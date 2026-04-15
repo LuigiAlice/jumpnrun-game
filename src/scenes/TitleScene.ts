@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { getLevelCount } from '../data/levels/index';
+import { GAME_WIDTH, GAME_HEIGHT } from '../config';
 
 interface BiomeButton {
     button: Phaser.GameObjects.Container;
@@ -26,6 +27,7 @@ export class TitleScene extends Phaser.Scene {
     private startButton!: Phaser.GameObjects.Container;
     private levelLabel!: Phaser.GameObjects.Text;
     private levelGrid!: Phaser.GameObjects.Container;
+    private backgroundImage!: Phaser.GameObjects.Image;
     
     private readonly BIOME_NAMES = [
         'grasslands', 'desert', 'water', 'ice-snow', 'sky-clouds',
@@ -44,27 +46,29 @@ export class TitleScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(400, 300, 'bg_grasslands_0');
-        
-        this.add.text(400, 60, 'SUPER JUMP WORLD', {
+        const centerX = GAME_WIDTH / 2;
+
+        this.backgroundImage = this.add.image(centerX, GAME_HEIGHT / 2, 'bg_grasslands_0');
+
+        this.add.text(centerX, 60, 'SUPER JUMP WORLD', {
             fontSize: '48px',
             fontFamily: 'Arial Black',
             color: '#f1c40f',
             stroke: '#e74c3c',
             strokeThickness: 8
         }).setOrigin(0.5);
-        
+
         // Biome tabs
         this.createBiomeTabs();
-        
+
         // Level grid
         this.createLevelGrid();
-        
+
         // Start button
         this.createStartButton();
-        
+
         // Control help
-        this.add.text(400, 560, '← → : Bewegen  |  ↑ : Springen  |  X : Feuerbälle', {
+        this.add.text(centerX, GAME_HEIGHT - 180, '← → : Bewegen  |  ↑ : Springen  |  X : Feuerbälle', {
             fontSize: '16px',
             color: '#fff',
             stroke: '#000',
@@ -77,14 +81,19 @@ export class TitleScene extends Phaser.Scene {
     }
     
     private createBiomeTabs() {
-        const startX = 30;
-        const tabWidth = 100;
+        const cols = 5;
+        const tabWidth = 200;
         const tabHeight = 30;
-        const gap = 8;
+        const gapX = 20;
+        const gapY = 10;
+        const startX = GAME_WIDTH / 2 - (cols * (tabWidth + gapX) - gapX) / 2;
+        const startY = 120;
         
         this.BIOME_NAMES.forEach((biome, i) => {
-            const x = startX + i * (tabWidth + gap);
-            const y = 115;
+            const col = i % cols;
+            const row = Math.floor(i / cols);
+            const x = startX + col * (tabWidth + gapX);
+            const y = startY + row * (tabHeight + gapY);
             
             const tab = this.add.container(x, y);
             
@@ -131,7 +140,7 @@ export class TitleScene extends Phaser.Scene {
     }
     
     private createLevelGrid() {
-        this.levelGrid = this.add.container(400, 300);
+        this.levelGrid = this.add.container(GAME_WIDTH / 2, 380);
         
         const cols = 3;
         const rows = 2;
@@ -217,7 +226,7 @@ export class TitleScene extends Phaser.Scene {
     }
     
     private createStartButton() {
-        this.startButton = this.add.container(400, 480);
+        this.startButton = this.add.container(GAME_WIDTH / 2, 530);
         
         const bg = this.add.graphics();
         bg.fillStyle(0x2ecc71, 1);
@@ -285,9 +294,10 @@ export class TitleScene extends Phaser.Scene {
             const visible = lb.biomeIndex === biome;
             lb.button.setVisible(visible);
         });
-        
-        // Update background
-        this.cameras.main.setBackgroundColor('#000');
+
+        // Update background to match biome
+        const biomeBgName = 'bg_' + this.BIOME_NAMES[biome] + '_0';
+        this.backgroundImage.setTexture(biomeBgName);
         
         // Try to keep selected level if same biome, otherwise select first
         if (this.selectedBiome !== biome) {

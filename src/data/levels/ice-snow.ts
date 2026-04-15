@@ -19,6 +19,7 @@ const pipeSection = (startX: number, y: number, pipeCount: number, S: number = 1
     const px = (startX + 300 + i * 350) * S;
     const ph = 64;
     plats.push(createPlat(px, y, 64 * S, ph, 'pipe'));
+    plats.push(createPlat(px - 8 * S, y - ph / 2 - 12, 80 * S, 24, 'pipe_top'));
   }
   return plats;
 };

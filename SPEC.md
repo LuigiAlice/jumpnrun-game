@@ -3,18 +3,42 @@
 ## Projektübersicht
 - **Name**: Jump & Run Abenteuer
 - **Typ**: 2D Browser-Platformer (wie Super Mario)
-- **Core-Feature**: Prozedural generierte, deterministische, garantiert lösbare Level
+- **Core-Feature**: 90 prozedural generierte, deterministische, garantiert lösbare Level
 - **Zielgruppe**: Casual Gamer, die kurze, spaßige Level spielen wollen
 
 ## Technologie
-- TypeScript + Vite
-- Canvas API (keine externen Rendering-Libraries)
-- Keine externen Dependencies
+- TypeScript + Vite + Phaser 3 + Vitest
+- Arcade Physics (Gravity: 1000)
+- ES Modules
+
+## Level-Struktur
+- **90 Level** über 15 Biomes
+- **6 Levels pro Biome**
+- **Garantiert lösbar** durch BFS-Pathfinding
+
+### Biome (15 Stück)
+| Biom | Levels | Plattform-Typen | Dekorationen |
+|------|--------|-----------------|---------------|
+| grasslands | 1-6 | grass, dirt | tree, bush |
+| desert | 7-12 | sand, sandstone | cactus, rock, skull, pyramid |
+| water | 13-18 | bubble, water | seaweed, bubble, coral, shell |
+| ice-snow | 19-24 | snow, ice | snowflake, icicle, rock |
+| sky-clouds | 25-30 | cloud | balloon, bird, sun, rainbow |
+| forest | 31-36 | grass, dirt | tree, bush, mushroom |
+| village | 37-42 | grass, dirt | house, fence, barrel |
+| beach-island | 43-48 | sand | palm, seagull, shell |
+| factory | 49-54 | metal, brick | conveyor, crane, gear, smoke |
+| volcano-lava | 55-60 | lava, stone | fire, ember, lava-rock |
+| haunted-mansion | 61-66 | stone, brick | cobweb, tombstone, web, ghost |
+| ruins | 67-72 | ruins, stone | pillar, statue |
+| canyon-base | 73-78 | sandstone | canyon-rock, formation, eagle |
+| space-star | 79-84 | space | planet, rocket, asteroid, satellite |
+| castle-final | 85-90 | castle | banner, chain, torch, boss-flag |
 
 ## UI/UX Spezifikation
 
 ### Layout
-- Canvas: 800x480 Pixel (16:10 Format)
+- Canvas: 800x1200 Pixel
 - HUD oben: Münzen (links), Level-Nr. (rechts)
 - Responsive Container mit Glow-Effekt
 
@@ -23,39 +47,44 @@
 - **Stil**: Vektor/Smooth mit abgerundeten Ecken, Verläufen, Schatten
 - **Animationen**: Player-Glow, Münzen-Glanz, Partikel, Parallax-Hintergrund
 
-### Biome (5 Stück)
-| Biom | Farben | Hintergrund-Design |
-|------|--------|-------------------|
-| Wald | Grün/Orange | Bäume, Wolken, blauer Himmel |
-| Wüste | Sand/Gelb | Kakteen, Pyramiden |
-| Schnee | Weiß/Blau | Schneeflocken, dunkler Himmel |
-| Vulkan | Rot/Schwarz | Lava-Partikel, dunkelrot |
-| Ozean | Blau/Türkis | Wellen, Blasen |
-
 ### Menüs
 - **Start-Screen**: Titel, Steuerung-Info, Cloud-Dekor
 - **Game Over**: Overlay mit Stats
 - **Victory**: Konfetti-Sterne, Glückwunsch
 
-## Level-Generierung
+## Plattform-Typen (22)
 
-### Algorithmus (garantiert lösbar)
-1. **Seed-basiert**: Gleicher Seed = gleiches Level
-2. **Pfad zuerst**: Generiere sicheren Pfad von links nach rechts
-   - Nutzt BFS mit Jump-Physik-Constraint (max 4 Tiles hoch, 6 weit)
-3. **Rest füllen**: Zusätzliche Plattformen NEBEN dem Pfad
-4. **Entities**: Gegner (Goombas), Münzen auf/near dem Pfad
+### Feste Plattformen (Solid)
+`grass`, `stone`, `brick`, `cave`, `castle`, `metal`, `lava`, `wood`, `sand`, `snow`, `ruins`, `space`, `sandstone`, `ground`, `cloud`, `water`, `bubble`
 
-### Tile-Typen
-- `air`: Leer
-- `ground`: Boden (durchgehend unten)
-- `platform`: Plattform (springbar)
-- `brick`: Ziegel (zerstörbar - später)
-- `question`: Frage-Block (Münzen/Items)
-- `pipe`: Rohr (später)
-- `ladder`: Leiter (später)
+### One-Way Plattformen
+`platform_easy`, `platform_medium`, `platform_hard`
 
-## Funktionalität
+### Spezielle Plattformen
+`pipe` (64x64) - Röhren für Piranhas
+`pipe_top` (80x24) - Röhren-Lippe
+
+## Gegner-Typen (15)
+
+### Stompbare Gegner
+`goomba`, `koopa`, `spiny`, `robot`, `crab`, `ghost`, `squid`, `ufo`
+
+### Nicht-stompbare Gegner
+`piranha`, `thwomp`, `boo`, `lakitu`, `bullet_bill`, `fireball`, `boss`
+
+## Fragezeichen-Blöcke
+
+### Anforderungen
+- **Mindestabstand**: 56 Pixel zwischen Block-Oberseite und darüberliegender Plattform
+- **Grund**: Big Mario ist 48px hoch + 8px Buffer
+
+### Inhaltstypen
+- `coin` - 100 Punkte
+- `mushroom` - Big Mario
+- `flower` - Fire Mario
+- `star` - Unverwundbarkeit (5s)
+
+## Spielmechanik
 
 ### Steuerung
 - Pfeil Links/Rechts: Bewegen
@@ -63,13 +92,21 @@
 - R: Level neustarten
 - N: Nächstes Level
 
-### Spielmechanik
-- Spieler: Blink-Glow-Effekt
-- Goombas: Lauern hin und her, töten durch Draufspringen
-- Münzen: Sammeln, Animation
-- Goal: Flagge/Block am Ende
+### Spieler-Zustände
+| Zustand | Größe | Texture |
+|---------|-------|---------|
+| Small Mario | 22x32 | player_idle |
+| Big Mario | 24x48 | player_big |
+| Fire Mario | 24x48 | player_fire |
 
-### Kamera
+### Piranha-Mechanik
+- **Aufsteigen**: 1.5s
+- **Oben bleiben**: 3s
+- **Absteigen**: 1.5s
+- **Pause**: 2s
+- **Position**: hiddenY = pipeTopY + 35, peekY = pipeTopY - 50
+
+## Kamera
 - Folgt Spieler horizontal
 - Smooth Lerp (0.1)
 

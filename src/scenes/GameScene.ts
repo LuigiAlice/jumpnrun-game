@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { loadLevel, getLevelName } from '../generator/LevelLoader';
 import type { LevelData } from '../data/levels';
+import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 
 const PLAYER_SPEED = 350;
 const JUMP_VELOCITY = -900;
@@ -84,7 +85,7 @@ export class GameScene extends Phaser.Scene {
   private setupWorld(level: LevelData) {
     this.physics.world.gravity.y = GRAVITY;
     this.physics.world.setBounds(0, 0, level.width, 1200);
-    this.cameras.main.setBounds(0, 0, level.width, 600);
+    this.cameras.main.setBounds(0, 0, level.width, GAME_HEIGHT);
     
     const biomePrefix: Record<string, string> = {
       'grasslands': 'bg_grasslands',
@@ -108,12 +109,12 @@ export class GameScene extends Phaser.Scene {
     
     const scrollFactors = [0, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4];
     const depths = [-100, -95, -90, -85, -80, -75, -70];
-    const widths = [800, 1200, 1400, 1400, 1400, 1000, 1000];
-    const heights = [600, 350, 400, 450, 500, 550, 600];
-    const yPositions = [300, 280, 320, 360, 400, 450, 520];
-    
+    const widths = [1200, 1400, 1600, 1600, 1600, 1200, 1200];
+    const heights = [800, 400, 450, 500, 550, 600, 650];
+    const yPositions = [GAME_HEIGHT / 2, 320, 360, 400, 440, 480, 520];
+
     for (let i = 0; i < 7; i++) {
-      this.add.tileSprite(400, yPositions[i], widths[i], heights[i], `${prefix}_${i}`)
+      this.add.tileSprite(GAME_WIDTH / 2, yPositions[i], widths[i], heights[i], `${prefix}_${i}`)
         .setScrollFactor(scrollFactors[i], 0)
         .setDepth(depths[i]);
     }
@@ -232,41 +233,48 @@ export class GameScene extends Phaser.Scene {
         enemy.body.setAllowGravity(false);
         enemy.setVelocityX(-80).setCollideWorldBounds(true).setBounce(0);
         enemy.setData('noEdgeDetection', true);
-      } else if (e.type === 'piranha') {
+} else if (e.type === 'piranha') {
         enemy.body.setAllowGravity(false);
         enemy.setImmovable(true);
         enemy.setData('noEdgeDetection', true);
+
         let pipeCenterX = e.x;
         let pipeTopY = e.y;
+        let hasPipe = false;
+
         for (const platform of level.platforms) {
           const typeStr = platform.type as string;
           if ((typeStr === 'pipe' || typeStr === 'pipe_top') &&
-              Math.abs(e.x - platform.x) < platform.w / 2 + 10) {
+              Math.abs(e.x - platform.x) < platform.w / 2 + 10 &&
+              Math.abs(e.y - platform.y) < 200) {
             pipeCenterX = platform.x;
             pipeTopY = platform.y - platform.h / 2;
+            hasPipe = true;
             break;
           }
         }
-        enemy.setX(pipeCenterX);
-        const hiddenY = pipeTopY + 20;
-        const peekY = pipeTopY - 26;
-        enemy.setY(hiddenY).setAlpha(0);
-        enemy.setData('hiddenY', hiddenY);
-        enemy.setData('peekY', peekY);
-        this.tweens.add({
-          targets: enemy,
-          y: { from: hiddenY, to: peekY },
-          alpha: { from: 0, to: 1 },
-          duration: 700,
-          ease: 'Sine.easeInOut',
-          hold: 1500,
-          yoyo: true,
-          repeat: -1,
-          repeatDelay: 800,
-          delay: Math.random() * 1500,
-          onYoyo: () => { enemy.setAlpha(1); },
-          onRepeat: () => { enemy.setAlpha(0); },
-        });
+
+        if (hasPipe) {
+          enemy.setX(pipeCenterX);
+          const hiddenY = pipeTopY + 35;
+          const peekY = pipeTopY - 50;
+          enemy.setY(hiddenY);
+          enemy.setData('hiddenY', hiddenY);
+          enemy.setData('peekY', peekY);
+          this.tweens.add({
+            targets: enemy,
+            y: { from: hiddenY, to: peekY },
+            duration: 1500,
+            ease: 'Sine.easeInOut',
+            hold: 3000,
+            yoyo: true,
+            repeat: -1,
+            repeatDelay: 2000,
+            delay: Math.random() * 2000,
+          });
+        } else {
+          enemy.destroy();
+        }
       } else if (e.type === 'thwomp') {
         enemy.body.setAllowGravity(false);
         enemy.setImmovable(true);
@@ -452,13 +460,13 @@ export class GameScene extends Phaser.Scene {
     
     const cfg = { fontSize: '20px', fontFamily: 'Arial', color: '#fff', stroke: '#000', strokeThickness: 3 };
     this.scoreText = this.add.text(20, 20, '', cfg).setScrollFactor(0).setDepth(1000);
-    this.coinText = this.add.text(200, 20, '', cfg).setScrollFactor(0).setDepth(1000);
-    this.worldText = this.add.text(400, 20, '', cfg).setScrollFactor(0).setDepth(1000);
-    this.timerText = this.add.text(650, 20, '', cfg).setScrollFactor(0).setDepth(1000);
+    this.coinText = this.add.text(300, 20, '', cfg).setScrollFactor(0).setDepth(1000);
+    this.worldText = this.add.text(600, 20, '', cfg).setScrollFactor(0).setDepth(1000);
+    this.timerText = this.add.text(900, 20, '', cfg).setScrollFactor(0).setDepth(1000);
     this.livesText = this.add.text(20, 60, '', cfg).setScrollFactor(0).setDepth(1000);
-    
+
     // Level name display
-    this.add.text(400, 50, levelName, { 
+    this.add.text(GAME_WIDTH / 2, 50, levelName, { 
       fontSize: '14px', 
       fontFamily: 'Arial', 
       color: '#FFD700',

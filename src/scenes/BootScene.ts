@@ -260,11 +260,19 @@ export class BootScene extends Phaser.Scene {
 
     // Pipe
     g.clear();
-    g.fillStyle(0x00a000, 1); g.fillRoundedRect(0, 0, 64, 32, 4);
-    g.fillStyle(0x00d800, 1); g.fillRoundedRect(4, 0, 12, 32, 4);
-    g.fillStyle(0x007000, 1); g.fillRoundedRect(48, 0, 12, 32, 4);
-    g.lineStyle(2, 0x004000, 1); g.strokeRoundedRect(0, 0, 64, 34, 4);
-    g.generateTexture('pipe', 64, 32);
+    g.fillStyle(0x00a000, 1); g.fillRoundedRect(0, 0, 64, 64, 4);
+    g.fillStyle(0x00d800, 1); g.fillRoundedRect(4, 0, 12, 64, 4);
+    g.fillStyle(0x007000, 1); g.fillRoundedRect(48, 0, 12, 64, 4);
+    g.lineStyle(2, 0x004000, 1); g.strokeRoundedRect(0, 0, 64, 64, 4);
+    g.generateTexture('pipe', 64, 64);
+
+    // Pipe top (lip)
+    g.clear();
+    g.fillStyle(0x00a000, 1); g.fillRoundedRect(0, 0, 80, 24, 4);
+    g.fillStyle(0x00d800, 1); g.fillRoundedRect(4, 0, 12, 24, 4);
+    g.fillStyle(0x007000, 1); g.fillRoundedRect(64, 0, 12, 24, 4);
+    g.lineStyle(2, 0x004000, 1); g.strokeRoundedRect(0, 0, 80, 24, 4);
+    g.generateTexture('pipe_top', 80, 24);
 
     // Brick
     g.clear();
@@ -839,1143 +847,1173 @@ export class BootScene extends Phaser.Scene {
     // ==================== GRASSLANDS BIOME (7 LAYERS) ====================
     // Layer 0: Sky gradient
     g.fillGradientStyle(0x87CEEB, 0x87CEEB, 0xE0F4FF, 0xE0F4FF, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_grasslands_0', 800, 600);
-    
-    // Layer 1: Far mountains (very slow)
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_grasslands_0', 1200, 800);
+
+    // Layer 1: Far mountains (very slow) - wider and taller for 1200x800
     g.clear();
     g.fillStyle(0x6B8E6B, 0.4);
-    g.fillTriangle(0, 300, 200, 100, 400, 300);
-    g.fillTriangle(300, 300, 600, 80, 800, 300);
-    g.fillTriangle(600, 300, 900, 120, 1200, 300);
-    g.generateTexture('bg_grasslands_1', 1200, 350);
-    
+    g.fillTriangle(0, 400, 300, 150, 600, 400);
+    g.fillTriangle(400, 400, 800, 100, 1200, 400);
+    g.fillTriangle(800, 400, 1200, 180, 1600, 400);
+    g.generateTexture('bg_grasslands_1', 1400, 400);
+
     // Layer 2: Far hills
     g.clear();
     g.fillStyle(0x5A9A5A, 0.6);
-    g.fillEllipse(150, 320, 350, 180);
-    g.fillEllipse(500, 300, 450, 200);
-    g.fillEllipse(850, 330, 400, 170);
-    g.fillEllipse(1200, 310, 380, 190);
-    g.generateTexture('bg_grasslands_2', 1400, 400);
-    
+    g.fillEllipse(200, 420, 400, 200);
+    g.fillEllipse(700, 400, 500, 220);
+    g.fillEllipse(1200, 430, 450, 190);
+    g.fillEllipse(1700, 410, 420, 210);
+    g.generateTexture('bg_grasslands_2', 1600, 450);
+
     // Layer 3: Mid hills
     g.clear();
     g.fillStyle(0x4A8A4A, 0.75);
-    g.fillEllipse(100, 380, 300, 150);
-    g.fillEllipse(400, 360, 350, 180);
-    g.fillEllipse(750, 390, 320, 140);
-    g.fillEllipse(1100, 370, 300, 160);
-    g.generateTexture('bg_grasslands_3', 1400, 450);
-    
+    g.fillEllipse(150, 480, 350, 170);
+    g.fillEllipse(550, 460, 400, 200);
+    g.fillEllipse(950, 490, 380, 160);
+    g.fillEllipse(1350, 470, 350, 180);
+    g.generateTexture('bg_grasslands_3', 1600, 500);
+
     // Layer 4: Near hills with trees
     g.clear();
     g.fillStyle(0x3A7A3A, 0.9);
-    g.fillEllipse(80, 420, 200, 120);
-    g.fillEllipse(300, 400, 250, 140);
-    g.fillEllipse(550, 430, 220, 110);
-    g.fillEllipse(800, 410, 280, 130);
-    g.fillEllipse(1050, 425, 200, 115);
+    g.fillEllipse(100, 520, 250, 140);
+    g.fillEllipse(400, 500, 300, 160);
+    g.fillEllipse(700, 530, 280, 130);
+    g.fillEllipse(1050, 510, 320, 150);
+    g.fillEllipse(1400, 525, 250, 135);
     // Tree trunks
     g.fillStyle(0x5D4037, 1);
-    g.fillRect(120, 350, 12, 60);
-    g.fillRect(350, 330, 14, 70);
-    g.fillRect(620, 360, 10, 55);
-    g.fillRect(880, 340, 15, 65);
-    g.fillRect(1100, 355, 12, 58);
-    g.generateTexture('bg_grasslands_4', 1400, 500);
-    
+    g.fillRect(150, 420, 14, 70);
+    g.fillRect(430, 400, 16, 80);
+    g.fillRect(750, 430, 12, 65);
+    g.fillRect(1100, 410, 18, 75);
+    g.fillRect(1420, 425, 14, 70);
+    g.generateTexture('bg_grasslands_4', 1600, 550);
+
     // Layer 5: Bushes and flowers
     g.clear();
     g.fillStyle(0x2D6B2D, 1);
-    g.fillEllipse(60, 480, 80, 45);
-    g.fillEllipse(200, 490, 60, 35);
-    g.fillEllipse(380, 475, 90, 50);
-    g.fillEllipse(550, 485, 70, 40);
-    g.fillEllipse(720, 478, 85, 48);
-    g.fillEllipse(900, 488, 65, 38);
+    g.fillEllipse(80, 580, 100, 55);
+    g.fillEllipse(280, 590, 80, 45);
+    g.fillEllipse(500, 575, 110, 60);
+    g.fillEllipse(720, 585, 90, 50);
+    g.fillEllipse(920, 578, 95, 55);
+    g.fillEllipse(1120, 588, 85, 48);
+    g.fillEllipse(1320, 582, 100, 52);
     // Flowers
     g.fillStyle(0xFF69B4, 1);
-    g.fillCircle(100, 465, 5); g.fillCircle(250, 472, 4);
+    g.fillCircle(130, 560, 6); g.fillCircle(330, 568, 5);
     g.fillStyle(0xFFD700, 1);
-    g.fillCircle(420, 460, 5); g.fillCircle(600, 468, 4);
+    g.fillCircle(550, 555, 6); g.fillCircle(770, 562, 5);
     g.fillStyle(0xFF6347, 1);
-    g.fillCircle(760, 462, 5); g.fillCircle(950, 470, 4);
-    g.generateTexture('bg_grasslands_5', 1000, 550);
-    
+    g.fillCircle(960, 558, 6); g.fillCircle(1170, 565, 5);
+    g.generateTexture('bg_grasslands_5', 1200, 600);
+
     // Layer 6: Foreground grass tufts
     g.clear();
     g.fillStyle(0x228B22, 1);
-    for (let i = 0; i < 30; i++) {
-      g.fillTriangle(i * 30 + 10, 560, i * 30 + 15, 520, i * 30 + 20, 560);
-      g.fillTriangle(i * 30 + 12, 570, i * 30 + 15, 530, i * 30 + 18, 570);
+    for (let i = 0; i < 40; i++) {
+      g.fillTriangle(i * 30 + 10, 650, i * 30 + 15, 600, i * 30 + 20, 650);
+      g.fillTriangle(i * 30 + 12, 660, i * 30 + 15, 610, i * 30 + 18, 660);
     }
-    g.generateTexture('bg_grasslands_6', 1000, 600);
+    g.generateTexture('bg_grasslands_6', 1200, 680);
     
     // ==================== DESERT BIOME (7 LAYERS) ====================
     // Layer 0: Sunny sky gradient
     g.fillGradientStyle(0x87CEEB, 0x87CEEB, 0xFFE4B5, 0xFFE4B5, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_desert_0', 800, 600);
-    
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_desert_0', 1200, 800);
+
     // Layer 1: Far sand dunes
     g.clear();
     g.fillStyle(0xDEB887, 0.5);
-    g.fillEllipse(200, 350, 500, 200);
-    g.fillEllipse(700, 320, 600, 220);
+    g.fillEllipse(250, 400, 600, 250);
+    g.fillEllipse(900, 370, 700, 280);
     g.generateTexture('bg_desert_1', 1400, 450);
-    
+
     // Layer 2: Mid dunes with heat shimmer
     g.clear();
     g.fillStyle(0xD2B48C, 0.7);
-    g.fillEllipse(150, 400, 400, 180);
-    g.fillEllipse(550, 380, 450, 200);
-    g.fillEllipse(950, 410, 380, 170);
+    g.fillEllipse(200, 450, 500, 200);
+    g.fillEllipse(700, 430, 550, 230);
+    g.fillEllipse(1200, 460, 450, 190);
     // Sun
     g.fillStyle(0xFFD700, 0.8);
-    g.fillCircle(700, 80, 40);
+    g.fillCircle(850, 100, 50);
     g.fillStyle(0xFFF8DC, 0.6);
-    g.fillCircle(700, 80, 30);
-    g.generateTexture('bg_desert_2', 1400, 500);
-    
+    g.fillCircle(850, 100, 38);
+    g.generateTexture('bg_desert_2', 1600, 500);
+
     // Layer 3: Near dunes
     g.clear();
     g.fillStyle(0xC4A676, 0.85);
-    g.fillEllipse(120, 450, 350, 150);
-    g.fillEllipse(500, 430, 400, 170);
-    g.fillEllipse(900, 460, 320, 140);
-    g.generateTexture('bg_desert_3', 1200, 550);
-    
+    g.fillEllipse(150, 500, 400, 180);
+    g.fillEllipse(650, 480, 500, 200);
+    g.fillEllipse(1150, 510, 380, 170);
+    g.generateTexture('bg_desert_3', 1600, 550);
+
     // Layer 4: Cacti and rocks
     g.clear();
     // Saguaro cactus
     g.fillStyle(0x556B2F, 1);
-    g.fillRect(100, 380, 15, 120);
-    g.fillRect(85, 420, 20, 15);
-    g.fillRect(100, 400, 15, 15);
-    g.fillRect(200, 360, 12, 100);
-    g.fillRect(188, 390, 18, 12);
-    g.fillRect(200, 370, 12, 12);
+    g.fillRect(120, 420, 18, 150);
+    g.fillRect(100, 480, 25, 18);
+    g.fillRect(120, 450, 18, 18);
+    g.fillRect(250, 390, 15, 120);
+    g.fillRect(235, 430, 22, 15);
+    g.fillRect(250, 405, 15, 15);
     // Rocks
     g.fillStyle(0x8B7355, 1);
-    g.fillEllipse(350, 490, 60, 35);
-    g.fillEllipse(550, 480, 50, 30);
-    g.fillEllipse(750, 495, 70, 40);
-    g.generateTexture('bg_desert_4', 900, 550);
-    
+    g.fillEllipse(450, 550, 70, 40);
+    g.fillEllipse(700, 540, 60, 35);
+    g.fillEllipse(950, 555, 80, 45);
+    g.generateTexture('bg_desert_4', 1200, 600);
+
     // Layer 5: Tumbleweed and small plants
     g.clear();
     g.fillStyle(0x9ACD32, 0.8);
-    g.fillCircle(150, 520, 20);
-    g.fillCircle(450, 530, 15);
-    g.fillCircle(700, 515, 18);
+    g.fillCircle(180, 580, 25);
+    g.fillCircle(550, 590, 20);
+    g.fillCircle(850, 575, 22);
+    g.fillCircle(1150, 585, 18);
     // Small shrubs
     g.fillStyle(0x6B8E23, 1);
-    g.fillEllipse(300, 510, 40, 25);
-    g.fillEllipse(600, 505, 35, 22);
-    g.generateTexture('bg_desert_5', 900, 560);
-    
+    g.fillEllipse(350, 570, 50, 30);
+    g.fillEllipse(750, 565, 45, 28);
+    g.generateTexture('bg_desert_5', 1200, 620);
+
     // Layer 6: Sand foreground
     g.clear();
     g.fillStyle(0xF4A460, 1);
-    for (let i = 0; i < 20; i++) {
-      g.fillEllipse(i * 50 + 25, 570, 40, 25);
+    for (let i = 0; i < 30; i++) {
+      g.fillEllipse(i * 45 + 25, 650, 45, 28);
     }
-    g.generateTexture('bg_desert_6', 1000, 600);
+    g.generateTexture('bg_desert_6', 1400, 700);
     
     // ==================== WATER BIOME (7 LAYERS) ====================
     // Layer 0: Underwater sky
     g.fillGradientStyle(0x006994, 0x006994, 0x001e3d, 0x001e3d, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_water_0', 800, 600);
-    
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_water_0', 1200, 800);
+
     // Layer 1: Light rays
     g.clear();
     g.fillStyle(0x4A90D9, 0.2);
-    g.fillTriangle(100, 0, 150, 400, 50, 400);
-    g.fillTriangle(300, 0, 380, 500, 220, 500);
-    g.fillTriangle(550, 0, 650, 450, 450, 450);
-    g.fillTriangle(750, 0, 800, 350, 700, 350);
-    g.generateTexture('bg_water_1', 800, 600);
-    
+    g.fillTriangle(120, 0, 180, 500, 60, 500);
+    g.fillTriangle(350, 0, 450, 600, 250, 600);
+    g.fillTriangle(650, 0, 780, 550, 520, 550);
+    g.fillTriangle(900, 0, 960, 420, 840, 420);
+    g.fillTriangle(1100, 0, 1150, 380, 1050, 380);
+    g.generateTexture('bg_water_1', 1200, 650);
+
     // Layer 2: Far coral reef
     g.clear();
     g.fillStyle(0xFF7F50, 0.5);
-    g.fillEllipse(100, 450, 80, 120);
+    g.fillEllipse(120, 500, 100, 150);
     g.fillStyle(0xFF69B4, 0.5);
-    g.fillEllipse(250, 430, 100, 140);
+    g.fillEllipse(320, 480, 120, 170);
     g.fillStyle(0x00CED1, 0.5);
-    g.fillEllipse(450, 460, 90, 110);
+    g.fillEllipse(550, 510, 110, 140);
     g.fillStyle(0x9932CC, 0.5);
-    g.fillEllipse(650, 440, 85, 130);
-    g.generateTexture('bg_water_2', 800, 550);
-    
+    g.fillEllipse(800, 490, 100, 160);
+    g.fillStyle(0xFF7F50, 0.5);
+    g.fillEllipse(1050, 505, 90, 130);
+    g.generateTexture('bg_water_2', 1200, 650);
+
     // Layer 3: Mid seaweed
     g.clear();
     g.fillStyle(0x228B22, 0.7);
-    for (let i = 0; i < 15; i++) {
-      const x = i * 60 + 30;
-      g.fillRect(x, 300, 8, 200);
-      g.fillEllipse(x + 4, 290, 20, 40);
+    for (let i = 0; i < 18; i++) {
+      const x = i * 70 + 40;
+      g.fillRect(x, 350, 10, 250);
+      g.fillEllipse(x + 5, 340, 25, 50);
     }
-    g.generateTexture('bg_water_3', 900, 550);
-    
+    g.generateTexture('bg_water_3', 1400, 650);
+
     // Layer 4: Swimming fish
     g.clear();
     g.fillStyle(0xFFA500, 0.8);
-    g.fillEllipse(100, 200, 40, 20);
-    g.fillTriangle(60, 200, 40, 190, 40, 210);
+    g.fillEllipse(120, 250, 50, 25);
+    g.fillTriangle(70, 250, 45, 235, 45, 265);
     g.fillStyle(0xFF6347, 0.8);
-    g.fillEllipse(350, 280, 35, 18);
-    g.fillTriangle(315, 280, 295, 270, 295, 290);
+    g.fillEllipse(400, 320, 45, 22);
+    g.fillTriangle(355, 320, 330, 305, 330, 335);
     g.fillStyle(0xFFD700, 0.8);
-    g.fillEllipse(600, 180, 45, 22);
-    g.fillTriangle(555, 180, 535, 170, 535, 190);
+    g.fillEllipse(700, 220, 55, 28);
+    g.fillTriangle(645, 220, 615, 205, 615, 235);
     g.fillStyle(0x00BFFF, 0.8);
-    g.fillEllipse(500, 350, 38, 19);
-    g.fillTriangle(462, 350, 442, 340, 442, 360);
-    g.generateTexture('bg_water_4', 800, 450);
-    
+    g.fillEllipse(1000, 280, 48, 24);
+    g.fillTriangle(952, 280, 927, 265, 927, 295);
+    g.generateTexture('bg_water_4', 1200, 450);
+
     // Layer 5: Bubbles
     g.clear();
     g.fillStyle(0xADD8E6, 0.6);
-    for (let i = 0; i < 25; i++) {
-      g.fillCircle(30 + i * 32, 100 + Math.sin(i) * 50, 5 + (i % 5) * 2);
+    for (let i = 0; i < 30; i++) {
+      g.fillCircle(40 + i * 40, 120 + Math.sin(i) * 60, 6 + (i % 6) * 2);
     }
-    g.generateTexture('bg_water_5', 800, 200);
-    
+    g.generateTexture('bg_water_5', 1200, 250);
+
     // Layer 6: Near coral
     g.clear();
     g.fillStyle(0xFF4500, 1);
-    g.fillEllipse(80, 530, 60, 80);
+    g.fillEllipse(100, 600, 80, 100);
     g.fillStyle(0x20B2AA, 1);
-    g.fillEllipse(250, 520, 70, 90);
+    g.fillEllipse(320, 590, 90, 110);
     g.fillStyle(0xDB7093, 1);
-    g.fillEllipse(450, 535, 55, 75);
+    g.fillEllipse(550, 605, 70, 95);
     g.fillStyle(0x00CED1, 1);
-    g.fillEllipse(650, 525, 65, 85);
+    g.fillEllipse(780, 595, 85, 105);
     g.fillStyle(0x9370DB, 1);
-    g.fillEllipse(800, 540, 50, 70);
-    g.generateTexture('bg_water_6', 900, 600);
+    g.fillEllipse(1000, 610, 65, 85);
+    g.fillStyle(0xFF6347, 1);
+    g.fillEllipse(1150, 598, 60, 80);
+    g.generateTexture('bg_water_6', 1400, 700);
     
     // ==================== ICE-SNOW BIOME (7 LAYERS) ====================
     // Layer 0: Winter sky
     g.fillGradientStyle(0xB0C4DE, 0xB0C4DE, 0xF0F8FF, 0xF0F8FF, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_ice_0', 800, 600);
-    
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_ice_0', 1200, 800);
+
     // Layer 1: Far ice mountains
     g.clear();
     g.fillStyle(0x778899, 0.5);
-    g.fillTriangle(0, 400, 150, 150, 300, 400);
-    g.fillTriangle(200, 400, 400, 100, 600, 400);
-    g.fillTriangle(500, 400, 700, 120, 900, 400);
-    g.generateTexture('bg_ice_1', 1000, 450);
-    
+    g.fillTriangle(0, 450, 200, 180, 400, 450);
+    g.fillTriangle(300, 450, 550, 120, 800, 450);
+    g.fillTriangle(650, 450, 950, 150, 1200, 450);
+    g.generateTexture('bg_ice_1', 1200, 480);
+
     // Layer 2: Icebergs
     g.clear();
     g.fillStyle(0xAFEEEE, 0.7);
-    g.fillEllipse(150, 380, 250, 150);
-    g.fillEllipse(500, 360, 300, 180);
-    g.fillEllipse(850, 390, 220, 130);
-    g.generateTexture('bg_ice_2', 1200, 480);
-    
+    g.fillEllipse(200, 480, 300, 180);
+    g.fillEllipse(650, 460, 380, 220);
+    g.fillEllipse(1100, 490, 280, 160);
+    g.generateTexture('bg_ice_2', 1400, 520);
+
     // Layer 3: Snow clouds
     g.clear();
     g.fillStyle(0xFFFFFF, 0.5);
-    g.fillCircle(100, 80, 40);
-    g.fillCircle(150, 70, 35);
-    g.fillCircle(60, 90, 25);
-    g.fillCircle(350, 100, 45);
-    g.fillCircle(420, 85, 30);
-    g.fillCircle(600, 75, 38);
-    g.fillCircle(680, 95, 32);
-    g.generateTexture('bg_ice_3', 800, 150);
-    
+    g.fillCircle(120, 100, 50);
+    g.fillCircle(180, 85, 42);
+    g.fillCircle(70, 115, 32);
+    g.fillCircle(420, 120, 55);
+    g.fillCircle(520, 100, 38);
+    g.fillCircle(720, 90, 48);
+    g.fillCircle(820, 115, 40);
+    g.fillCircle(1020, 95, 45);
+    g.generateTexture('bg_ice_3', 1200, 200);
+
     // Layer 4: Snow particles
     g.clear();
     g.fillStyle(0xFFFFFF, 0.8);
-    for (let i = 0; i < 50; i++) {
-      const x = (i * 37) % 800;
-      const y = (i * 23) % 500;
+    for (let i = 0; i < 60; i++) {
+      const x = (i * 37) % 1200;
+      const y = (i * 23) % 600;
       const size = 2 + (i % 4);
       g.fillCircle(x, y, size);
     }
-    g.generateTexture('bg_ice_4', 800, 500);
-    
+    g.generateTexture('bg_ice_4', 1200, 650);
+
     // Layer 5: Icicles
     g.clear();
     g.fillStyle(0x87CEEB, 0.9);
-    for (let i = 0; i < 20; i++) {
-      const x = i * 45 + 20;
-      g.fillTriangle(x, 0, x - 10, 80, x + 10, 80);
+    for (let i = 0; i < 25; i++) {
+      const x = i * 50 + 25;
+      g.fillTriangle(x, 0, x - 12, 100, x + 12, 100);
     }
-    g.generateTexture('bg_ice_5', 900, 100);
-    
+    g.generateTexture('bg_ice_5', 1200, 120);
+
     // Layer 6: Snow ground
     g.clear();
     g.fillStyle(0xFFFAFA, 1);
-    g.fillEllipse(100, 570, 200, 50);
-    g.fillEllipse(350, 575, 180, 45);
-    g.fillEllipse(600, 565, 220, 55);
-    g.fillEllipse(800, 572, 160, 42);
-    g.generateTexture('bg_ice_6', 1000, 600);
+    g.fillEllipse(150, 680, 250, 60);
+    g.fillEllipse(450, 690, 220, 55);
+    g.fillEllipse(750, 675, 280, 65);
+    g.fillEllipse(1050, 685, 200, 52);
+    g.generateTexture('bg_ice_6', 1200, 720);
     
     // ==================== SKY-CLOUDS BIOME (7 LAYERS) ====================
     // Layer 0: Sunset sky
     g.fillGradientStyle(0xFF6B6B, 0xFF6B6B, 0xFFE4B5, 0xFFA07A, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_sky_0', 800, 600);
-    
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_sky_0', 1200, 800);
+
     // Layer 1: Distant clouds
     g.clear();
     g.fillStyle(0xFFFFFF, 0.3);
-    g.fillCircle(100, 100, 50);
-    g.fillCircle(160, 90, 40);
-    g.fillCircle(50, 110, 30);
-    g.fillCircle(400, 80, 55);
-    g.fillCircle(480, 70, 35);
-    g.fillCircle(700, 110, 48);
-    g.fillCircle(760, 95, 32);
-    g.generateTexture('bg_sky_1', 900, 150);
-    
+    g.fillCircle(120, 120, 60);
+    g.fillCircle(190, 105, 48);
+    g.fillCircle(60, 135, 38);
+    g.fillCircle(480, 95, 65);
+    g.fillCircle(580, 82, 42);
+    g.fillCircle(840, 130, 58);
+    g.fillCircle(920, 112, 40);
+    g.fillCircle(1080, 100, 50);
+    g.generateTexture('bg_sky_1', 1200, 200);
+
     // Layer 2: Pink clouds
     g.clear();
     g.fillStyle(0xFFB6C1, 0.6);
-    g.fillCircle(120, 180, 60);
-    g.fillCircle(200, 165, 45);
-    g.fillCircle(50, 195, 35);
-    g.fillCircle(400, 200, 70);
-    g.fillCircle(520, 180, 50);
-    g.fillCircle(650, 190, 55);
-    g.generateTexture('bg_sky_2', 800, 280);
-    
+    g.fillCircle(150, 200, 70);
+    g.fillCircle(250, 180, 55);
+    g.fillCircle(60, 220, 45);
+    g.fillCircle(500, 230, 80);
+    g.fillCircle(650, 200, 60);
+    g.fillCircle(800, 215, 65);
+    g.fillCircle(1000, 195, 55);
+    g.generateTexture('bg_sky_2', 1200, 350);
+
     // Layer 3: Fluffy white clouds
     g.clear();
     g.fillStyle(0xFFFFFF, 0.8);
-    g.fillCircle(80, 300, 55);
-    g.fillCircle(150, 280, 45);
-    g.fillCircle(200, 310, 35);
-    g.fillCircle(350, 320, 60);
-    g.fillCircle(450, 295, 40);
-    g.fillCircle(550, 315, 50);
-    g.fillCircle(680, 290, 45);
-    g.fillCircle(750, 305, 38);
-    g.generateTexture('bg_sky_3', 900, 400);
-    
+    g.fillCircle(100, 350, 65);
+    g.fillCircle(200, 325, 55);
+    g.fillCircle(260, 365, 45);
+    g.fillCircle(430, 380, 70);
+    g.fillCircle(560, 345, 50);
+    g.fillCircle(680, 370, 60);
+    g.fillCircle(840, 340, 55);
+    g.fillCircle(950, 360, 48);
+    g.fillCircle(1100, 330, 58);
+    g.generateTexture('bg_sky_3', 1200, 450);
+
     // Layer 4: Near clouds
     g.clear();
     g.fillStyle(0xFFFACD, 0.9);
-    g.fillCircle(100, 420, 70);
-    g.fillCircle(200, 400, 55);
-    g.fillCircle(280, 430, 45);
-    g.fillCircle(450, 410, 65);
-    g.fillCircle(580, 435, 50);
-    g.fillCircle(700, 405, 58);
-    g.generateTexture('bg_sky_4', 900, 500);
-    
+    g.fillCircle(120, 480, 80);
+    g.fillCircle(250, 455, 65);
+    g.fillCircle(350, 495, 55);
+    g.fillCircle(550, 470, 75);
+    g.fillCircle(720, 500, 60);
+    g.fillCircle(880, 460, 68);
+    g.fillCircle(1050, 485, 58);
+    g.generateTexture('bg_sky_4', 1200, 550);
+
     // Layer 5: Birds
     g.clear();
     g.fillStyle(0x2F2F2F, 1);
-    // Bird 1
-    g.fillTriangle(200, 350, 210, 340, 220, 350);
-    g.fillTriangle(220, 350, 230, 340, 240, 350);
-    // Bird 2
-    g.fillTriangle(450, 380, 460, 370, 470, 380);
-    g.fillTriangle(470, 380, 480, 370, 490, 380);
-    // Bird 3
-    g.fillTriangle(650, 360, 660, 350, 670, 360);
-    g.fillTriangle(670, 360, 680, 350, 690, 360);
-    g.generateTexture('bg_sky_5', 800, 450);
-    
+    g.fillTriangle(250, 400, 265, 385, 280, 400);
+    g.fillTriangle(280, 400, 295, 385, 310, 400);
+    g.fillTriangle(550, 430, 565, 415, 580, 430);
+    g.fillTriangle(580, 430, 595, 415, 610, 430);
+    g.fillTriangle(800, 410, 815, 395, 830, 410);
+    g.fillTriangle(830, 410, 845, 395, 860, 410);
+    g.generateTexture('bg_sky_5', 1200, 500);
+
     // Layer 6: Rainbow
     g.clear();
-    g.fillStyle(0xFF0000, 0.7); g.fillRect(0, 500, 800, 15);
-    g.fillStyle(0xFF7F00, 0.7); g.fillRect(0, 515, 800, 15);
-    g.fillStyle(0xFFFF00, 0.7); g.fillRect(0, 530, 800, 15);
-    g.fillStyle(0x00FF00, 0.7); g.fillRect(0, 545, 800, 15);
-    g.fillStyle(0x0000FF, 0.7); g.fillRect(0, 560, 800, 15);
-    g.fillStyle(0x4B0082, 0.7); g.fillRect(0, 575, 800, 15);
-    g.fillStyle(0x9400D3, 0.7); g.fillRect(0, 590, 800, 15);
-    g.generateTexture('bg_sky_6', 800, 600);
+    g.fillStyle(0xFF0000, 0.7); g.fillRect(0, 600, 1200, 20);
+    g.fillStyle(0xFF7F00, 0.7); g.fillRect(0, 620, 1200, 20);
+    g.fillStyle(0xFFFF00, 0.7); g.fillRect(0, 640, 1200, 20);
+    g.fillStyle(0x00FF00, 0.7); g.fillRect(0, 660, 1200, 20);
+    g.fillStyle(0x0000FF, 0.7); g.fillRect(0, 680, 1200, 20);
+    g.fillStyle(0x4B0082, 0.7); g.fillRect(0, 700, 1200, 20);
+    g.fillStyle(0x9400D3, 0.7); g.fillRect(0, 720, 1200, 20);
+    g.generateTexture('bg_sky_6', 1200, 750);
     
     // ==================== FOREST BIOME (7 LAYERS) ====================
     // Layer 0: Forest sky
     g.fillGradientStyle(0x228B22, 0x228B22, 0x90EE90, 0x98FB98, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_forest_0', 800, 600);
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_forest_0', 1200, 800);
     
     // Layer 1: Far tree canopy
     g.clear();
     g.fillStyle(0x006400, 0.6);
-    g.fillEllipse(100, 150, 200, 120);
-    g.fillEllipse(300, 130, 180, 100);
-    g.fillEllipse(500, 160, 220, 130);
-    g.fillEllipse(700, 140, 190, 110);
-    g.generateTexture('bg_forest_1', 900, 250);
-    
+    g.fillEllipse(120, 180, 240, 140);
+    g.fillEllipse(400, 155, 220, 120);
+    g.fillEllipse(700, 190, 260, 150);
+    g.fillEllipse(1000, 165, 230, 130);
+    g.generateTexture('bg_forest_1', 1200, 300);
+
     // Layer 2: Mid canopy
     g.clear();
     g.fillStyle(0x228B22, 0.7);
-    g.fillEllipse(80, 250, 180, 110);
-    g.fillEllipse(280, 230, 200, 130);
-    g.fillEllipse(500, 260, 170, 100);
-    g.fillEllipse(720, 240, 190, 120);
-    g.generateTexture('bg_forest_2', 900, 350);
-    
+    g.fillEllipse(100, 300, 220, 130);
+    g.fillEllipse(400, 275, 240, 150);
+    g.fillEllipse(700, 310, 200, 120);
+    g.fillEllipse(1000, 290, 230, 140);
+    g.generateTexture('bg_forest_2', 1200, 400);
+
     // Layer 3: Tree trunks far
     g.clear();
     g.fillStyle(0x8B4513, 0.5);
-    g.fillRect(120, 200, 20, 300);
-    g.fillRect(320, 180, 25, 320);
-    g.fillRect(550, 220, 22, 280);
-    g.fillRect(750, 200, 18, 300);
-    g.generateTexture('bg_forest_3', 900, 500);
-    
+    g.fillRect(150, 250, 25, 380);
+    g.fillRect(400, 220, 30, 410);
+    g.fillRect(700, 270, 28, 360);
+    g.fillRect(1000, 240, 22, 390);
+    g.generateTexture('bg_forest_3', 1200, 600);
+
     // Layer 4: Vines and leaves
     g.clear();
     g.fillStyle(0x32CD32, 0.8);
-    for (let i = 0; i < 12; i++) {
-      const x = i * 75 + 30;
-      g.fillRect(x, 0, 4, 150 + (i % 3) * 30);
-      g.fillEllipse(x + 2, 150 + (i % 3) * 30, 15, 25);
+    for (let i = 0; i < 15; i++) {
+      const x = i * 85 + 40;
+      g.fillRect(x, 0, 5, 180 + (i % 3) * 35);
+      g.fillEllipse(x + 2, 180 + (i % 3) * 35, 18, 30);
     }
-    g.generateTexture('bg_forest_4', 900, 200);
-    
+    g.generateTexture('bg_forest_4', 1200, 250);
+
     // Layer 5: Mushrooms and logs
     g.clear();
     g.fillStyle(0x8B4513, 1);
-    g.fillEllipse(100, 520, 80, 30);
-    g.fillEllipse(400, 530, 90, 35);
-    g.fillEllipse(700, 515, 75, 28);
+    g.fillEllipse(120, 600, 100, 38);
+    g.fillEllipse(500, 610, 110, 42);
+    g.fillEllipse(900, 595, 95, 35);
     // Mushrooms
     g.fillStyle(0xFF0000, 1);
-    g.fillEllipse(180, 500, 30, 20);
+    g.fillEllipse(220, 575, 38, 25);
     g.fillStyle(0xFFFFFF, 1);
-    g.fillCircle(175, 495, 4);
-    g.fillCircle(185, 498, 3);
+    g.fillCircle(212, 568, 5);
+    g.fillCircle(228, 572, 4);
     g.fillStyle(0xFFD700, 1);
-    g.fillEllipse(500, 510, 25, 18);
+    g.fillEllipse(620, 580, 32, 22);
     g.fillStyle(0xFFFFFF, 1);
-    g.fillCircle(495, 505, 3);
-    g.fillCircle(505, 507, 3);
-    g.generateTexture('bg_forest_5', 900, 560);
-    
+    g.fillCircle(612, 573, 4);
+    g.fillCircle(628, 576, 4);
+    g.generateTexture('bg_forest_5', 1200, 650);
+
     // Layer 6: Fireflies
     g.clear();
     g.fillStyle(0xFFFF00, 0.9);
-    for (let i = 0; i < 30; i++) {
-      const x = (i * 47) % 800;
-      const y = 350 + (i * 31) % 200;
+    for (let i = 0; i < 40; i++) {
+      const x = (i * 47) % 1200;
+      const y = 400 + (i * 31) % 300;
       g.fillCircle(x, y, 3);
     }
-    g.generateTexture('bg_forest_6', 800, 600);
+    g.generateTexture('bg_forest_6', 1200, 700);
     
     // ==================== VILLAGE BIOME (7 LAYERS) ====================
     // Layer 0: Peaceful blue sky
     g.fillGradientStyle(0x87CEEB, 0x87CEEB, 0xE6E6FA, 0xE6E6FA, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_village_0', 800, 600);
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_village_0', 1200, 800);
     
     // Layer 1: Distant houses
     g.clear();
     g.fillStyle(0x696969, 0.4);
-    g.fillRect(50, 280, 60, 80);
+    g.fillRect(60, 320, 75, 100);
     g.fillStyle(0xA9A9A9, 0.4);
-    g.fillRect(200, 260, 70, 100);
-    g.fillRect(400, 270, 55, 90);
-    g.fillRect(580, 250, 80, 110);
-    g.fillRect(720, 280, 60, 80);
+    g.fillRect(250, 295, 85, 125);
+    g.fillRect(500, 310, 70, 110);
+    g.fillRect(720, 285, 95, 135);
+    g.fillRect(950, 300, 70, 120);
     // Roofs
     g.fillStyle(0x8B0000, 0.4);
-    g.fillTriangle(40, 280, 130, 280, 85, 230);
-    g.fillTriangle(190, 260, 280, 260, 235, 200);
-    g.fillTriangle(390, 270, 470, 270, 430, 210);
-    g.fillTriangle(570, 250, 670, 250, 620, 180);
-    g.fillTriangle(710, 280, 790, 280, 750, 220);
-    g.generateTexture('bg_village_1', 900, 350);
-    
+    g.fillTriangle(50, 320, 155, 320, 100, 255);
+    g.fillTriangle(240, 295, 350, 295, 295, 220);
+    g.fillTriangle(490, 310, 580, 310, 535, 240);
+    g.fillTriangle(710, 285, 830, 285, 770, 200);
+    g.fillTriangle(940, 300, 1025, 300, 982, 240);
+    g.generateTexture('bg_village_1', 1200, 450);
+
     // Layer 2: Mid buildings
     g.clear();
     g.fillStyle(0x808080, 0.7);
-    g.fillRect(80, 320, 80, 120);
-    g.fillRect(280, 300, 90, 140);
-    g.fillRect(500, 310, 70, 130);
-    g.fillRect(680, 290, 85, 150);
+    g.fillRect(100, 380, 100, 150);
+    g.fillRect(350, 360, 110, 170);
+    g.fillRect(620, 370, 90, 160);
+    g.fillRect(850, 350, 105, 180);
     // Windows
     g.fillStyle(0xFFFF00, 0.6);
-    g.fillRect(95, 340, 15, 15);
-    g.fillRect(125, 360, 15, 15);
-    g.fillRect(300, 320, 18, 18);
-    g.fillRect(340, 350, 15, 15);
-    g.generateTexture('bg_village_2', 900, 500);
-    
+    g.fillRect(120, 405, 18, 18);
+    g.fillRect(155, 430, 18, 18);
+    g.fillRect(380, 385, 22, 22);
+    g.fillRect(425, 420, 18, 18);
+    g.generateTexture('bg_village_2', 1200, 550);
+
     // Layer 3: Windmill
     g.clear();
     g.fillStyle(0xDEB887, 1);
-    g.fillRect(650, 350, 40, 150);
+    g.fillRect(800, 400, 50, 190);
     // Blades
     g.fillStyle(0x8B4513, 1);
-    g.fillRect(640, 280, 60, 8);
-    g.fillRect(670, 290, 8, 60);
-    g.fillRect(610, 310, 60, 8);
-    g.fillRect(670, 300, 8, 60);
-    g.generateTexture('bg_village_3', 800, 550);
-    
+    g.fillRect(785, 310, 80, 10);
+    g.fillRect(825, 325, 10, 80);
+    g.fillRect(740, 350, 80, 10);
+    g.fillRect(820, 340, 10, 80);
+    g.generateTexture('bg_village_3', 1200, 650);
+
     // Layer 4: Fence
     g.clear();
     g.fillStyle(0x8B4513, 1);
-    for (let i = 0; i < 25; i++) {
-      g.fillRect(i * 35 + 10, 480, 6, 50);
-      g.fillTriangle(i * 35 + 10, 480, i * 35 + 13, 470, i * 35 + 16, 480);
+    for (let i = 0; i < 35; i++) {
+      g.fillRect(i * 35 + 12, 560, 8, 60);
+      g.fillTriangle(i * 35 + 12, 560, i * 35 + 16, 545, i * 35 + 20, 560);
     }
-    g.fillRect(0, 500, 875, 8);
-    g.fillRect(0, 520, 875, 5);
-    g.generateTexture('bg_village_4', 900, 560);
-    
+    g.fillRect(0, 585, 1225, 10);
+    g.fillRect(0, 610, 1225, 6);
+    g.generateTexture('bg_village_4', 1200, 650);
+
     // Layer 5: Flowers
     g.clear();
     g.fillStyle(0x228B22, 1);
-    for (let i = 0; i < 20; i++) {
-      g.fillEllipse(i * 45 + 20, 550, 30, 20);
+    for (let i = 0; i < 28; i++) {
+      g.fillEllipse(i * 45 + 25, 650, 38, 25);
     }
     g.fillStyle(0xFF0000, 1);
-    for (let i = 0; i < 15; i++) {
-      g.fillCircle(50 + i * 55, 540, 6);
+    for (let i = 0; i < 20; i++) {
+      g.fillCircle(60 + i * 58, 635, 8);
     }
     g.fillStyle(0xFFFF00, 1);
-    for (let i = 0; i < 12; i++) {
-      g.fillCircle(80 + i * 70, 545, 5);
+    for (let i = 0; i < 16; i++) {
+      g.fillCircle(90 + i * 72, 642, 6);
     }
-    g.generateTexture('bg_village_5', 900, 580);
-    
+    g.generateTexture('bg_village_5', 1200, 700);
+
     // Layer 6: Path
     g.clear();
     g.fillStyle(0xD2B48C, 1);
-    g.fillRect(0, 560, 800, 40);
+    g.fillRect(0, 660, 1200, 50);
     g.fillStyle(0xC4A676, 1);
-    for (let i = 0; i < 20; i++) {
-      g.fillEllipse(i * 45 + 20, 575, 25, 15);
+    for (let i = 0; i < 28; i++) {
+      g.fillEllipse(i * 45 + 25, 680, 30, 18);
     }
-    g.generateTexture('bg_village_6', 800, 600);
+    g.generateTexture('bg_village_6', 1200, 720);
     
     // ==================== BEACH-ISLAND BIOME (7 LAYERS) ====================
     // Layer 0: Tropical sky
     g.fillGradientStyle(0x00CED1, 0x00CED1, 0xFFB6C1, 0x87CEEB, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_beach_0', 800, 600);
-    
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_beach_0', 1200, 800);
+
     // Layer 1: Ocean horizon
     g.clear();
     g.fillStyle(0x006994, 0.6);
-    g.fillRect(0, 300, 800, 150);
+    g.fillRect(0, 350, 1200, 180);
     // Waves
     g.fillStyle(0x00CED1, 0.4);
-    for (let i = 0; i < 20; i++) {
-      g.fillEllipse(i * 50 + 25, 350, 40, 10);
+    for (let i = 0; i < 28; i++) {
+      g.fillEllipse(i * 50 + 25, 420, 45, 12);
     }
-    g.generateTexture('bg_beach_1', 800, 450);
-    
+    g.generateTexture('bg_beach_1', 1200, 500);
+
     // Layer 2: Palm trees silhouette
     g.clear();
     g.fillStyle(0x2F4F4F, 0.5);
-    g.fillRect(100, 300, 15, 200);
-    g.fillRect(300, 280, 12, 220);
-    g.fillRect(600, 290, 14, 210);
+    g.fillRect(120, 350, 18, 250);
+    g.fillRect(380, 330, 15, 270);
+    g.fillRect(750, 340, 17, 260);
+    g.fillRect(1050, 355, 14, 245);
     // Leaves
     g.fillStyle(0x228B22, 0.5);
-    g.fillEllipse(100, 280, 80, 50);
-    g.fillEllipse(300, 260, 70, 45);
-    g.fillEllipse(600, 270, 75, 48);
-    g.generateTexture('bg_beach_2', 800, 550);
-    
+    g.fillEllipse(120, 330, 95, 60);
+    g.fillEllipse(380, 305, 85, 55);
+    g.fillEllipse(750, 320, 90, 58);
+    g.fillEllipse(1050, 335, 80, 52);
+    g.generateTexture('bg_beach_2', 1200, 650);
+
     // Layer 3: Waves mid
     g.clear();
     g.fillStyle(0x40E0D0, 0.6);
-    for (let i = 0; i < 15; i++) {
-      g.fillEllipse(i * 60 + 30, 420, 50, 15);
+    for (let i = 0; i < 22; i++) {
+      g.fillEllipse(i * 60 + 30, 520, 55, 18);
     }
-    g.generateTexture('bg_beach_3', 900, 480);
-    
+    g.generateTexture('bg_beach_3', 1400, 580);
+
     // Layer 4: Beach sand
     g.clear();
     g.fillStyle(0xF4A460, 1);
-    g.fillRect(0, 450, 800, 100);
+    g.fillRect(0, 550, 1200, 120);
     g.fillStyle(0xDEB887, 1);
-    for (let i = 0; i < 25; i++) {
-      g.fillEllipse(i * 35 + 17, 480, 25, 12);
+    for (let i = 0; i < 35; i++) {
+      g.fillEllipse(i * 38 + 20, 590, 30, 15);
     }
-    g.generateTexture('bg_beach_4', 800, 550);
-    
+    g.generateTexture('bg_beach_4', 1200, 680);
+
     // Layer 5: Shells and crabs
     g.clear();
     g.fillStyle(0xFFFACD, 1);
-    g.fillEllipse(100, 520, 20, 15);
-    g.fillEllipse(300, 530, 18, 12);
-    g.fillEllipse(550, 515, 22, 16);
+    g.fillEllipse(120, 640, 25, 18);
+    g.fillEllipse(380, 650, 22, 15);
+    g.fillEllipse(700, 635, 28, 20);
+    g.fillEllipse(1000, 645, 24, 17);
     g.fillStyle(0xFF6347, 1);
-    g.fillEllipse(200, 525, 25, 18);
+    g.fillEllipse(250, 645, 30, 22);
     // Crab claws
-    g.fillTriangle(175, 515, 185, 510, 185, 520);
-    g.fillTriangle(225, 515, 215, 510, 215, 520);
-    g.generateTexture('bg_beach_5', 800, 570);
-    
+    g.fillTriangle(220, 630, 235, 622, 235, 635);
+    g.fillTriangle(280, 630, 265, 622, 265, 635);
+    g.generateTexture('bg_beach_5', 1200, 700);
+
     // Layer 6: Seaweed foreground
     g.clear();
     g.fillStyle(0x228B22, 0.9);
-    for (let i = 0; i < 10; i++) {
-      const x = i * 90 + 40;
-      g.fillRect(x, 500, 8, 100);
-      g.fillEllipse(x + 4, 500, 20, 35);
+    for (let i = 0; i < 14; i++) {
+      const x = i * 90 + 45;
+      g.fillRect(x, 620, 10, 120);
+      g.fillEllipse(x + 5, 620, 25, 42);
     }
-    g.generateTexture('bg_beach_6', 900, 600);
+    g.generateTexture('bg_beach_6', 1400, 750);
     
     // ==================== FACTORY BIOME (7 LAYERS) ====================
     // Layer 0: Smoggy sky
     g.fillGradientStyle(0x4A4A4A, 0x4A4A4A, 0x696969, 0x808080, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_factory_0', 800, 600);
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_factory_0', 1200, 800);
     
     // Layer 1: Industrial buildings far
     g.clear();
     g.fillStyle(0x2F2F2F, 0.7);
-    g.fillRect(50, 200, 80, 250);
-    g.fillRect(200, 180, 100, 270);
-    g.fillRect(400, 220, 70, 230);
-    g.fillRect(550, 190, 90, 260);
-    g.fillRect(720, 210, 80, 240);
+    g.fillRect(60, 250, 100, 300);
+    g.fillRect(250, 220, 120, 330);
+    g.fillRect(500, 270, 90, 280);
+    g.fillRect(700, 230, 110, 320);
+    g.fillRect(920, 260, 95, 290);
     // Smokestacks
     g.fillStyle(0x1a1a1a, 1);
-    g.fillRect(80, 150, 20, 50);
-    g.fillRect(240, 130, 25, 50);
-    g.fillRect(580, 140, 22, 50);
-    g.generateTexture('bg_factory_1', 900, 500);
-    
+    g.fillRect(100, 180, 25, 70);
+    g.fillRect(300, 155, 30, 65);
+    g.fillRect(730, 170, 28, 60);
+    g.generateTexture('bg_factory_1', 1200, 600);
+
     // Layer 2: Gears
     g.clear();
     g.fillStyle(0x696969, 0.8);
-    g.fillCircle(150, 300, 60);
+    g.fillCircle(180, 380, 75);
     g.fillStyle(0x808080, 0.8);
-    g.fillCircle(400, 280, 80);
+    g.fillCircle(500, 350, 100);
     g.fillStyle(0xA9A9A9, 0.8);
-    g.fillCircle(650, 320, 70);
+    g.fillCircle(850, 400, 88);
     // Gear teeth
     g.fillStyle(0x505050, 1);
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2;
-      g.fillRect(90 + Math.cos(angle) * 50, 250 + Math.sin(angle) * 50, 12, 20);
+    for (let i = 0; i < 10; i++) {
+      const angle = (i / 10) * Math.PI * 2;
+      g.fillRect(105 + Math.cos(angle) * 65, 305 + Math.sin(angle) * 65, 15, 25);
     }
-    g.generateTexture('bg_factory_2', 800, 450);
-    
+    g.generateTexture('bg_factory_2', 1200, 550);
+
     // Layer 3: Pipes
     g.clear();
     g.fillStyle(0x708090, 1);
-    g.fillRect(0, 300, 800, 20);
-    g.fillRect(0, 350, 800, 15);
-    g.fillRect(0, 400, 800, 25);
+    g.fillRect(0, 380, 1200, 25);
+    g.fillRect(0, 440, 1200, 20);
+    g.fillRect(0, 500, 1200, 30);
     // Pipe joints
     g.fillStyle(0x4A4A4A, 1);
-    g.fillRect(100, 290, 30, 40);
-    g.fillRect(300, 340, 30, 35);
-    g.fillRect(550, 390, 30, 45);
-    g.fillRect(750, 310, 30, 30);
-    g.generateTexture('bg_factory_3', 800, 480);
-    
+    g.fillRect(150, 365, 40, 50);
+    g.fillRect(450, 425, 40, 45);
+    g.fillRect(800, 485, 40, 55);
+    g.fillRect(1100, 375, 40, 40);
+    g.generateTexture('bg_factory_3', 1200, 580);
+
     // Layer 4: Conveyor belts
     g.clear();
     g.fillStyle(0x3a3a3a, 1);
-    g.fillRect(0, 480, 800, 40);
+    g.fillRect(0, 580, 1200, 50);
     g.fillStyle(0x505050, 1);
-    for (let i = 0; i < 40; i++) {
-      g.fillRect(i * 22 + 5, 485, 12, 30);
+    for (let i = 0; i < 55; i++) {
+      g.fillRect(i * 22 + 6, 588, 14, 36);
     }
-    g.generateTexture('bg_factory_4', 800, 550);
-    
+    g.generateTexture('bg_factory_4', 1200, 650);
+
     // Layer 5: Sparks
     g.clear();
     g.fillStyle(0xFFD700, 0.9);
-    for (let i = 0; i < 20; i++) {
-      const x = (i * 67) % 800;
-      const y = 350 + (i * 43) % 150;
+    for (let i = 0; i < 30; i++) {
+      const x = (i * 67) % 1200;
+      const y = 420 + (i * 43) % 180;
       g.fillCircle(x, y, 2 + (i % 3));
     }
     g.fillStyle(0xFF4500, 0.8);
-    for (let i = 0; i < 15; i++) {
-      const x = (i * 89) % 800;
-      const y = 380 + (i * 57) % 120;
+    for (let i = 0; i < 22; i++) {
+      const x = (i * 89) % 1200;
+      const y = 460 + (i * 57) % 150;
       g.fillCircle(x, y, 3);
     }
-    g.generateTexture('bg_factory_5', 800, 550);
-    
+    g.generateTexture('bg_factory_5', 1200, 650);
+
     // Layer 6: Smoke
     g.clear();
     g.fillStyle(0x696969, 0.5);
-    g.fillEllipse(120, 100, 80, 50);
-    g.fillEllipse(150, 60, 60, 40);
-    g.fillEllipse(600, 120, 90, 55);
-    g.fillEllipse(640, 80, 70, 45);
-    g.fillEllipse(400, 90, 75, 48);
-    g.fillEllipse(420, 50, 55, 35);
-    g.generateTexture('bg_factory_6', 800, 200);
+    g.fillEllipse(150, 120, 100, 60);
+    g.fillEllipse(190, 70, 75, 50);
+    g.fillEllipse(750, 150, 110, 65);
+    g.fillEllipse(800, 95, 88, 55);
+    g.fillEllipse(500, 110, 95, 58);
+    g.fillEllipse(530, 60, 70, 45);
+    g.fillEllipse(1000, 130, 85, 52);
+    g.generateTexture('bg_factory_6', 1200, 250);
     
     // ==================== VOLCANO-LAVA BIOME (7 LAYERS) ====================
     // Layer 0: Dark ashy sky
     g.fillGradientStyle(0x1a0a0a, 0x1a0a0a, 0x4a1010, 0x8B0000, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_volcano_0', 800, 600);
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_volcano_0', 1200, 800);
     
     // Layer 1: Lava glow
     g.clear();
     g.fillStyle(0xFF4500, 0.3);
-    g.fillRect(0, 400, 800, 200);
+    g.fillRect(0, 500, 1200, 300);
     g.fillStyle(0xFF6347, 0.2);
-    g.fillRect(0, 450, 800, 150);
-    g.generateTexture('bg_volcano_1', 800, 600);
-    
+    g.fillRect(0, 580, 1200, 220);
+    g.generateTexture('bg_volcano_1', 1200, 800);
+
     // Layer 2: Volcanic mountains
     g.clear();
     g.fillStyle(0x2F2F2F, 0.8);
-    g.fillTriangle(0, 400, 200, 100, 400, 400);
-    g.fillTriangle(300, 400, 500, 80, 700, 400);
-    g.fillTriangle(600, 400, 800, 120, 1000, 400);
+    g.fillTriangle(0, 500, 300, 120, 600, 500);
+    g.fillTriangle(400, 500, 700, 100, 1000, 500);
+    g.fillTriangle(800, 500, 1100, 150, 1400, 500);
     // Lava streams
     g.fillStyle(0xFF0000, 0.6);
-    g.fillTriangle(180, 400, 200, 200, 220, 400);
-    g.fillTriangle(480, 400, 500, 180, 520, 400);
-    g.generateTexture('bg_volcano_2', 1000, 450);
-    
+    g.fillTriangle(250, 500, 300, 250, 350, 500);
+    g.fillTriangle(650, 500, 700, 220, 750, 500);
+    g.generateTexture('bg_volcano_2', 1400, 550);
+
     // Layer 3: Falling rocks
     g.clear();
     g.fillStyle(0x4a4a4a, 1);
-    for (let i = 0; i < 25; i++) {
-      const x = (i * 53) % 800;
-      const y = (i * 37) % 400;
-      const size = 5 + (i % 8);
+    for (let i = 0; i < 35; i++) {
+      const x = (i * 53) % 1200;
+      const y = (i * 37) % 500;
+      const size = 6 + (i % 10);
       g.fillEllipse(x, y, size, size * 0.7);
     }
-    g.generateTexture('bg_volcano_3', 800, 450);
-    
+    g.generateTexture('bg_volcano_3', 1200, 550);
+
     // Layer 4: Smoke clouds
     g.clear();
     g.fillStyle(0x3a3a3a, 0.7);
-    g.fillEllipse(150, 150, 120, 80);
-    g.fillEllipse(400, 100, 150, 90);
-    g.fillEllipse(650, 130, 130, 85);
+    g.fillEllipse(180, 180, 150, 100);
+    g.fillEllipse(500, 120, 180, 110);
+    g.fillEllipse(800, 160, 160, 105);
+    g.fillEllipse(1050, 140, 130, 85);
     g.fillStyle(0x505050, 0.5);
-    g.fillEllipse(200, 80, 80, 50);
-    g.fillEllipse(500, 60, 100, 60);
-    g.fillEllipse(700, 70, 90, 55);
-    g.generateTexture('bg_volcano_4', 900, 200);
-    
+    g.fillEllipse(250, 100, 100, 60);
+    g.fillEllipse(620, 75, 120, 72);
+    g.fillEllipse(880, 90, 110, 68);
+    g.generateTexture('bg_volcano_4', 1200, 250);
+
     // Layer 5: Lava pools
     g.clear();
     g.fillStyle(0x8B0000, 1);
-    g.fillEllipse(100, 520, 150, 50);
-    g.fillEllipse(400, 530, 200, 60);
-    g.fillEllipse(700, 515, 180, 55);
+    g.fillEllipse(150, 620, 180, 60);
+    g.fillEllipse(500, 640, 250, 70);
+    g.fillEllipse(850, 615, 220, 65);
+    g.fillEllipse(1100, 630, 170, 55);
     g.fillStyle(0xFF4500, 0.8);
-    g.fillEllipse(100, 515, 100, 30);
-    g.fillEllipse(400, 525, 140, 35);
-    g.fillEllipse(700, 510, 120, 32);
-    g.generateTexture('bg_volcano_5', 900, 600);
-    
+    g.fillEllipse(150, 610, 120, 35);
+    g.fillEllipse(500, 630, 180, 42);
+    g.fillEllipse(850, 605, 150, 38);
+    g.generateTexture('bg_volcano_5', 1400, 720);
+
     // Layer 6: Ember particles
     g.clear();
     g.fillStyle(0xFF6347, 1);
-    for (let i = 0; i < 40; i++) {
-      const x = (i * 41) % 800;
-      const y = 600 - (i * 23) % 300;
+    for (let i = 0; i < 50; i++) {
+      const x = (i * 41) % 1200;
+      const y = 700 - (i * 23) % 400;
       g.fillCircle(x, y, 2 + (i % 4));
     }
     g.fillStyle(0xFFD700, 0.8);
-    for (let i = 0; i < 30; i++) {
-      const x = (i * 67) % 800;
-      const y = 600 - (i * 31) % 350;
+    for (let i = 0; i < 40; i++) {
+      const x = (i * 67) % 1200;
+      const y = 700 - (i * 31) % 450;
       g.fillCircle(x, y, 1 + (i % 3));
     }
-    g.generateTexture('bg_volcano_6', 800, 600);
+    g.generateTexture('bg_volcano_6', 1200, 750);
     
     // ==================== HAUNTED-MANSION BIOME (7 LAYERS) ====================
     // Layer 0: Dark purple night sky
     g.fillGradientStyle(0x0D0D1A, 0x0D0D1A, 0x1A0D2E, 0x2D1B4E, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_haunted_0', 800, 600);
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_haunted_0', 1200, 800);
     
     // Layer 1: Moon
     g.clear();
     g.fillStyle(0xFFFFDD, 0.9);
-    g.fillCircle(650, 80, 35);
+    g.fillCircle(800, 100, 45);
     g.fillStyle(0x0D0D1A, 1);
-    g.fillCircle(640, 75, 28);
+    g.fillCircle(788, 92, 35);
     // Moon craters
     g.fillStyle(0xCCCCAA, 0.5);
-    g.fillCircle(660, 85, 5);
-    g.fillCircle(645, 70, 4);
-    g.generateTexture('bg_haunted_1', 800, 150);
-    
+    g.fillCircle(815, 108, 6);
+    g.fillCircle(795, 88, 5);
+    g.generateTexture('bg_haunted_1', 1200, 200);
+
     // Layer 2: Dead trees silhouette
     g.clear();
     g.fillStyle(0x1a1a2e, 0.9);
-    g.fillRect(100, 200, 15, 250);
-    g.fillRect(70, 250, 40, 8);
-    g.fillRect(60, 280, 50, 6);
-    g.fillRect(50, 310, 60, 5);
-    g.fillRect(280, 180, 12, 270);
-    g.fillRect(250, 220, 45, 7);
-    g.fillRect(240, 260, 55, 6);
-    g.fillRect(600, 190, 14, 260);
-    g.fillRect(570, 240, 40, 8);
-    g.fillRect(560, 290, 50, 6);
-    g.generateTexture('bg_haunted_2', 800, 500);
-    
+    g.fillRect(120, 250, 18, 300);
+    g.fillRect(85, 310, 50, 10);
+    g.fillRect(72, 350, 62, 8);
+    g.fillRect(60, 390, 75, 6);
+    g.fillRect(350, 220, 15, 330);
+    g.fillRect(310, 275, 55, 9);
+    g.fillRect(295, 325, 68, 7);
+    g.fillRect(750, 240, 17, 310);
+    g.fillRect(710, 300, 48, 10);
+    g.fillRect(695, 365, 58, 8);
+    g.fillRect(1050, 230, 16, 320);
+    g.fillRect(1015, 290, 45, 9);
+    g.fillRect(1000, 350, 55, 7);
+    g.generateTexture('bg_haunted_2', 1200, 600);
+
     // Layer 3: Gravestones
     g.clear();
     g.fillStyle(0x3a3a4a, 1);
-    g.fillRect(80, 450, 40, 60);
-    g.fillTriangle(70, 450, 110, 450, 90, 420);
-    g.fillRect(200, 460, 35, 50);
-    g.fillRect(350, 440, 50, 70);
-    g.fillTriangle(340, 440, 400, 440, 370, 400);
-    g.fillRect(500, 455, 38, 55);
-    g.fillRect(680, 445, 45, 65);
-    g.fillTriangle(670, 445, 720, 445, 695, 410);
-    g.generateTexture('bg_haunted_3', 800, 550);
-    
+    g.fillRect(100, 550, 50, 75);
+    g.fillTriangle(87, 550, 137, 550, 112, 510);
+    g.fillRect(250, 565, 45, 60);
+    g.fillRect(430, 540, 60, 85);
+    g.fillTriangle(415, 540, 490, 540, 452, 490);
+    g.fillRect(620, 555, 48, 68);
+    g.fillRect(840, 545, 55, 80);
+    g.fillTriangle(825, 545, 892, 545, 858, 500);
+    g.fillRect(1020, 560, 42, 65);
+    g.generateTexture('bg_haunted_3', 1200, 680);
+
     // Layer 4: Fog
     g.clear();
     g.fillStyle(0x4a4a5a, 0.3);
-    g.fillEllipse(100, 500, 300, 80);
-    g.fillEllipse(400, 520, 350, 90);
-    g.fillEllipse(700, 490, 280, 70);
-    g.generateTexture('bg_haunted_4', 900, 600);
-    
+    g.fillEllipse(150, 600, 380, 100);
+    g.fillEllipse(500, 630, 420, 110);
+    g.fillEllipse(900, 590, 350, 90);
+    g.fillEllipse(1100, 615, 300, 85);
+    g.generateTexture('bg_haunted_4', 1400, 750);
+
     // Layer 5: Bats
     g.clear();
     g.fillStyle(0x000000, 1);
-    for (let i = 0; i < 15; i++) {
-      const x = 50 + i * 55;
-      const y = 100 + (i % 4) * 40;
-      g.fillEllipse(x, y, 15, 8);
-      g.fillTriangle(x - 8, y, x - 15, y - 10, x - 8, y + 5);
-      g.fillTriangle(x + 8, y, x + 15, y - 10, x + 8, y + 5);
+    for (let i = 0; i < 20; i++) {
+      const x = 80 + i * 58;
+      const y = 120 + (i % 5) * 50;
+      g.fillEllipse(x, y, 18, 10);
+      g.fillTriangle(x - 10, y, x - 20, y - 12, x - 10, y + 6);
+      g.fillTriangle(x + 10, y, x + 20, y - 12, x + 10, y + 6);
     }
-    g.generateTexture('bg_haunted_5', 900, 300);
-    
+    g.generateTexture('bg_haunted_5', 1200, 400);
+
     // Layer 6: Dead grass
     g.clear();
     g.fillStyle(0x2a2a3a, 1);
-    for (let i = 0; i < 40; i++) {
-      const x = i * 22 + 10;
-      g.fillRect(x, 520, 2, 50 + (i % 5) * 10);
+    for (let i = 0; i < 55; i++) {
+      const x = i * 22 + 12;
+      g.fillRect(x, 640, 3, 60 + (i % 6) * 12);
     }
-    g.generateTexture('bg_haunted_6', 900, 600);
+    g.generateTexture('bg_haunted_6', 1200, 750);
     
     // ==================== RUINS BIOME (7 LAYERS) ====================
     // Layer 0: Sunset sky
     g.fillGradientStyle(0xFF6347, 0xFF6347, 0xFFD700, 0xFFA500, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_ruins_0', 800, 600);
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_ruins_0', 1200, 800);
     
     // Layer 1: Temple silhouette
     g.clear();
     g.fillStyle(0x4a3a2a, 0.6);
-    g.fillRect(100, 200, 120, 200);
-    g.fillRect(300, 180, 100, 220);
-    g.fillRect(500, 190, 140, 210);
-    g.fillRect(700, 170, 100, 230);
+    g.fillRect(120, 250, 150, 250);
+    g.fillRect(380, 225, 125, 275);
+    g.fillRect(650, 240, 170, 260);
+    g.fillRect(900, 215, 120, 285);
     // Columns
     g.fillStyle(0x5a4a3a, 0.7);
-    g.fillRect(120, 220, 20, 180);
-    g.fillRect(160, 220, 20, 180);
-    g.fillRect(330, 200, 18, 200);
-    g.fillRect(370, 200, 18, 200);
-    g.fillRect(530, 210, 22, 190);
-    g.fillRect(590, 210, 22, 190);
-    g.generateTexture('bg_ruins_1', 900, 450);
-    
+    g.fillRect(145, 275, 25, 225);
+    g.fillRect(195, 275, 25, 225);
+    g.fillRect(415, 250, 22, 250);
+    g.fillRect(465, 250, 22, 250);
+    g.fillRect(690, 270, 28, 230);
+    g.fillRect(760, 270, 28, 230);
+    g.generateTexture('bg_ruins_1', 1200, 550);
+
     // Layer 2: Broken pillars
     g.clear();
     g.fillStyle(0x6a5a4a, 0.8);
-    g.fillRect(80, 300, 30, 150);
-    g.fillRect(200, 350, 25, 100);
-    g.fillRect(400, 320, 35, 130);
-    g.fillRect(550, 280, 28, 170);
-    g.fillRect(720, 340, 32, 110);
-    g.generateTexture('bg_ruins_2', 900, 500);
-    
+    g.fillRect(100, 380, 38, 180);
+    g.fillRect(250, 440, 32, 120);
+    g.fillRect(500, 400, 42, 160);
+    g.fillRect(700, 350, 35, 210);
+    g.fillRect(900, 420, 40, 140);
+    g.generateTexture('bg_ruins_2', 1200, 600);
+
     // Layer 3: Vines
     g.clear();
     g.fillStyle(0x228B22, 0.7);
-    for (let i = 0; i < 15; i++) {
-      const x = i * 65 + 20;
-      g.fillRect(x, 0, 5, 200 + (i % 3) * 50);
-      g.fillEllipse(x + 2, 200 + (i % 3) * 50, 12, 20);
+    for (let i = 0; i < 18; i++) {
+      const x = i * 70 + 30;
+      g.fillRect(x, 0, 6, 250 + (i % 3) * 60);
+      g.fillEllipse(x + 3, 250 + (i % 3) * 60, 15, 25);
     }
-    g.generateTexture('bg_ruins_3', 1000, 300);
-    
+    g.generateTexture('bg_ruins_3', 1200, 350);
+
     // Layer 4: Fallen stones
     g.clear();
     g.fillStyle(0x5a5a4a, 1);
-    g.fillEllipse(100, 480, 60, 40);
-    g.fillEllipse(300, 500, 80, 50);
-    g.fillEllipse(500, 470, 55, 35);
-    g.fillEllipse(700, 490, 70, 45);
-    g.generateTexture('bg_ruins_4', 900, 560);
-    
+    g.fillEllipse(120, 580, 75, 50);
+    g.fillEllipse(380, 610, 100, 60);
+    g.fillEllipse(650, 570, 70, 45);
+    g.fillEllipse(900, 595, 85, 55);
+    g.fillEllipse(1100, 575, 65, 42);
+    g.generateTexture('bg_ruins_4', 1200, 680);
+
     // Layer 5: Moss patches
     g.clear();
     g.fillStyle(0x2a5a2a, 0.8);
-    g.fillEllipse(120, 530, 80, 35);
-    g.fillEllipse(350, 545, 90, 40);
-    g.fillEllipse(600, 520, 75, 32);
-    g.fillEllipse(800, 540, 85, 38);
-    g.generateTexture('bg_ruins_5', 1000, 600);
-    
+    g.fillEllipse(150, 650, 100, 45);
+    g.fillEllipse(420, 670, 110, 50);
+    g.fillEllipse(750, 640, 95, 42);
+    g.fillEllipse(1000, 660, 105, 48);
+    g.generateTexture('bg_ruins_5', 1200, 720);
+
     // Layer 6: Statues
     g.clear();
     g.fillStyle(0x808080, 1);
-    g.fillRect(100, 400, 40, 100);
-    g.fillCircle(120, 380, 25);
-    g.fillRect(400, 420, 35, 80);
-    g.fillCircle(417, 400, 20);
-    g.fillRect(700, 390, 45, 110);
-    g.fillCircle(722, 365, 28);
-    g.generateTexture('bg_ruins_6', 900, 550);
+    g.fillRect(120, 500, 50, 125);
+    g.fillCircle(145, 475, 32);
+    g.fillRect(500, 530, 45, 100);
+    g.fillCircle(522, 505, 26);
+    g.fillRect(880, 490, 55, 135);
+    g.fillCircle(907, 458, 35);
+    g.generateTexture('bg_ruins_6', 1200, 680);
     
     // ==================== CANYON-BASE BIOME (7 LAYERS) ====================
     // Layer 0: Red/orange sky
     g.fillGradientStyle(0xFF4500, 0xFF4500, 0xFFA07A, 0xDEB887, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_canyon_0', 800, 600);
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_canyon_0', 1200, 800);
     
     // Layer 1: Far canyon walls
     g.clear();
     g.fillStyle(0x8B4513, 0.5);
-    g.fillTriangle(0, 500, 200, 150, 400, 500);
-    g.fillTriangle(300, 500, 500, 100, 700, 500);
-    g.fillTriangle(600, 500, 800, 180, 1000, 500);
-    g.generateTexture('bg_canyon_1', 1000, 550);
-    
+    g.fillTriangle(0, 550, 300, 180, 600, 550);
+    g.fillTriangle(400, 550, 750, 120, 1100, 550);
+    g.fillTriangle(800, 550, 1200, 220, 1600, 550);
+    g.generateTexture('bg_canyon_1', 1400, 600);
+
     // Layer 2: Mid canyon layers
     g.clear();
     g.fillStyle(0xA0522D, 0.7);
-    g.fillTriangle(0, 500, 150, 200, 300, 500);
-    g.fillTriangle(200, 500, 400, 180, 600, 500);
-    g.fillTriangle(500, 500, 700, 220, 900, 500);
+    g.fillTriangle(0, 550, 200, 250, 400, 550);
+    g.fillTriangle(300, 550, 550, 220, 800, 550);
+    g.fillTriangle(600, 550, 900, 280, 1200, 550);
     // Rock layers
     g.fillStyle(0xCD853F, 0.6);
-    g.fillRect(0, 350, 800, 15);
-    g.fillRect(0, 420, 800, 12);
-    g.generateTexture('bg_canyon_2', 900, 550);
-    
+    g.fillRect(0, 420, 1400, 18);
+    g.fillRect(0, 500, 1400, 15);
+    g.generateTexture('bg_canyon_2', 1400, 600);
+
     // Layer 3: Canyon floor
     g.clear();
     g.fillStyle(0xDEB887, 1);
-    g.fillRect(0, 480, 800, 80);
+    g.fillRect(0, 600, 1200, 100);
     g.fillStyle(0xD2691E, 0.8);
-    for (let i = 0; i < 20; i++) {
-      g.fillEllipse(i * 45 + 20, 510, 30, 15);
+    for (let i = 0; i < 28; i++) {
+      g.fillEllipse(i * 45 + 25, 640, 35, 18);
     }
-    g.generateTexture('bg_canyon_3', 800, 560);
-    
+    g.generateTexture('bg_canyon_3', 1200, 700);
+
     // Layer 4: Rock formations
     g.clear();
     g.fillStyle(0x8B4513, 0.9);
-    g.fillTriangle(100, 400, 150, 250, 200, 400);
-    g.fillTriangle(350, 420, 420, 200, 490, 420);
-    g.fillTriangle(600, 380, 680, 180, 760, 380);
-    g.generateTexture('bg_canyon_4', 900, 500);
-    
+    g.fillTriangle(120, 500, 180, 300, 240, 500);
+    g.fillTriangle(420, 520, 510, 250, 600, 520);
+    g.fillTriangle(720, 480, 820, 220, 920, 480);
+    g.fillTriangle(1050, 510, 1150, 280, 1250, 510);
+    g.generateTexture('bg_canyon_4', 1400, 600);
+
     // Layer 5: Eagles
     g.clear();
     g.fillStyle(0x2F2F2F, 1);
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 12; i++) {
       const x = 100 + i * 100;
-      const y = 150 + (i % 3) * 50;
-      g.fillEllipse(x, y, 20, 8);
-      g.fillTriangle(x - 12, y, x - 25, y - 15, x - 12, y + 5);
-      g.fillTriangle(x + 12, y, x + 25, y - 15, x + 12, y + 5);
+      const y = 180 + (i % 4) * 60;
+      g.fillEllipse(x, y, 25, 10);
+      g.fillTriangle(x - 15, y, x - 32, y - 18, x - 15, y + 6);
+      g.fillTriangle(x + 15, y, x + 32, y - 18, x + 15, y + 6);
     }
-    g.generateTexture('bg_canyon_5', 900, 300);
-    
+    g.generateTexture('bg_canyon_5', 1400, 400);
+
     // Layer 6: Dust particles
     g.clear();
     g.fillStyle(0xDEB887, 0.5);
-    for (let i = 0; i < 50; i++) {
-      const x = (i * 37) % 800;
-      const y = 400 + (i * 23) % 150;
+    for (let i = 0; i < 70; i++) {
+      const x = (i * 37) % 1200;
+      const y = 500 + (i * 23) % 200;
       g.fillCircle(x, y, 1 + (i % 3));
     }
-    g.generateTexture('bg_canyon_6', 800, 600);
+    g.generateTexture('bg_canyon_6', 1200, 750);
     
     // ==================== SPACE-STAR BIOME (7 LAYERS) ====================
     // Layer 0: Deep space
     g.fillGradientStyle(0x000000, 0x000000, 0x0a0a20, 0x1a1a3a, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_space_0', 800, 600);
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_space_0', 1200, 800);
     
     // Layer 1: Stars far
     g.clear();
     g.fillStyle(0xFFFFFF, 0.8);
-    for (let i = 0; i < 100; i++) {
-      const x = (i * 73) % 800;
-      const y = (i * 47) % 600;
+    for (let i = 0; i < 150; i++) {
+      const x = (i * 73) % 1200;
+      const y = (i * 47) % 800;
       const size = 0.5 + (i % 3) * 0.5;
       g.fillCircle(x, y, size);
     }
-    g.generateTexture('bg_space_1', 800, 600);
-    
+    g.generateTexture('bg_space_1', 1200, 800);
+
     // Layer 2: Nebula
     g.clear();
     g.fillStyle(0x4B0082, 0.2);
-    g.fillEllipse(200, 200, 200, 100);
+    g.fillEllipse(250, 250, 250, 130);
     g.fillStyle(0x0000FF, 0.15);
-    g.fillEllipse(500, 300, 250, 120);
+    g.fillEllipse(650, 380, 320, 150);
     g.fillStyle(0xFF1493, 0.1);
-    g.fillEllipse(650, 150, 150, 80);
-    g.generateTexture('bg_space_2', 900, 450);
-    
+    g.fillEllipse(850, 200, 190, 100);
+    g.generateTexture('bg_space_2', 1200, 550);
+
     // Layer 3: Planets
     g.clear();
     g.fillStyle(0xCD853F, 1);
-    g.fillCircle(150, 150, 40);
+    g.fillCircle(200, 200, 50);
     g.fillStyle(0xDEB887, 1);
-    g.fillEllipse(150, 150, 60, 8);
+    g.fillEllipse(200, 200, 75, 10);
     g.fillStyle(0x4169E1, 1);
-    g.fillCircle(550, 250, 55);
+    g.fillCircle(700, 320, 70);
     g.fillStyle(0xFFD700, 1);
-    g.fillCircle(700, 100, 20);
-    g.generateTexture('bg_space_3', 800, 400);
-    
+    g.fillCircle(900, 130, 25);
+    g.generateTexture('bg_space_3', 1200, 500);
+
     // Layer 4: Asteroids
     g.clear();
     g.fillStyle(0x696969, 1);
-    for (let i = 0; i < 20; i++) {
-      const x = (i * 67) % 800;
-      const y = (i * 43) % 500;
-      const size = 8 + (i % 10);
+    for (let i = 0; i < 30; i++) {
+      const x = (i * 67) % 1200;
+      const y = (i * 43) % 600;
+      const size = 10 + (i % 12);
       g.fillEllipse(x, y, size, size * 0.8);
     }
-    g.generateTexture('bg_space_4', 800, 500);
-    
+    g.generateTexture('bg_space_4', 1200, 650);
+
     // Layer 5: Satellites
     g.clear();
     g.fillStyle(0xC0C0C0, 1);
-    g.fillRect(200, 300, 60, 8);
-    g.fillRect(190, 295, 80, 18);
+    g.fillRect(250, 380, 75, 10);
+    g.fillRect(235, 372, 100, 22);
     g.fillStyle(0x00FF00, 1);
-    g.fillCircle(200, 304, 4);
+    g.fillCircle(250, 388, 5);
     g.fillStyle(0xC0C0C0, 1);
-    g.fillRect(500, 200, 50, 6);
-    g.fillRect(490, 196, 70, 14);
+    g.fillRect(650, 260, 65, 8);
+    g.fillRect(635, 254, 90, 18);
     g.fillStyle(0xFF0000, 1);
-    g.fillCircle(500, 203, 3);
-    g.generateTexture('bg_space_5', 600, 350);
-    
+    g.fillCircle(650, 266, 4);
+    g.fillStyle(0xC0C0C0, 1);
+    g.fillRect(1000, 180, 55, 7);
+    g.fillRect(988, 175, 75, 15);
+    g.fillStyle(0x00FF00, 1);
+    g.fillCircle(1000, 184, 4);
+    g.generateTexture('bg_space_5', 1200, 450);
+
     // Layer 6: Space station
     g.clear();
     g.fillStyle(0x808080, 1);
-    g.fillRect(300, 400, 200, 40);
-    g.fillRect(350, 380, 30, 20);
-    g.fillRect(420, 380, 30, 20);
-    g.fillRect(350, 440, 30, 20);
-    g.fillRect(420, 440, 30, 20);
+    g.fillRect(400, 500, 250, 50);
+    g.fillRect(460, 475, 40, 25);
+    g.fillRect(550, 475, 40, 25);
+    g.fillRect(460, 550, 40, 25);
+    g.fillRect(550, 550, 40, 25);
     g.fillStyle(0x00BFFF, 0.8);
-    g.fillRect(310, 410, 180, 20);
-    g.generateTexture('bg_space_6', 800, 500);
+    g.fillRect(415, 515, 220, 25);
+    g.generateTexture('bg_space_6', 1200, 650);
     
     // ==================== CASTLE-FINAL BIOME (7 LAYERS) ====================
     // Layer 0: Midnight sky
     g.fillGradientStyle(0x000020, 0x000020, 0x000040, 0x000060, 1);
-    g.fillRect(0, 0, 800, 600);
-    g.generateTexture('bg_castle_0', 800, 600);
-    
+    g.fillRect(0, 0, 1200, 800);
+    g.generateTexture('bg_castle_0', 1200, 800);
+
     // Layer 1: Stars
     g.clear();
     g.fillStyle(0xFFFFFF, 0.9);
-    for (let i = 0; i < 80; i++) {
-      const x = (i * 59) % 800;
-      const y = (i * 37) % 400;
+    for (let i = 0; i < 100; i++) {
+      const x = (i * 59) % 1200;
+      const y = (i * 37) % 500;
       const size = 1 + (i % 3);
       g.fillCircle(x, y, size);
     }
-    g.generateTexture('bg_castle_1', 800, 450);
-    
+    g.generateTexture('bg_castle_1', 1200, 550);
+
     // Layer 2: Castle silhouette
     g.clear();
     g.fillStyle(0x1a1a2a, 0.9);
-    g.fillRect(100, 250, 80, 200);
-    g.fillRect(250, 200, 100, 250);
-    g.fillRect(450, 180, 120, 270);
-    g.fillRect(650, 220, 90, 230);
+    g.fillRect(120, 300, 100, 250);
+    g.fillRect(320, 240, 125, 310);
+    g.fillRect(560, 220, 150, 330);
+    g.fillRect(820, 270, 110, 280);
     // Towers
-    g.fillTriangle(90, 250, 190, 250, 140, 180);
-    g.fillTriangle(240, 200, 360, 200, 300, 120);
-    g.fillTriangle(440, 180, 580, 180, 510, 80);
-    g.fillTriangle(640, 220, 750, 220, 695, 140);
-    g.generateTexture('bg_castle_2', 900, 500);
-    
+    g.fillTriangle(108, 300, 232, 300, 170, 210);
+    g.fillTriangle(308, 240, 457, 240, 382, 140);
+    g.fillTriangle(548, 220, 722, 220, 635, 100);
+    g.fillTriangle(808, 270, 942, 270, 875, 170);
+    g.generateTexture('bg_castle_2', 1200, 600);
+
     // Layer 3: Banners
     g.clear();
     g.fillStyle(0x8B0000, 1);
-    g.fillRect(145, 200, 20, 80);
-    g.fillRect(295, 150, 25, 100);
-    g.fillRect(505, 120, 22, 90);
-    g.fillRect(690, 170, 18, 75);
+    g.fillRect(175, 240, 25, 100);
+    g.fillRect(370, 175, 30, 125);
+    g.fillRect(620, 150, 28, 115);
+    g.fillRect(865, 210, 22, 95);
     g.fillStyle(0xFFD700, 1);
-    g.fillTriangle(140, 200, 170, 200, 155, 280);
-    g.fillTriangle(290, 150, 325, 150, 307, 250);
-    g.fillTriangle(500, 120, 532, 120, 516, 210);
-    g.fillTriangle(685, 170, 715, 170, 700, 245);
-    g.generateTexture('bg_castle_3', 800, 350);
-    
+    g.fillTriangle(168, 240, 207, 240, 187, 340);
+    g.fillTriangle(362, 175, 408, 175, 385, 300);
+    g.fillTriangle(612, 150, 656, 150, 634, 265);
+    g.fillTriangle(858, 210, 894, 210, 876, 305);
+    g.generateTexture('bg_castle_3', 1200, 450);
+
     // Layer 4: Torches
     g.clear();
     g.fillStyle(0x8B4513, 1);
-    g.fillRect(80, 400, 10, 60);
-    g.fillRect(280, 380, 12, 70);
-    g.fillRect(500, 350, 10, 65);
-    g.fillRect(720, 370, 11, 68);
+    g.fillRect(100, 500, 12, 75);
+    g.fillRect(350, 475, 15, 88);
+    g.fillRect(620, 440, 12, 82);
+    g.fillRect(900, 465, 14, 85);
     // Flames
     g.fillStyle(0xFF4500, 1);
-    g.fillEllipse(85, 395, 15, 20);
-    g.fillEllipse(286, 375, 18, 22);
-    g.fillEllipse(505, 345, 16, 18);
-    g.fillEllipse(725, 365, 17, 21);
+    g.fillEllipse(106, 492, 18, 25);
+    g.fillEllipse(357, 465, 22, 28);
+    g.fillEllipse(626, 430, 20, 23);
+    g.fillEllipse(907, 455, 21, 26);
     g.fillStyle(0xFFD700, 0.8);
-    g.fillEllipse(85, 395, 8, 12);
-    g.fillEllipse(286, 375, 10, 14);
-    g.fillEllipse(505, 345, 9, 11);
-    g.fillEllipse(725, 365, 10, 13);
-    g.generateTexture('bg_castle_4', 800, 500);
+    g.fillEllipse(106, 492, 10, 15);
+    g.fillEllipse(357, 465, 12, 17);
+    g.fillEllipse(626, 430, 11, 14);
+    g.fillEllipse(907, 455, 12, 16);
+    g.generateTexture('bg_castle_4', 1200, 620);
     
     // Layer 5: Chandelier
     g.clear();
     g.fillStyle(0xFFD700, 1);
-    g.fillRect(380, 350, 40, 15);
-    g.fillRect(370, 365, 60, 10);
+    g.fillRect(560, 420, 50, 18);
+    g.fillRect(545, 440, 80, 12);
     g.fillStyle(0xFFFF00, 0.9);
-    g.fillCircle(390, 380, 8);
-    g.fillCircle(410, 385, 6);
-    g.fillCircle(400, 390, 7);
+    g.fillCircle(575, 460, 10);
+    g.fillCircle(605, 468, 8);
+    g.fillCircle(590, 475, 9);
     // Chains
     g.fillStyle(0x808080, 1);
-    g.fillRect(395, 320, 3, 35);
-    g.fillRect(405, 325, 2, 30);
-    g.generateTexture('bg_castle_5', 800, 450);
-    
+    g.fillRect(580, 380, 4, 45);
+    g.fillRect(595, 390, 3, 38);
+    g.generateTexture('bg_castle_5', 1200, 550);
+
     // Layer 6: Fireworks (subtle)
     g.clear();
     g.fillStyle(0xFF0000, 0.7);
-    g.fillCircle(200, 100, 5);
-    g.fillCircle(195, 95, 3);
+    g.fillCircle(250, 120, 6);
+    g.fillCircle(244, 114, 4);
     g.fillStyle(0x00FF00, 0.7);
-    g.fillCircle(500, 80, 4);
-    g.fillCircle(496, 76, 2);
+    g.fillCircle(620, 95, 5);
+    g.fillCircle(615, 90, 3);
     g.fillStyle(0x0000FF, 0.7);
-    g.fillCircle(700, 120, 5);
-    g.fillCircle(696, 116, 3);
-    g.generateTexture('bg_castle_6', 800, 200);
+    g.fillCircle(880, 145, 6);
+    g.fillCircle(875, 140, 4);
+    g.fillStyle(0xFFD700, 0.7);
+    g.fillCircle(450, 80, 4);
+    g.fillCircle(1020, 110, 5);
+    g.generateTexture('bg_castle_6', 1200, 250);
     
     g.destroy();
   }

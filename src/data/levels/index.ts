@@ -12,7 +12,7 @@ export type Biome =
 export type PlatformType = 
   | 'grass' | 'dirt' | 'sandstone' | 'sand' | 'ice' | 'snow'
   | 'stone' | 'brick' | 'cave' | 'castle' | 'metal'
-  | 'pipe' | 'cloud' | 'platform_easy' | 'platform_medium' | 'platform_hard'
+  | 'pipe' | 'pipe_top' | 'cloud' | 'platform_easy' | 'platform_medium' | 'platform_hard'
   | 'lava' | 'wood' | 'ruins' | 'space' | 'water' | 'bubble';
 
 export type EnemyType = 
