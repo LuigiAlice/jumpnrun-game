@@ -1,0 +1,22 @@
+{
+  "name": "jumpnrun-game",
+  "version": "1.0.0",
+  "description": "2D Jump & Run Spiel mit Phaser 3",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "tsc --noEmit && vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "jsdom": "^29.0.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vitest": "^1.2.0"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  }
+}
