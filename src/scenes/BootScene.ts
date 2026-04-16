@@ -201,7 +201,75 @@ export class BootScene extends Phaser.Scene {
       g.fillCircle(16 + Math.cos(angle) * 12, 16 + Math.sin(angle) * 12, 3);
     }
     g.generateTexture('fire_bar', 32, 32);
-    
+
+    // Ghost - transparent floating ghost
+    g.clear();
+    g.fillStyle(0xFFFFFF, 0.85);
+    g.fillCircle(16, 12, 10);
+    g.fillRoundedRect(6, 12, 20, 16, { tl: 0, tr: 0, bl: 6, br: 6 });
+    g.fillStyle(0x000000, 1);
+    g.fillCircle(12, 10, 3);
+    g.fillCircle(20, 10, 3);
+    g.fillStyle(0xFF0000, 0.7);
+    g.fillCircle(12, 11, 1.5);
+    g.fillCircle(20, 11, 1.5);
+    g.generateTexture('ghost', 32, 28);
+
+    // Squid - purple octopus-like enemy
+    g.clear();
+    g.fillStyle(0x9932CC, 1);
+    g.fillEllipse(16, 14, 18, 14);
+    g.fillStyle(0xDA70D6, 1);
+    g.fillEllipse(16, 16, 12, 8);
+    g.fillStyle(0x000000, 1);
+    g.fillCircle(10, 10, 3);
+    g.fillCircle(22, 10, 3);
+    g.fillStyle(0xFFFFFF, 1);
+    g.fillCircle(10, 10, 1.5);
+    g.fillCircle(22, 10, 1.5);
+    g.fillStyle(0x9932CC, 1);
+    g.fillRect(6, 22, 4, 8);
+    g.fillRect(12, 24, 4, 6);
+    g.fillRect(20, 24, 4, 6);
+    g.fillRect(26, 22, 4, 8);
+    g.generateTexture('squid', 32, 32);
+
+    // UFO - flying saucer
+    g.clear();
+    g.fillStyle(0xC0C0C0, 1);
+    g.fillEllipse(16, 20, 28, 10);
+    g.fillStyle(0x808080, 1);
+    g.fillEllipse(16, 18, 20, 6);
+    g.fillStyle(0x00BFFF, 1);
+    g.fillCircle(10, 16, 4);
+    g.fillCircle(16, 16, 4);
+    g.fillCircle(22, 16, 4);
+    g.fillStyle(0xFFFF00, 0.8);
+    g.fillCircle(16, 26, 3);
+    g.fillStyle(0xFF0000, 0.8);
+    g.fillCircle(8, 24, 2);
+    g.fillCircle(24, 24, 2);
+    g.generateTexture('ufo', 32, 32);
+
+    // Boss - large menacing enemy
+    g.clear();
+    g.fillStyle(0x8B0000, 1);
+    g.fillRoundedRect(4, 8, 24, 20, 4);
+    g.fillStyle(0xA52A2A, 1);
+    g.fillRoundedRect(8, 12, 16, 12, 3);
+    g.fillStyle(0xFFFF00, 1);
+    g.fillCircle(12, 16, 4);
+    g.fillCircle(20, 16, 4);
+    g.fillStyle(0x000000, 1);
+    g.fillCircle(12, 16, 2);
+    g.fillCircle(20, 16, 2);
+    g.fillStyle(0xFF0000, 1);
+    g.fillRect(10, 22, 12, 3);
+    g.fillStyle(0x4a0000, 1);
+    g.fillRect(4, 4, 8, 6);
+    g.fillRect(20, 4, 8, 6);
+    g.generateTexture('boss', 32, 32);
+
     g.destroy();
   }
 
