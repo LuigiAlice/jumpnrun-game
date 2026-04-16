@@ -73,6 +73,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(...canyonWallSection(S, 3800, 550, 200));
       plats.push(...canyonFloatingPlatforms(S, 4200, 550, 8));
       plats.push(createPlat(5800 * S, 550, 1000 * S, 40, 'stone'));
+      plats.push(createPlat(5000 * S, 376, 100, 24, 'platform_easy'));
       plats.push(...canyonGroundSection(S, 6800, 550, 2500));
       plats.push(...canyonVerticalSection(S, 9400, 550, 6));
       plats.push(createPlat(10100 * S, 350, 600 * S, 40, 'stone'));
@@ -114,7 +115,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       return [
         createQB(1500 * S, 480, 'coin'),
         createQB(3200 * S, 480, 'mushroom'),
-        createQB(5000 * S, 420, 'flower'),
+        createQB(5000 * S, 380, 'flower'),
         createQB(7200 * S, 480, 'star'),
         createQB(9600 * S, 320, 'mushroom'),
         createQB(11400 * S, 280, 'coin'),

@@ -423,6 +423,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       plats.push(createPlat(10300 * S, 600, 800 * S, 40, 'grass'));
       plats.push(...gapWithPlatforms(11300 * S, 600, 450 * S, 3));
       plats.push(createPlat(12100 * S, 600, 1000 * S, 40, 'grass'));
+      plats.push(createPlat(12000 * S, 490, 100, 16, 'platform_hard'));
       plats.push(createPlat(13500 * S, 520, 120, 28, 'platform_easy'));
       plats.push(createPlat(13800 * S, 440, 120, 28, 'platform_medium'));
       plats.push(createPlat(14100 * S, 360, 120, 28, 'platform_hard'));
@@ -447,6 +448,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       plats.push(createPlat(26700 * S, 600, 800 * S, 40, 'grass'));
       plats.push(createPlat(28200 * S, 600, 1500 * S, 40, 'grass'));
       plats.push(...gapWithPlatforms(29900 * S, 600, 500 * S, 4));
+      plats.push(createPlat(29900 * S, 480, 120, 16, 'platform_hard'));
       plats.push(createPlat(30800 * S, 600, 1200 * S, 40, 'grass'));
       plats.push(...pipeSection(32000 * S, 600, 5));
       plats.push(createPlat(34500 * S, 600, 2000 * S, 40, 'grass'));
@@ -489,10 +491,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       createQB(1000 * 0.45, 530, 'mushroom'), createQB(2500 * 0.45, 450, 'coin'), createQB(3500 * 0.45, 530, 'mushroom'),
       createQB(4500 * 0.45, 530, 'flower'), createQB(6500 * 0.45, 530, 'star'), createQB(7800 * 0.45, 530, 'mushroom'),
       createQB(9100 * 0.45, 210, 'flower'), createQB(10500 * 0.45, 530, 'coin'), createQB(11600 * 0.45, 400, 'mushroom'),
-      createQB(12500 * 0.45, 530, 'star'), createQB(13500 * 0.45, 574, 'mushroom'), createQB(14500 * 0.45, 210, 'flower'),
+      createQB(12500 * 0.45, 530, 'star'), createQB(13500 * 0.45, 530, 'mushroom'), createQB(14500 * 0.45, 210, 'flower'),
       createQB(16000 * 0.45, 530, 'coin'), createQB(16900 * 0.45, 530, 'mushroom'), createQB(20000 * 0.45, 530, 'star'),
       createQB(22000 * 0.45, 549, 'flower'), createQB(23000 * 0.45, 530, 'mushroom'), createQB(25200 * 0.45, 120, 'coin'),
-      createQB(27000 * 0.45, 530, 'star'), createQB(28500 * 0.45, 530, 'mushroom'), createQB(30100 * 0.45, 574, 'flower'),
+      createQB(27000 * 0.45, 530, 'star'), createQB(28500 * 0.45, 530, 'mushroom'), createQB(30100 * 0.45, 534, 'flower'),
       createQB(31000 * 0.45, 530, 'coin'), createQB(32100 * 0.45, 530, 'mushroom'), createQB(35000 * 0.45, 530, 'star'),
       createQB(36800 * 0.45, 530, 'flower'), createQB(38000 * 0.45, 530, 'mushroom'), createQB(39600 * 0.45, 530, 'coin'),
       createQB(41200 * 0.45, 530, 'star'), createQB(42200 * 0.45, 530, 'mushroom'), createQB(43700 * 0.45, 530, 'flower'),
@@ -555,6 +557,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       plats.push(createPlat(16900 * S, 440, 120, 28, 'platform_medium'));
       plats.push(createPlat(17200 * S, 520, 120, 28, 'platform_easy'));
       plats.push(createPlat(17500 * S, 600, 1200 * S, 40, 'grass'));
+      plats.push(createPlat(17808 * S, 440, 120, 16, 'platform_easy'));
       plats.push(...pipeSection(18700 * S, 600, 5));
       plats.push(createPlat(21500 * S, 600, 2500 * S, 40, 'grass'));
       plats.push(...gapWithPlatforms(24200 * S, 600, 600 * S, 4));
@@ -574,6 +577,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       plats.push(createPlat(35100 * S, 600, 1500 * S, 40, 'grass'));
       plats.push(...pipeSection(36600 * S, 600, 5));
       plats.push(createPlat(39500 * S, 600, 2500 * S, 40, 'grass'));
+      plats.push(createPlat(41800 * S, 480, 120, 16, 'platform_hard'));
       plats.push(...gapWithPlatforms(42200 * S, 600, 600 * S, 5));
       plats.push(createPlat(43500 * S, 600, 1500 * S, 40, 'grass'));
       plats.push(createPlat(45500 * S, 600, 2500 * S, 40, 'grass'));
@@ -612,7 +616,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       createQB(24400 * 0.42, 530, 'flower'), createQB(25800 * 0.42, 530, 'mushroom'), createQB(28400 * 0.42, 120, 'coin'),
       createQB(30200 * 0.42, 530, 'star'), createQB(32000 * 0.42, 530, 'mushroom'), createQB(34400 * 0.42, 530, 'flower'),
       createQB(35500 * 0.42, 530, 'coin'), createQB(36800 * 0.42, 530, 'mushroom'), createQB(39800 * 0.42, 530, 'star'),
-      createQB(42400 * 0.42, 574, 'flower'), createQB(43800 * 0.42, 530, 'mushroom'), createQB(45800 * 0.42, 530, 'coin'),
+      createQB(42400 * 0.42, 530, 'flower'), createQB(43800 * 0.42, 530, 'mushroom'), createQB(45800 * 0.42, 530, 'coin'),
     ],
     enemies: [
       createEnemy(800 * 0.42, 560, 'goomba'), createEnemy(1100 * 0.42, 560, 'robot'), createEnemy(2000 * 0.42, 560, 'goomba'),

@@ -282,6 +282,7 @@ export const DESERT_LEVELS: LevelData[] = [
     platforms: (() => {
       const S = 0.53;
       const plats: any[] = [];
+      plats.push(createPlat(742, 416, 120, 16, 'platform_easy'));
       plats.push(createPlat(200 * S, 550, 800 * S, 40, 'sand'));
       plats.push(createPlat(1200 * S, 550, 600 * S, 40, 'sand'));
       plats.push(createPlat(2000 * S, 550, 500 * S, 40, 'sandstone'));
@@ -362,7 +363,7 @@ export const DESERT_LEVELS: LevelData[] = [
       return coins;
     })(),
     questionBlocks: [
-      createQB(1400 * 0.53, 480, 'mushroom'),
+      createQB(1400 * 0.53, 530, 'mushroom'),
       createQB(2800 * 0.53, 480, 'coin'),
       createQB(3800 * 0.53, 480, 'mushroom'),
       createQB(5000 * 0.53, 480, 'flower'),

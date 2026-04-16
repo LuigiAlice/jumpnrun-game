@@ -151,11 +151,14 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     platforms: (() => {
       const S = 0.556;
       const plats: any[] = [];
-      plats.push(createPlat(200 * S, 600, 1000 * S, 40, 'sand'));
-      plats.push(...boardwalkSection(S, 1400, 600, 800));
-      plats.push(...gapWithPlatforms(S, 2300, 600, 450, 3));
-      plats.push(createPlat(3100 * S, 600, 1200 * S, 40, 'sand'));
-      plats.push(...pipeSection(S, 4300, 600, 5));
+      plats.push(createPlat(200 * S, 600, 1800 * S, 40, 'sand'));
+      plats.push(createPlat(2100 * S, 500, 120, 24, 'platform_easy'));
+      plats.push(createPlat(2300 * S, 450, 120, 24, 'platform_medium'));
+      plats.push(createPlat(3000 * S, 600, 1400 * S, 40, 'sand'));
+      plats.push(createPlat(3300 * S, 540, 120, 24, 'platform_easy'));
+      plats.push(createPlat(3450 * S, 480, 120, 24, 'platform_medium'));
+      plats.push(createPlat(3600 * S, 420, 120, 24, 'platform_hard'));
+      plats.push(...pipeSection(S, 4000, 600, 5));
       plats.push(createPlat(6200 * S, 600, 1500 * S, 40, 'sand'));
       plats.push(createPlat(8100 * S, 520, 120, 28, 'platform_easy'));
       plats.push(createPlat(8400 * S, 440, 120, 28, 'platform_medium'));
@@ -376,8 +379,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.444;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 600, 1500 * S, 40, 'sand'));
-      plats.push(createPlat(400 * S, 580, 120, 24, 'platform_easy'));
-      plats.push(createPlat(700 * S, 560, 120, 24, 'platform_medium'));
+      plats.push(createPlat(300 * S, 540, 100, 24, 'platform_easy'));
+      plats.push(createPlat(550 * S, 500, 100, 24, 'platform_easy'));
       plats.push(...boardwalkSection(S, 1800, 600, 800));
       plats.push(...gapWithPlatforms(S, 2700, 600, 550, 4));
       plats.push(createPlat(3600 * S, 600, 1800 * S, 40, 'sand'));

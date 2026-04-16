@@ -134,7 +134,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createDeco(7000 * S, 480, 'rock'), createDeco(7600 * S, 400, 'lava-rock'),
             ];
         })(),
-        playerStart: { x: 100, y: 500 },
+        playerStart: { x: 100, y: 470 },
         goal: { x: 20000 - 500, y: 490 },
         timeBonus: 180,
     },

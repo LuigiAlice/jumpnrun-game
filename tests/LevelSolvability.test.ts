@@ -111,6 +111,90 @@ describe('Level Path Finding', () => {
     });
 });
 
+describe('Player Start Position', () => {
+    it('all levels should have playerStart on a valid platform', () => {
+        const failures: { level: number; name: string; playerY: number; platformTop: number; gap: number }[] = [];
+        const noPlatformFailures: { level: number; name: string; playerX: number; playerY: number }[] = [];
+
+        for (let i = 0; i < getLevelCount(); i++) {
+            const level = getLevel(i);
+            const physics = new Physics(level.platforms as any[], level.width, level.height);
+
+            const platform = physics.findPlatformUnderPoint(level.playerStart.x, level.playerStart.y);
+            if (!platform) {
+                noPlatformFailures.push({
+                    level: i + 1,
+                    name: level.name,
+                    playerX: level.playerStart.x,
+                    playerY: level.playerStart.y
+                });
+            } else {
+                const platformTop = platform.y - platform.h / 2;
+                const playerBottom = level.playerStart.y + 16;
+                const gap = playerBottom - platformTop;
+                if (gap > 32) {
+                    failures.push({
+                        level: i + 1,
+                        name: level.name,
+                        playerY: level.playerStart.y,
+                        platformTop,
+                        gap
+                    });
+                }
+            }
+        }
+
+        if (noPlatformFailures.length > 0) {
+            console.log('Player spawn - NO PLATFORM:');
+            noPlatformFailures.forEach(f => {
+                console.log(`  Level ${f.level} (${f.name}): player at x=${f.playerX}, y=${f.playerY} - NO PLATFORM FOUND`);
+            });
+        }
+        if (failures.length > 0) {
+            console.log('Player spawn issues (gap > 32px):');
+            failures.forEach(f => {
+                console.log(`  Level ${f.level} (${f.name}): playerY=${f.playerY}, platformTop=${f.platformTop.toFixed(0)}, gap=${f.gap.toFixed(0)}px`);
+            });
+        }
+        expect(noPlatformFailures.length).toBe(0);
+        expect(failures.length).toBe(0);
+    });
+});
+
+describe('Full Level Traversability', () => {
+    it('all platforms up to goal should be reachable from start', () => {
+        const failures: { level: number; name: string; unreachableCount: number; totalCount: number; details: string }[] = [];
+
+        for (let i = 0; i < getLevelCount(); i++) {
+            const level = getLevel(i);
+            const physics = new Physics(level.platforms as any[], level.width, level.height);
+
+            const result = physics.isFullyTraversableToGoal(level.playerStart.x, level.playerStart.y, level.goal.x);
+
+            if (!result.traversable) {
+                const firstFew = result.unreachablePlatforms.slice(0, 3).map(p =>
+                    `(${p.x.toFixed(0)}, ${p.y.toFixed(0)}, ${p.type})`
+                ).join(', ');
+                failures.push({
+                    level: i + 1,
+                    name: level.name,
+                    unreachableCount: result.unreachablePlatforms.length,
+                    totalCount: level.platforms.length,
+                    details: firstFew + (result.unreachablePlatforms.length > 3 ? '...' : '')
+                });
+            }
+        }
+
+        if (failures.length > 0) {
+            console.log('\nUnreachable platforms (before goal) found:');
+            failures.forEach(f => {
+                console.log(`  Level ${f.level} (${f.name}): ${f.unreachableCount}/${f.totalCount} unreachable - ${f.details}`);
+            });
+        }
+        expect(failures.length).toBe(0);
+    });
+});
+
 describe('Individual Level Tests', () => {
     it('level 1 (grasslands-1.1) should be solvable with path', () => {
         const level = getLevel(0);

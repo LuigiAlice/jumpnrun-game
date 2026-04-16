@@ -76,7 +76,7 @@ export class Physics {
         return true;
     }
 
-    private findPlatformUnderPoint(x: number, y: number): Platform | null {
+    public findPlatformUnderPoint(x: number, y: number): Platform | null {
         let closestPlatform: Platform | null = null;
         let closestDist = Infinity;
 
@@ -195,5 +195,62 @@ export class Physics {
         }
 
         return null;
+    }
+
+    public getReachablePlatforms(playerStartX: number, playerStartY: number): Platform[] {
+        if (this.platforms.length === 0) return [];
+
+        let startPlatform = this.findPlatformUnderPoint(playerStartX, playerStartY);
+        if (!startPlatform) {
+            const lowestPlatform = [...this.platforms].sort((a, b) => b.y - a.y)[0];
+            if (!lowestPlatform) return [];
+            startPlatform = lowestPlatform;
+        }
+
+        const queue: Platform[] = [startPlatform];
+        const visited: Set<string> = new Set([`${startPlatform.x},${startPlatform.y}`]);
+        const reachable: Platform[] = [startPlatform];
+
+        while (queue.length > 0) {
+            const current = queue.shift()!;
+
+            for (const next of this.platforms) {
+                const key = `${next.x},${next.y}`;
+                if (visited.has(key)) continue;
+
+                if (this.canJumpTo(current, next)) {
+                    visited.add(key);
+                    reachable.push(next);
+                    queue.push(next);
+                }
+            }
+        }
+
+        return reachable;
+    }
+
+    public isFullyTraversable(playerStartX: number, playerStartY: number): { traversable: boolean; unreachablePlatforms: Platform[] } {
+        const reachable = this.getReachablePlatforms(playerStartX, playerStartY);
+        const reachableKeys = new Set(reachable.map(p => `${p.x},${p.y}`));
+        const unreachable = this.platforms.filter(p => !reachableKeys.has(`${p.x},${p.y}`));
+        return {
+            traversable: unreachable.length === 0,
+            unreachablePlatforms: unreachable
+        };
+    }
+
+    public isFullyTraversableToGoal(playerStartX: number, playerStartY: number, goalX: number): { traversable: boolean; unreachablePlatforms: Platform[] } {
+        const reachable = this.getReachablePlatforms(playerStartX, playerStartY);
+        const reachableKeys = new Set(reachable.map(p => `${p.x},${p.y}`));
+        
+        const unreachable = this.platforms.filter(p => {
+            if (p.x > goalX) return false;
+            return !reachableKeys.has(`${p.x},${p.y}`);
+        });
+        
+        return {
+            traversable: unreachable.length === 0,
+            unreachablePlatforms: unreachable
+        };
     }
 }

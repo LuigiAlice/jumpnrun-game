@@ -20,6 +20,7 @@ export class GameScene extends Phaser.Scene {
   private goal!: Phaser.Physics.Arcade.Sprite;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private shootKey!: Phaser.Input.Keyboard.Key;
+  private escapeKey!: Phaser.Input.Keyboard.Key;
   
   private score: number = 0;
   private coinCount: number = 0;
@@ -84,6 +85,15 @@ export class GameScene extends Phaser.Scene {
     this.setupTimer();
     
     this.shootKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+    this.escapeKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    
+    // ESC to quit to level select
+    this.escapeKey.on('down', () => {
+      this.isMusicPlaying = false;
+      if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
+      this.scene.stop('Game');
+      this.scene.start('Title');
+    });
     
     // Start music on first input (click or key)
     this.input.once('pointerdown', () => this.startBgm());
@@ -181,6 +191,9 @@ export class GameScene extends Phaser.Scene {
       const platform = targetGroup.create(p.x, p.y, tex);
       platform.setDisplaySize(p.w, p.h).refreshBody();
       (platform as any).platformType = p.type;
+      if (platType === 'pipe' || platType === 'pipe_top') {
+        platform.setDepth(5);
+      }
     });
     
     if (level.movingPlatforms) {
@@ -247,6 +260,7 @@ export class GameScene extends Phaser.Scene {
         enemy.body.setAllowGravity(false);
         enemy.setImmovable(true);
         enemy.setData('noEdgeDetection', true);
+        enemy.setDepth(-5);
 
         let pipeCenterX = e.x;
         let pipeTopY = e.y;
@@ -494,6 +508,15 @@ export class GameScene extends Phaser.Scene {
       stroke: '#000',
       strokeThickness: 2
     }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
+    
+    // ESC hint
+    this.add.text(GAME_WIDTH - 20, GAME_HEIGHT - 20, 'ESC = Quit', {
+      fontSize: '12px',
+      fontFamily: 'Arial',
+      color: '#aaa',
+      stroke: '#000',
+      strokeThickness: 1
+    }).setOrigin(1, 1).setScrollFactor(0).setDepth(1000);
   }
 
   private updateUI() {

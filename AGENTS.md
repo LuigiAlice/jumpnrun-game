@@ -19,6 +19,19 @@ Siehe auch die Datei [SPEC.md](SPEC.md) und [MECHANICS.md](MECHANICS.md)
 - Run single test: `npm test -- LevelSolvability.test.ts`
 - TypeScript Fehler müssen vor test/build behoben werden
 
+## E2E Testing
+- Playwright for end-to-end tests in `e2e/**/*.test.ts`
+- Commands:
+  - `npm run e2e:test` - Run E2E tests headlessly
+  - `npm run e2e:test:headed` - Run E2E tests with browser visible
+- E2E tests verify:
+  - Game loads without console errors
+  - Canvas element exists and is visible
+  - Game responds to keyboard input
+  - ESC returns to title screen
+  - Game runs without critical errors
+- Note: Phaser rendert auf Canvas, daher sind visuelle Tests auf Textlocators nicht möglich
+
 ## Architecture
 - **Entry**: `src/main.ts` initializes Phaser.Game
 - **Scenes**: `src/scenes/` contains BootScene, TitleScene, GameScene, GameOverScene
@@ -39,6 +52,7 @@ Siehe auch die Datei [SPEC.md](SPEC.md) und [MECHANICS.md](MECHANICS.md)
 
 ## Guidelines
 - add tests for all new features
+- add tests for all requirements (user stories / bug reports)
 - TypeScript muss fehlerfrei sein vor commit
 - Piranhas müssen eine Pipe in der Nähe haben (Code handled gracefully)
 - Question Blocks brauchen 56px Mindestabstand für Big Mario

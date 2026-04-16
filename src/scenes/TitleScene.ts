@@ -34,6 +34,12 @@ export class TitleScene extends Phaser.Scene {
         'forest', 'village', 'beach-island', 'factory', 'volcano-lava',
         'haunted-mansion', 'ruins', 'canyon-base', 'space-star', 'castle-final'
     ];
+
+    private readonly BIOME_BG_NAMES = [
+        'grasslands', 'desert', 'water', 'ice', 'sky',
+        'forest', 'village', 'beach', 'factory', 'volcano',
+        'haunted', 'ruins', 'canyon', 'space', 'castle'
+    ];
     
     private readonly BIOME_COLORS = [
         '#2ecc71', '#f39c12', '#3498db', '#ecf0f1', '#87ceeb',
@@ -296,7 +302,7 @@ export class TitleScene extends Phaser.Scene {
         });
 
         // Update background to match biome
-        const biomeBgName = 'bg_' + this.BIOME_NAMES[biome] + '_0';
+        const biomeBgName = 'bg_' + this.BIOME_BG_NAMES[biome] + '_0';
         this.backgroundImage.setTexture(biomeBgName);
         
         // Try to keep selected level if same biome, otherwise select first
