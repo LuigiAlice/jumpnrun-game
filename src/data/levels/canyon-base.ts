@@ -148,7 +148,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 460 },
-    goal: createGoal(19460 - 500, 100, 1500, 'easy'),
+    goal: createGoal(18626, 130, 1500, 'easy'),
     timeBonus: 180,
   },
   {

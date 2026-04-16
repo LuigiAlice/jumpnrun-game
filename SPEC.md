@@ -8,7 +8,7 @@
 
 ## Technologie
 - TypeScript + Vite + Phaser 3 + Vitest
-- Arcade Physics (Gravity: 1000)
+- Arcade Physics (Gravity: 2000)
 - ES Modules
 
 ## Level-Struktur
@@ -38,9 +38,9 @@
 ## UI/UX Spezifikation
 
 ### Layout
-- Canvas: 800x1200 Pixel
-- HUD oben: Münzen (links), Level-Nr. (rechts)
-- Responsive Container mit Glow-Effekt
+- Canvas: 1200x800 Pixel
+- HUD oben: Score (links), Coins, World, Timer (rechts), Lives (unten links)
+- Responsive mit ENVELOP mode (keine Verzerrung)
 
 ### Visual Design
 - **Farbschema**: Dynamisch basierend auf Biome

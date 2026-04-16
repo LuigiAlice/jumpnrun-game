@@ -218,7 +218,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 600 },
-        goal: { x: 19520, y: 210 },
+        goal: { x: 18336, y: 630 },
         timeBonus: 62,
     },
     {
@@ -342,7 +342,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 700 },
-        goal: { x: 19540, y: 200 },
+        goal: { x: 18202, y: 220 },
         timeBonus: 68,
     },
     {
@@ -490,7 +490,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 750 },
-        goal: { x: 19480, y: 330 },
+        goal: { x: 19152, y: 480 },
         timeBonus: 75,
     },
     {
@@ -645,7 +645,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 800 },
-        goal: { x: 19510, y: 340 },
+        goal: { x: 18854, y: 360 },
         timeBonus: 82,
     },
     {
@@ -801,7 +801,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 900 },
-        goal: { x: 19500, y: 340 },
+        goal: { x: 18000, y: 360 },
         timeBonus: 90,
     },
 ];

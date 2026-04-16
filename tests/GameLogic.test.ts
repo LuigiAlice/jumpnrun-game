@@ -57,7 +57,7 @@ describe('Physics', () => {
                 createPlat(600, 500, 100, 32, 'brick'),
             ];
             const physics = new Physics(platforms as any, 800, 600);
-            expect(physics.isSolvable(100, 450, 600)).toBe(true);
+            expect(physics.isSolvable(100, 450, 600, 500)).toBe(true);
         });
 
         it('should return false when goal is beyond any platform', () => {
@@ -66,7 +66,7 @@ describe('Physics', () => {
                 createPlat(5000, 500, 100, 32, 'brick'),
             ];
             const physics = new Physics(platforms as any, 10000, 600);
-            expect(physics.isSolvable(100, 450, 15000)).toBe(false);
+            expect(physics.isSolvable(100, 450, 15000, 500)).toBe(false);
         });
     });
 });

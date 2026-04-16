@@ -575,7 +575,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 100, y: 520 },
-        goal: { x: 19536 - 500, y: 510 },
+        goal: { x: 18726, y: 520 },
         timeBonus: 220,
     },
     {

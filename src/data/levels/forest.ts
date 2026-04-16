@@ -218,7 +218,7 @@ export const FOREST_LEVELS: LevelData[] = [
       return decos;
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 18960, y: 558 },
+    goal: { x: 4247, y: 580 },
     timeBonus: 140,
   },
   {

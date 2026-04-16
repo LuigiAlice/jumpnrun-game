@@ -257,7 +257,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 530 },
-        goal: { x: 19516, y: 548 },
+        goal: { x: 18626, y: 570 },
         timeBonus: 140,
     },
     {
@@ -521,7 +521,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 560 },
-        goal: { x: 19520, y: 603 },
+        goal: { x: 18700, y: 625 },
         timeBonus: 180,
     },
     {
@@ -654,7 +654,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 570 },
-        goal: { x: 19516, y: 633 },
+        goal: { x: 19036, y: 655 },
         timeBonus: 200,
     },
     {

@@ -162,7 +162,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       createDeco(26000 * S, 510, 'tree'), createDeco(28000 * S, 510, 'bush'),
     ],
     playerStart: { x: 150, y: 500 },
-    goal: { x: 19500, y: 508 },
+    goal: { x: 19500, y: 530 },
     timeBonus: 120,
   },
   {

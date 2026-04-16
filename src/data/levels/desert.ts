@@ -274,7 +274,7 @@ export const DESERT_LEVELS: LevelData[] = [
       createDeco(24400 * 0.59, 510, 'cactus'), createDeco(26000 * 0.59, 510, 'skull'), createDeco(28000 * 0.59, 510, 'cactus'),
     ],
     playerStart: { x: 150, y: 500 },
-    goal: { x: 19560, y: 508 },
+    goal: { x: 18938, y: 530 },
     timeBonus: 140,
   },
   {

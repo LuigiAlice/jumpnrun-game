@@ -84,7 +84,7 @@ export class GameScene extends Phaser.Scene {
 
   private setupWorld(level: LevelData) {
     this.physics.world.gravity.y = GRAVITY;
-    this.physics.world.setBounds(0, 0, level.width, 1200);
+    this.physics.world.setBounds(0, 0, level.width, GAME_HEIGHT);
     this.cameras.main.setBounds(0, 0, level.width, GAME_HEIGHT);
     
     const biomePrefix: Record<string, string> = {
@@ -548,7 +548,7 @@ export class GameScene extends Phaser.Scene {
     }
     
     // Safety Threshold for death
-    if (this.player.y > 700) this.die();
+    if (this.player.y > GAME_HEIGHT - 100) this.die();
   }
 
   private shootFireball() {

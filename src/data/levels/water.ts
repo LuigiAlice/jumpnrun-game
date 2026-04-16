@@ -578,7 +578,7 @@ export const WATER_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 480 },
-        goal: { x: 19500, y: 480 },
+        goal: { x: 19000, y: 480 },
         timeBonus: 160,
     },
     {
