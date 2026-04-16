@@ -990,68 +990,28 @@ export class BootScene extends Phaser.Scene {
     g.lineBetween(16, 0, 32, 16);
     g.lineBetween(16, 32, 0, 16);
     g.lineBetween(16, 32, 32, 16);
-    g.generateTexture('web', 32, 32);
+g.generateTexture('web', 32, 32);
 
-    // Pillar (ruins decoration)
+    // Log (forest decoration)
     g.clear();
-    g.fillStyle(0x8B7355, 1);
-    g.fillRect(8, 0, 16, 40);
-    g.fillStyle(0xA0522D, 1);
-    g.fillRect(4, 0, 24, 8);
-    g.fillRect(4, 36, 24, 8);
-    g.fillStyle(0x6B5344, 1);
-    g.fillRect(10, 8, 4, 28);
-    g.fillRect(18, 8, 4, 28);
-    g.generateTexture('pillar', 32, 44);
+    g.fillStyle(0x8B4513, 1);
+    g.fillEllipse(16, 20, 28, 14);
+    g.fillStyle(0x6B3E0F, 1);
+    g.fillEllipse(16, 20, 20, 10);
+    g.fillStyle(0x5D4037, 0.8);
+    g.fillCircle(8, 18, 3);
+    g.fillCircle(20, 22, 2);
+    g.generateTexture('log', 32, 32);
 
-    // Statue (ruins decoration)
-    g.clear();
-    g.fillStyle(0x808080, 1);
-    g.fillRect(10, 8, 12, 24);
-    g.fillStyle(0x696969, 1);
-    g.fillCircle(16, 8, 8);
-    g.fillRect(8, 32, 16, 8);
-    g.fillStyle(0xA9A9A9, 1);
-    g.fillRect(12, 4, 8, 4);
-    g.fillStyle(0x000000, 0.5);
-    g.fillCircle(14, 6, 2);
-    g.fillCircle(18, 6, 2);
-    g.generateTexture('statue', 32, 44);
-
-    // Moss (ruins decoration)
-    g.clear();
-    g.fillStyle(0x228B22, 0.8);
-    g.fillEllipse(16, 20, 24, 16);
-    g.fillStyle(0x32CD32, 0.6);
-    g.fillEllipse(10, 16, 8, 8);
-    g.fillEllipse(22, 18, 10, 6);
-    g.fillStyle  (0x1a5a1a, 0.5);
-    g.fillEllipse(14, 24, 6, 4);
-    g.generateTexture('moss', 32, 32);
-
-    // Seaweed (water decoration)
+    // Vine (forest decoration)
     g.clear();
     g.fillStyle(0x228B22, 1);
-    g.fillRect(12, 8, 8, 32);
-    g.fillEllipse(16, 8, 12, 16);
-    g.fillStyle(0x32CD32, 0.8);
-    g.fillEllipse(8, 12, 8, 10);
-    g.fillEllipse(24, 16, 8, 10);
-    g.fillStyle(0x90EE90, 0.6);
-    g.fillCircle(16, 8, 4);
-    g.generateTexture('seaweed', 32, 44);
-
-    // Snowflake (ice-snow decoration)
-    g.clear();
-    g.fillStyle(0xFFFFFF, 0.9);
-    g.lineStyle(2, 0xADD8E6, 1);
-    g.lineBetween(16, 4, 16, 28);
-    g.lineBetween(4, 16, 28, 16);
-    g.lineBetween(8, 8, 24, 24);
-    g.lineBetween(24, 8, 8, 24);
-    g.fillStyle(0xADD8E6, 1);
-    g.fillCircle(16, 16, 3);
-    g.generateTexture('snowflake', 32, 32);
+    g.fillRect(14, 0, 4, 40);
+    g.fillStyle(0x32CD32, 1);
+    g.fillEllipse(14, 8, 10, 14);
+    g.fillEllipse(14, 20, 10, 14);
+    g.fillEllipse(14, 32, 10, 14);
+    g.generateTexture('vine', 32, 44);
 
     g.destroy();
   }
