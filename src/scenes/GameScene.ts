@@ -41,6 +41,11 @@ export class GameScene extends Phaser.Scene {
   private livesText!: Phaser.GameObjects.Text;
   private timerText!: Phaser.GameObjects.Text;
   private worldText!: Phaser.GameObjects.Text;
+  private scoreValText!: Phaser.GameObjects.Text;
+  private coinValText!: Phaser.GameObjects.Text;
+  private livesValText!: Phaser.GameObjects.Text;
+  private timerValText!: Phaser.GameObjects.Text;
+  private worldValText!: Phaser.GameObjects.Text;
 
   private audioContext?: AudioContext;
   private isMusicPlaying: boolean = false;
@@ -462,18 +467,29 @@ export class GameScene extends Phaser.Scene {
   private createUI() {
     const levelData = this.currentLevelData;
     const levelName = levelData?.name || `Level ${this.levelIndex + 1}`;
-    
-    const cfg = { fontSize: '20px', fontFamily: 'Arial', color: '#fff', stroke: '#000', strokeThickness: 3 };
-    this.scoreText = this.add.text(20, 20, '', cfg).setScrollFactor(0).setDepth(1000);
-    this.coinText = this.add.text(300, 20, '', cfg).setScrollFactor(0).setDepth(1000);
-    this.worldText = this.add.text(600, 20, '', cfg).setScrollFactor(0).setDepth(1000);
-    this.timerText = this.add.text(900, 20, '', cfg).setScrollFactor(0).setDepth(1000);
-    this.livesText = this.add.text(20, 60, '', cfg).setScrollFactor(0).setDepth(1000);
 
-    // Level name display
-    this.add.text(GAME_WIDTH / 2, 50, levelName, { 
-      fontSize: '14px', 
-      fontFamily: 'Arial', 
+    const labelStyle = { fontSize: '12px', fontFamily: 'Arial', color: '#fff', stroke: '#000', strokeThickness: 3 };
+    const valueStyle = { fontSize: '22px', fontFamily: 'Arial', color: '#fff', stroke: '#000', strokeThickness: 3 };
+    const hudY = 20;
+    const valY = hudY + 18;
+
+    this.scoreText = this.add.text(20, hudY, 'MARIO', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.coinText = this.add.text(160, hudY, 'COINS', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.worldText = this.add.text(300, hudY, 'WORLD', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.timerText = this.add.text(440, hudY, 'TIME', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.livesText = this.add.text(GAME_WIDTH - 100, hudY, 'LIVES', labelStyle).setScrollFactor(0).setDepth(1000);
+
+    // Value texts that get updated
+    this.scoreValText = this.add.text(20, valY, '', valueStyle).setScrollFactor(0).setDepth(1000);
+    this.coinValText = this.add.text(160, valY, '', valueStyle).setScrollFactor(0).setDepth(1000);
+    this.worldValText = this.add.text(300, valY, '', valueStyle).setScrollFactor(0).setDepth(1000);
+    this.timerValText = this.add.text(440, valY, '', valueStyle).setScrollFactor(0).setDepth(1000);
+    this.livesValText = this.add.text(GAME_WIDTH - 100, valY, '', valueStyle).setScrollFactor(0).setDepth(1000);
+
+    // Level name display - centered below HUD
+    this.add.text(GAME_WIDTH / 2, 75, levelName, {
+      fontSize: '16px',
+      fontFamily: 'Arial',
       color: '#FFD700',
       stroke: '#000',
       strokeThickness: 2
@@ -481,11 +497,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private updateUI() {
-    this.scoreText.setText('MARIO\n' + this.score.toString().padStart(6, '0'));
-    this.coinText.setText('COINS\nx' + this.coinCount.toString().padStart(2, '0'));
-    this.worldText.setText('WORLD\n' + this.levelId + '-' + (this.levelIndex % 6 + 1));
-    this.timerText.setText('TIME\n' + Math.max(0, this.timeLeft).toString().padStart(3, '0'));
-    this.livesText.setText('LIVES: ' + this.lives);
+    this.scoreValText.setText(this.score.toString().padStart(6, '0'));
+    this.coinValText.setText('x' + this.coinCount.toString().padStart(2, '0'));
+    this.worldValText.setText(this.levelId + '-' + (this.levelIndex % 6 + 1));
+    this.timerValText.setText(Math.max(0, this.timeLeft).toString().padStart(3, '0'));
+    this.livesValText.setText(String(this.lives));
   }
 
   update(time: number) {
