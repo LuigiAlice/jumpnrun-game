@@ -383,6 +383,92 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(22, 16, 7);
     g.fillCircle(16, 22, 6);
     g.generateTexture('cloud_block', 32, 32);
+
+    // Ruins ground - ancient stone blocks
+    g.clear();
+    g.fillStyle(0x8B7355, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xA0522D, 1); g.fillRect(1, 1, 14, 14);
+    g.fillStyle(0x6B5344, 1); g.fillRect(17, 17, 14, 14);
+    g.fillStyle(0x9B8365, 1); g.fillRect(3, 3, 10, 10);
+    g.fillStyle(0x7B6354, 1); g.fillRect(19, 19, 10, 10);
+    g.generateTexture('ground_ruins', 32, 32);
+
+    // Sand ground - desert floor
+    g.clear();
+    g.fillStyle(0xF4A460, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xDEB887, 1); g.fillRect(4, 4, 8, 8);
+    g.fillRect(20, 12, 6, 6);
+    g.fillRect(12, 22, 10, 6);
+    g.fillStyle(0xE8C090, 0.6); g.fillCircle(8, 16, 4);
+    g.fillCircle(24, 8, 3);
+    g.generateTexture('ground_sand', 32, 32);
+
+    // Water ground - underwater floor
+    g.clear();
+    g.fillStyle(0x006994, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0x0088AA, 1); g.fillRect(0, 0, 32, 8);
+    g.fillStyle(0x00A0CC, 0.6); g.fillCircle(8, 20, 6);
+    g.fillCircle(20, 14, 5);
+    g.fillCircle(26, 24, 4);
+    g.generateTexture('ground_water', 32, 32);
+
+    // Snow ground - icy surface
+    g.clear();
+    g.fillStyle(0xFFFAFA, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xE0FFFF, 1); g.fillRect(0, 0, 32, 16);
+    g.fillStyle(0xADD8E6, 0.5); g.fillCircle(6, 8, 4);
+    g.fillCircle(18, 12, 3);
+    g.fillCircle(26, 6, 5);
+    g.fillStyle(0xFFFFFF, 0.8); g.fillRect(4, 20, 6, 3);
+    g.fillRect(16, 24, 8, 3);
+    g.generateTexture('ground_snow', 32, 32);
+
+    // Lava ground - molten rock
+    g.clear();
+    g.fillStyle(0x8B0000, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xFF4500, 1); g.fillRect(2, 2, 12, 12);
+    g.fillStyle(0xFF6347, 1); g.fillRect(18, 8, 10, 10);
+    g.fillStyle(0xFFD700, 0.7); g.fillCircle(8, 20, 4);
+    g.fillCircle(22, 18, 3);
+    g.fillStyle(0xFF0000, 1); g.fillRect(6, 6, 4, 4);
+    g.generateTexture('ground_lava', 32, 32);
+
+    // Metal ground - industrial floor
+    g.clear();
+    g.fillStyle(0x708090, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xA9A9A9, 1); g.fillRect(1, 1, 30, 8);
+    g.lineStyle(1, 0x505050, 1);
+    g.strokeRect(1, 1, 30, 8);
+    g.strokeRect(1, 12, 15, 10);
+    g.strokeRect(17, 12, 14, 10);
+    g.fillStyle(0x808080, 1);
+    g.fillRect(2, 2, 4, 4);
+    g.fillRect(14, 2, 4, 4);
+    g.fillRect(26, 2, 4, 4);
+    g.generateTexture('ground_metal', 32, 32);
+
+    // Space ground - floating platforms
+    g.clear();
+    g.fillStyle(0x2F2F2F, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0x4A4A6A, 1); g.fillRect(4, 4, 24, 24);
+    g.fillStyle(0x696969, 1); g.fillRect(8, 8, 8, 8);
+    g.fillRect(18, 16, 8, 8);
+    g.fillStyle(0x808080, 0.5); g.fillCircle(12, 20, 2);
+    g.fillCircle(24, 12, 2);
+    g.generateTexture('ground_space', 32, 32);
+
+    // Stone ground - cave/dungeon floor
+    g.clear();
+    g.fillStyle(0x4a4a5a, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0x3a3a4a, 1); g.fillRect(0, 0, 32, 16);
+    g.fillStyle(0x5a5a6a, 1); g.fillRect(4, 4, 6, 6);
+    g.fillRect(18, 10, 8, 8);
+    g.fillRect(8, 20, 10, 6);
+    g.lineStyle(1, 0x2a2a3a, 1);
+    g.strokeRect(0, 0, 16, 16);
+    g.strokeRect(16, 16, 16, 16);
+    g.generateTexture('ground_stone', 32, 32);
+
     g.destroy();
   }
 
@@ -905,6 +991,67 @@ export class BootScene extends Phaser.Scene {
     g.lineBetween(16, 32, 0, 16);
     g.lineBetween(16, 32, 32, 16);
     g.generateTexture('web', 32, 32);
+
+    // Pillar (ruins decoration)
+    g.clear();
+    g.fillStyle(0x8B7355, 1);
+    g.fillRect(8, 0, 16, 40);
+    g.fillStyle(0xA0522D, 1);
+    g.fillRect(4, 0, 24, 8);
+    g.fillRect(4, 36, 24, 8);
+    g.fillStyle(0x6B5344, 1);
+    g.fillRect(10, 8, 4, 28);
+    g.fillRect(18, 8, 4, 28);
+    g.generateTexture('pillar', 32, 44);
+
+    // Statue (ruins decoration)
+    g.clear();
+    g.fillStyle(0x808080, 1);
+    g.fillRect(10, 8, 12, 24);
+    g.fillStyle(0x696969, 1);
+    g.fillCircle(16, 8, 8);
+    g.fillRect(8, 32, 16, 8);
+    g.fillStyle(0xA9A9A9, 1);
+    g.fillRect(12, 4, 8, 4);
+    g.fillStyle(0x000000, 0.5);
+    g.fillCircle(14, 6, 2);
+    g.fillCircle(18, 6, 2);
+    g.generateTexture('statue', 32, 44);
+
+    // Moss (ruins decoration)
+    g.clear();
+    g.fillStyle(0x228B22, 0.8);
+    g.fillEllipse(16, 20, 24, 16);
+    g.fillStyle(0x32CD32, 0.6);
+    g.fillEllipse(10, 16, 8, 8);
+    g.fillEllipse(22, 18, 10, 6);
+    g.fillStyle  (0x1a5a1a, 0.5);
+    g.fillEllipse(14, 24, 6, 4);
+    g.generateTexture('moss', 32, 32);
+
+    // Seaweed (water decoration)
+    g.clear();
+    g.fillStyle(0x228B22, 1);
+    g.fillRect(12, 8, 8, 32);
+    g.fillEllipse(16, 8, 12, 16);
+    g.fillStyle(0x32CD32, 0.8);
+    g.fillEllipse(8, 12, 8, 10);
+    g.fillEllipse(24, 16, 8, 10);
+    g.fillStyle(0x90EE90, 0.6);
+    g.fillCircle(16, 8, 4);
+    g.generateTexture('seaweed', 32, 44);
+
+    // Snowflake (ice-snow decoration)
+    g.clear();
+    g.fillStyle(0xFFFFFF, 0.9);
+    g.lineStyle(2, 0xADD8E6, 1);
+    g.lineBetween(16, 4, 16, 28);
+    g.lineBetween(4, 16, 28, 16);
+    g.lineBetween(8, 8, 24, 24);
+    g.lineBetween(24, 8, 8, 24);
+    g.fillStyle(0xADD8E6, 1);
+    g.fillCircle(16, 16, 3);
+    g.generateTexture('snowflake', 32, 32);
 
     g.destroy();
   }
