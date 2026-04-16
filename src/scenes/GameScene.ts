@@ -25,6 +25,7 @@ export class GameScene extends Phaser.Scene {
   private coinCount: number = 0;
   private lives: number = 3;
   private levelIndex: number = 0;
+  private levelId: number = 0;
   private timeLeft: number = 300;
   private timerEvent!: Phaser.Time.TimerEvent;
   
@@ -57,11 +58,13 @@ export class GameScene extends Phaser.Scene {
     this.coinCount = data.coinCount || 0;
     this.isPlayerBig = data.isPlayerBig || false;
     this.isPlayerFire = data.isPlayerFire || false;
+    this.levelId = data.levelId || 0;
   }
 
   create() {
     this.currentLevelData = loadLevel(this.levelIndex);
     const level = this.currentLevelData;
+    this.levelId = level.id;
     
     this.isDead = false;
     this.isTransitioning = false;
@@ -480,7 +483,7 @@ export class GameScene extends Phaser.Scene {
   private updateUI() {
     this.scoreText.setText('MARIO\n' + this.score.toString().padStart(6, '0'));
     this.coinText.setText('COINS\nx' + this.coinCount.toString().padStart(2, '0'));
-    this.worldText.setText('WORLD\n1-' + (this.levelIndex + 1));
+    this.worldText.setText('WORLD\n' + this.levelId + '-' + (this.levelIndex % 6 + 1));
     this.timerText.setText('TIME\n' + Math.max(0, this.timeLeft).toString().padStart(3, '0'));
     this.livesText.setText('LIVES: ' + this.lives);
   }

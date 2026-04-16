@@ -1013,6 +1013,43 @@ g.generateTexture('web', 32, 32);
     g.fillEllipse(14, 32, 10, 14);
     g.generateTexture('vine', 32, 44);
 
+    // Pillar (ruins decoration)
+    g.clear();
+    g.fillStyle(0x8B7355, 1);
+    g.fillRect(8, 0, 16, 44);
+    g.fillStyle(0xA0522D, 1);
+    g.fillRect(4, 0, 24, 8);
+    g.fillRect(4, 36, 24, 8);
+    g.fillStyle(0x6B5344, 1);
+    g.fillRect(10, 8, 4, 28);
+    g.fillRect(18, 8, 4, 28);
+    g.generateTexture('pillar', 32, 44);
+
+    // Statue (ruins decoration)
+    g.clear();
+    g.fillStyle(0x808080, 1);
+    g.fillRect(10, 8, 12, 24);
+    g.fillStyle(0x696969, 1);
+    g.fillCircle(16, 8, 8);
+    g.fillRect(8, 32, 16, 8);
+    g.fillStyle(0xA9A9A9, 1);
+    g.fillRect(12, 4, 8, 4);
+    g.fillStyle(0x000000, 0.5);
+    g.fillCircle(14, 6, 2);
+    g.fillCircle(18, 6, 2);
+    g.generateTexture('statue', 32, 44);
+
+    // Moss (ruins decoration)
+    g.clear();
+    g.fillStyle(0x228B22, 0.8);
+    g.fillEllipse(16, 20, 24, 16);
+    g.fillStyle(0x32CD32, 0.6);
+    g.fillEllipse(10, 16, 8, 8);
+    g.fillEllipse(22, 18, 10, 6);
+    g.fillStyle(0x1a5a1a, 0.5);
+    g.fillEllipse(14, 24, 6, 4);
+    g.generateTexture('moss', 32, 32);
+
     g.destroy();
   }
 
