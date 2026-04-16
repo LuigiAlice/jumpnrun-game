@@ -1,7 +1,7 @@
 export const DEFAULT_PHYSICS = {
     TILE_SIZE: 32,
-    MAX_JUMP_DISTANCE: 800,
-    MAX_JUMP_UP: 300,
+    MAX_JUMP_DISTANCE: 800,  // Maintains compatibility with existing level design
+    MAX_JUMP_UP: 350,
     MAX_FALL_DOWN: 1000
 };
 

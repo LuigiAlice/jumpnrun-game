@@ -392,6 +392,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 13600, 600, 500, 4));
       plats.push(createPlat(14500 * S, 600, 1500 * S, 40, 'sand'));
       plats.push(...pipeSection(S, 16000, 600, 5));
+      plats.push(createPlat(16650 * S, 550, 80, 24, 'platform_easy'));
       plats.push(createPlat(19000 * S, 600, 2000 * S, 40, 'sand'));
       plats.push(...boardwalkSection(S, 21000, 600, 1000));
       plats.push(...gapWithPlatforms(S, 22200, 600, 600, 5));

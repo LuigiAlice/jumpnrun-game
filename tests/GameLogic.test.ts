@@ -227,7 +227,7 @@ describe('DEFAULT_PHYSICS constants', () => {
     it('should have reasonable physics values', () => {
         expect(DEFAULT_PHYSICS.TILE_SIZE).toBe(32);
         expect(DEFAULT_PHYSICS.MAX_JUMP_DISTANCE).toBe(800);
-        expect(DEFAULT_PHYSICS.MAX_JUMP_UP).toBe(300);
+        expect(DEFAULT_PHYSICS.MAX_JUMP_UP).toBe(350);
         expect(DEFAULT_PHYSICS.MAX_FALL_DOWN).toBe(1000);
     });
 });
