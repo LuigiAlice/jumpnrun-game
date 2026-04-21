@@ -1,4 +1,4 @@
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 const gapWithPlatforms = (startX: number, baseY: number, gapWidth: number, platformCount: number, S: number = 1): any[] => {
   const plats = [];
@@ -81,6 +81,13 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 6125, y: 510 },
     timeBonus: 120,
+    movingPlatforms: (() => {
+      const S = 0.625;
+      return [
+        createMovingPlat(3350, 480, 120, 24, 'platform_medium', 'horizontal', 180, 20),
+        createMovingPlat(4620, 420, 120, 24, 'platform_medium', 'vertical', 180, 22),
+      ];
+    })(),
   },
   {
     id: 20, name: "Glacier Climb", width: 20016, height: 650, biome: 'ice-snow',
@@ -132,6 +139,13 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 3503, y: 560 },
     timeBonus: 140,
+    movingPlatforms: (() => {
+      const S = 0.556;
+      return [
+        createMovingPlat(3450, 480, 120, 24, 'platform_medium', 'horizontal', 150, 20),
+        createMovingPlat(4680, 400, 120, 24, 'platform_medium', 'vertical', 180, 22),
+      ];
+    })(),
   },
   {
     id: 21, name: "Snow Summit", width: 19992, height: 700, biome: 'ice-snow',
@@ -234,6 +248,13 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 3641, y: 560 },
     timeBonus: 180,
+    movingPlatforms: (() => {
+      const S = 0.444;
+      return [
+        createMovingPlat(7880, 480, 120, 24, 'platform_medium', 'horizontal', 140, 20),
+        createMovingPlat(4700, 380, 120, 24, 'platform_medium', 'vertical', 180, 22),
+      ];
+    })(),
   },
   {
     id: 23, name: "Polar Heights", width: 20016, height: 700, biome: 'ice-snow',

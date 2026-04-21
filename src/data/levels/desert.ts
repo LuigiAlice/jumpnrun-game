@@ -1,7 +1,7 @@
 // Desert World - 6 Super Mario-style Side-Scrolling Levels (IDs 7-12)
 // Long horizontal desert levels with sand, pyramids, pipes, and vertical passages
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 const gapWithPlatforms = (startX: number, baseY: number, gapWidth: number, platformCount: number): any[] => {
   const plats = [];
@@ -110,6 +110,9 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(28000 * S, 550, 2000 * S, 40, 'sand'));
       return plats;
     })(),
+    movingPlatforms: [
+      createMovingPlat(6400, 450, 120, 24, 'platform_medium', 'vertical', 200, 20),
+    ],
     coins: (() => {
       const S = 0.67;
       const coins: any[] = [];
@@ -235,6 +238,9 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(7500 * S, 550, 600 * S, 40, 'sand'));
       return plats;
     })(),
+    movingPlatforms: [
+      createMovingPlat(1400, 480, 150, 24, 'platform_medium', 'horizontal', 180, 22),
+    ],
     coins: (() => {
       const S = 0.53;
       const coins: any[] = [];
@@ -372,6 +378,9 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(7400 * S, 600, 1600 * S, 40, 'sand'));
       return plats;
     })(),
+    movingPlatforms: [
+      createMovingPlat(1300, 520, 150, 24, 'platform_medium', 'horizontal', 200, 20),
+    ],
     coins: (() => {
       const S = 0.4;
       const coins: any[] = [];

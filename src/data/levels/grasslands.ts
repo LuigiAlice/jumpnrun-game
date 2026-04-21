@@ -1,7 +1,7 @@
 // Grasslands World - 6 Super Mario-style Side-Scrolling Levels (IDs 1-6)
 // Long horizontal levels with ground sections, gaps, pipes, and vertical passages
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 const S = 0.65;
 
@@ -104,6 +104,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 12545, y: 510 },
     timeBonus: 120,
+    movingPlatforms: [
+      createMovingPlat(11700 * S, 480, 150, 24, 'platform_medium', 'horizontal', 350, 20),
+      createMovingPlat(12100 * S, 480, 120, 24, 'platform_medium', 'horizontal', 250, 18),
+    ],
   },
   {
     id: 2, name: "Grasslands Hills", width: 21000, height: 700, biome: 'grasslands',
@@ -270,6 +274,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 7000 * S, y: 580 },
     timeBonus: 180,
+    movingPlatforms: [
+      createMovingPlat(5500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 400, 22),
+    ],
   },
   {
     id: 5, name: "Grasslands Fortress", width: 20160, height: 700, biome: 'grasslands',
@@ -376,5 +383,8 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 9500 * S, y: 580 },
     timeBonus: 220,
+    movingPlatforms: [
+      createMovingPlat(7500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 400, 22),
+    ],
   },
 ];

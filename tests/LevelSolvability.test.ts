@@ -61,7 +61,7 @@ describe('Level Solvability - All 90 Levels', () => {
         it(`${biome.name} (levels ${biome.start}-${biome.end}): all levels should be solvable`, () => {
             for (let i = biome.start; i <= biome.end; i++) {
                 const level = getLevel(i);
-                const physics = new Physics(level.platforms as any[], level.width, level.height);
+                const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
                 const result = physics.isSolvable(
                     level.playerStart.x,
                     level.playerStart.y,
@@ -97,7 +97,7 @@ describe('Level Path Finding', () => {
         it(`${biome.name}: all levels should have a valid path to goal`, () => {
             for (let i = biome.start; i <= biome.end; i++) {
                 const level = getLevel(i);
-                const physics = new Physics(level.platforms as any[], level.width, level.height);
+                const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
                 const path = physics.findPath(
                     level.playerStart.x,
                     level.playerStart.y,
@@ -198,7 +198,7 @@ describe('Full Level Traversability', () => {
 describe('Individual Level Tests', () => {
     it('level 1 (grasslands-1.1) should be solvable with path', () => {
         const level = getLevel(0);
-        const physics = new Physics(level.platforms as any[], level.width, level.height);
+        const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
         expect(physics.isSolvable(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y)).toBe(true);
         const path = physics.findPath(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y);
         expect(path).not.toBeNull();
@@ -207,7 +207,7 @@ describe('Individual Level Tests', () => {
 
     it('level 90 (castle-final) should be solvable with path', () => {
         const level = getLevel(89);
-        const physics = new Physics(level.platforms as any[], level.width, level.height);
+        const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
         expect(physics.isSolvable(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y)).toBe(true);
         const path = physics.findPath(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y);
         expect(path).not.toBeNull();

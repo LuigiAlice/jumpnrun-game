@@ -552,16 +552,42 @@ export class GameScene extends Phaser.Scene {
     this.movingPlatforms.getChildren().forEach((mplat: any) => {
       const data = this.movingPlatformData.get(mplat);
       if (!data) return;
-      
+
+      const platformTop = mplat.y - mplat.displayHeight / 2;
+      const playerBottom = this.player.y + (this.player.displayHeight / 2);
+      const isAbovePlatform = playerBottom <= platformTop + 10 && playerBottom >= platformTop - 30;
+      const isHorizontallyAligned = Math.abs(this.player.x - mplat.x) < mplat.displayWidth / 2 + 20;
+      const isOnPlatform = isAbovePlatform && isHorizontallyAligned;
+
       if (data.moveType === 'horizontal') {
-        mplat.x = data.startX + Math.sin(time * 0.001 * data.speed) * data.range;
+        const prevX = mplat.x;
+        mplat.x = data.startX + Math.sin(time * 0.00002 * data.speed) * data.range;
+        const dx = mplat.x - prevX;
+        if (isOnPlatform && Math.abs(dx) > 0 && this.player.body) {
+          this.player.setX(this.player.x + dx);
+          (this.player.body as any).setVelocityX(dx * 60);
+        }
       } else if (data.moveType === 'vertical') {
-        mplat.y = data.startY + Math.sin(time * 0.001 * data.speed) * data.range;
+        const prevY = mplat.y;
+        mplat.y = data.startY + Math.sin(time * 0.00002 * data.speed) * data.range;
+        const dy = mplat.y - prevY;
+        if (isOnPlatform && Math.abs(dy) > 0 && this.player.body) {
+          this.player.setY(this.player.y + dy);
+          (this.player.body as any).setVelocityY(dy * 60);
+        }
       } else if (data.moveType === 'circular') {
         if (!data.angle) data.angle = 0;
-        data.angle += data.speed * 0.016;
+        data.angle += data.speed * 0.0002;
+        const prevX = mplat.x;
+        const prevY = mplat.y;
         mplat.x = data.startX + Math.cos(data.angle) * data.range;
         mplat.y = data.startY + Math.sin(data.angle) * data.range;
+        if (isOnPlatform && this.player.body) {
+          this.player.setX(this.player.x + (mplat.x - prevX));
+          this.player.setY(this.player.y + (mplat.y - prevY));
+          (this.player.body as any).setVelocityX((mplat.x - prevX) * 60);
+          (this.player.body as any).setVelocityY((mplat.y - prevY) * 60);
+        }
       }
       mplat.body.updateFromGameObject();
     });
@@ -602,8 +628,9 @@ export class GameScene extends Phaser.Scene {
       });
     }
     
-    // Safety Threshold for death
-    if (this.player.y > GAME_HEIGHT - 100) this.die();
+    // Safety Threshold for death - player dies when falling out of level bounds
+    const levelHeight = this.currentLevelData?.height || GAME_HEIGHT;
+    if (this.player.y > levelHeight + 100) this.die();
   }
 
   private restartLevel() {

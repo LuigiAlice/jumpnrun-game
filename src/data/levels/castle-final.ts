@@ -2,7 +2,7 @@
 // Final castle fortress with ornate decorations and challenging boss encounters
 // Long horizontal side-scrolling structure with castle, brick, and metal platforms
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 export const CASTLE_FINAL_LEVELS: LevelData[] = [
     {
@@ -153,6 +153,14 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 510 },
         goal: { x: 20000 - 500, y: 558 },
         timeBonus: 150,
+        movingPlatforms: (() => {
+            const S = 0.625;
+            return [
+                createMovingPlat(2750 * S, 420, 120, 24, 'platform_medium', 'horizontal', 180, 20),
+                createMovingPlat(5800 * S, 400, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+                createMovingPlat(12000 * S, 420, 120, 24, 'platform_medium', 'vertical', 160, 18),
+            ];
+        })(),
     },
     {
         id: 86, name: "Throne Room", width: 20000, height: 660, biome: 'castle-final',
@@ -643,6 +651,14 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 550 },
         goal: { x: 19980 - 500, y: 568 },
         timeBonus: 210,
+        movingPlatforms: (() => {
+            const S = 0.444;
+            return [
+                createMovingPlat(6200 * S, 380, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(13000 * S, 360, 120, 24, 'platform_medium', 'vertical', 180, 18),
+                createMovingPlat(28000 * S, 400, 120, 24, 'platform_medium', 'horizontal', 220, 22),
+            ];
+        })(),
     },
     {
         id: 89, name: "Final Flag", width: 20016, height: 660, biome: 'castle-final',
@@ -965,5 +981,12 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 540 },
         goal: { x: 20000 - 500, y: 558 },
         timeBonus: 220,
+        movingPlatforms: (() => {
+            const S = 0.4;
+            return [
+                createMovingPlat(7000 * S, 480, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(16000 * S, 420, 120, 24, 'platform_medium', 'vertical', 160, 18),
+            ];
+        })(),
     },
 ];

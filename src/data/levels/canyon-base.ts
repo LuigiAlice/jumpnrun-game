@@ -1,4 +1,4 @@
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat } from './helpers';
 
 const canyonGroundSection = (S: number, startX: number, baseY: number, width: number): any[] => {
   const plats = [];
@@ -93,6 +93,10 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(createPlat(30600 * S, 150, 4000 * S, 40, 'stone'));
       return plats;
     })(),
+    movingPlatforms: [
+      createMovingPlat(5400 * 0.556, 300, 150, 24, 'platform_medium', 'horizontal', 600, 20),
+      createMovingPlat(10200 * 0.556, 280, 150, 24, 'platform_medium', 'vertical', 200, 20),
+    ],
     coins: (() => {
       const S = 0.556;
       const coins: any[] = [];

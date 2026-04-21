@@ -1,7 +1,7 @@
 // Ruins World - 6 Levels (IDs 67-72) - Long Horizontal Side-Scrolling Structure
 // Ancient temple ruins biome with stone platforms, brick walls, and overgrown decorations
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 const gapWithPlatforms = (S: number, startX: number, baseY: number, gapWidth: number, platformCount: number): any[] => {
   const plats = [];
@@ -117,6 +117,10 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 500 },
     goal: { x: 18750 - 500, y: 508 },
+    movingPlatforms: [
+      createMovingPlat(2200 * 0.625, 500, 100, 24, 'platform_medium', 'horizontal', 200, 22),
+      createMovingPlat(10000 * 0.625, 350, 100, 24, 'platform_medium', 'vertical', 180, 20),
+    ],
   },
   {
     id: 68, name: "Pillar Passage", width: 18904, height: 620, biome: 'ruins',
@@ -279,6 +283,10 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 550 },
     goal: { x: 19000 - 500, y: 558 },
+    movingPlatforms: [
+      createMovingPlat(11750 * 0.5, 350, 100, 24, 'platform_medium', 'vertical', 200, 22),
+      createMovingPlat(27500 * 0.5, 400, 100, 24, 'platform_medium', 'horizontal', 250, 20),
+    ],
   },
   {
     id: 70, name: "Temple Summit", width: 19110, height: 680, biome: 'ruins',
@@ -448,6 +456,9 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 600 },
     goal: { x: 19182 - 500, y: 608 },
+    movingPlatforms: [
+      createMovingPlat(33000 * 0.417, 380, 100, 24, 'platform_medium', 'vertical', 200, 20),
+    ],
   },
   {
     id: 72, name: "Throne of the Ancients", width: 20000, height: 700, biome: 'ruins',

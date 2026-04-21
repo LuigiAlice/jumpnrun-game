@@ -1,7 +1,7 @@
 // Beach/Island World - 6 Side-Scrolling Levels (IDs 43-48)
 // Tropical paradise with sandy beaches, boardwalks, and ocean views
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 const gapWithPlatforms = (S: number, startX: number, baseY: number, gapWidth: number, platformCount: number): any[] => {
   const plats = [];
@@ -194,6 +194,13 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 34300, 600, 450, 3));
       plats.push(createPlat(35100 * S, 600, 900 * S, 40, 'sand'));
       return plats;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.556;
+      return [
+        createMovingPlat(11300 * S, 520, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+        createMovingPlat(29400 * S, 520, 120, 24, 'platform_medium', 'horizontal', 250, 20),
+      ];
     })(),
     coins: (() => {
       const S = 0.556;
@@ -424,6 +431,12 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(createPlat(45200 * S, 600, 800 * S, 40, 'sand'));
       return plats;
     })(),
+    movingPlatforms: (() => {
+      const S = 0.444;
+      return [
+        createMovingPlat(11100 * S, 280, 120, 24, 'platform_medium', 'vertical', 180, 22),
+      ];
+    })(),
     coins: (() => {
       const S = 0.444;
       const coins: any[] = [];
@@ -645,6 +658,13 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(...pipeSection(S, 42300, 600, 8));
       plats.push(createPlat(46500 * S, 600, 3500 * S, 40, 'sand'));
       return plats;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.4;
+      return [
+        createMovingPlat(14800 * S, 280, 120, 24, 'platform_medium', 'vertical', 200, 20),
+        createMovingPlat(34500 * S, 280, 120, 24, 'platform_medium', 'vertical', 200, 20),
+      ];
     })(),
     coins: (() => {
       const S = 0.4;

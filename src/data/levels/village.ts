@@ -1,4 +1,4 @@
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 export const VILLAGE_LEVELS: LevelData[] = [
     {
@@ -105,6 +105,15 @@ export const VILLAGE_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 600 },
         goal: { x: 19500, y: 270 },
         timeBonus: 55,
+        movingPlatforms: (() => {
+            const S = 2.0;
+            return [
+                createMovingPlat(2700 * S, 500, 100 * S, 20, 'wood', 'horizontal', 180, 20),
+                createMovingPlat(4400, 480, 120, 20, 'wood', 'horizontal', 250, 18),
+                createMovingPlat(9500, 400, 120, 20, 'wood', 'horizontal', 300, 18),
+                createMovingPlat(5200 * S, 350, 80 * S, 20, 'wood', 'vertical', 120, 18),
+            ];
+        })(),
     },
     {
         id: 38, name: "Market Road", width: 20020, height: 800, biome: 'village',
@@ -492,6 +501,13 @@ export const VILLAGE_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 750 },
         goal: { x: 19152, y: 480 },
         timeBonus: 75,
+        movingPlatforms: (() => {
+            const S = 1.48;
+            return [
+                createMovingPlat(3950 * S, 550, 100 * S, 20, 'wood', 'vertical', 150, 22),
+                createMovingPlat(5700 * S, 380, 80 * S, 20, 'wood', 'horizontal', 160, 20),
+            ];
+        })(),
     },
     {
         id: 41, name: "Town Square", width: 20010, height: 1050, biome: 'village',
@@ -803,5 +819,12 @@ export const VILLAGE_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 900 },
         goal: { x: 18000, y: 360 },
         timeBonus: 90,
+        movingPlatforms: (() => {
+            const S = 1.25;
+            return [
+                createMovingPlat(5900 * S, 480, 80 * S, 20, 'wood', 'vertical', 140, 20),
+                createMovingPlat(8000 * S, 500, 100 * S, 20, 'wood', 'horizontal', 180, 22),
+            ];
+        })(),
     },
 ];

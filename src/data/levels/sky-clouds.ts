@@ -1,6 +1,6 @@
 // Sky Clouds World - 6 Levels (25-30) - Long horizontal side-scrolling structure
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 export const SKY_CLOUDS_LEVELS: LevelData[] = [
     {
@@ -91,6 +91,10 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createEnemy(5500 * S, 220, 'spiny'), createEnemy(7000 * S, 160, 'ufo'),
             ];
         })(),
+        movingPlatforms: [
+            createMovingPlat(6750, 320, 150, 24, 'platform_medium', 'vertical', 180, 20),
+            createMovingPlat(4800, 360, 150, 24, 'platform_medium', 'horizontal', 250, 18),
+        ],
         decorations: (() => {
             const S = 0.625;
             return [
@@ -253,6 +257,10 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createEnemy(6800 * S, 220, 'goomba'), createEnemy(8200 * S, 200, 'ufo'),
             ];
         })(),
+        movingPlatforms: [
+            createMovingPlat(3725, 380, 150, 24, 'platform_medium', 'horizontal', 120, 20),
+            createMovingPlat(3850, 360, 150, 24, 'platform_medium', 'vertical', 120, 18),
+        ],
         decorations: (() => {
             const S = 0.5;
             return [
@@ -438,6 +446,11 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createEnemy(8000 * S, 240, 'goomba'), createEnemy(9600 * S, 220, 'ufo'),
             ];
         })(),
+        movingPlatforms: [
+            createMovingPlat(3570, 390, 150, 24, 'platform_medium', 'horizontal', 130, 20),
+            createMovingPlat(3830, 350, 150, 24, 'platform_medium', 'vertical', 120, 18),
+            createMovingPlat(4350, 290, 150, 24, 'platform_medium', 'horizontal', 130, 20),
+        ],
         decorations: (() => {
             const S = 0.4;
             return [

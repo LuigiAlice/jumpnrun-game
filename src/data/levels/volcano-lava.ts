@@ -1,7 +1,7 @@
 // Volcano Lava World - 6 Levels (55-60)
 // Long horizontal side-scrolling levels with lava hazards
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat } from './helpers';
 
 export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     {
@@ -577,6 +577,9 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         playerStart: { x: 100, y: 520 },
         goal: { x: 18726, y: 520 },
         timeBonus: 220,
+        movingPlatforms: [
+            createMovingPlat(6500, 320, 120, 24, 'platform_medium', 'circular', 130, 15),
+        ],
     },
     {
         id: 59,

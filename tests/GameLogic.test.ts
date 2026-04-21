@@ -222,3 +222,95 @@ describe('DEFAULT_PHYSICS constants', () => {
         expect(DEFAULT_PHYSICS.MAX_FALL_DOWN).toBe(1000);
     });
 });
+
+describe('Moving Platform Solvability', () => {
+    it('should solve level with large gap using horizontal moving platform', () => {
+        const platforms = [
+            createPlat(200, 500, 200, 32, 'brick'),
+            createPlat(1400, 500, 200, 32, 'brick'),
+        ];
+        const movingPlatforms = [
+            createMovingPlat(800, 480, 100, 24, 'platform_medium', 'horizontal', 300, 1.5),
+        ];
+
+        const physics = new Physics(platforms, 1600, 600, movingPlatforms);
+        const solvable = physics.isSolvable(200, 450, 1400, 450);
+
+        expect(solvable).toBe(true);
+    });
+
+    it('should solve level with vertical moving platform', () => {
+        const platforms = [
+            createPlat(200, 500, 200, 32, 'brick'),
+            createPlat(400, 200, 200, 32, 'brick'),
+        ];
+        const movingPlatforms = [
+            createMovingPlat(300, 400, 100, 24, 'platform_medium', 'vertical', 150, 1.0),
+        ];
+
+        const physics = new Physics(platforms, 600, 600, movingPlatforms);
+        const solvable = physics.isSolvable(200, 450, 400, 150);
+
+        expect(solvable).toBe(true);
+    });
+
+    it('should NOT solve level without moving platform when gap is too large', () => {
+        const platforms = [
+            createPlat(200, 500, 200, 32, 'brick'),
+            createPlat(1400, 500, 200, 32, 'brick'),
+        ];
+
+        const physics = new Physics(platforms, 1600, 600, []);
+        const solvable = physics.isSolvable(200, 450, 1400, 450);
+
+        expect(solvable).toBe(false);
+    });
+
+    it('should solve level with circular moving platform', () => {
+        const platforms = [
+            createPlat(200, 500, 200, 32, 'brick'),
+            createPlat(1000, 400, 200, 32, 'brick'),
+        ];
+        const movingPlatforms = [
+            createMovingPlat(600, 450, 100, 24, 'platform_medium', 'circular', 200, 1.0),
+        ];
+
+        const physics = new Physics(platforms, 1200, 600, movingPlatforms);
+        const solvable = physics.isSolvable(200, 450, 1000, 350);
+
+        expect(solvable).toBe(true);
+    });
+
+    it('should allow reaching higher platform via moving platform', () => {
+        const platforms = [
+            createPlat(200, 600, 200, 32, 'brick'),
+            createPlat(600, 300, 200, 32, 'brick'),
+        ];
+        const movingPlatforms = [
+            createMovingPlat(400, 500, 100, 24, 'platform_easy', 'vertical', 120, 1.2),
+        ];
+
+        const physics = new Physics(platforms, 800, 700, movingPlatforms);
+        const reachable = physics.getReachablePlatforms(200, 550);
+
+        expect(reachable.length).toBeGreaterThan(1);
+        expect(reachable.some(p => Math.abs(p.y - 300) < 50)).toBe(true);
+    });
+
+    it('should handle multiple moving platforms', () => {
+        const platforms = [
+            createPlat(150, 500, 150, 32, 'brick'),
+            createPlat(650, 500, 150, 32, 'brick'),
+            createPlat(1150, 500, 150, 32, 'brick'),
+        ];
+        const movingPlatforms = [
+            createMovingPlat(400, 480, 100, 24, 'platform_easy', 'horizontal', 120, 1.5),
+            createMovingPlat(900, 480, 100, 24, 'platform_easy', 'horizontal', 120, 1.5),
+        ];
+
+        const physics = new Physics(platforms, 1300, 600, movingPlatforms);
+        const solvable = physics.isSolvable(150, 450, 1150, 450);
+
+        expect(solvable).toBe(true);
+    });
+});

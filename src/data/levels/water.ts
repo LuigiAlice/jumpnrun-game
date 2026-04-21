@@ -1,4 +1,4 @@
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 export const WATER_LEVELS: LevelData[] = [
     {
@@ -143,6 +143,13 @@ export const WATER_LEVELS: LevelData[] = [
                 createDeco(4200 * S, 280, 'seaweed'), createDeco(5000 * S, 240, 'bubble'),
             ];
         })(),
+        movingPlatforms: (() => {
+            const S = 0.67;
+            return [
+                createMovingPlat(4500 * S, 400, 100, 24, 'water', 'horizontal', 200, 20),
+                createMovingPlat(6400 * S, 380, 100, 24, 'water', 'horizontal', 200, 20),
+            ];
+        })(),
         playerStart: { x: 150, y: 440 },
         goal: { x: 19430, y: 440 },
         timeBonus: 120,
@@ -214,6 +221,12 @@ export const WATER_LEVELS: LevelData[] = [
                 createDeco(4800 * S, 280, 'seaweed'), createDeco(5600 * S, 240, 'bubble'),
             ];
         })(),
+        movingPlatforms: (() => {
+            const S = 0.57;
+            return [
+                createMovingPlat(3800 * S, 400, 100, 24, 'water', 'horizontal', 180, 22),
+            ];
+        })(),
         playerStart: { x: 150, y: 480 },
         goal: { x: 3676, y: 388 },
         timeBonus: 140,
@@ -265,6 +278,12 @@ export const WATER_LEVELS: LevelData[] = [
                 createDeco(400 * S, 460, 'seaweed'), createDeco(1000 * S, 400, 'bubble'),
                 createDeco(2000 * S, 340, 'coral'), createDeco(3000 * S, 280, 'shell'),
                 createDeco(4000 * S, 280, 'seaweed'), createDeco(5000 * S, 340, 'bubble'),
+            ];
+        })(),
+        movingPlatforms: (() => {
+            const S = 0.5;
+            return [
+                createMovingPlat(7200 * S, 420, 100, 24, 'water', 'horizontal', 250, 22),
             ];
         })(),
         playerStart: { x: 150, y: 450 },

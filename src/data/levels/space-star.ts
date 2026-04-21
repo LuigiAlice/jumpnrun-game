@@ -1,7 +1,7 @@
 // Space Star World - 6 Levels (IDs 79-84)
 // Space station biome with floating enemies and no-gravity sections
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 export const SPACE_STAR_LEVELS: LevelData[] = [
     {
@@ -130,6 +130,11 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 490 },
         goal: { x: 20000 - 500, y: 558, points: 1000, difficulty: 'easy' },
         timeBonus: 120,
+        movingPlatforms: (() => {
+            return [
+                createMovingPlat(4500, 480, 120, 24, 'platform_medium', 'horizontal', 400, 20),
+            ];
+        })(),
     },
     {
         id: 80,
@@ -268,6 +273,12 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 510 },
         goal: { x: 20000 - 500, y: 578, points: 1500, difficulty: 'medium' },
         timeBonus: 150,
+        movingPlatforms: (() => {
+            return [
+                createMovingPlat(5500, 450, 120, 24, 'platform_medium', 'horizontal', 350, 22),
+                createMovingPlat(9000, 350, 100, 24, 'platform_medium', 'vertical', 200, 20),
+            ];
+        })(),
     },
     {
         id: 81,
@@ -827,5 +838,12 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 530 },
         goal: { x: 20000 - 500, y: 598, points: 5000, difficulty: 'hard' },
         timeBonus: 220,
+        movingPlatforms: (() => {
+            return [
+                createMovingPlat(5400, 450, 120, 24, 'platform_medium', 'horizontal', 400, 22),
+                createMovingPlat(9500, 350, 100, 24, 'platform_medium', 'vertical', 200, 20),
+                createMovingPlat(14000, 400, 100, 24, 'platform_medium', 'horizontal', 350, 22),
+            ];
+        })(),
     },
 ];

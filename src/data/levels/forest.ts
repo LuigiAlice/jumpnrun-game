@@ -1,7 +1,7 @@
 // Forest World - 6 Levels (31-36) - Long Horizontal Side-Scrolling Structure
 // 70-80% ground coverage with wood platforms, vertical sections with floating platforms
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 const gapWithPlatforms = (S: number, startX: number, baseY: number, gapWidth: number, platformCount: number): any[] => {
   const plats = [];
@@ -124,6 +124,12 @@ export const FOREST_LEVELS: LevelData[] = [
         decos.push(createDeco(x * S, 510, type));
       }
       return decos;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.625;
+      return [
+        createMovingPlat(4600 * S, 500, 150, 24, 'wood', 'horizontal', 200, 20),
+      ];
     })(),
     playerStart: { x: 150, y: 500 },
     goal: { x: 18250, y: 508 },
@@ -311,6 +317,12 @@ export const FOREST_LEVELS: LevelData[] = [
         decos.push(createDeco(x * S, 610, type));
       }
       return decos;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.5;
+      return [
+        createMovingPlat(8000 * S, 550, 150, 24, 'wood', 'horizontal', 250, 20),
+      ];
     })(),
     playerStart: { x: 150, y: 600 },
     goal: { x: 18500, y: 608 },
@@ -620,6 +632,12 @@ export const FOREST_LEVELS: LevelData[] = [
         decos.push(createDeco(x * S, 560, type));
       }
       return decos;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.4;
+      return [
+        createMovingPlat(13200 * S, 450, 120, 24, 'wood', 'vertical', 150, 20),
+      ];
     })(),
     playerStart: { x: 150, y: 550 },
     goal: { x: 19500, y: 558 },

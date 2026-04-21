@@ -1,7 +1,7 @@
 // Haunted Mansion World - 6 Levels (61-66) - Long Horizontal Side-Scrolling Structure
 // Width: 30000-50000px, Height: 600-700px, 70-80% ground / 20-30% vertical
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 const ghostPlatforms = (S: number, startX: number, baseY: number, count: number): any[] => {
   const plats = [];
@@ -84,6 +84,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 510 },
     goal: { x: 18000, y: 498 },
     timeBonus: 165,
+    movingPlatforms: [
+      createMovingPlat(5700, 480, 120, 24, 'platform_medium', 'horizontal', 250, 20),
+      createMovingPlat(12500, 400, 120, 24, 'platform_medium', 'vertical', 200, 22),
+    ],
   },
   {
     id: 62, name: "Phantom Foyer", width: 19460, height: 650, biome: 'haunted-mansion',
@@ -182,6 +186,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 530 },
     goal: { x: 19000, y: 578 },
     timeBonus: 195,
+    movingPlatforms: [
+      createMovingPlat(6800, 520, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+      createMovingPlat(16000, 450, 120, 24, 'platform_medium', 'vertical', 200, 20),
+    ],
   },
   {
     id: 64, name: "Curse Corridor", width: 19536, height: 700, biome: 'haunted-mansion',
@@ -329,5 +337,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 19500, y: 598 },
     timeBonus: 220,
+    movingPlatforms: [
+      createMovingPlat(19600, 520, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+      createMovingPlat(15000, 450, 120, 24, 'platform_medium', 'vertical', 200, 20),
+    ],
   },
 ];

@@ -1,7 +1,7 @@
 // Factory World - 6 Levels (IDs 49-54)
 // Long horizontal side-scrolling factory biome with metal platforms, pipes, and industrial decorations
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
 
 const createFactorySection = (startX: number, groundY: number, sectionLength: number, difficulty: number) => {
     const plats: ReturnType<typeof createPlat>[] = [];
@@ -214,6 +214,13 @@ export const FACTORY_LEVELS: LevelData[] = [
                 createDeco(6800 * S, 560, 'gear'), createDeco(8700 * S, 560, 'crane'), createDeco(10700 * S, 560, 'pipe'),
                 createDeco(12800 * S, 560, 'smoke'), createDeco(14500 * S, 560, 'gear'), createDeco(16300 * S, 560, 'conveyor'),
                 createDeco(18300 * S, 560, 'crane'), createDeco(19800 * S, 560, 'smoke'), createDeco(22000 * S, 560, 'gear'),
+            ];
+        })(),
+        movingPlatforms: (() => {
+            const S = 0.625;
+            return [
+                createMovingPlat(3600 * S, 480, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(8600 * S, 520, 120, 24, 'platform_medium', 'horizontal', 250, 22),
             ];
         })(),
         playerStart: { x: 150, y: 550 },
@@ -558,6 +565,13 @@ export const FACTORY_LEVELS: LevelData[] = [
                 createDeco(9300 * S, 610, 'crane'), createDeco(11800 * S, 610, 'smoke'), createDeco(14000 * S, 610, 'pipe'),
                 createDeco(14800 * S, 610, 'gear'), createDeco(16600 * S, 610, 'conveyor'), createDeco(19000 * S, 610, 'crane'),
                 createDeco(21100 * S, 610, 'smoke'), createDeco(23600 * S, 610, 'gear'),
+            ];
+        })(),
+        movingPlatforms: (() => {
+            const S = 0.5;
+            return [
+                createMovingPlat(3800 * S, 480, 120, 24, 'platform_medium', 'vertical', 180, 20),
+                createMovingPlat(8500 * S, 450, 120, 24, 'platform_medium', 'horizontal', 200, 22),
             ];
         })(),
         playerStart: { x: 150, y: 600 },
@@ -1101,6 +1115,14 @@ export const FACTORY_LEVELS: LevelData[] = [
                 createDeco(12700 * S, 610, 'crane'), createDeco(15500 * S, 610, 'smoke'), createDeco(18300 * S, 610, 'pipe'),
                 createDeco(19400 * S, 610, 'gear'), createDeco(21800 * S, 610, 'conveyor'), createDeco(24900 * S, 610, 'crane'),
                 createDeco(27400 * S, 610, 'smoke'), createDeco(30700 * S, 610, 'gear'),
+            ];
+        })(),
+        movingPlatforms: (() => {
+            const S = 0.4;
+            return [
+                createMovingPlat(5500 * S, 500, 120, 24, 'platform_medium', 'horizontal', 180, 20),
+                createMovingPlat(8200 * S, 400, 120, 24, 'platform_medium', 'vertical', 160, 22),
+                createMovingPlat(25600 * S, 450, 120, 24, 'platform_medium', 'horizontal', 200, 20),
             ];
         })(),
         playerStart: { x: 150, y: 600 },
