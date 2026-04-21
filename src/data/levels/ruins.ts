@@ -165,10 +165,10 @@ export const RUINS_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.556;
       return [
-        createQB(1000 * S, 500, 'mushroom'), createQB(2300 * S, 420, 'flower'), createQB(3400 * S, 500, 'mushroom'),
+        createQB(1000 * S, 500, 'mushroom'), createQB(2300 * S, 420, 'flower'), createQB(3400 * S, 460, 'mushroom'),
         createQB(4600 * S, 500, 'star'), createQB(6200 * S, 500, 'flower'), createQB(8500 * S, 500, 'mushroom'),
         createQB(10700 * S, 170, 'star'), createQB(12200 * S, 500, 'mushroom'), createQB(13400 * S, 500, 'flower'),
-        createQB(15100 * S, 500, 'mushroom'), createQB(16500 * S, 500, 'star'), createQB(18300 * S, 500, 'flower'),
+        createQB(15100 * S, 490, 'mushroom'), createQB(16500 * S, 490, 'star'), createQB(18300 * S, 500, 'flower'),
       ];
     })(),
     enemies: (() => {
@@ -329,8 +329,8 @@ export const RUINS_LEVELS: LevelData[] = [
       return [
         createQB(1400 * S, 560, 'mushroom'), createQB(3100 * S, 480, 'flower'), createQB(4600 * S, 560, 'mushroom'),
         createQB(6000 * S, 560, 'star'), createQB(7700 * S, 560, 'flower'), createQB(10600 * S, 560, 'mushroom'),
-        createQB(13300 * S, 230, 'star'), createQB(15000 * S, 560, 'mushroom'), createQB(16300 * S, 560, 'flower'),
-        createQB(17900 * S, 560, 'mushroom'), createQB(19400 * S, 560, 'star'), createQB(21400 * S, 560, 'flower'),
+        createQB(13300 * S, 230, 'star'), createQB(15000 * S, 500, 'mushroom'), createQB(16300 * S, 500, 'flower'),
+        createQB(17900 * S, 500, 'mushroom'), createQB(19400 * S, 500, 'star'), createQB(21400 * S, 520, 'flower'),
       ];
     })(),
     enemies: (() => {

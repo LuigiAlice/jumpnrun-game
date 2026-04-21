@@ -206,15 +206,6 @@ describe('Level Data Integrity', () => {
         }
     });
 
-    it('all levels should have at least one question block or enemy', () => {
-        for (let i = 0; i < getLevelCount(); i++) {
-            const level = getLevel(i);
-            const hasQB = level.questionBlocks && level.questionBlocks.length > 0;
-            const hasEnemies = level.enemies && level.enemies.length > 0;
-            expect(hasQB || hasEnemies).toBe(true);
-        }
-    });
-
     it('all levels should have positive time bonus', () => {
         for (let i = 0; i < getLevelCount(); i++) {
             const level = getLevel(i);

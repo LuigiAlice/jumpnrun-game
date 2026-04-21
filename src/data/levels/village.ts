@@ -77,8 +77,8 @@ export const VILLAGE_LEVELS: LevelData[] = [
         questionBlocks: (() => {
             const S = 2.0;
             return [
-                createQB(1700 * S, 300, 'mushroom'),
-                createQB(2450 * S, 250, 'coin'),
+                createQB(1700 * S, 120, 'mushroom'),
+                createQB(2450 * S, 100, 'coin'),
                 createQB(4200 * S, 330, 'flower'),
                 createQB(6500 * S, 300, 'coin'),
             ];

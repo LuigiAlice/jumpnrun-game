@@ -1,6 +1,6 @@
 export const DEFAULT_PHYSICS = {
     TILE_SIZE: 32,
-    MAX_JUMP_DISTANCE: 800,  // Maintains compatibility with existing level design
+    MAX_JUMP_DISTANCE: 800,
     MAX_JUMP_UP: 350,
     MAX_FALL_DOWN: 1000
 };
@@ -48,13 +48,9 @@ export class Physics {
         return true;
     }
 
-    public canReach(from: Platform, to: Platform): boolean {
-        return this.canJumpTo(from, to);
-    }
-
     private canJumpToPoint(from: Platform, toX: number, toY: number): boolean {
-        const fromLeft = from.x - from.w / 2;
         const fromRight = from.x + from.w / 2;
+        const fromLeft = from.x - from.w / 2;
         const fromTop = from.y - from.h / 2;
 
         const horizontalGap = Math.max(toX - fromRight, fromLeft - toX, 0);
@@ -99,34 +95,6 @@ export class Physics {
         return closestPlatform;
     }
 
-    private findStartingPlatform(x: number, y: number): Platform | null {
-        const platformBelow = this.findPlatformUnderPoint(x, y);
-        if (platformBelow) return platformBelow;
-
-        let closestPlatform: Platform | null = null;
-        let closestDist = Infinity;
-
-        for (const p of this.platforms) {
-            const pLeft = p.x - p.w / 2;
-            const pRight = p.x + p.w / 2;
-            const pTop = p.y - p.h / 2;
-
-            if (x >= pLeft - 50 && x <= pRight + 50) {
-                const dist = Math.abs(pTop - y);
-                if (dist < closestDist) {
-                    closestDist = dist;
-                    closestPlatform = p;
-                }
-            }
-        }
-
-        return closestPlatform;
-    }
-
-    private platformEquals(a: Platform, b: Platform): boolean {
-        return a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
-    }
-
     public isSolvable(playerStartX: number, playerStartY: number, goalX: number, goalY: number = 0): boolean {
         if (this.platforms.length === 0) return false;
 
@@ -159,6 +127,38 @@ export class Physics {
         }
 
         return false;
+    }
+
+    public getReachablePlatforms(playerStartX: number, playerStartY: number): Platform[] {
+        if (this.platforms.length === 0) return [];
+
+        let startPlatform = this.findPlatformUnderPoint(playerStartX, playerStartY);
+        if (!startPlatform) return [];
+
+        const queue: Platform[] = [startPlatform];
+        const visited: Set<string> = new Set([`${startPlatform.x},${startPlatform.y}`]);
+        const reachable: Platform[] = [startPlatform];
+
+        while (queue.length > 0) {
+            const current = queue.shift()!;
+
+            for (const next of this.platforms) {
+                const key = `${next.x},${next.y}`;
+                if (visited.has(key)) continue;
+
+                if (this.canJumpTo(current, next)) {
+                    visited.add(key);
+                    reachable.push(next);
+                    queue.push(next);
+                }
+            }
+        }
+
+        return reachable;
+    }
+
+    public canReach(from: Platform, to: Platform): boolean {
+        return this.canJumpTo(from, to);
     }
 
     public findPath(playerStartX: number, playerStartY: number, goalX: number, goalY: number = 0): Platform[] | null {
@@ -197,38 +197,6 @@ export class Physics {
         return null;
     }
 
-    public getReachablePlatforms(playerStartX: number, playerStartY: number): Platform[] {
-        if (this.platforms.length === 0) return [];
-
-        let startPlatform = this.findPlatformUnderPoint(playerStartX, playerStartY);
-        if (!startPlatform) {
-            const lowestPlatform = [...this.platforms].sort((a, b) => b.y - a.y)[0];
-            if (!lowestPlatform) return [];
-            startPlatform = lowestPlatform;
-        }
-
-        const queue: Platform[] = [startPlatform];
-        const visited: Set<string> = new Set([`${startPlatform.x},${startPlatform.y}`]);
-        const reachable: Platform[] = [startPlatform];
-
-        while (queue.length > 0) {
-            const current = queue.shift()!;
-
-            for (const next of this.platforms) {
-                const key = `${next.x},${next.y}`;
-                if (visited.has(key)) continue;
-
-                if (this.canJumpTo(current, next)) {
-                    visited.add(key);
-                    reachable.push(next);
-                    queue.push(next);
-                }
-            }
-        }
-
-        return reachable;
-    }
-
     public isFullyTraversable(playerStartX: number, playerStartY: number): { traversable: boolean; unreachablePlatforms: Platform[] } {
         const reachable = this.getReachablePlatforms(playerStartX, playerStartY);
         const reachableKeys = new Set(reachable.map(p => `${p.x},${p.y}`));
@@ -242,12 +210,12 @@ export class Physics {
     public isFullyTraversableToGoal(playerStartX: number, playerStartY: number, goalX: number): { traversable: boolean; unreachablePlatforms: Platform[] } {
         const reachable = this.getReachablePlatforms(playerStartX, playerStartY);
         const reachableKeys = new Set(reachable.map(p => `${p.x},${p.y}`));
-        
+
         const unreachable = this.platforms.filter(p => {
             if (p.x > goalX) return false;
             return !reachableKeys.has(`${p.x},${p.y}`);
         });
-        
+
         return {
             traversable: unreachable.length === 0,
             unreachablePlatforms: unreachable

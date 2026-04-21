@@ -452,8 +452,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.444;
       return [
-        createQB(1000 * S, 530, 'mushroom'), createQB(2000 * S, 530, 'coin'), createQB(3000 * S, 530, 'mushroom'),
-        createQB(4000 * S, 530, 'flower'), createQB(5600 * S, 530, 'star'), createQB(8100 * S, 530, 'mushroom'),
+        createQB(1000 * S, 530, 'mushroom'), createQB(2000 * S, 530, 'coin'), createQB(3000 * S, 574, 'mushroom'),
+        createQB(4000 * S, 530, 'flower'), createQB(5600 * S, 549, 'star'), createQB(8100 * S, 530, 'mushroom'),
         createQB(9600 * S, 530, 'coin'), createQB(11200 * S, 210, 'flower'), createQB(12600 * S, 530, 'mushroom'),
         createQB(13800 * S, 530, 'star'), createQB(14800 * S, 530, 'mushroom'), createQB(16200 * S, 530, 'flower'),
       ];
@@ -564,7 +564,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.417;
       return [
-        createQB(1200 * S, 530, 'mushroom'), createQB(2400 * S, 530, 'coin'), createQB(3600 * S, 530, 'mushroom'),
+        createQB(1200 * S, 530, 'mushroom'), createQB(2400 * S, 530, 'coin'), createQB(3600 * S, 574, 'mushroom'),
         createQB(4600 * S, 530, 'flower'), createQB(6600 * S, 530, 'star'), createQB(9200 * S, 530, 'mushroom'),
         createQB(11000 * S, 530, 'coin'), createQB(12700 * S, 200, 'flower'), createQB(14100 * S, 530, 'mushroom'),
         createQB(15000 * S, 530, 'star'), createQB(15800 * S, 530, 'mushroom'), createQB(16600 * S, 530, 'flower'),
@@ -671,7 +671,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.4;
       return [
-        createQB(1500 * S, 530, 'mushroom'), createQB(2800 * S, 530, 'coin'), createQB(4200 * S, 530, 'mushroom'),
+        createQB(1500 * S, 530, 'mushroom'), createQB(2800 * S, 530, 'coin'), createQB(4200 * S, 574, 'mushroom'),
         createQB(5400 * S, 530, 'flower'), createQB(7600 * S, 530, 'star'), createQB(10000 * S, 530, 'mushroom'),
         createQB(12000 * S, 530, 'coin'), createQB(13500 * S, 530, 'mushroom'), createQB(14900 * S, 530, 'mushroom'),
         createQB(15200 * S, 130, 'flower'), createQB(16600 * S, 530, 'star'), createQB(17200 * S, 530, 'mushroom'),

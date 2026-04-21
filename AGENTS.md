@@ -1,6 +1,10 @@
 # AGENTS.md - Jump & Run Game
 
-Siehe auch die Datei [SPEC.md](SPEC.md) und [MECHANICS.md](MECHANICS.md)
+Beachte unbedingt auch die Datei [SPEC.md](SPEC.md) und [MECHANICS.md](MECHANICS.md)
+Aktualisiere selbständig dieses Dokument und alle anderen, falls sich Anforderungen ändern vom Programmierer.
+
+Teile deine Arbeit auf mehrere Subagenten auf.
+
 
 ## Tech Stack
 - TypeScript + Vite + Phaser 3 + Vitest

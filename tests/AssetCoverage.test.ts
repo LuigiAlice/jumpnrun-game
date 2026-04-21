@@ -20,7 +20,7 @@ const REQUIRED_DECORATION_TEXTURES = [
   'canyon-rock', 'formation', 'eagle', 'banner', 'boss-flag', 'cactus', 'rock',
   'skull', 'pyramid', 'bubble', 'cobweb', 'conveyor', 'coral', 'crane', 'ember',
   'fire', 'gear', 'lava-rock', 'palm', 'seagull', 'shell', 'smoke', 'tombstone',
-  'web', 'pillar', 'statue', 'moss', 'seaweed', 'snowflake',
+  'web', 'pillar', 'statue', 'moss', 'seaweed', 'snowflake', 'icicle',
   'star', 'mushroom', 'log', 'vine', 'pipe'
 ];
 

@@ -121,8 +121,8 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
         createQB(11400 * S, 280, 'coin'),
         createQB(14800 * S, 250, 'flower'),
         createQB(17800 * S, 280, 'star'),
-        createQB(20900 * S, 80, 'mushroom'),
-        createQB(25000 * S, 80, 'coin'),
+        createQB(20900 * S, 120, 'mushroom'),
+        createQB(25000 * S, 120, 'coin'),
       ];
     })(),
     enemies: (() => {
@@ -207,10 +207,10 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.526;
       return [
-        createQB(1800 * S, 530, 'mushroom'), createQB(3800 * S, 530, 'coin'), createQB(5600 * S, 480, 'flower'),
+        createQB(1800 * S, 514, 'mushroom'), createQB(3800 * S, 530, 'coin'), createQB(5600 * S, 420, 'flower'),
         createQB(7800 * S, 530, 'star'), createQB(10000 * S, 380, 'mushroom'), createQB(12200 * S, 320, 'coin'),
         createQB(15000 * S, 320, 'flower'), createQB(17500 * S, 310, 'star'), createQB(21000 * S, 310, 'mushroom'),
-        createQB(23200 * S, 120, 'coin'), createQB(26800 * S, 120, 'flower'),
+        createQB(23200 * S, 146, 'coin'), createQB(26800 * S, 550, 'flower'),
       ];
     })(),
     enemies: (() => {
@@ -296,7 +296,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.476;
       return [
-        createQB(2200 * S, 580, 'coin'), createQB(4500 * S, 580, 'mushroom'), createQB(6500 * S, 540, 'flower'),
+        createQB(2200 * S, 580, 'coin'), createQB(4500 * S, 580, 'mushroom'), createQB(6500 * S, 587, 'flower'),
         createQB(8800 * S, 580, 'star'), createQB(11500 * S, 420, 'mushroom'), createQB(13400 * S, 360, 'coin'),
         createQB(16200 * S, 360, 'flower'), createQB(20000 * S, 350, 'star'), createQB(23200 * S, 350, 'mushroom'),
         createQB(26600 * S, 140, 'coin'), createQB(29600 * S, 140, 'flower'), createQB(33600 * S, 140, 'star'),
