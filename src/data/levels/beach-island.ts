@@ -82,6 +82,13 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(createPlat(30800 * S, 550, 1200 * S, 40, 'sand'));
       return plats;
     })(),
+    movingPlatforms: (() => {
+      const S = 0.625;
+      return [
+        createMovingPlat(2800 * S, 470, 120, 24, 'platform_medium', 'horizontal', 180, 20),
+        createMovingPlat(16000 * S, 470, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+      ];
+    })(),
     coins: (() => {
       const S = 0.625;
       const coins: any[] = [];
@@ -313,6 +320,13 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 39400, 650, 500, 3));
       plats.push(createPlat(40200 * S, 650, 800 * S, 40, 'sand'));
       return plats;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.5;
+      return [
+        createMovingPlat(2400 * S, 570, 120, 24, 'platform_medium', 'horizontal', 200, 18),
+        createMovingPlat(13400 * S, 570, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+      ];
     })(),
     coins: (() => {
       const S = 0.5;
@@ -548,6 +562,13 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(...boardwalkSection(S, 46100, 600, 1000));
       plats.push(createPlat(47600 * S, 600, 1400 * S, 40, 'sand'));
       return plats;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.417;
+      return [
+        createMovingPlat(3550 * S, 520, 120, 24, 'platform_medium', 'horizontal', 180, 20),
+        createMovingPlat(25700 * S, 520, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+      ];
     })(),
     coins: (() => {
       const S = 0.417;

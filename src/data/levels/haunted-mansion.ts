@@ -137,6 +137,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 510 },
     goal: { x: 18000, y: 548 },
     timeBonus: 180,
+    movingPlatforms: [
+      createMovingPlat(10390, 490, 120, 24, 'platform_medium', 'horizontal', 250, 20),
+      createMovingPlat(22760, 420, 120, 24, 'platform_medium', 'vertical', 200, 18),
+    ],
   },
   {
     id: 63, name: "Spooky Stairs", width: 20000, height: 680, biome: 'haunted-mansion',
@@ -239,6 +243,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 19000, y: 598 },
     timeBonus: 210,
+    movingPlatforms: [
+      createMovingPlat(13290, 540, 120, 24, 'platform_medium', 'horizontal', 250, 22),
+      createMovingPlat(30560, 470, 120, 24, 'platform_medium', 'vertical', 200, 20),
+    ],
   },
   {
     id: 65, name: "Banshee Barracks", width: 20016, height: 650, biome: 'haunted-mansion',
@@ -288,6 +296,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 510 },
     goal: { x: 19500, y: 548 },
     timeBonus: 215,
+    movingPlatforms: [
+      createMovingPlat(14040, 490, 120, 24, 'platform_medium', 'horizontal', 250, 20),
+      createMovingPlat(33010, 420, 120, 24, 'platform_medium', 'vertical', 200, 18),
+    ],
   },
   {
     id: 66, name: "Crypt Keeper", width: 20000, height: 700, biome: 'haunted-mansion',

@@ -223,6 +223,13 @@ export const FOREST_LEVELS: LevelData[] = [
       }
       return decos;
     })(),
+    movingPlatforms: (() => {
+      const S = 0.556;
+      return [
+        createMovingPlat(2900 * S, 480, 120, 24, 'wood', 'horizontal', 250, 20),
+        createMovingPlat(20800 * S, 450, 120, 24, 'wood', 'vertical', 180, 22),
+      ];
+    })(),
     playerStart: { x: 150, y: 550 },
     goal: { x: 4247, y: 580 },
     timeBonus: 140,
@@ -421,6 +428,13 @@ export const FOREST_LEVELS: LevelData[] = [
       }
       return decos;
     })(),
+    movingPlatforms: (() => {
+      const S = 0.455;
+      return [
+        createMovingPlat(14600 * S, 500, 120, 24, 'wood', 'horizontal', 250, 20),
+        createMovingPlat(25400 * S, 450, 120, 24, 'wood', 'vertical', 180, 22),
+      ];
+    })(),
     playerStart: { x: 150, y: 600 },
     goal: { x: 18610, y: 608 },
     timeBonus: 180,
@@ -523,6 +537,13 @@ export const FOREST_LEVELS: LevelData[] = [
         decos.push(createDeco(x * S, 560, type));
       }
       return decos;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.417;
+      return [
+        createMovingPlat(4200 * S, 480, 120, 24, 'wood', 'horizontal', 250, 20),
+        createMovingPlat(28400 * S, 450, 120, 24, 'wood', 'vertical', 180, 22),
+      ];
     })(),
     playerStart: { x: 150, y: 550 },
     goal: { x: 18682, y: 558 },

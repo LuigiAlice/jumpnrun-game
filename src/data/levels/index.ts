@@ -92,10 +92,10 @@ import { SKY_CLOUDS_LEVELS } from './sky-clouds';
 import { FOREST_LEVELS } from './forest';
 import { VILLAGE_LEVELS } from './village';
 import { BEACH_ISLAND_LEVELS } from './beach-island';
-import { RUINS_LEVELS } from './ruins';
 import { FACTORY_LEVELS } from './factory';
 import { VOLCANO_LAVA_LEVELS } from './volcano-lava';
 import { HAUNTED_MANSION_LEVELS } from './haunted-mansion';
+import { RUINS_LEVELS } from './ruins';
 import { CANYON_BASE_LEVELS } from './canyon-base';
 import { SPACE_STAR_LEVELS } from './space-star';
 import { CASTLE_FINAL_LEVELS } from './castle-final';
@@ -109,10 +109,10 @@ const ALL_LEVELS = [
     ...FOREST_LEVELS,
     ...VILLAGE_LEVELS,
     ...BEACH_ISLAND_LEVELS,
-    ...RUINS_LEVELS,
     ...FACTORY_LEVELS,
     ...VOLCANO_LAVA_LEVELS,
     ...HAUNTED_MANSION_LEVELS,
+    ...RUINS_LEVELS,
     ...CANYON_BASE_LEVELS,
     ...SPACE_STAR_LEVELS,
     ...CASTLE_FINAL_LEVELS,

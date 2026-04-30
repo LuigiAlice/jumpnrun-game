@@ -418,6 +418,12 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 530 },
         goal: { x: 20000 - 500, y: 598, points: 2000, difficulty: 'medium' },
         timeBonus: 170,
+        movingPlatforms: (() => {
+            return [
+                createMovingPlat(6800, 480, 120, 24, 'platform_medium', 'horizontal', 350, 20),
+                createMovingPlat(12500, 380, 100, 24, 'platform_medium', 'vertical', 160, 22),
+            ];
+        })(),
     },
     {
         id: 82,
@@ -557,6 +563,12 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 510 },
         goal: { x: 19980 - 500, y: 578, points: 2500, difficulty: 'hard' },
         timeBonus: 190,
+        movingPlatforms: (() => {
+            return [
+                createMovingPlat(7000, 460, 120, 24, 'platform_medium', 'horizontal', 350, 22),
+                createMovingPlat(13000, 380, 100, 24, 'platform_medium', 'vertical', 140, 20),
+            ];
+        })(),
     },
     {
         id: 83,
@@ -699,6 +711,12 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 530 },
         goal: { x: 20016 - 500, y: 598, points: 3000, difficulty: 'hard' },
         timeBonus: 200,
+        movingPlatforms: (() => {
+            return [
+                createMovingPlat(7500, 480, 120, 24, 'platform_medium', 'horizontal', 350, 20),
+                createMovingPlat(14000, 400, 100, 24, 'platform_medium', 'vertical', 150, 22),
+            ];
+        })(),
     },
     {
         id: 84,

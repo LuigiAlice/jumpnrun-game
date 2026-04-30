@@ -323,6 +323,13 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 560 },
         goal: { x: 20000 - 500, y: 578 },
         timeBonus: 175,
+        movingPlatforms: (() => {
+            const S = 0.526;
+            return [
+                createMovingPlat(4000 * S, 520, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(14000 * S, 460, 120, 24, 'platform_medium', 'vertical', 160, 22),
+            ];
+        })(),
     },
     {
         id: 87, name: "Tower Climb", width: 20000, height: 680, biome: 'castle-final',
@@ -487,6 +494,13 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 580 },
         goal: { x: 20000 - 500, y: 598 },
         timeBonus: 195,
+        movingPlatforms: (() => {
+            const S = 0.476;
+            return [
+                createMovingPlat(3500 * S, 540, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(15000 * S, 480, 120, 24, 'platform_medium', 'vertical', 160, 22),
+            ];
+        })(),
     },
     {
         id: 88, name: "Dungeon Deep", width: 19980, height: 650, biome: 'castle-final',
@@ -821,6 +835,13 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 560 },
         goal: { x: 20016 - 500, y: 578 },
         timeBonus: 220,
+        movingPlatforms: (() => {
+            const S = 0.417;
+            return [
+                createMovingPlat(5000 * S, 520, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(20000 * S, 450, 120, 24, 'platform_medium', 'vertical', 180, 22),
+            ];
+        })(),
     },
     {
         id: 90, name: "Princess Castle", width: 20000, height: 640, biome: 'castle-final',

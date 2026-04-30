@@ -189,6 +189,10 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(16700 * S, 550, 1200 * S, 40, 'sand'));
       return plats;
     })(),
+    movingPlatforms: [
+      createMovingPlat(3500, 490, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+      createMovingPlat(9800, 420, 120, 24, 'platform_medium', 'vertical', 180, 22),
+    ],
     coins: (() => {
       const S = 0.59;
       const coins: any[] = [];
@@ -287,6 +291,10 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(6200 * S, 600, 1400 * S, 40, 'sand'));
       return plats;
     })(),
+    movingPlatforms: [
+      createMovingPlat(2700, 520, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+      createMovingPlat(3100, 480, 120, 24, 'platform_medium', 'vertical', 160, 22),
+    ],
     coins: (() => {
       const S = 0.48;
       const coins: any[] = [];
@@ -333,6 +341,10 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(6400 * S, 600, 1400 * S, 40, 'sand'));
       return plats;
     })(),
+    movingPlatforms: [
+      createMovingPlat(2400, 520, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+      createMovingPlat(3000, 480, 120, 24, 'platform_medium', 'vertical', 160, 22),
+    ],
     coins: (() => {
       const S = 0.43;
       const coins: any[] = [];

@@ -195,6 +195,10 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createEnemy(6800 * S, 180, 'goomba'), createEnemy(8200 * S, 160, 'ufo'),
             ];
         })(),
+        movingPlatforms: [
+            createMovingPlat(2400, 440, 150, 24, 'platform_medium', 'horizontal', 180, 18),
+            createMovingPlat(7200, 320, 150, 24, 'platform_medium', 'vertical', 140, 20),
+        ],
         decorations: (() => {
             const S = 0.556;
             return [
@@ -323,6 +327,10 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createEnemy(7400 * S, 240, 'goomba'), createEnemy(8800 * S, 220, 'ufo'),
             ];
         })(),
+        movingPlatforms: [
+            createMovingPlat(2700, 470, 150, 24, 'platform_medium', 'horizontal', 180, 18),
+            createMovingPlat(6900, 390, 150, 24, 'platform_medium', 'vertical', 150, 20),
+        ],
         decorations: (() => {
             const S = 0.455;
             return [
@@ -384,6 +392,10 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createEnemy(7900 * S, 260, 'goomba'), createEnemy(9400 * S, 240, 'ufo'),
             ];
         })(),
+        movingPlatforms: [
+            createMovingPlat(2400, 480, 150, 24, 'platform_medium', 'horizontal', 180, 18),
+            createMovingPlat(6900, 400, 150, 24, 'platform_medium', 'vertical', 150, 20),
+        ],
         decorations: (() => {
             const S = 0.417;
             return [

@@ -175,6 +175,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 11000 * S, y: 580 },
     timeBonus: 140,
+    movingPlatforms: [
+      createMovingPlat(4800 * S, 470, 140, 24, 'platform_medium', 'horizontal', 280, 20),
+      createMovingPlat(8500 * S, 480, 120, 24, 'platform_medium', 'vertical', 200, 22),
+    ],
   },
   {
     id: 3, name: "Grasslands Mountains", width: 20000, height: 800, biome: 'grasslands',
@@ -224,6 +228,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 650 },
     goal: { x: 6000 * S, y: 680 },
     timeBonus: 160,
+    movingPlatforms: [
+      createMovingPlat(3000 * S, 620, 140, 24, 'platform_medium', 'horizontal', 280, 20),
+      createMovingPlat(5400 * S, 580, 120, 24, 'platform_easy', 'vertical', 160, 18),
+    ],
   },
   {
     id: 4, name: "Grasslands Valley", width: 20250, height: 700, biome: 'grasslands',
@@ -329,6 +337,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 8500 * S, y: 580 },
     timeBonus: 200,
+    movingPlatforms: [
+      createMovingPlat(3200 * S, 520, 150, 24, 'platform_medium', 'horizontal', 320, 22),
+      createMovingPlat(4500 * S, 500, 120, 24, 'platform_medium', 'vertical', 200, 20),
+    ],
   },
   {
     id: 6, name: "Grasslands Finale", width: 20000, height: 700, biome: 'grasslands',

@@ -197,6 +197,13 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 600 },
     goal: { x: 3427, y: 610 },
     timeBonus: 160,
+    movingPlatforms: (() => {
+      const S = 0.476;
+      return [
+        createMovingPlat(2800, 500, 120, 24, 'platform_medium', 'horizontal', 180, 20),
+        createMovingPlat(3300, 450, 120, 24, 'platform_medium', 'vertical', 150, 22),
+      ];
+    })(),
   },
   {
     id: 22, name: "Iceberg Ascent", width: 19980, height: 650, biome: 'ice-snow',
@@ -306,6 +313,13 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 600 },
     goal: { x: 3878, y: 610 },
     timeBonus: 200,
+    movingPlatforms: (() => {
+      const S = 0.417;
+      return [
+        createMovingPlat(3300, 500, 120, 24, 'platform_medium', 'horizontal', 180, 20),
+        createMovingPlat(3700, 450, 120, 24, 'platform_medium', 'vertical', 150, 22),
+      ];
+    })(),
   },
   {
     id: 24, name: "Frozen Finale", width: 20000, height: 700, biome: 'ice-snow',
@@ -357,5 +371,12 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 600 },
     goal: { x: 4120, y: 610 },
     timeBonus: 220,
+    movingPlatforms: (() => {
+      const S = 0.4;
+      return [
+        createMovingPlat(3550, 500, 120, 24, 'platform_medium', 'horizontal', 180, 22),
+        createMovingPlat(3950, 450, 120, 24, 'platform_medium', 'vertical', 150, 20),
+      ];
+    })(),
   },
 ];

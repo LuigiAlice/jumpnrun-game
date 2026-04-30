@@ -391,6 +391,13 @@ export const FACTORY_LEVELS: LevelData[] = [
                 createDeco(21300 * S, 590, 'smoke'), createDeco(22900 * S, 590, 'gear'),
             ];
         })(),
+        movingPlatforms: (() => {
+            const S = 0.556;
+            return [
+                createMovingPlat(5700 * S, 500, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(15700 * S, 480, 120, 24, 'platform_medium', 'vertical', 160, 22),
+            ];
+        })(),
         playerStart: { x: 150, y: 580 },
         goal: { x: 19460 - 500, y: 588 },
         timeBonus: 175,
@@ -754,6 +761,13 @@ export const FACTORY_LEVELS: LevelData[] = [
                 createDeco(23400 * S, 630, 'smoke'), createDeco(26300 * S, 630, 'gear'),
             ];
         })(),
+        movingPlatforms: (() => {
+            const S = 0.444;
+            return [
+                createMovingPlat(7200 * S, 550, 120, 24, 'platform_medium', 'horizontal', 200, 18),
+                createMovingPlat(21800 * S, 540, 120, 24, 'platform_medium', 'vertical', 180, 24),
+            ];
+        })(),
         playerStart: { x: 150, y: 620 },
         goal: { x: 19980 - 500, y: 628 },
         timeBonus: 200,
@@ -934,6 +948,13 @@ export const FACTORY_LEVELS: LevelData[] = [
                 createDeco(11600 * S, 610, 'crane'), createDeco(14400 * S, 610, 'smoke'), createDeco(17000 * S, 610, 'pipe'),
                 createDeco(18100 * S, 610, 'gear'), createDeco(20300 * S, 610, 'conveyor'), createDeco(23400 * S, 610, 'crane'),
                 createDeco(25700 * S, 610, 'smoke'), createDeco(28800 * S, 610, 'gear'),
+            ];
+        })(),
+        movingPlatforms: (() => {
+            const S = 0.417;
+            return [
+                createMovingPlat(6300 * S, 520, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(28600 * S, 500, 120, 24, 'platform_medium', 'vertical', 160, 24),
             ];
         })(),
         playerStart: { x: 150, y: 600 },
@@ -1122,7 +1143,9 @@ export const FACTORY_LEVELS: LevelData[] = [
             return [
                 createMovingPlat(5500 * S, 500, 120, 24, 'platform_medium', 'horizontal', 180, 20),
                 createMovingPlat(8200 * S, 400, 120, 24, 'platform_medium', 'vertical', 160, 22),
+                createMovingPlat(14000 * S, 480, 120, 24, 'platform_medium', 'vertical', 160, 23),
                 createMovingPlat(25600 * S, 450, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+                createMovingPlat(31600 * S, 520, 120, 24, 'platform_medium', 'horizontal', 200, 25),
             ];
         })(),
         playerStart: { x: 150, y: 600 },

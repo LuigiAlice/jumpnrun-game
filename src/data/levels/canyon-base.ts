@@ -189,6 +189,13 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(createPlat(35400 * S, 180, 2600 * S, 40, 'stone'));
       return plats;
     })(),
+    movingPlatforms: (() => {
+      const S = 0.526;
+      return [
+        createMovingPlat(6000 * S, 480, 150, 24, 'platform_medium', 'horizontal', 500, 18),
+        createMovingPlat(11600 * S, 340, 150, 24, 'platform_medium', 'vertical', 200, 20),
+      ];
+    })(),
     coins: (() => {
       const S = 0.526;
       const coins: any[] = [];
@@ -277,6 +284,13 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(...canyonVerticalSection(S, 39400, 200, 8));
       plats.push(createPlat(40400 * S, 200, 1600 * S, 40, 'stone'));
       return plats;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.476;
+      return [
+        createMovingPlat(7000 * S, 500, 150, 24, 'platform_medium', 'horizontal', 520, 20),
+        createMovingPlat(13300 * S, 400, 150, 24, 'platform_medium', 'vertical', 200, 22),
+      ];
     })(),
     coins: (() => {
       const S = 0.476;
@@ -367,6 +381,13 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(createPlat(44800 * S, 180, 200 * S, 40, 'stone'));
       return plats;
     })(),
+    movingPlatforms: (() => {
+      const S = 0.444;
+      return [
+        createMovingPlat(7800 * S, 480, 150, 24, 'platform_medium', 'horizontal', 520, 18),
+        createMovingPlat(14800 * S, 340, 150, 24, 'platform_medium', 'vertical', 180, 20),
+      ];
+    })(),
     coins: (() => {
       const S = 0.444;
       const coins: any[] = [];
@@ -454,6 +475,13 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(...canyonGroundSection(S, 44000, 180, 4000));
       return plats;
     })(),
+    movingPlatforms: (() => {
+      const S = 0.417;
+      return [
+        createMovingPlat(8500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 500, 22),
+        createMovingPlat(16200 * S, 360, 150, 24, 'platform_medium', 'vertical', 200, 18),
+      ];
+    })(),
     coins: (() => {
       const S = 0.417;
       const coins: any[] = [];
@@ -537,6 +565,13 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(...canyonFloatingPlatforms(S, 44000, 150, 18));
       plats.push(createPlat(47000 * S, 150, 3000 * S, 40, 'stone'));
       return plats;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.4;
+      return [
+        createMovingPlat(9500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 560, 20),
+        createMovingPlat(18000 * S, 340, 150, 24, 'platform_medium', 'vertical', 220, 25),
+      ];
     })(),
     coins: (() => {
       const S = 0.4;

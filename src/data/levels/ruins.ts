@@ -201,6 +201,10 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 520 },
     goal: { x: 18904 - 500, y: 528 },
+    movingPlatforms: [
+      createMovingPlat(2200 * 0.556, 480, 100, 24, 'platform_medium', 'horizontal', 200, 20),
+      createMovingPlat(10500 * 0.556, 350, 100, 24, 'platform_medium', 'vertical', 180, 22),
+    ],
   },
   {
     id: 69, name: "Forgotten Archive", width: 19000, height: 650, biome: 'ruins',
@@ -371,6 +375,10 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 580 },
     goal: { x: 19110 - 500, y: 588 },
+    movingPlatforms: [
+      createMovingPlat(2400 * 0.455, 500, 100, 24, 'platform_medium', 'horizontal', 220, 20),
+      createMovingPlat(10800 * 0.455, 360, 100, 24, 'platform_medium', 'vertical', 180, 22),
+    ],
   },
   {
     id: 71, name: "Underground Catacombs", width: 19182, height: 700, biome: 'ruins',
@@ -545,5 +553,9 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 600 },
     goal: { x: 20000 - 500, y: 608 },
+    movingPlatforms: [
+      createMovingPlat(2600 * 0.4, 520, 100, 24, 'platform_medium', 'horizontal', 240, 20),
+      createMovingPlat(11500 * 0.4, 380, 100, 24, 'platform_medium', 'vertical', 180, 22),
+    ],
   },
 ];

@@ -137,6 +137,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         playerStart: { x: 100, y: 470 },
         goal: { x: 20000 - 500, y: 490 },
         timeBonus: 180,
+        movingPlatforms: [
+            createMovingPlat(5000, 380, 120, 24, 'platform_medium', 'horizontal', 250, 20),
+            createMovingPlat(12000, 300, 110, 22, 'platform_hard', 'vertical', 150, 18),
+        ],
     },
     {
         id: 56,
@@ -283,6 +287,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         playerStart: { x: 100, y: 530 },
         goal: { x: 20016 - 500, y: 520 },
         timeBonus: 200,
+        movingPlatforms: [
+            createMovingPlat(5500, 400, 130, 24, 'platform_medium', 'horizontal', 280, 22),
+            createMovingPlat(14000, 350, 120, 22, 'platform_hard', 'circular', 120, 16),
+        ],
     },
     {
         id: 57,
@@ -430,6 +438,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         playerStart: { x: 100, y: 510 },
         goal: { x: 20000 - 500, y: 500 },
         timeBonus: 210,
+        movingPlatforms: [
+            createMovingPlat(7000, 450, 130, 24, 'platform_medium', 'vertical', 200, 15),
+            createMovingPlat(16000, 350, 120, 22, 'platform_easy', 'horizontal', 300, 25),
+        ],
     },
     {
         id: 58,
@@ -733,6 +745,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         playerStart: { x: 100, y: 530 },
         goal: { x: 20016 - 500, y: 520 },
         timeBonus: 200,
+        movingPlatforms: [
+            createMovingPlat(7000, 420, 140, 24, 'platform_medium', 'horizontal', 260, 19),
+            createMovingPlat(20000, 350, 120, 22, 'platform_hard', 'circular', 140, 17),
+        ],
     },
     {
         id: 60,
@@ -887,5 +903,9 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         playerStart: { x: 100, y: 540 },
         goal: { x: 20000 - 500, y: 530 },
         timeBonus: 200,
+        movingPlatforms: [
+            createMovingPlat(8000, 450, 130, 24, 'platform_medium', 'vertical', 180, 21),
+            createMovingPlat(25000, 380, 120, 22, 'platform_hard', 'horizontal', 280, 23),
+        ],
     },
 ];

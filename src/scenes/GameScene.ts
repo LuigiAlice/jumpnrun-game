@@ -92,11 +92,10 @@ export class GameScene extends Phaser.Scene {
     this.restartKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.nextKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.N);
     
-    // ESC to quit to level select
-    this.escapeKey.on('down', () => {
+    // ESC to quit to title
+    this.input.keyboard!.on('keydown-ESC', () => {
       this.isMusicPlaying = false;
       if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
-      this.scene.stop('Game');
       this.scene.start('Title');
     });
     
@@ -362,6 +361,12 @@ export class GameScene extends Phaser.Scene {
             e.setVelocityX(-e.body.velocity.x);
         }
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.physics.add.collider(this.enemies, this.movingPlatforms, (e: any) => {
+        if (e.body?.blocked?.left || e.body?.blocked?.right) {
+            e.setVelocityX(-e.body.velocity.x);
+        }
+    });
     
     // Floating platforms: player can land on top
     this.physics.add.collider(this.player, this.platforms);
@@ -533,7 +538,12 @@ export class GameScene extends Phaser.Scene {
   private updateUI() {
     this.scoreValText.setText(this.score.toString().padStart(6, '0'));
     this.coinValText.setText('x' + this.coinCount.toString().padStart(2, '0'));
-    this.worldValText.setText(this.levelId + '-' + (this.levelIndex % 6 + 1));
+    const biomeNames = ['grasslands','desert','water','ice-snow','sky-clouds','forest','village','beach-island','factory','volcano-lava','haunted-mansion','ruins','canyon-base','space-star','castle-final'];
+    const biomeIdx = Math.floor(this.levelIndex / 6);
+    const levelInBiome = this.levelIndex % 6;
+    const biomeName = biomeNames[biomeIdx] || '';
+    const levelDisplay = `${biomeName}-${biomeIdx + 1}.${levelInBiome + 1}`;
+    this.worldValText.setText(levelDisplay);
     this.timerValText.setText(Math.max(0, this.timeLeft).toString().padStart(3, '0'));
     this.livesValText.setText(String(this.lives));
   }
@@ -549,47 +559,45 @@ export class GameScene extends Phaser.Scene {
     if (this.shootKey.isDown && this.isPlayerFire && time > this.lastFired) { this.shootFireball(); this.lastFired = time + 250; }
     
     // Update moving platforms
+    let playerCarried = false;
     this.movingPlatforms.getChildren().forEach((mplat: any) => {
       const data = this.movingPlatformData.get(mplat);
       if (!data) return;
 
-      const platformTop = mplat.y - mplat.displayHeight / 2;
-      const playerBottom = this.player.y + (this.player.displayHeight / 2);
-      const isAbovePlatform = playerBottom <= platformTop + 10 && playerBottom >= platformTop - 30;
-      const isHorizontallyAligned = Math.abs(this.player.x - mplat.x) < mplat.displayWidth / 2 + 20;
-      const isOnPlatform = isAbovePlatform && isHorizontallyAligned;
+      const prevX = mplat.x;
+      const prevY = mplat.y;
 
       if (data.moveType === 'horizontal') {
-        const prevX = mplat.x;
         mplat.x = data.startX + Math.sin(time * 0.00002 * data.speed) * data.range;
-        const dx = mplat.x - prevX;
-        if (isOnPlatform && Math.abs(dx) > 0 && this.player.body) {
-          this.player.setX(this.player.x + dx);
-          (this.player.body as any).setVelocityX(dx * 60);
-        }
       } else if (data.moveType === 'vertical') {
-        const prevY = mplat.y;
         mplat.y = data.startY + Math.sin(time * 0.00002 * data.speed) * data.range;
-        const dy = mplat.y - prevY;
-        if (isOnPlatform && Math.abs(dy) > 0 && this.player.body) {
-          this.player.setY(this.player.y + dy);
-          (this.player.body as any).setVelocityY(dy * 60);
-        }
       } else if (data.moveType === 'circular') {
         if (!data.angle) data.angle = 0;
         data.angle += data.speed * 0.0002;
-        const prevX = mplat.x;
-        const prevY = mplat.y;
         mplat.x = data.startX + Math.cos(data.angle) * data.range;
         mplat.y = data.startY + Math.sin(data.angle) * data.range;
-        if (isOnPlatform && this.player.body) {
-          this.player.setX(this.player.x + (mplat.x - prevX));
-          this.player.setY(this.player.y + (mplat.y - prevY));
-          (this.player.body as any).setVelocityX((mplat.x - prevX) * 60);
-          (this.player.body as any).setVelocityY((mplat.y - prevY) * 60);
-        }
       }
       mplat.body.updateFromGameObject();
+
+      const dx = mplat.x - prevX;
+      const dy = mplat.y - prevY;
+
+      if (playerCarried || !this.player.body) return;
+
+      const body = mplat.body as any;
+      const platformTop = body.y - body.halfHeight;
+      const playerBottom = this.player.y + (body.halfHeight || 16);
+      const isAbovePlatform = Math.abs(playerBottom - platformTop) < 15;
+      const isHorizontallyAligned = Math.abs(this.player.x - mplat.x) < (body.halfWidth || 40) + 20;
+      const isOnPlatform = isAbovePlatform && isHorizontallyAligned;
+
+      if (isOnPlatform && (Math.abs(dx) > 0 || Math.abs(dy) > 0)) {
+        playerCarried = true;
+        this.player.setX(this.player.x + dx);
+        this.player.setY(this.player.y + dy);
+        if (dx !== 0) (this.player.body as any).setVelocityX(dx * 60);
+        if (dy !== 0) (this.player.body as any).setVelocityY(dy * 60);
+      }
     });
     
     // Enemy platform edge detection - turn around instead of falling

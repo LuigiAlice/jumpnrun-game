@@ -229,6 +229,13 @@ export const VILLAGE_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 600 },
         goal: { x: 18336, y: 630 },
         timeBonus: 62,
+        movingPlatforms: (() => {
+            const S = 1.82;
+            return [
+                createMovingPlat(4300 * S, 450, 100 * S, 20, 'wood', 'horizontal', 200, 20),
+                createMovingPlat(7800 * S, 380, 100 * S, 20, 'wood', 'horizontal', 180, 22),
+            ];
+        })(),
     },
     {
         id: 39, name: "Rooftop Run", width: 20040, height: 900, biome: 'village',
@@ -353,6 +360,13 @@ export const VILLAGE_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 700 },
         goal: { x: 18202, y: 220 },
         timeBonus: 68,
+        movingPlatforms: (() => {
+            const S = 1.67;
+            return [
+                createMovingPlat(5000 * S, 380, 100 * S, 20, 'wood', 'horizontal', 200, 20),
+                createMovingPlat(8200 * S, 320, 100 * S, 20, 'wood', 'horizontal', 180, 22),
+            ];
+        })(),
     },
     {
         id: 40, name: "Chimney Chase", width: 19980, height: 950, biome: 'village',
@@ -663,6 +677,13 @@ export const VILLAGE_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 800 },
         goal: { x: 18854, y: 360 },
         timeBonus: 82,
+        movingPlatforms: (() => {
+            const S = 1.38;
+            return [
+                createMovingPlat(5400 * S, 430, 100 * S, 20, 'wood', 'horizontal', 200, 20),
+                createMovingPlat(8500 * S, 320, 100 * S, 20, 'wood', 'horizontal', 180, 22),
+            ];
+        })(),
     },
     {
         id: 42, name: "Village Finale", width: 20000, height: 1100, biome: 'village',

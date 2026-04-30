@@ -34,12 +34,13 @@ export class Physics {
         this.movingPlatforms = movingPlatforms;
     }
 
-    private getMovingPlatformPositions(mp: MovingPlatformData, time: number = 0): { x: number; y: number }[] {
+    private getMovingPlatformPositions(mp: MovingPlatformData): { x: number; y: number }[] {
         const positions: { x: number; y: number }[] = [];
-        const steps = 16;
+        const steps = 32;
+        const timeScale = mp.moveType === 'circular' ? 0.0002 : 0.00002;
 
         for (let i = 0; i < steps; i++) {
-            const t = (time + i * 200) * 0.00005 * mp.speed;
+            const t = (Math.PI * 2 * i) / steps;
             let x = mp.x;
             let y = mp.y;
 
@@ -92,7 +93,7 @@ export class Physics {
         return false;
     }
 
-    private canJumpFromMovingPlatform(mp: MovingPlatformData, to: Platform, time: number = 0): boolean {
+    private canJumpFromMovingPlatform(mp: MovingPlatformData, to: Platform): boolean {
         const positions = this.getMovingPlatformPositions(mp);
 
         for (const pos of positions) {
@@ -357,6 +358,7 @@ export class Physics {
             { platform: startPlatform, path: [startPlatform] }
         ];
         const visited: Set<string> = new Set([`${startPlatform.x},${startPlatform.y}`]);
+        const visitedMoving: Set<string> = new Set();
 
         while (queue.length > 0) {
             const { platform: current, path } = queue.shift()!;
@@ -372,6 +374,19 @@ export class Physics {
                 if (this.canJumpTo(current, next)) {
                     visited.add(key);
                     queue.push({ platform: next, path: [...path, next] });
+                }
+            }
+
+            for (const mp of this.movingPlatforms) {
+                const mpKey = `${mp.x},${mp.y},${mp.moveType},${mp.range}`;
+                if (visitedMoving.has(mpKey)) continue;
+
+                if (this.canJumpToMovingPlatform(current, mp)) {
+                    visitedMoving.add(mpKey);
+                    const reachableFromMoving = this.getStaticPlatformReachableFromMoving(mp, visited);
+                    for (const reachable of reachableFromMoving) {
+                        queue.push({ platform: reachable, path: [...path, reachable] });
+                    }
                 }
             }
         }

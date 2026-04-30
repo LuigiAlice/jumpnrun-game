@@ -345,6 +345,13 @@ export const WATER_LEVELS: LevelData[] = [
                 createDeco(5600 * S, 300, 'seaweed'), createDeco(6500 * S, 260, 'bubble'),
             ];
         })(),
+        movingPlatforms: (() => {
+            const S = 0.47;
+            return [
+                createMovingPlat(1800 * S, 460, 100, 24, 'water', 'horizontal', 200, 22),
+                createMovingPlat(4400 * S, 400, 100, 24, 'water', 'vertical', 150, 18),
+            ];
+        })(),
         playerStart: { x: 150, y: 510 },
         goal: { x: 250, y: 548 },
         timeBonus: 200,
@@ -403,6 +410,13 @@ export const WATER_LEVELS: LevelData[] = [
                 createDeco(900 * S, 490, 'seaweed'), createDeco(2200 * S, 450, 'bubble'),
                 createDeco(3600 * S, 410, 'coral'), createDeco(5000 * S, 370, 'shell'),
                 createDeco(6400 * S, 330, 'seaweed'), createDeco(7600 * S, 290, 'bubble'),
+            ];
+        })(),
+        movingPlatforms: (() => {
+            const S = 0.43;
+            return [
+                createMovingPlat(2000 * S, 460, 100, 24, 'water', 'horizontal', 200, 22),
+                createMovingPlat(5000 * S, 390, 100, 24, 'water', 'vertical', 150, 18),
             ];
         })(),
         playerStart: { x: 150, y: 530 },
@@ -466,6 +480,13 @@ export const WATER_LEVELS: LevelData[] = [
                 createDeco(1000 * S, 480, 'seaweed'), createDeco(2400 * S, 440, 'bubble'),
                 createDeco(3800 * S, 400, 'coral'), createDeco(5200 * S, 360, 'shell'),
                 createDeco(6400 * S, 320, 'seaweed'), createDeco(7500 * S, 280, 'bubble'),
+            ];
+        })(),
+        movingPlatforms: (() => {
+            const S = 0.4;
+            return [
+                createMovingPlat(2200 * S, 460, 100, 24, 'water', 'horizontal', 200, 22),
+                createMovingPlat(5500 * S, 400, 100, 24, 'water', 'vertical', 150, 18),
             ];
         })(),
         playerStart: { x: 150, y: 540 },
