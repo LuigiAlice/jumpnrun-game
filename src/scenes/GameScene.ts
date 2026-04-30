@@ -679,7 +679,7 @@ export class GameScene extends Phaser.Scene {
 
     const biome = this.currentLevelData?.biome || 'grasslands';
 
-    const BIOME_MUSIC: Record<string, { melody: number[], bassline: number[], drums: number[] }> = {
+    const BIOME_MUSIC: Record<string, { melody: number[], bassline: number[], drums: number[], chordProgression: { root: number; type: string }[], padRoots: number[] }> = {
       'grasslands': {
         melody: [
           329.63, 329.63, 0, 329.63, 0, 261.63, 329.63, 0, 392.00, 0, 0, 0, 196.00, 0, 0, 0,
@@ -827,7 +827,14 @@ export class GameScene extends Phaser.Scene {
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0,
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0
-        ]
+        ],
+        chordProgression: [
+          { root: 261.63, type: 'major' },
+          { root: 349.23, type: 'major' },
+          { root: 392.00, type: 'major' },
+          { root: 261.63, type: 'major' },
+        ],
+        padRoots: [261.63, 349.23, 392.00, 261.63],
       },
       'desert': {
         melody: [
@@ -976,7 +983,14 @@ export class GameScene extends Phaser.Scene {
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0,
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0
-        ]
+        ],
+        chordProgression: [
+          { root: 220.00, type: 'minor' },
+          { root: 293.66, type: 'minor' },
+          { root: 329.63, type: 'major' },
+          { root: 220.00, type: 'minor' },
+        ],
+        padRoots: [220.00, 293.66, 329.63, 220.00],
       },
       'water': {
         melody: [
@@ -1120,7 +1134,14 @@ export class GameScene extends Phaser.Scene {
           1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0
-        ]
+        ],
+        chordProgression: [
+          { root: 261.63, type: 'major' },
+          { root: 220.00, type: 'minor' },
+          { root: 349.23, type: 'major' },
+          { root: 392.00, type: 'major' },
+        ],
+        padRoots: [261.63, 220.00, 349.23, 392.00],
       },
       'ice-snow': {
         melody: [
@@ -1267,7 +1288,14 @@ export class GameScene extends Phaser.Scene {
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0
-        ]
+        ],
+        chordProgression: [
+          { root: 220.00, type: 'minor' },
+          { root: 349.23, type: 'major' },
+          { root: 261.63, type: 'major' },
+          { root: 392.00, type: 'major' },
+        ],
+        padRoots: [220.00, 349.23, 261.63, 392.00],
       },
       'sky-clouds': {
         melody: [
@@ -1415,7 +1443,14 @@ export class GameScene extends Phaser.Scene {
           1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0
-        ]
+        ],
+        chordProgression: [
+          { root: 349.23, type: 'major' },
+          { root: 261.63, type: 'major' },
+          { root: 392.00, type: 'major' },
+          { root: 220.00, type: 'minor' },
+        ],
+        padRoots: [349.23, 261.63, 392.00, 220.00],
       },
       'forest': {
         melody: [
@@ -1555,7 +1590,9 @@ export class GameScene extends Phaser.Scene {
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,
           1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0,
           1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0
-        ]
+        ],
+        chordProgression: [],
+        padRoots: [],
       },
       'village': {
         melody: [
@@ -1691,7 +1728,9 @@ export class GameScene extends Phaser.Scene {
           1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0,
           1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0,
           1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0
-        ]
+        ],
+        chordProgression: [],
+        padRoots: [],
       },
       'beach-island': {
         melody: [
@@ -1828,7 +1867,9 @@ export class GameScene extends Phaser.Scene {
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0
-        ]
+        ],
+        chordProgression: [],
+        padRoots: [],
       },
       'factory': {
         melody: [
@@ -1953,7 +1994,9 @@ export class GameScene extends Phaser.Scene {
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
           1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0
-        ]
+        ],
+        chordProgression: [],
+        padRoots: [],
       },
       'volcano-lava': {
         melody: [130.81, 0, 164.81, 0, 196.00, 0, 164.81, 0, 130.81, 0, 164.81, 0, 196.00, 0, 220.00, 0,
@@ -2099,7 +2142,9 @@ export class GameScene extends Phaser.Scene {
                 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
                 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
                 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
-                2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0]
+                2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0],
+         chordProgression: [],
+        padRoots: [],
       },
       'haunted-mansion': {
         melody: [220.00, 0, 0, 0, 246.94, 0, 0, 0, 261.63, 0, 0, 0, 246.94, 0, 0, 0,
@@ -2309,7 +2354,9 @@ export class GameScene extends Phaser.Scene {
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0,
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0,
                 2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0,
-                2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0]
+                2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0],
+        chordProgression: [],
+        padRoots: [],
       },
       'ruins': {
         melody: [293.66, 0, 329.63, 0, 349.23, 0, 329.63, 0, 293.66, 0, 261.63, 0, 246.94, 0, 220.00, 0,
@@ -2519,7 +2566,9 @@ export class GameScene extends Phaser.Scene {
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0,
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0,
                 2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0,
-                2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0]
+                2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0],
+        chordProgression: [],
+        padRoots: [],
       },
       'canyon-base': {
         melody: [196.00, 0, 220.00, 0, 246.94, 0, 220.00, 0, 196.00, 0, 220.00, 0, 246.94, 0, 261.63, 0,
@@ -2729,7 +2778,9 @@ export class GameScene extends Phaser.Scene {
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0,
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0,
                 2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0,
-                2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0]
+                2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0],
+        chordProgression: [],
+        padRoots: [],
       },
       'space-star': {
         melody: [523.25, 0, 587.33, 0, 659.25, 0, 698.46, 0, 783.99, 0, 698.46, 0, 659.25, 0, 587.33, 0,
@@ -2939,9 +2990,11 @@ export class GameScene extends Phaser.Scene {
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0,
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0,
                 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
-                2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0]
-      },
-      'castle-final': {
+                2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0],
+         chordProgression: [],
+         padRoots: [],
+       },
+       'castle-final': {
         melody: [392.00, 0, 440.00, 0, 493.88, 0, 523.25, 0, 587.33, 0, 523.25, 0, 493.88, 0, 440.00, 0,
                  392.00, 0, 440.00, 0, 493.88, 0, 523.25, 0, 587.33, 0, 523.25, 0, 493.88, 0, 440.00, 0,
                  523.25, 0, 493.88, 0, 440.00, 0, 392.00, 0, 440.00, 0, 493.88, 0, 523.25, 0, 587.33, 0,
@@ -3149,12 +3202,14 @@ export class GameScene extends Phaser.Scene {
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0,
                 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0,
                 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
-                2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0]
+                2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0],
+        chordProgression: [],
+        padRoots: [],
       }
     };
 
     const musicData = BIOME_MUSIC[biome] || BIOME_MUSIC['grasslands'];
-    const { melody, bassline, drums } = musicData;
+    const { melody, bassline, drums, chordProgression, padRoots } = musicData;
 
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -3176,8 +3231,36 @@ export class GameScene extends Phaser.Scene {
           this.playNote(bassline[step], 'square', 0.04, 0.12);
         }
 
-        if (drums[step] > 0) {
+        if (drums[step] === 1) {
           this.playDrum(0.03);
+        } else if (drums[step] === 2) {
+          this.playHihat(0.02);
+        }
+
+        if (step % 16 === 0 && chordProgression.length > 0) {
+          const chordIndex = Math.floor(step / 16) % chordProgression.length;
+          const chordDef = chordProgression[chordIndex];
+          if (chordDef) {
+            const root = chordDef.root;
+            const third = root * (chordDef.type === 'minor' ? Math.pow(2, 3 / 12) : Math.pow(2, 4 / 12));
+            const fifth = root * Math.pow(2, 7 / 12);
+            this.playChord([root, third, fifth], 'sine', 0.025, 0.8);
+          }
+        }
+
+        if (step % 16 === 0 && padRoots.length > 0) {
+          const padIndex = Math.floor(step / 16) % padRoots.length;
+          const root = padRoots[padIndex];
+          if (root > 0) {
+            const fifth = root * Math.pow(2, 7 / 12);
+            this.playChord([root, fifth], 'sine', 0.012, 2.0);
+          }
+        } else if (step % 16 === 8 && padRoots.length > 0) {
+          const padIndex = Math.floor(step / 16) % padRoots.length;
+          const root = padRoots[padIndex] * 0.5;
+          if (root > 0) {
+            this.playChord([root], 'sine', 0.006, 1.5);
+          }
         }
 
         step = (step + 1) % melody.length;
@@ -3187,27 +3270,88 @@ export class GameScene extends Phaser.Scene {
   
   private playDrum(volume: number) {
     if (!this.audioContext) return;
+    const now = this.audioContext.currentTime;
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(150, this.audioContext.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(50, this.audioContext.currentTime + 0.05);
-    gain.gain.setValueAtTime(volume, this.audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, this.audioContext.currentTime + 0.05);
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 0.05);
+    gain.gain.setValueAtTime(volume, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
     osc.connect(gain);
     gain.connect(this.audioContext.destination);
-    osc.start();
-    osc.stop(this.audioContext.currentTime + 0.05);
+    osc.start(now);
+    osc.stop(now + 0.05);
+  }
+
+  private playHihat(volume: number) {
+    if (!this.audioContext) return;
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(1200, now);
+    gain.gain.setValueAtTime(volume, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+    osc.connect(gain);
+    gain.connect(this.audioContext.destination);
+    osc.start(now);
+    osc.stop(now + 0.03);
   }
 
   private playNote(freq: number, type: OscillatorType, volume: number, duration: number) {
-      if (!this.audioContext) return;
+    if (!this.audioContext) return;
+    const now = this.audioContext.currentTime;
+
+    const osc1 = this.audioContext.createOscillator();
+    const gain1 = this.audioContext.createGain();
+    osc1.type = type;
+    osc1.frequency.setValueAtTime(freq, now);
+    gain1.gain.setValueAtTime(volume, now);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc1.connect(gain1);
+    gain1.connect(this.audioContext.destination);
+    osc1.start(now);
+    osc1.stop(now + duration);
+
+    const detuneFreq = freq * Math.pow(2, 7 / 1200);
+    const osc2 = this.audioContext.createOscillator();
+    const gain2 = this.audioContext.createGain();
+    osc2.type = type;
+    osc2.frequency.setValueAtTime(detuneFreq, now);
+    gain2.gain.setValueAtTime(volume * 0.5, now);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc2.connect(gain2);
+    gain2.connect(this.audioContext.destination);
+    osc2.start(now);
+    osc2.stop(now + duration);
+
+    const osc3 = this.audioContext.createOscillator();
+    const gain3 = this.audioContext.createGain();
+    osc3.type = type;
+    osc3.frequency.setValueAtTime(freq * 2, now);
+    gain3.gain.setValueAtTime(volume * 0.3, now);
+    gain3.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc3.connect(gain3);
+    gain3.connect(this.audioContext.destination);
+    osc3.start(now);
+    osc3.stop(now + duration);
+  }
+
+  private playChord(freqs: number[], type: OscillatorType, volume: number, duration: number) {
+    if (!this.audioContext) return;
+    const now = this.audioContext.currentTime;
+    for (const freq of freqs) {
       const osc = this.audioContext.createOscillator();
       const gain = this.audioContext.createGain();
-      osc.type = type; osc.frequency.setValueAtTime(freq, this.audioContext.currentTime);
-      gain.gain.setValueAtTime(volume, this.audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.audioContext.currentTime + duration);
-      osc.connect(gain); gain.connect(this.audioContext.destination);
-      osc.start(); osc.stop(this.audioContext.currentTime + duration);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(gain);
+      gain.connect(this.audioContext.destination);
+      osc.start(now);
+      osc.stop(now + duration);
+    }
   }
 }

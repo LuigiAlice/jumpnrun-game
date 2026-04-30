@@ -87,6 +87,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       return [
         createMovingPlat(2800 * S, 470, 120, 24, 'platform_medium', 'horizontal', 180, 20),
         createMovingPlat(16000 * S, 470, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+        createMovingPlat(25600 * S, 480, 100, 24, 'platform_medium', 'horizontal', 350, 18),
       ];
     })(),
     coins: (() => {

@@ -140,6 +140,15 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         movingPlatforms: [
             createMovingPlat(5000, 380, 120, 24, 'platform_medium', 'horizontal', 250, 20),
             createMovingPlat(12000, 300, 110, 22, 'platform_hard', 'vertical', 150, 18),
+            createMovingPlat(1656, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(3094, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(4406, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(5969, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(7094, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(8531, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(9844, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(11406, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(12531, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
         ],
     },
     {
@@ -151,7 +160,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         platforms: (() => {
             const S = 0.556;
             return [
-                createPlat(0 * S, 580, 2800 * S, 100, 'stone'),
+                createPlat(400 * S, 580, 2400 * S, 100, 'stone'),
                 createPlat(3100 * S, 580, 2200 * S, 100, 'stone'),
                 createPlat(5600 * S, 580, 2000 * S, 100, 'stone'),
                 createPlat(7900 * S, 580, 2400 * S, 100, 'stone'),
@@ -284,12 +293,17 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createDeco(7600 * S, 510, 'rock'), createDeco(8300 * S, 430, 'lava-rock'),
             ];
         })(),
-        playerStart: { x: 100, y: 530 },
+        playerStart: { x: 400, y: 480 },
         goal: { x: 20016 - 500, y: 520 },
         timeBonus: 200,
         movingPlatforms: [
             createMovingPlat(5500, 400, 130, 24, 'platform_medium', 'horizontal', 280, 22),
             createMovingPlat(14000, 350, 120, 22, 'platform_hard', 'circular', 120, 16),
+            createMovingPlat(4309, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(6978, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(9647, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(12215, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(14984, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
         ],
     },
     {
@@ -441,6 +455,9 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         movingPlatforms: [
             createMovingPlat(7000, 450, 130, 24, 'platform_medium', 'vertical', 200, 15),
             createMovingPlat(16000, 350, 120, 22, 'platform_easy', 'horizontal', 300, 25),
+            createMovingPlat(4244, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(8344, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(13694, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
         ],
     },
     {
@@ -591,6 +608,11 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         timeBonus: 220,
         movingPlatforms: [
             createMovingPlat(6500, 320, 120, 24, 'platform_medium', 'circular', 130, 15),
+            createMovingPlat(4063, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(6638, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(10678, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(13165, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(15829, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
         ],
     },
     {
@@ -748,6 +770,11 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         movingPlatforms: [
             createMovingPlat(7000, 420, 140, 24, 'platform_medium', 'horizontal', 260, 19),
             createMovingPlat(20000, 350, 120, 22, 'platform_hard', 'circular', 140, 17),
+            createMovingPlat(2856, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(5525, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(8027, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(10696, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(13198, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
         ],
     },
     {
@@ -906,6 +933,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         movingPlatforms: [
             createMovingPlat(8000, 450, 130, 24, 'platform_medium', 'vertical', 180, 21),
             createMovingPlat(25000, 380, 120, 22, 'platform_hard', 'horizontal', 280, 23),
+            createMovingPlat(2900, 410, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(5620, 410, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(10900, 410, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(14700, 410, 110, 22, 'platform_medium', 'horizontal', 300, 20),
         ],
     },
 ];
