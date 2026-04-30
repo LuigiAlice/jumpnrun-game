@@ -1,6 +1,6 @@
 # AGENTS.md - Jump & Run Game
 
-Beachte unbedingt auch die Datei [SPEC.md](SPEC.md) und [MECHANICS.md](MECHANICS.md)
+Beachte unbedingt auch die Datei [GAMEDESIGN.md](GAMEDESIGN.md)
 Aktualisiere selbständig dieses Dokument und alle anderen, falls sich Anforderungen ändern vom Programmierer.
 
 Teile deine Arbeit auf mehrere Subagenten auf.

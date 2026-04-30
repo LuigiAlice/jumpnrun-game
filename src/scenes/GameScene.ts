@@ -4,7 +4,7 @@ import type { LevelData } from '../data/levels';
 import type { Biome } from '../data/levels';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
 
-const PLAYER_SPEED = 350;
+const PLAYER_SPEED = 300;
 const JUMP_VELOCITY = -900;
 const GRAVITY = 2000;
 
@@ -21,6 +21,7 @@ export class GameScene extends Phaser.Scene {
   private goal!: Phaser.Physics.Arcade.Sprite;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private shootKey!: Phaser.Input.Keyboard.Key;
+  private spaceShoot!: Phaser.Input.Keyboard.Key;
   private escapeKey!: Phaser.Input.Keyboard.Key;
   private restartKey!: Phaser.Input.Keyboard.Key;
   private nextKey!: Phaser.Input.Keyboard.Key;
@@ -88,6 +89,7 @@ export class GameScene extends Phaser.Scene {
     this.setupTimer();
     
     this.shootKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+    this.spaceShoot = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.escapeKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     this.restartKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.nextKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.N);
@@ -201,6 +203,11 @@ export class GameScene extends Phaser.Scene {
       const platform = targetGroup.create(p.x, p.y, tex);
       platform.setDisplaySize(p.w, p.h).refreshBody();
       (platform as any).platformType = p.type;
+      if (!isSolid && p.type.startsWith('platform_')) {
+        (platform.body as Phaser.Physics.Arcade.StaticBody).checkCollision.down = false;
+        (platform.body as Phaser.Physics.Arcade.StaticBody).checkCollision.left = false;
+        (platform.body as Phaser.Physics.Arcade.StaticBody).checkCollision.right = false;
+      }
       if (platType === 'pipe' || platType === 'pipe_top') {
         platform.setDepth(5);
       }
@@ -455,8 +462,8 @@ export class GameScene extends Phaser.Scene {
     block.setTexture('question_used');
     this.tweens.add({ targets: block, y: block.y - 10, duration: 100, yoyo: true });
     const content = block.contents;
-    if (content === 'coin') { this.coinCount++; this.score += 200; }
-    else { const pu = this.powerUps.create(block.x, block.y - 32, content); pu.setVelocityY(-200); (pu as any).type = content; }
+    if (content === 'coin') { this.coinCount += 200; this.score += 100; }
+    else { const pu = this.powerUps.create(block.x, block.y - 32, content); pu.setVelocityY(-200); (pu as any).type = content; this.score += 200; }
   }
 
   private collectPowerUp(pu: any) {
@@ -466,7 +473,6 @@ export class GameScene extends Phaser.Scene {
     if (type === 'mushroom') { if (!this.isPlayerBig) { this.isPlayerBig = true; this.player.y -= 16; this.player.setTexture('player_big'); body.setSize(24, 48); } }
     else if (type === 'flower') { if (!this.isPlayerBig) this.player.y -= 16; this.isPlayerBig = true; this.isPlayerFire = true; this.player.setTexture('player_fire'); body.setSize(24, 48); }
     else if (type === 'star') { this.makeInvincible(5000); }
-    this.score += 1000;
   }
 
   private makeInvincible(duration: number) { this.isInvincible = true; this.player.setAlpha(0.5); this.time.delayedCall(duration, () => { this.isInvincible = false; this.player.setAlpha(1); }); }
@@ -538,12 +544,9 @@ export class GameScene extends Phaser.Scene {
   private updateUI() {
     this.scoreValText.setText(this.score.toString().padStart(6, '0'));
     this.coinValText.setText('x' + this.coinCount.toString().padStart(2, '0'));
-    const biomeNames = ['grasslands','desert','water','ice-snow','sky-clouds','forest','village','beach-island','factory','volcano-lava','haunted-mansion','ruins','canyon-base','space-star','castle-final'];
     const biomeIdx = Math.floor(this.levelIndex / 6);
     const levelInBiome = this.levelIndex % 6;
-    const biomeName = biomeNames[biomeIdx] || '';
-    const levelDisplay = `${biomeName}-${biomeIdx + 1}.${levelInBiome + 1}`;
-    this.worldValText.setText(levelDisplay);
+    this.worldValText.setText(`${biomeIdx + 1}-${levelInBiome + 1}`);
     this.timerValText.setText(Math.max(0, this.timeLeft).toString().padStart(3, '0'));
     this.livesValText.setText(String(this.lives));
   }
@@ -552,11 +555,11 @@ export class GameScene extends Phaser.Scene {
     if (this.isDead || this.isTransitioning) return;
     this.updateUI();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
-    if (this.cursors.left.isDown) { body.setVelocityX(-300); this.player.setFlipX(true); }
-    else if (this.cursors.right.isDown) { body.setVelocityX(300); this.player.setFlipX(false); }
+    if (this.cursors.left.isDown) { body.setVelocityX(-PLAYER_SPEED); this.player.setFlipX(true); }
+    else if (this.cursors.right.isDown) { body.setVelocityX(PLAYER_SPEED); this.player.setFlipX(false); }
     else body.setVelocityX(0);
     if (this.cursors.up.isDown && body.blocked.down) body.setVelocityY(JUMP_VELOCITY);
-    if (this.shootKey.isDown && this.isPlayerFire && time > this.lastFired) { this.shootFireball(); this.lastFired = time + 250; }
+    if ((this.shootKey.isDown || this.spaceShoot.isDown) && this.isPlayerFire && time > this.lastFired) { this.shootFireball(); this.lastFired = time + 250; }
     
     // Update moving platforms
     let playerCarried = false;
@@ -650,7 +653,8 @@ export class GameScene extends Phaser.Scene {
   private nextLevel() {
     this.isMusicPlaying = false;
     if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
-    this.scene.restart({ levelIndex: this.levelIndex + 1, lives: this.lives, score: this.score + 1000, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
+    const timeBonus = Math.max(0, this.timeLeft);
+    this.scene.restart({ levelIndex: this.levelIndex + 1, lives: this.lives, score: this.score + 1000 + timeBonus, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
   }
 
   private shootFireball() {
@@ -663,8 +667,9 @@ export class GameScene extends Phaser.Scene {
       if (this.isTransitioning) return;
       this.isTransitioning = true;
       this.cameras.main.fadeOut(500);
+      const timeBonus = Math.max(0, this.timeLeft);
       this.time.delayedCall(500, () => {
-          this.scene.restart({ levelIndex: this.levelIndex + 1, lives: this.lives, score: this.score + 1000, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
+          this.scene.restart({ levelIndex: this.levelIndex + 1, lives: this.lives, score: this.score + 1000 + timeBonus, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
       });
   }
 

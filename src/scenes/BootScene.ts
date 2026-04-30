@@ -1145,6 +1145,17 @@ g.generateTexture('crab', 28, 34);
     g.fillCircle(8, 8, 4);
     g.generateTexture('bubble', 24, 24);
 
+    // Seaweed (water decoration)
+    g.clear();
+    g.fillStyle(0x228B22, 1);
+    g.fillRect(14, 8, 4, 28);
+    g.fillEllipse(8, 12, 8, 16);
+    g.fillEllipse(24, 16, 8, 14);
+    g.fillStyle(0x32CD32, 0.7);
+    g.fillEllipse(8, 10, 5, 12);
+    g.fillEllipse(24, 14, 5, 10);
+    g.generateTexture('seaweed', 32, 36);
+
     // Cobweb (haunted decoration)
     g.clear();
     g.lineStyle(1, 0xD3D3D3, 0.8);
@@ -1359,6 +1370,54 @@ g.generateTexture('web', 32, 32);
     g.fillStyle(0x1a5a1a, 0.5);
     g.fillEllipse(14, 24, 6, 4);
     g.generateTexture('moss', 32, 32);
+
+    // Snowflake (ice-snow decoration)
+    g.clear();
+    g.lineStyle(2, 0xE0FFFF, 1);
+    for (let i = 0; i < 6; i++) {
+      const angle = (i / 6) * Math.PI;
+      const len = 3 + (i % 3) * 2;
+      g.lineBetween(16, 16, 16 + Math.cos(angle) * len * 2, 16 + Math.sin(angle) * len * 2);
+    }
+    g.fillStyle(0xFFFFFF, 0.9);
+    g.fillCircle(16, 16, 3);
+    g.generateTexture('snowflake', 32, 32);
+
+    // Icicle (ice-snow decoration)
+    g.clear();
+    g.fillStyle(0xB0E0E6, 0.8);
+    g.fillTriangle(16, 0, 6, 24, 26, 24);
+    g.fillStyle(0xADD8E6, 0.6);
+    g.fillTriangle(16, 4, 10, 22, 22, 22);
+    g.fillStyle(0xFFFFFF, 0.4);
+    g.fillCircle(16, 8, 3);
+    g.generateTexture('icicle', 32, 28);
+
+    // Iceberg (ice-snow decoration)
+    g.clear();
+    g.fillStyle(0xE0FFFF, 0.8);
+    g.fillEllipse(20, 30, 36, 24);
+    g.fillStyle(0xFFFFFF, 0.6);
+    g.fillTriangle(12, 14, 20, 4, 28, 14);
+    g.fillStyle(0xF0F8FF, 1);
+    g.fillCircle(20, 10, 5);
+    g.generateTexture('iceberg', 40, 40);
+
+    // Penguin (ice-snow decoration)
+    g.clear();
+    g.fillStyle(0x1a1a2e, 1);
+    g.fillEllipse(16, 20, 20, 24);
+    g.fillStyle(0xFFFFFF, 1);
+    g.fillEllipse(16, 16, 14, 16);
+    g.fillStyle(0x000000, 1);
+    g.fillCircle(13, 10, 2);
+    g.fillCircle(19, 10, 2);
+    g.fillStyle(0xFFA500, 1);
+    g.fillTriangle(14, 14, 18, 14, 16, 16);
+    g.fillStyle(0x1a1a2e, 1);
+    g.fillEllipse(8, 28, 6, 4);
+    g.fillEllipse(24, 28, 6, 4);
+    g.generateTexture('penguin', 32, 36);
 
     g.destroy();
   }
