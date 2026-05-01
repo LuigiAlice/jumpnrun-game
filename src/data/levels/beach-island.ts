@@ -88,6 +88,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
         createMovingPlat(2800 * S, 470, 120, 24, 'platform_medium', 'horizontal', 180, 20),
         createMovingPlat(16000 * S, 470, 120, 24, 'platform_medium', 'horizontal', 200, 22),
         createMovingPlat(25600 * S, 480, 100, 24, 'platform_medium', 'horizontal', 350, 18),
+        createMovingPlat(16035, 490, 120, 24, 'platform_medium', 'horizontal', 366, 20),
       ];
     })(),
     coins: (() => {
@@ -151,7 +152,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 19500, y: 508 },
+    goal: { x: 19500, y: 528 },
     timeBonus: 120,
   },
   {
@@ -208,6 +209,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       return [
         createMovingPlat(11300 * S, 520, 120, 24, 'platform_medium', 'horizontal', 200, 22),
         createMovingPlat(29400 * S, 520, 120, 24, 'platform_medium', 'horizontal', 250, 20),
+        createMovingPlat(16027, 540, 120, 24, 'platform_medium', 'horizontal', 398, 20),
       ];
     })(),
     coins: (() => {
@@ -271,7 +273,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 19516, y: 558 },
+    goal: { x: 19516, y: 578 },
     timeBonus: 140,
   },
   {
@@ -327,6 +329,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       return [
         createMovingPlat(2400 * S, 570, 120, 24, 'platform_medium', 'horizontal', 200, 18),
         createMovingPlat(13400 * S, 570, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+        createMovingPlat(16915, 590, 120, 24, 'platform_medium', 'horizontal', 365, 20),
       ];
     })(),
     coins: (() => {
@@ -392,7 +395,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 600 },
-    goal: { x: 19500, y: 608 },
+    goal: { x: 20300, y: 628 },
     timeBonus: 160,
   },
   {
@@ -450,6 +453,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.444;
       return [
         createMovingPlat(11100 * S, 280, 120, 24, 'platform_medium', 'vertical', 180, 22),
+        createMovingPlat(16650, 540, 120, 24, 'platform_medium', 'horizontal', 383, 20),
       ];
     })(),
     coins: (() => {
@@ -480,7 +484,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.444;
       return [
-        createQB(1000 * S, 530, 'mushroom'), createQB(2000 * S, 530, 'coin'), createQB(3000 * S, 574, 'mushroom'),
+        createQB(1000 * S, 530, 'mushroom'), createQB(2000 * S, 530, 'coin'), createQB(3000 * S, 549, 'mushroom'),
         createQB(4000 * S, 530, 'flower'), createQB(5600 * S, 549, 'star'), createQB(8100 * S, 530, 'mushroom'),
         createQB(9600 * S, 530, 'coin'), createQB(11200 * S, 210, 'flower'), createQB(12600 * S, 530, 'mushroom'),
         createQB(13800 * S, 530, 'star'), createQB(14800 * S, 530, 'mushroom'), createQB(16200 * S, 530, 'flower'),
@@ -515,7 +519,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 19480, y: 558 },
+    goal: { x: 20246, y: 578 },
     timeBonus: 180,
   },
   {
@@ -569,6 +573,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       return [
         createMovingPlat(3550 * S, 520, 120, 24, 'platform_medium', 'horizontal', 180, 20),
         createMovingPlat(25700 * S, 520, 120, 24, 'platform_medium', 'horizontal', 200, 22),
+        createMovingPlat(4505, 540, 120, 24, 'platform_medium', 'horizontal', 364, 20),
+        createMovingPlat(17670, 540, 120, 24, 'platform_medium', 'horizontal', 415, 20),
       ];
     })(),
     coins: (() => {
@@ -634,7 +640,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 19480, y: 558 },
+    goal: { x: 19480, y: 586 },
     timeBonus: 200,
   },
   {
@@ -686,6 +692,9 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       return [
         createMovingPlat(14800 * S, 280, 120, 24, 'platform_medium', 'vertical', 200, 20),
         createMovingPlat(34500 * S, 280, 120, 24, 'platform_medium', 'vertical', 200, 20),
+        createMovingPlat(2724, 540, 120, 24, 'platform_medium', 'horizontal', 354, 20),
+        createMovingPlat(5150, 540, 120, 24, 'platform_medium', 'horizontal', 400, 20),
+        createMovingPlat(16724, 540, 120, 24, 'platform_medium', 'horizontal', 354, 20),
       ];
     })(),
     coins: (() => {
@@ -748,7 +757,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 19500, y: 558 },
+    goal: { x: 19300, y: 578 },
     timeBonus: 220,
   },
 ];

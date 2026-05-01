@@ -1,6 +1,7 @@
 export const DEFAULT_PHYSICS = {
     TILE_SIZE: 32,
     MAX_JUMP_DISTANCE: 800,
+    MAX_PRACTICAL_JUMP: 600,
     MAX_JUMP_UP: 350,
     MAX_FALL_DOWN: 1000,
     PLAYER_WIDTH: 48
@@ -179,7 +180,7 @@ export class Physics {
 
         const horizontalGap = Math.max(toLeft - fromRight, fromLeft - toRight, 0);
 
-        if (horizontalGap > DEFAULT_PHYSICS.MAX_JUMP_DISTANCE) {
+        if (horizontalGap > DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP) {
             return false;
         }
 
@@ -203,7 +204,7 @@ export class Physics {
 
         const horizontalGap = Math.max(toX - fromRight, fromLeft - toX, 0);
 
-        if (horizontalGap > DEFAULT_PHYSICS.MAX_JUMP_DISTANCE) {
+        if (horizontalGap > DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP) {
             return false;
         }
 
@@ -241,6 +242,11 @@ export class Physics {
         }
 
         return closestPlatform;
+    }
+
+    public isGoalOnPlatform(goalX: number, goalY: number): boolean {
+        const platform = this.findPlatformUnderPoint(goalX, goalY);
+        return platform !== null && Math.abs((platform.y - platform.h / 2) - goalY) < 20;
     }
 
     public isSolvable(playerStartX: number, playerStartY: number, goalX: number, goalY: number = 0): boolean {

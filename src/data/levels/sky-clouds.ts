@@ -104,7 +104,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 510 },
-        goal: { x: 19500 * 0.625, y: 518 },
+        goal: { x: 19438, y: 538 },
         timeBonus: 120,
     },
     {
@@ -208,7 +208,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 530 },
-        goal: { x: 10000 * 0.556, y: 570 },
+        goal: { x: 18126, y: 568 },
         timeBonus: 140,
     },
     {
@@ -274,7 +274,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 550 },
-        goal: { x: 10400 * 0.5, y: 588 },
+        goal: { x: 5288, y: 298 },
         timeBonus: 160,
     },
     {
@@ -340,7 +340,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 560 },
-        goal: { x: 11200 * 0.455, y: 625 },
+        goal: { x: 5176, y: 308 },
         timeBonus: 180,
     },
     {
@@ -405,7 +405,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 570 },
-        goal: { x: 12050 * 0.417, y: 655 },
+        goal: { x: 5098, y: 318 },
         timeBonus: 200,
     },
     {
@@ -472,7 +472,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 580 },
-        goal: { x: 12900 * 0.4, y: 653 },
+        goal: { x: 5230, y: 328 },
         timeBonus: 220,
     },
 ];

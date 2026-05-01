@@ -154,7 +154,7 @@ export const DESERT_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 12730, y: 508 },
+    goal: { x: 19430, y: 528 },
     timeBonus: 120,
   },
   {
@@ -222,7 +222,7 @@ export const DESERT_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 10620, y: 530 },
+    goal: { x: 10207, y: 528 },
     timeBonus: 140,
   },
   {
@@ -272,7 +272,7 @@ export const DESERT_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 4240, y: 530 },
+    goal: { x: 4134, y: 528 },
     timeBonus: 160,
   },
   {
@@ -322,7 +322,7 @@ export const DESERT_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 3840, y: 580 },
+    goal: { x: 3610, y: 566 },
     timeBonus: 180,
   },
   {
@@ -372,7 +372,7 @@ export const DESERT_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 3440, y: 580 },
+    goal: { x: 3466, y: 566 },
     timeBonus: 200,
   },
   {
@@ -420,7 +420,7 @@ export const DESERT_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 3600, y: 580 },
+    goal: { x: 3962, y: 566 },
     timeBonus: 220,
   },
 ];

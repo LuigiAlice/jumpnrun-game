@@ -82,7 +82,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 510 },
-    goal: { x: 18000, y: 498 },
+    goal: { x: 18000, y: 538 },
     timeBonus: 165,
     movingPlatforms: [
       createMovingPlat(5700, 480, 120, 24, 'platform_medium', 'horizontal', 250, 20),
@@ -135,7 +135,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 510 },
-    goal: { x: 18000, y: 548 },
+    goal: { x: 18000, y: 588 },
     timeBonus: 180,
     movingPlatforms: [
       createMovingPlat(10390, 490, 120, 24, 'platform_medium', 'horizontal', 250, 20),
@@ -188,7 +188,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 530 },
-    goal: { x: 19000, y: 578 },
+    goal: { x: 19000, y: 618 },
     timeBonus: 195,
     movingPlatforms: [
       createMovingPlat(6800, 520, 120, 24, 'platform_medium', 'horizontal', 200, 22),
@@ -241,7 +241,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 19000, y: 598 },
+    goal: { x: 19989, y: 638 },
     timeBonus: 210,
     movingPlatforms: [
       createMovingPlat(13290, 540, 120, 24, 'platform_medium', 'horizontal', 250, 22),
@@ -294,7 +294,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 510 },
-    goal: { x: 19500, y: 548 },
+    goal: { x: 19500, y: 588 },
     timeBonus: 215,
     movingPlatforms: [
       createMovingPlat(14040, 490, 120, 24, 'platform_medium', 'horizontal', 250, 20),
@@ -347,7 +347,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 19500, y: 598 },
+    goal: { x: 20008, y: 638 },
     timeBonus: 220,
     movingPlatforms: [
       createMovingPlat(19600, 520, 120, 24, 'platform_medium', 'horizontal', 200, 20),

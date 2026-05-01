@@ -116,10 +116,14 @@ export const RUINS_LEVELS: LevelData[] = [
       return decos;
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 18750 - 500, y: 508 },
+    goal: { x: 18625, y: 523 },
     movingPlatforms: [
       createMovingPlat(2200 * 0.625, 500, 100, 24, 'platform_medium', 'horizontal', 200, 22),
       createMovingPlat(10000 * 0.625, 350, 100, 24, 'platform_medium', 'vertical', 180, 20),
+      createMovingPlat(3162, 490, 120, 24, 'platform_medium', 'horizontal', 368, 20),
+      createMovingPlat(5572, 490, 120, 24, 'platform_medium', 'horizontal', 372, 20),
+      createMovingPlat(11531, 490, 120, 24, 'platform_medium', 'horizontal', 363, 20),
+      createMovingPlat(15698, 490, 120, 24, 'platform_medium', 'horizontal', 435, 20),
     ],
   },
   {
@@ -200,10 +204,13 @@ export const RUINS_LEVELS: LevelData[] = [
       return decos;
     })(),
     playerStart: { x: 150, y: 520 },
-    goal: { x: 18904 - 500, y: 528 },
+    goal: { x: 18376, y: 543 },
     movingPlatforms: [
       createMovingPlat(2200 * 0.556, 480, 100, 24, 'platform_medium', 'horizontal', 200, 20),
       createMovingPlat(10500 * 0.556, 350, 100, 24, 'platform_medium', 'vertical', 180, 22),
+      createMovingPlat(9443, 510, 120, 24, 'platform_medium', 'horizontal', 375, 20),
+      createMovingPlat(11993, 510, 120, 24, 'platform_medium', 'horizontal', 423, 20),
+      createMovingPlat(16115, 510, 120, 24, 'platform_medium', 'horizontal', 375, 20),
     ],
   },
   {
@@ -286,10 +293,13 @@ export const RUINS_LEVELS: LevelData[] = [
       return decos;
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 19000 - 500, y: 558 },
+    goal: { x: 18325, y: 573 },
     movingPlatforms: [
       createMovingPlat(11750 * 0.5, 350, 100, 24, 'platform_medium', 'vertical', 200, 22),
       createMovingPlat(27500 * 0.5, 400, 100, 24, 'platform_medium', 'horizontal', 250, 20),
+      createMovingPlat(9467, 540, 120, 24, 'platform_medium', 'horizontal', 367, 20),
+      createMovingPlat(12013, 540, 120, 24, 'platform_medium', 'horizontal', 413, 20),
+      createMovingPlat(16017, 540, 120, 24, 'platform_medium', 'horizontal', 367, 20),
     ],
   },
   {
@@ -374,10 +384,14 @@ export const RUINS_LEVELS: LevelData[] = [
       return decos;
     })(),
     playerStart: { x: 150, y: 580 },
-    goal: { x: 19110 - 500, y: 588 },
+    goal: { x: 18314, y: 603 },
     movingPlatforms: [
       createMovingPlat(2400 * 0.455, 500, 100, 24, 'platform_medium', 'horizontal', 220, 20),
       createMovingPlat(10800 * 0.455, 360, 100, 24, 'platform_medium', 'vertical', 180, 22),
+      createMovingPlat(5338, 570, 120, 24, 'platform_medium', 'horizontal', 641, 20),
+      createMovingPlat(9366, 570, 120, 24, 'platform_medium', 'horizontal', 361, 20),
+      createMovingPlat(11954, 570, 120, 24, 'platform_medium', 'horizontal', 401, 20),
+      createMovingPlat(15827, 570, 120, 24, 'platform_medium', 'horizontal', 361, 20),
     ],
   },
   {
@@ -463,9 +477,13 @@ export const RUINS_LEVELS: LevelData[] = [
       return decos;
     })(),
     playerStart: { x: 150, y: 600 },
-    goal: { x: 19182 - 500, y: 608 },
+    goal: { x: 18411, y: 623 },
     movingPlatforms: [
       createMovingPlat(33000 * 0.417, 380, 100, 24, 'platform_medium', 'vertical', 200, 20),
+      createMovingPlat(5803, 590, 120, 24, 'platform_medium', 'horizontal', 390, 20),
+      createMovingPlat(9522, 590, 120, 24, 'platform_medium', 'horizontal', 356, 20),
+      createMovingPlat(12062, 590, 120, 24, 'platform_medium', 'horizontal', 394, 20),
+      createMovingPlat(15860, 590, 120, 24, 'platform_medium', 'horizontal', 356, 20),
     ],
   },
   {
@@ -552,10 +570,14 @@ export const RUINS_LEVELS: LevelData[] = [
       return decos;
     })(),
     playerStart: { x: 150, y: 600 },
-    goal: { x: 20000 - 500, y: 608 },
+    goal: { x: 19220, y: 623 },
     movingPlatforms: [
       createMovingPlat(2600 * 0.4, 520, 100, 24, 'platform_medium', 'horizontal', 240, 20),
       createMovingPlat(11500 * 0.4, 380, 100, 24, 'platform_medium', 'vertical', 180, 22),
+      createMovingPlat(6046, 590, 120, 24, 'platform_medium', 'horizontal', 416, 20),
+      createMovingPlat(9874, 590, 120, 24, 'platform_medium', 'horizontal', 364, 20),
+      createMovingPlat(12549, 590, 120, 24, 'platform_medium', 'horizontal', 399, 20),
+      createMovingPlat(16474, 590, 120, 24, 'platform_medium', 'horizontal', 364, 20),
     ],
   },
 ];

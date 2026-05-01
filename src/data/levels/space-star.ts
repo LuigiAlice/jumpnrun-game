@@ -128,7 +128,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 490 },
-        goal: { x: 20000 - 500, y: 558, points: 1000, difficulty: 'easy' },
+        goal: { x: 20000 - 500, y: 578, points: 1000, difficulty: 'easy' },
         timeBonus: 120,
         movingPlatforms: (() => {
             return [
@@ -271,7 +271,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 510 },
-        goal: { x: 20000 - 500, y: 578, points: 1500, difficulty: 'medium' },
+        goal: { x: 20000 - 500, y: 598, points: 1500, difficulty: 'medium' },
         timeBonus: 150,
         movingPlatforms: (() => {
             return [
@@ -416,7 +416,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 530 },
-        goal: { x: 20000 - 500, y: 598, points: 2000, difficulty: 'medium' },
+        goal: { x: 20000 - 500, y: 618, points: 2000, difficulty: 'medium' },
         timeBonus: 170,
         movingPlatforms: (() => {
             return [
@@ -561,7 +561,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 510 },
-        goal: { x: 19980 - 500, y: 578, points: 2500, difficulty: 'hard' },
+        goal: { x: 19980 - 500, y: 598, points: 2500, difficulty: 'hard' },
         timeBonus: 190,
         movingPlatforms: (() => {
             return [
@@ -709,7 +709,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 530 },
-        goal: { x: 20016 - 500, y: 598, points: 3000, difficulty: 'hard' },
+        goal: { x: 20016 - 500, y: 618, points: 3000, difficulty: 'hard' },
         timeBonus: 200,
         movingPlatforms: (() => {
             return [
@@ -854,7 +854,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 530 },
-        goal: { x: 20000 - 500, y: 598, points: 5000, difficulty: 'hard' },
+        goal: { x: 20000 - 500, y: 618, points: 5000, difficulty: 'hard' },
         timeBonus: 220,
         movingPlatforms: (() => {
             return [

@@ -135,7 +135,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 100, y: 470 },
-        goal: { x: 20000 - 500, y: 490 },
+        goal: { x: 19000, y: 498 },
         timeBonus: 180,
         movingPlatforms: [
             createMovingPlat(5000, 380, 120, 24, 'platform_medium', 'horizontal', 250, 20),
@@ -149,6 +149,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             createMovingPlat(9844, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
             createMovingPlat(11406, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
             createMovingPlat(12531, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(16031, 380, 110, 22, 'platform_medium', 'horizontal', 500, 20),
         ],
     },
     {
@@ -294,7 +295,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 400, y: 480 },
-        goal: { x: 20016 - 500, y: 520 },
+        goal: { x: 18821, y: 528 },
         timeBonus: 200,
         movingPlatforms: [
             createMovingPlat(5500, 400, 130, 24, 'platform_medium', 'horizontal', 280, 22),
@@ -450,7 +451,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 100, y: 510 },
-        goal: { x: 20000 - 500, y: 500 },
+        goal: { x: 18825, y: 508 },
         timeBonus: 210,
         movingPlatforms: [
             createMovingPlat(7000, 450, 130, 24, 'platform_medium', 'vertical', 200, 15),
@@ -604,7 +605,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 100, y: 520 },
-        goal: { x: 18726, y: 520 },
+        goal: { x: 18226, y: 518 },
         timeBonus: 220,
         movingPlatforms: [
             createMovingPlat(6500, 320, 120, 24, 'platform_medium', 'circular', 130, 15),
@@ -765,7 +766,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 100, y: 530 },
-        goal: { x: 20016 - 500, y: 520 },
+        goal: { x: 19265, y: 528 },
         timeBonus: 200,
         movingPlatforms: [
             createMovingPlat(7000, 420, 140, 24, 'platform_medium', 'horizontal', 260, 19),
@@ -775,6 +776,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             createMovingPlat(8027, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
             createMovingPlat(10696, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
             createMovingPlat(13198, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(18056, 380, 110, 22, 'platform_medium', 'horizontal', 500, 20),
         ],
     },
     {
@@ -928,7 +930,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 100, y: 540 },
-        goal: { x: 20000 - 500, y: 530 },
+        goal: { x: 19400, y: 538 },
         timeBonus: 200,
         movingPlatforms: [
             createMovingPlat(8000, 450, 130, 24, 'platform_medium', 'vertical', 180, 21),

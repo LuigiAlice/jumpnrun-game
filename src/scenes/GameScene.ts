@@ -8,6 +8,8 @@ const PLAYER_SPEED = 300;
 const JUMP_VELOCITY = -900;
 const GRAVITY = 2000;
 
+const SOLID_TYPES = ['grass', 'stone', 'brick', 'cave', 'castle', 'metal', 'lava', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'bubble'];
+
 export class GameScene extends Phaser.Scene {
   private player!: Phaser.Physics.Arcade.Sprite;
   private platforms!: Phaser.Physics.Arcade.StaticGroup;
@@ -169,9 +171,6 @@ export class GameScene extends Phaser.Scene {
         dec.setScrollFactor(0.3, 0.3).setDepth(-85);
       });
     }
-    
-    const SOLID_TYPES = ['grass', 'stone', 'brick', 'cave', 'castle', 'metal', 'lava', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud'];
-
     level.platforms.forEach(p => {
       let tex = 'ground_grass';
       const platType = p.type as string;
@@ -606,7 +605,6 @@ export class GameScene extends Phaser.Scene {
     // Enemy platform edge detection - turn around instead of falling
     const level = this.currentLevelData;
     if (level) {
-      const SOLID_TYPES = ['grass', 'stone', 'brick', 'cave', 'castle', 'metal', 'lava', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'sand', 'water', 'dirt'];
       this.enemies.getChildren().forEach((enemy: any) => {
         if (!enemy.body || enemy.getData('noEdgeDetection')) return;
         const vx = enemy.body.velocity.x;
@@ -619,7 +617,6 @@ export class GameScene extends Phaser.Scene {
         
         let hasGroundBelow = false;
         for (const p of level.platforms) {
-          if (!SOLID_TYPES.includes(p.type)) continue;
           const px = p.x - p.w / 2;
           const pw = p.w;
           const py = p.y - p.h / 2;
@@ -628,6 +625,21 @@ export class GameScene extends Phaser.Scene {
             if (ey + eh >= py && ey + eh <= py + 40) {
               hasGroundBelow = true;
               break;
+            }
+          }
+        }
+        
+        if (!hasGroundBelow && level.movingPlatforms) {
+          for (const mp of level.movingPlatforms) {
+            const px = mp.x - mp.w / 2;
+            const pw = mp.w;
+            const py = mp.y - mp.h / 2;
+            
+            if (ex + ew > px && ex < px + pw) {
+              if (ey + eh >= py && ey + eh <= py + 40) {
+                hasGroundBelow = true;
+                break;
+              }
             }
           }
         }

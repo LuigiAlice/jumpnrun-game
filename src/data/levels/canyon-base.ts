@@ -153,7 +153,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 460 },
-    goal: createGoal(18626, 130, 1500, 'easy'),
+    goal: createGoal(18126, 128, 1500, 'easy'),
     timeBonus: 180,
   },
   {
@@ -249,7 +249,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 510 },
-    goal: createGoal(20000 - 500, 130, 1800, 'medium'),
+    goal: createGoal(19304, 158, 1800, 'medium'),
     timeBonus: 200,
   },
   {
@@ -345,7 +345,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: createGoal(20000 - 500, 150, 2000, 'medium'),
+    goal: createGoal(19500, 178, 2000, 'medium'),
     timeBonus: 210,
   },
   {
@@ -441,7 +441,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 530 },
-    goal: createGoal(19536 - 500, 130, 2200, 'hard'),
+    goal: createGoal(19036, 158, 2200, 'hard'),
     timeBonus: 180,
   },
   {
@@ -533,7 +533,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: createGoal(20016 - 500, 130, 2400, 'hard'),
+    goal: createGoal(19516, 158, 2400, 'hard'),
     timeBonus: 200,
   },
   {
@@ -624,7 +624,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: createGoal(20000 - 500, 100, 2600, 'hard'),
+    goal: createGoal(19400, 128, 2600, 'hard'),
     timeBonus: 220,
   },
 ];

@@ -79,7 +79,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 6125, y: 510 },
+    goal: { x: 6125, y: 528 },
     timeBonus: 120,
     movingPlatforms: (() => {
       const S = 0.625;
@@ -137,7 +137,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 3503, y: 560 },
+    goal: { x: 3503, y: 578 },
     timeBonus: 140,
     movingPlatforms: (() => {
       const S = 0.556;
@@ -195,7 +195,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 600 },
-    goal: { x: 3427, y: 610 },
+    goal: { x: 3427, y: 628 },
     timeBonus: 160,
     movingPlatforms: (() => {
       const S = 0.476;
@@ -253,7 +253,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 3641, y: 560 },
+    goal: { x: 3641, y: 578 },
     timeBonus: 180,
     movingPlatforms: (() => {
       const S = 0.444;
@@ -311,7 +311,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 600 },
-    goal: { x: 3878, y: 610 },
+    goal: { x: 3878, y: 628 },
     timeBonus: 200,
     movingPlatforms: (() => {
       const S = 0.417;

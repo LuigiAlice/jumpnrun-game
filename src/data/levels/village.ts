@@ -103,7 +103,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 600 },
-        goal: { x: 19500, y: 270 },
+        goal: { x: 19100, y: 288 },
         timeBonus: 55,
         movingPlatforms: (() => {
             const S = 2.0;
@@ -227,7 +227,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 600 },
-        goal: { x: 18336, y: 630 },
+        goal: { x: 17836, y: 628 },
         timeBonus: 62,
         movingPlatforms: (() => {
             const S = 1.82;
@@ -358,7 +358,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 700 },
-        goal: { x: 18202, y: 220 },
+        goal: { x: 17702, y: 218 },
         timeBonus: 68,
         movingPlatforms: (() => {
             const S = 1.67;
@@ -513,7 +513,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 750 },
-        goal: { x: 19152, y: 480 },
+        goal: { x: 19388, y: 348 },
         timeBonus: 75,
         movingPlatforms: (() => {
             const S = 1.48;
@@ -675,7 +675,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 800 },
-        goal: { x: 18854, y: 360 },
+        goal: { x: 18354, y: 358 },
         timeBonus: 82,
         movingPlatforms: (() => {
             const S = 1.38;
@@ -838,7 +838,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 900 },
-        goal: { x: 18000, y: 360 },
+        goal: { x: 17500, y: 358 },
         timeBonus: 90,
         movingPlatforms: (() => {
             const S = 1.25;

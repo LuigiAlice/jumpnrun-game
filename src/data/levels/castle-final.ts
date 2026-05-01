@@ -151,7 +151,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 510 },
-        goal: { x: 20000 - 500, y: 558 },
+        goal: { x: 20000 - 500, y: 578 },
         timeBonus: 150,
         movingPlatforms: (() => {
             const S = 0.625;
@@ -321,7 +321,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 560 },
-        goal: { x: 20000 - 500, y: 578 },
+        goal: { x: 20000 - 500, y: 598 },
         timeBonus: 175,
         movingPlatforms: (() => {
             const S = 0.526;
@@ -492,7 +492,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 580 },
-        goal: { x: 20000 - 500, y: 598 },
+        goal: { x: 20000 - 500, y: 618 },
         timeBonus: 195,
         movingPlatforms: (() => {
             const S = 0.476;
@@ -663,7 +663,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 550 },
-        goal: { x: 19980 - 500, y: 568 },
+        goal: { x: 19980 - 500, y: 588 },
         timeBonus: 210,
         movingPlatforms: (() => {
             const S = 0.444;
@@ -833,7 +833,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 560 },
-        goal: { x: 20016 - 500, y: 578 },
+        goal: { x: 20016 - 500, y: 598 },
         timeBonus: 220,
         movingPlatforms: (() => {
             const S = 0.417;
@@ -1000,7 +1000,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 540 },
-        goal: { x: 20000 - 500, y: 558 },
+        goal: { x: 20000 - 500, y: 578 },
         timeBonus: 220,
         movingPlatforms: (() => {
             const S = 0.4;

@@ -102,11 +102,11 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 12545, y: 510 },
+    goal: { x: 12545, y: 528 },
     timeBonus: 120,
     movingPlatforms: [
       createMovingPlat(11700 * S, 480, 150, 24, 'platform_medium', 'horizontal', 350, 20),
-      createMovingPlat(12100 * S, 480, 120, 24, 'platform_medium', 'horizontal', 250, 18),
+      createMovingPlat(6800, 480, 120, 24, 'platform_medium', 'horizontal', 380, 18),
     ],
   },
   {
@@ -280,7 +280,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 7000 * S, y: 580 },
+    goal: { x: 4518, y: 578 },
     timeBonus: 180,
     movingPlatforms: [
       createMovingPlat(5500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 400, 22),
@@ -335,11 +335,12 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 8500 * S, y: 580 },
+    goal: { x: 5265, y: 578 },
     timeBonus: 200,
     movingPlatforms: [
       createMovingPlat(3200 * S, 520, 150, 24, 'platform_medium', 'horizontal', 320, 22),
-      createMovingPlat(4500 * S, 500, 120, 24, 'platform_medium', 'vertical', 200, 20),
+      createMovingPlat(4500 * S, 500, 120, 24, 'platform_medium', 'vertical', 400, 20),
+      createMovingPlat(3115, 540, 120, 24, 'platform_medium', 'horizontal', 403, 20),
     ],
   },
   {
@@ -393,10 +394,11 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 9500 * S, y: 580 },
+    goal: { x: 5980, y: 578 },
     timeBonus: 220,
     movingPlatforms: [
-      createMovingPlat(7500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 400, 22),
+      createMovingPlat(5200, 480, 150, 24, 'platform_medium', 'horizontal', 420, 22),
+      createMovingPlat(3644, 540, 120, 24, 'platform_medium', 'horizontal', 443, 20),
     ],
   },
 ];

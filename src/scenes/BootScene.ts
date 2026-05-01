@@ -28,158 +28,172 @@ export class BootScene extends Phaser.Scene {
 
     const drawMario = (key: string, shirtColor: number, pantsColor: number, isBig: boolean) => {
       g.clear();
-      const w = isBig ? 32 : 28;
-      const h = isBig ? 48 : 36;
-      const yOff = isBig ? 0 : 14;
+      const w = isBig ? 36 : 30;
+      const h = isBig ? 52 : 44;
+      const yOff = isBig ? 0 : 8;
       const totalH = h + yOff;
       const cx = w / 2;
-      const SKIN = 0xffcc99;
-      const HAIR = 0x5c3317;
-      const SHOE_DARK = 0x3d1f00;
-      const SHOE = 0x7a3b10;
+      const SKIN = 0xffddbb;
+      const SKIN_SHADOW = 0xf0c8a0;
+      const CHEEK = 0xffaaaa;
+      const HAIR = 0x4a2800;
 
-      // Subtle shadow under feet
-      g.fillStyle(0x000000, 0.1);
-      g.fillEllipse(cx, totalH - 1, w * 0.55, 3.5);
+      // CHIBI PROPORTIONS: huge head (60% of height), tiny body
+      const headCY = h * 0.22 + yOff;
+      const headRX = w * 0.52;
+      const headRY = h * 0.18;
 
-      // === SHOES (larger, rounded, with dark soles) ===
-      g.fillStyle(SHOE_DARK, 1);
-      g.fillRoundedRect(3, h - 7 + yOff, 9, 5, 2);
-      g.fillRoundedRect(w - 12, h - 7 + yOff, 9, 5, 2);
-      g.fillStyle(SHOE, 1);
-      g.fillRoundedRect(3, h - 10 + yOff, 9, 5, 2);
-      g.fillRoundedRect(w - 12, h - 10 + yOff, 9, 5, 2);
-      // Shoe shine dots
-      g.fillStyle(0xffffff, 0.2);
-      g.fillCircle(7, h - 9 + yOff, 0.8);
-      g.fillCircle(w - 8, h - 9 + yOff, 0.8);
+      // === GROUND SHADOW ===
+      g.fillStyle(0x000000, 0.08);
+      g.fillEllipse(cx, totalH - 1, w * 0.45, 3);
 
-      // === LEGS / OVERALLS ===
+      // === FEET (tiny round boots) ===
+      g.fillStyle(0x3d1f00, 1);
+      g.fillEllipse(cx - 6, h * 0.88 + yOff, 8, 5);
+      g.fillEllipse(cx + 6, h * 0.88 + yOff, 8, 5);
+      g.fillStyle(0x6b3a1f, 1);
+      g.fillEllipse(cx - 6, h * 0.87 + yOff, 7, 4);
+      g.fillEllipse(cx + 6, h * 0.87 + yOff, 7, 4);
+
+      // === LEGS (tiny, stubby) ===
       g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(4, h - 24 + yOff, 8, 16, 3);
-      g.fillRoundedRect(w - 12, h - 24 + yOff, 8, 16, 3);
-      // Pants highlight
-      const pantsHl = pantsColor === 0x0050c0 ? 0x2068d8 : 0xd03030;
-      g.fillStyle(pantsHl, 1);
-      g.fillRoundedRect(5, h - 23 + yOff, 5, 3, 1);
-      g.fillRoundedRect(w - 10, h - 23 + yOff, 5, 3, 1);
+      g.fillRoundedRect(cx - 7, h * 0.65 + yOff, 6, h * 0.22, 3);
+      g.fillRoundedRect(cx + 1, h * 0.65 + yOff, 6, h * 0.22, 3);
 
-      // === BODY / SHIRT (wider stance) ===
+      // === BODY/OVERALLS (tiny, round) ===
+      const bodyY = h * 0.48 + yOff;
+      const bodyH = h * 0.20;
+      g.fillStyle(pantsColor, 1);
+      g.fillRoundedRect(cx - 7, bodyY, 14, bodyH, {tl:2,tr:2,bl:4,br:4});
+      // Overalls highlight
+      g.fillStyle(0xffffff, 0.1);
+      g.fillRoundedRect(cx - 6, bodyY + 1, 5, bodyH - 2, 2);
+
+      // === SHIRT (tiny top of overalls) ===
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(1, h - 33 + yOff, w - 2, 12, 4);
-      // Shirt 3D highlight (upper-left lighting)
-      g.fillStyle(0xffffff, 0.13);
-      g.fillRoundedRect(2, h - 32 + yOff, 8, 4, 2);
+      g.fillRoundedRect(cx - 8, bodyY - 2, 16, bodyH * 0.45, {tl:4,tr:4,bl:0,br:0});
+      g.fillStyle(0xffffff, 0.12);
+      g.fillRoundedRect(cx - 6, bodyY - 1, 6, bodyH * 0.2, 2);
 
-      // === OVERALLS STRAPS with yellow buttons ===
-      g.fillStyle(pantsColor, 1);
-      g.fillRect(cx - 5, h - 33 + yOff, 2, 5);
-      g.fillRect(cx + 3, h - 33 + yOff, 2, 5);
+      // === GOLD BUTTONS ===
       g.fillStyle(0xffdd00, 1);
-      g.fillCircle(cx - 4, h - 29 + yOff, 1.2);
-      g.fillCircle(cx + 4, h - 29 + yOff, 1.2);
+      g.fillCircle(cx - 3, bodyY + 1, 1.5);
+      g.fillCircle(cx + 3, bodyY + 1, 1.5);
 
-      // === HANDS (white glove circles at sides) ===
-      g.fillStyle(0xfafafa, 1);
-      g.fillCircle(1, h - 30 + yOff, 3.5);
-      g.fillCircle(w - 1, h - 30 + yOff, 3.5);
-      g.fillStyle(0xcccccc, 0.25);
-      g.fillCircle(2, h - 29 + yOff, 2.5);
-      g.fillCircle(w, h - 29 + yOff, 2.5);
+      // === TINY ARMS with white gloves ===
+      g.fillStyle(shirtColor, 1);
+      g.fillRoundedRect(cx - 12, bodyY + 2, 5, bodyH * 0.4, 2);
+      g.fillRoundedRect(cx + 7, bodyY + 2, 5, bodyH * 0.4, 2);
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(cx - 12, bodyY, 3.5);
+      g.fillCircle(cx + 12, bodyY, 3.5);
 
       // === EARS ===
       g.fillStyle(SKIN, 1);
-      g.fillCircle(3, 14 + yOff * 0.45, 3);
-      g.fillCircle(w - 3, 14 + yOff * 0.45, 3);
+      g.fillCircle(cx - headRX * 0.9, headCY, 3.5);
+      g.fillCircle(cx + headRX * 0.9, headCY, 3.5);
+      g.fillStyle(0xddaa88, 0.3);
+      g.fillCircle(cx - headRX * 0.9 + 0.5, headCY + 1, 1.5);
+      g.fillCircle(cx + headRX * 0.9 - 0.5, headCY + 1, 1.5);
 
-      // === HEAD (bigger, expressive, 3D shaded) ===
+      // === HEAD (huge, round) ===
       g.fillStyle(SKIN, 1);
-      g.fillEllipse(cx, 12 + yOff * 0.45, 21, 17);
-      // Head highlight (upper-left)
-      g.fillStyle(0xffe0bb, 0.45);
-      g.fillEllipse(cx - 3, 9 + yOff * 0.45, 8, 7);
+      g.fillCircle(cx, headCY, headRX * 0.85);
+      // Cheek blush
+      g.fillStyle(CHEEK, 0.35);
+      g.fillEllipse(cx - headRX * 0.45, headCY + headRY * 0.2, headRX * 0.25, headRY * 0.2);
+      g.fillEllipse(cx + headRX * 0.45, headCY + headRY * 0.2, headRX * 0.25, headRY * 0.2);
 
-      // === HAIR (dark brown, under cap) ===
+      // === HAIR ===
       g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - 9, 2 + yOff * 0.35, 18, 5, 2);
-      g.fillRect(1, 5 + yOff * 0.35, 3, 4);
-      g.fillRect(w - 4, 5 + yOff * 0.35, 3, 4);
+      g.fillRoundedRect(cx - headRX * 0.7, headCY - headRY * 0.95, headRX * 1.4, headRY * 0.45, {tl:4,tr:4,bl:0,br:0});
+      g.fillRect(cx - headRX * 0.8, headCY - headRY * 0.75, 3, headRY * 0.35);
+      g.fillRect(cx + headRX * 0.65, headCY - headRY * 0.75, 3, headRY * 0.35);
 
-      // === CAP (iconic red cap with white badge and "M") ===
+      // === CAP (big, cute) ===
+      const capY = headCY - headRY * 0.9;
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 9, 3 + yOff * 0.25, 18, 7, 3);
-      // Cap brim (visor)
+      g.fillRoundedRect(cx - headRX * 0.75, capY, headRX * 1.5, headRY * 0.6, {tl:5,tr:5,bl:1,br:1});
+      // Cap brim
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 1, 7 + yOff * 0.4, 13, 3, 2);
+      g.fillRoundedRect(cx + 1, capY + headRY * 0.3, headRX * 0.8, headRY * 0.2, {tl:0,tr:3,bl:0,br:3});
       // Cap highlight
-      g.fillStyle(0xffffff, 0.15);
-      g.fillRoundedRect(cx - 7, 3 + yOff * 0.25, 7, 3, 1);
-      // White badge circle
+      g.fillStyle(0xffffff, 0.2);
+      g.fillRoundedRect(cx - headRX * 0.5, capY + 1, headRX * 0.5, headRY * 0.2, 2);
+
+      // === "M" BADGE ===
       g.fillStyle(0xffffff, 1);
-      g.fillCircle(cx, 5 + yOff * 0.25, 2.5);
-      // "M" letter (red strokes carved into white badge)
+      g.fillCircle(cx, capY + headRY * 0.2, headRY * 0.25);
       g.fillStyle(shirtColor, 1);
-      g.fillRect(cx - 1.8, 3.5 + yOff * 0.25, 0.7, 2.5);
-      g.fillRect(cx + 1.1, 3.5 + yOff * 0.25, 0.7, 2.5);
-      g.fillRect(cx - 0.4, 4 + yOff * 0.25, 0.8, 2);
+      g.fillRect(cx - 1.5, capY + headRY * 0.05, 0.8, headRY * 0.3);
+      g.fillRect(cx + 0.7, capY + headRY * 0.05, 0.8, headRY * 0.3);
 
-      // === FACE ===
-      // Eye whites (sclera)
+      // === HUGE CUTE EYES ===
+      const eyeY = headCY - headRY * 0.05;
+      // Eye whites
       g.fillStyle(0xffffff, 1);
-      g.fillEllipse(cx - 5, 12 + yOff * 0.45, 5, 5.5);
-      g.fillEllipse(cx + 5, 12 + yOff * 0.45, 5, 5.5);
-      // Black pupils
+      g.fillEllipse(cx - headRX * 0.28, eyeY, headRX * 0.32, headRY * 0.35);
+      g.fillEllipse(cx + headRX * 0.28, eyeY, headRX * 0.32, headRY * 0.35);
+      // Irises (big dark circles)
+      g.fillStyle(0x111122, 1);
+      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.18);
+      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.18);
+      // Iris color (bright blue)
+      g.fillStyle(0x4488dd, 1);
+      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.14);
+      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.14);
+      // BIG pupil
       g.fillStyle(0x000000, 1);
-      g.fillCircle(cx - 4, 12 + yOff * 0.45, 2);
-      g.fillCircle(cx + 6, 12 + yOff * 0.45, 2);
-      // Eye shine highlights
-      g.fillStyle(0xffffff, 0.85);
-      g.fillCircle(cx - 3.3, 10.8 + yOff * 0.45, 0.7);
-      g.fillCircle(cx + 6.7, 10.8 + yOff * 0.45, 0.7);
-      // Eyebrows
-      g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - 7, 7 + yOff * 0.45, 5, 1.3, 0.5);
-      g.fillRoundedRect(cx + 2, 7 + yOff * 0.45, 5, 1.3, 0.5);
-      // Big round nose
-      g.fillStyle(0xffbb88, 1);
-      g.fillCircle(cx, 14 + yOff * 0.45, 3.2);
-      // Nose highlight
-      g.fillStyle(0xffcc99, 0.35);
-      g.fillCircle(cx - 1, 13 + yOff * 0.45, 1.2);
-      // Mustache
-      g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - 8, 16.5 + yOff * 0.45, 16, 3.2, 1.5);
-      // Smile line
-      g.fillStyle(0x3d1f00, 1);
-      g.fillRoundedRect(cx - 3, 19 + yOff * 0.45, 6, 1.2, 0.5);
+      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.08);
+      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.08);
+      // ✨ BIG SHINE SPARKLE (two highlights per eye)
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(cx - headRX * 0.20, eyeY - headRY * 0.08, headRX * 0.08);
+      g.fillCircle(cx + headRX * 0.36, eyeY - headRY * 0.08, headRX * 0.08);
+      g.fillStyle(0xffffff, 0.5);
+      g.fillCircle(cx - headRX * 0.32, eyeY + headRY * 0.04, headRX * 0.04);
+      g.fillCircle(cx + headRX * 0.24, eyeY + headRY * 0.04, headRX * 0.04);
 
-      // Cap shine dot
-      g.fillStyle(0xffffff, 0.35);
-      g.fillCircle(cx - 6, 3.5 + yOff * 0.25, 0.8);
+      // === CUTE TINY EYEBROWS ===
+      g.fillStyle(HAIR, 1);
+      g.fillRoundedRect(cx - headRX * 0.38, eyeY - headRY * 0.18, headRX * 0.25, headRY * 0.08, 1);
+      g.fillRoundedRect(cx + headRX * 0.18, eyeY - headRY * 0.18, headRX * 0.25, headRY * 0.08, 1);
+
+      // === SMALL ROUND NOSE ===
+      g.fillStyle(0xf0a888, 1);
+      g.fillCircle(cx, eyeY + headRY * 0.15, headRY * 0.12);
+      g.fillStyle(0xffffff, 0.3);
+      g.fillCircle(cx - 0.5, eyeY + headRY * 0.12, headRY * 0.04);
+
+      // === TINY MUSTACHE ===
+      g.fillStyle(HAIR, 1);
+      g.fillRoundedRect(cx - headRX * 0.3, eyeY + headRY * 0.25, headRX * 0.6, headRY * 0.12, 1);
+
+      // === HAPPY SMILE ===
+      g.fillStyle(0x772200, 0.35);
+      g.fillRoundedRect(cx - headRX * 0.1, eyeY + headRY * 0.35, headRX * 0.2, headRY * 0.06, 1);
 
       g.generateTexture(key, w, totalH);
     };
 
-    drawMario('player_idle', 0xe00000, 0x0050c0, false);
-    drawMario('player_big', 0xe00000, 0x0050c0, true);
-    drawMario('player_fire', 0xf8f8f8, 0xe00000, true);
+    drawMario('player_idle', 0xee3333, 0x2266dd, false);
+    drawMario('player_big', 0xee3333, 0x2266dd, true);
+    drawMario('player_fire', 0xffffff, 0xee4444, true);
 
-    // Fireball with glow effects
+    // Fireball
     g.clear();
-    g.fillStyle(0xff3300, 0.15);
+    g.fillStyle(0xff2200, 0.08);
+    g.fillCircle(6, 6, 7);
+    g.fillStyle(0xff4400, 0.15);
     g.fillCircle(6, 6, 6);
-    g.fillStyle(0xff5500, 0.3);
+    g.fillStyle(0xff7700, 0.35);
     g.fillCircle(6, 6, 5);
-    g.fillStyle(0xff6600, 0.7);
+    g.fillStyle(0xffaa00, 0.7);
     g.fillCircle(6, 6, 4);
-    g.fillStyle(0xffaa00, 1);
-    g.fillCircle(6, 6, 3);
     g.fillStyle(0xffdd00, 1);
-    g.fillCircle(6, 6, 2);
-    g.fillStyle(0xffffff, 0.85);
-    g.fillCircle(6, 6, 0.8);
-    g.fillStyle(0xffffff, 0.5);
-    g.fillCircle(5, 4.5, 0.5);
+    g.fillCircle(6, 6, 3);
+    g.fillStyle(0xffffff, 0.6);
+    g.fillCircle(6, 6, 1.2);
     g.generateTexture('fireball', 12, 12);
     g.destroy();
   }

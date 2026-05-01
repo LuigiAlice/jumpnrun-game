@@ -167,7 +167,7 @@ describe('Full Level Traversability', () => {
 
         for (let i = 0; i < getLevelCount(); i++) {
             const level = getLevel(i);
-            const physics = new Physics(level.platforms as any[], level.width, level.height);
+            const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
 
             const result = physics.isFullyTraversableToGoal(level.playerStart.x, level.playerStart.y, level.goal.x);
 
@@ -227,5 +227,22 @@ describe('Individual Level Tests', () => {
             expect(level.playerStart).toBeDefined();
             expect(level.goal).toBeDefined();
         }
+    });
+
+    it('all 90 levels should have goal on a platform', () => {
+        const failures: string[] = [];
+        for (let i = 0; i < 90; i++) {
+            const level = getLevel(i);
+            const physics = new Physics(level.platforms as any[], level.width, level.height);
+            if (!physics.isGoalOnPlatform(level.goal.x, level.goal.y)) {
+                const nearest = physics.findPlatformUnderPoint(level.goal.x, level.goal.y);
+                failures.push(`Level ${level.id} (${level.name}): goal at (${level.goal.x.toFixed(0)}, ${level.goal.y}) - ${nearest ? `nearest platform at (${nearest.x.toFixed(0)}, ${nearest.y}) type=${nearest.type}` : 'NO platform'}`);
+            }
+        }
+        if (failures.length > 0) {
+            console.log(`\nGoals NOT on a platform (${failures.length}/90):`);
+            failures.forEach(f => console.log(`  ${f}`));
+        }
+        expect(failures.length).toBe(0);
     });
 });

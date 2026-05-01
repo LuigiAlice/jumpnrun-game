@@ -224,7 +224,7 @@ export const FACTORY_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 550 },
-        goal: { x: 20000 - 500, y: 558 },
+        goal: { x: 20000 - 500, y: 578 },
         timeBonus: 160,
     },
     {
@@ -399,7 +399,7 @@ export const FACTORY_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 580 },
-        goal: { x: 19460 - 500, y: 588 },
+        goal: { x: 19460 - 500, y: 608 },
         timeBonus: 175,
     },
     {
@@ -582,7 +582,7 @@ export const FACTORY_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 600 },
-        goal: { x: 20000 - 500, y: 608 },
+        goal: { x: 20000 - 500, y: 628 },
         timeBonus: 190,
     },
     {
@@ -769,7 +769,7 @@ export const FACTORY_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 620 },
-        goal: { x: 19980 - 500, y: 628 },
+        goal: { x: 19980 - 500, y: 648 },
         timeBonus: 200,
     },
     {
@@ -958,7 +958,7 @@ export const FACTORY_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 600 },
-        goal: { x: 20016 - 500, y: 608 },
+        goal: { x: 20016 - 500, y: 628 },
         timeBonus: 210,
     },
     {
@@ -1149,7 +1149,7 @@ export const FACTORY_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 600 },
-        goal: { x: 20000 - 500, y: 608 },
+        goal: { x: 20000 - 500, y: 628 },
         timeBonus: 220,
     },
 ];

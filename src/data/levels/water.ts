@@ -151,7 +151,7 @@ export const WATER_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 440 },
-        goal: { x: 19430, y: 440 },
+        goal: { x: 19430, y: 458 },
         timeBonus: 120,
     },
     {
@@ -225,10 +225,11 @@ export const WATER_LEVELS: LevelData[] = [
             const S = 0.57;
             return [
                 createMovingPlat(3800 * S, 400, 100, 24, 'water', 'horizontal', 180, 22),
+                createMovingPlat(8400 * S, 420, 120, 24, 'water', 'horizontal', 480, 20),
             ];
         })(),
         playerStart: { x: 150, y: 480 },
-        goal: { x: 3676, y: 388 },
+        goal: { x: 3676, y: 406 },
         timeBonus: 140,
     },
     {
@@ -350,10 +351,11 @@ export const WATER_LEVELS: LevelData[] = [
             return [
                 createMovingPlat(1800 * S, 460, 100, 24, 'water', 'horizontal', 200, 22),
                 createMovingPlat(4400 * S, 400, 100, 24, 'water', 'vertical', 150, 18),
+                createMovingPlat(6076 * S, 420, 120, 24, 'water', 'horizontal', 480, 20),
             ];
         })(),
         playerStart: { x: 150, y: 510 },
-        goal: { x: 250, y: 548 },
+        goal: { x: 1951, y: 528 },
         timeBonus: 200,
     },
     {
@@ -420,7 +422,7 @@ export const WATER_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 530 },
-        goal: { x: 3440, y: 530 },
+        goal: { x: 3440, y: 548 },
         timeBonus: 200,
     },
     {
@@ -490,7 +492,7 @@ export const WATER_LEVELS: LevelData[] = [
             ];
         })(),
         playerStart: { x: 150, y: 540 },
-        goal: { x: 3200, y: 540 },
+        goal: { x: 3200, y: 558 },
         timeBonus: 220,
     },
 ];

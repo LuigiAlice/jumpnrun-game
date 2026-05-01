@@ -129,10 +129,12 @@ export const FOREST_LEVELS: LevelData[] = [
       const S = 0.625;
       return [
         createMovingPlat(4600 * S, 500, 150, 24, 'wood', 'horizontal', 200, 20),
+        createMovingPlat(9216, 490, 120, 24, 'wood', 'horizontal', 359, 20),
+        createMovingPlat(16349, 490, 120, 24, 'wood', 'horizontal', 368, 20),
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 18250, y: 508 },
+    goal: { x: 17688, y: 528 },
     timeBonus: 120,
   },
   {
@@ -231,7 +233,7 @@ export const FOREST_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 4247, y: 580 },
+    goal: { x: 3447, y: 566 },
     timeBonus: 140,
   },
   {
@@ -329,10 +331,12 @@ export const FOREST_LEVELS: LevelData[] = [
       const S = 0.5;
       return [
         createMovingPlat(8000 * S, 550, 150, 24, 'wood', 'horizontal', 250, 20),
+        createMovingPlat(9563, 590, 120, 24, 'wood', 'horizontal', 362, 20),
+        createMovingPlat(15250, 590, 120, 24, 'wood', 'horizontal', 425, 20),
       ];
     })(),
     playerStart: { x: 150, y: 600 },
-    goal: { x: 18500, y: 608 },
+    goal: { x: 18500, y: 628 },
     timeBonus: 160,
   },
   {
@@ -394,7 +398,7 @@ export const FOREST_LEVELS: LevelData[] = [
         createQB(19800 * S, 580, 'mushroom'), createQB(21000 * S, 617, 'star'), createQB(22200 * S, 540, 'mushroom'),
         createQB(25000 * S, 250, 'flower'), createQB(26300 * S, 543, 'mushroom'), createQB(27500 * S, 580, 'star'),
         createQB(29100 * S, 580, 'flower'), createQB(30600 * S, 580, 'mushroom'), createQB(32200 * S, 580, 'star'),
-        createQB(34000 * S, 580, 'mushroom'), createQB(35200 * S, 580, 'flower'), createQB(36800 * S, 580, 'mushroom'),
+        createQB(34000 * S, 580, 'mushroom'),         createQB(35200 * S, 560, 'flower'), createQB(36800 * S, 580, 'mushroom'),
         createQB(38200 * S, 580, 'star'), createQB(39800 * S, 580, 'flower'), createQB(40800 * S, 580, 'mushroom'),
       ];
     })(),
@@ -433,10 +437,12 @@ export const FOREST_LEVELS: LevelData[] = [
       return [
         createMovingPlat(14600 * S, 500, 120, 24, 'wood', 'horizontal', 250, 20),
         createMovingPlat(25400 * S, 450, 120, 24, 'wood', 'vertical', 180, 22),
+        createMovingPlat(9635, 590, 120, 24, 'wood', 'horizontal', 357, 20),
+        createMovingPlat(15438, 590, 120, 24, 'wood', 'horizontal', 427, 20),
       ];
     })(),
     playerStart: { x: 150, y: 600 },
-    goal: { x: 18610, y: 608 },
+    goal: { x: 18610, y: 628 },
     timeBonus: 180,
   },
   {
@@ -543,10 +549,12 @@ export const FOREST_LEVELS: LevelData[] = [
       return [
         createMovingPlat(4200 * S, 480, 120, 24, 'wood', 'horizontal', 250, 20),
         createMovingPlat(28400 * S, 450, 120, 24, 'wood', 'vertical', 180, 22),
+        createMovingPlat(9841, 540, 120, 24, 'wood', 'horizontal', 363, 20),
+        createMovingPlat(15627, 540, 120, 24, 'wood', 'horizontal', 415, 20),
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 18682, y: 558 },
+    goal: { x: 18682, y: 578 },
     timeBonus: 200,
   },
   {
@@ -604,7 +612,7 @@ export const FOREST_LEVELS: LevelData[] = [
         createQB(2000 * S, 530, 'mushroom'), createQB(4200 * S, 450, 'flower'), createQB(5800 * S, 530, 'mushroom'),
         createQB(7500 * S, 530, 'star'), createQB(10400 * S, 530, 'flower'), createQB(11900 * S, 530, 'mushroom'),
         createQB(13100 * S, 200, 'star'), createQB(14400 * S, 530, 'mushroom'), createQB(15600 * S, 530, 'flower'),
-        createQB(17200 * S, 530, 'mushroom'), createQB(18600 * S, 530, 'star'), createQB(19800 * S, 530, 'flower'),
+        createQB(17200 * S, 486, 'mushroom'), createQB(18600 * S, 530, 'star'), createQB(19800 * S, 530, 'flower'),
         createQB(21000 * S, 530, 'mushroom'), createQB(22200 * S, 530, 'star'), createQB(23800 * S, 474, 'mushroom'),
         createQB(25400 * S, 530, 'flower'), createQB(26800 * S, 492, 'mushroom'), createQB(28200 * S, 530, 'star'),
         createQB(29400 * S, 530, 'flower'), createQB(30600 * S, 200, 'mushroom'), createQB(31800 * S, 530, 'star'),
@@ -658,10 +666,13 @@ export const FOREST_LEVELS: LevelData[] = [
       const S = 0.4;
       return [
         createMovingPlat(13200 * S, 450, 120, 24, 'wood', 'vertical', 150, 20),
+        createMovingPlat(10291, 540, 120, 24, 'wood', 'horizontal', 381, 20),
+        createMovingPlat(13684, 540, 120, 24, 'wood', 'horizontal', 354, 20),
+        createMovingPlat(16171, 540, 120, 24, 'wood', 'horizontal', 421, 20),
       ];
     })(),
     playerStart: { x: 150, y: 550 },
-    goal: { x: 19500, y: 558 },
+    goal: { x: 19500, y: 578 },
     timeBonus: 220,
   },
 ];
