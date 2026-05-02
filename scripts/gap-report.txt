@@ -1,0 +1,3952 @@
+================================================================================
+  PLATFORM GAP DIAGNOSTIC REPORT
+  Generated: 2026-05-02T11:49:16.751Z
+================================================================================
+
+Physics: GRAVITY=2000, JUMP_VELOCITY=900, PLAYER_SPEED=300
+Max same-height jump: 270px center-to-center
+Max same-height gap (with buffer): 246px edge-to-edge
+Player half-width buffer: 24px
+
+--------------------------------------------------------------------------------
+  Level 2: "Grasslands Gaps" (grasslands)
+  Platforms: 24 | Gap issues: 6
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (156.25, 550) 500x40 [grass]
+    Platform B: (765.625, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 309.38px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 81.99px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1312.5, 550) 375x40 [grass]
+    Platform B: (1825, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 275px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 47.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2437.5, 550) 312.5x40 [grass]
+    Platform B: (2890.625, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 246.88px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 19.49px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (3437.5, 550) 375x40 [grass]
+    Platform B: (3953.125, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 278.13px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 50.74px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (4500, 550) 500x40 [grass]
+    Platform B: (5137.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 337.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 110.12px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (5750, 550) 500x40 [grass]
+    Platform B: (6437.5, 550) 312.5x40 [grass]
+    Edge-to-edge gap: 281.25px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 35.25px
+
+--------------------------------------------------------------------------------
+  Level 3: "Grasslands Pipes" (grasslands)
+  Platforms: 50 | Gap issues: 6
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (780, 550) 300x40 [grass]
+    Platform B: (1252, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 282px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 48.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1980, 550) 240x40 [grass]
+    Platform B: (2392, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 252px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 18.59px
+
+  Gap #3:
+    Platform A: (3360, 480) 360x40 [grass]
+    Platform B: (3892, 436) 80x24 [pipe_top]
+    Edge-to-edge gap: 312px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 78.59px
+
+  Gap #4:
+    Platform A: (4620, 550) 300x40 [grass]
+    Platform B: (5092, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 282px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 48.59px
+
+  Gap #5:
+    Platform A: (6120, 420) 150x28 [platform_medium]
+    Platform B: (6652, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 417px
+    Vertical diff: 88px (downhill)
+    Max allowed gap: 272.69px
+    Excess: 144.31px
+
+  Gap #6:
+    Platform A: (7380, 550) 300x40 [grass]
+    Platform B: (7852, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 282px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 48.59px
+
+--------------------------------------------------------------------------------
+  Level 5: "Grasslands Horde" (grasslands)
+  Platforms: 18 | Gap issues: 5
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (125, 550) 800x40 [grass]
+    Platform B: (1125, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 550px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 322.62px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1450, 550) 900x40 [grass]
+    Platform B: (2550, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 600px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 372.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (3000, 550) 800x40 [grass]
+    Platform B: (3992, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 552px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 318.59px
+
+  Gap #4:
+    Platform A: (4750, 550) 900x40 [grass]
+    Platform B: (5808.333333333333, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 558.33px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 330.95px
+
+  Gap #5:
+    Platform A: (6250, 550) 900x40 [grass]
+    Platform B: (7250, 500) 120x28 [platform_easy]
+    Edge-to-edge gap: 490px
+    Vertical diff: -44px (uphill)
+    Max allowed gap: 230.44px
+    Excess: 259.56px
+
+--------------------------------------------------------------------------------
+  Level 6: "Grasslands Dash" (grasslands)
+  Platforms: 13 | Gap issues: 4
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (112.5, 550) 900x40 [grass]
+    Platform B: (1181.25, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 568.75px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 341.37px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1440, 550) 900x40 [grass]
+    Platform B: (2531.25, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 591.25px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 363.87px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2790, 550) 900x40 [grass]
+    Platform B: (3727, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 447px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 213.59px
+
+  Gap #4:
+    Platform A: (4410, 550) 900x40 [grass]
+    Platform B: (5501.25, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 591.25px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 363.87px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 7: "Sandy Deserts" (desert)
+  Platforms: 14 | Gap issues: 2
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (715, 550) 325x40 [sand]
+    Platform B: (1245.8333333333335, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 318.33px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 90.95px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1495, 550) 520x40 [sand]
+    Platform B: (2145, 500) 100x20 [platform_easy]
+    Edge-to-edge gap: 340px
+    Vertical diff: -40px (uphill)
+    Max allowed gap: 231.93px
+    Excess: 108.07px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 8: "Pyramid Dunes" (desert)
+  Platforms: 21 | Gap issues: 5
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (125, 550) 437.5x40 [sand]
+    Platform B: (750, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 356.25px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 128.87px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1062.5, 550) 375x40 [sand]
+    Platform B: (1687.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 387.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 160.12px
+
+  Gap #3:
+    Platform A: (2000, 550) 375x40 [sand]
+    Platform B: (2625, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 387.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 160.12px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (2937.5, 550) 437.5x40 [sand]
+    Platform B: (3562.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 356.25px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 128.87px
+
+  Gap #5:
+    Platform A: (3875, 550) 375x40 [sand]
+    Platform B: (4500, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 387.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 160.12px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 9: "Scorpion Sands" (desert)
+  Platforms: 42 | Gap issues: 5
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (120, 550) 420x40 [sand]
+    Platform B: (832, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 462px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 228.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1500, 550) 360x40 [sand]
+    Platform B: (2212, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 492px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 258.59px
+
+  Gap #3:
+    Platform A: (3060, 550) 360x40 [sand]
+    Platform B: (3772, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 492px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 258.59px
+
+  Gap #4:
+    Platform A: (4620, 550) 300x40 [sand]
+    Platform B: (5272, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 462px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 228.59px
+
+  Gap #5:
+    Platform A: (6120, 550) 360x40 [sand]
+    Platform B: (6832, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 492px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 258.59px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 10: "Tomb Raider" (desert)
+  Platforms: 33 | Gap issues: 4
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (111.20000000000002, 600) 389.20000000000005x40 [sand]
+    Platform B: (611.6, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 272.44px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 53.9px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1723.6000000000001, 600) 389.20000000000005x40 [sand]
+    Platform B: (2224, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 272.44px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 53.9px
+
+  Gap #3:
+    Platform A: (3391.6000000000004, 600) 389.20000000000005x40 [sand]
+    Platform B: (3892.0000000000005, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 272.44px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 53.9px
+
+  Gap #4:
+    Platform A: (5059.6, 600) 389.20000000000005x40 [sand]
+    Platform B: (5560.000000000001, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 272.44px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 53.9px
+
+--------------------------------------------------------------------------------
+  Level 11: "Quicksand Canyon" (desert)
+  Platforms: 16 | Gap issues: 3
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (100, 550) 900x40 [sand]
+    Platform B: (1150, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 550px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 322.62px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1400, 550) 1000x40 [sand]
+    Platform B: (2550, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 600px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 372.62px
+
+  Gap #3:
+    Platform A: (2800, 550) 1000x40 [sand]
+    Platform B: (4042, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 702px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 468.59px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 12: "Pharaoh's Tomb" (desert)
+  Platforms: 26 | Gap issues: 1
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (90, 600) 360x40 [sand]
+    Platform B: (540, 540) 54x28 [platform_easy]
+    Edge-to-edge gap: 243px
+    Vertical diff: -54px (uphill)
+    Max allowed gap: 226.61px
+    Excess: 16.39px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+--------------------------------------------------------------------------------
+  Level 13: "Aqua Depths" (water)
+  Platforms: 13 | Gap issues: 3
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (65, 500) 780x40 [water]
+    Platform B: (910, 440) 100x24 [platform_easy]
+    Edge-to-edge gap: 405px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 177.62px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1430, 500) 780x40 [water]
+    Platform B: (2202, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 342px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 108.59px
+
+  Gap #3:
+    Platform A: (2925, 500) 780x40 [water]
+    Platform B: (3921.6666666666665, 440) 100x24 [platform_easy]
+    Edge-to-edge gap: 556.67px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 329.28px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 14: "Tidal Tunnels" (water)
+  Platforms: 22 | Gap issues: 5
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (62.5, 500) 500x40 [water]
+    Platform B: (757.8125, 440) 100x24 [platform_easy]
+    Edge-to-edge gap: 395.31px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 167.93px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1125, 500) 375x40 [water]
+    Platform B: (1687.5, 440) 100x24 [platform_easy]
+    Edge-to-edge gap: 325px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 97.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2125, 500) 375x40 [water]
+    Platform B: (2695.3125, 440) 100x24 [platform_easy]
+    Edge-to-edge gap: 332.81px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 105.43px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (3062.5, 500) 375x40 [water]
+    Platform B: (3625, 440) 100x24 [platform_easy]
+    Edge-to-edge gap: 325px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 97.62px
+
+  Gap #5:
+    Platform A: (4062.5, 500) 375x40 [water]
+    Platform B: (4635.416666666667, 440) 100x24 [platform_easy]
+    Edge-to-edge gap: 335.42px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 108.03px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 15: "Coral Abyss" (water)
+  Platforms: 63 | Gap issues: 7
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (60, 500) 360x40 [water]
+    Platform B: (772, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 492px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 258.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1620, 500) 300x40 [water]
+    Platform B: (2212, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 402px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 168.59px
+
+  Gap #3:
+    Platform A: (3240, 500) 240x40 [water]
+    Platform B: (3832, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 432px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 198.59px
+
+  Gap #4:
+    Platform A: (4680, 500) 300x40 [water]
+    Platform B: (5272, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 402px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 168.59px
+
+  Gap #5:
+    Platform A: (6300, 500) 240x40 [water]
+    Platform B: (6892, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 432px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 198.59px
+
+  Gap #6:
+    Platform A: (7740, 500) 300x40 [water]
+    Platform B: (8332, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 402px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 168.59px
+
+  Gap #7:
+    Platform A: (9360, 500) 240x40 [water]
+    Platform B: (9952, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 432px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 198.59px
+
+--------------------------------------------------------------------------------
+  Level 16: "Sunken Ruins" (water)
+  Platforms: 49 | Gap issues: 7
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (55.60000000000001, 600) 444.80000000000007x40 [water]
+    Platform B: (778.4000000000001, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 467.04px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 248.5px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2112.8, 600) 444.80000000000007x40 [water]
+    Platform B: (2724.4, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 339.2px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 111.82px
+
+  Gap #3:
+    Platform A: (3113.6000000000004, 600) 333.6x40 [water]
+    Platform B: (3669.6000000000004, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 355.84px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 137.3px
+
+  Gap #4:
+    Platform A: (5004, 600) 333.6x40 [water]
+    Platform B: (5607.6, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 396.8px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 163.39px
+
+  Gap #5:
+    Platform A: (6282.8, 600) 444.80000000000007x40 [water]
+    Platform B: (6950.000000000001, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 411.44px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 192.9px
+
+  Gap #6:
+    Platform A: (8284.400000000001, 600) 333.6x40 [water]
+    Platform B: (8784.800000000001, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 283.6px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 56.22px
+
+  Gap #7:
+    Platform A: (9174, 600) 333.6x40 [water]
+    Platform B: (9730, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 355.84px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 137.3px
+
+--------------------------------------------------------------------------------
+  Level 17: "Neptune's Depths" (water)
+  Platforms: 40 | Gap issues: 6
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (50, 600) 1500x40 [water]
+    Platform B: (1300, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 450px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 222.62px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1800, 600) 1500x40 [water]
+    Platform B: (3042, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 452px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 218.59px
+
+  Gap #3:
+    Platform A: (3800, 600) 750x40 [water]
+    Platform B: (4750, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 525px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 297.62px
+
+  Gap #4:
+    Platform A: (5250, 600) 1000x40 [water]
+    Platform B: (6250, 520) 60x28 [platform_easy]
+    Edge-to-edge gap: 470px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 251.46px
+
+  Gap #5:
+    Platform A: (7450, 600) 400x40 [water]
+    Platform B: (8142, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 452px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 218.59px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (8750, 600) 400x40 [water]
+    Platform B: (9358.333333333334, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 358.33px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 130.95px
+
+--------------------------------------------------------------------------------
+  Level 18: "The Mariana Trench" (water)
+  Platforms: 51 | Gap issues: 3
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1800, 600) 360x40 [water]
+    Platform B: (2377, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 357px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 123.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (4230, 660) 270x40 [water]
+    Platform B: (4635, 580) 54x28 [platform_easy]
+    Edge-to-edge gap: 243px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 24.46px
+
+  Gap #3:
+    Platform A: (5715, 700) 360x40 [water]
+    Platform B: (6292, 656) 80x24 [pipe_top]
+    Edge-to-edge gap: 357px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 123.59px
+
+--------------------------------------------------------------------------------
+  Level 19: "Snowy Path" (ice-snow)
+  Platforms: 18 | Gap issues: 4
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (162.5, 550) 520x40 [snow]
+    Platform B: (845, 550) 325x40 [snow]
+    Edge-to-edge gap: 260px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 14px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (845, 550) 325x40 [snow]
+    Platform B: (1365, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 307.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 80.12px
+
+  Gap #3:
+    Platform A: (1755, 550) 650x40 [snow]
+    Platform B: (2470, 520) 100x20 [platform_easy]
+    Edge-to-edge gap: 340px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 100.84px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (3510, 550) 650x40 [snow]
+    Platform B: (4365.833333333334, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 480.83px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 253.45px
+
+--------------------------------------------------------------------------------
+  Level 20: "Glacier Gaps" (ice-snow)
+  Platforms: 31 | Gap issues: 5
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (125, 600) 625x40 [snow]
+    Platform B: (875, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 387.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 160.12px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1375, 600) 625x40 [snow]
+    Platform B: (2118.75, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 381.25px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 153.87px
+
+  Gap #3:
+    Platform A: (2625, 600) 750x40 [snow]
+    Platform B: (3437.5, 550) 100x20 [platform_easy]
+    Edge-to-edge gap: 387.5px
+    Vertical diff: -40px (uphill)
+    Max allowed gap: 231.93px
+    Excess: 155.57px
+
+  Gap #4:
+    Platform A: (4687.5, 600) 625x40 [snow]
+    Platform B: (5437.5, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 387.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 160.12px
+
+  Gap #5:
+    Platform A: (5875, 600) 750x40 [snow]
+    Platform B: (6743.75, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 443.75px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 216.37px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 21: "Frozen Tunnels" (ice-snow)
+  Platforms: 42 | Gap issues: 4
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (120, 650) 600x40 [snow]
+    Platform B: (840, 600) 100x20 [platform_easy]
+    Edge-to-edge gap: 370px
+    Vertical diff: -40px (uphill)
+    Max allowed gap: 231.93px
+    Excess: 138.07px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2160, 650) 480x40 [snow]
+    Platform B: (2760, 600) 100x20 [platform_easy]
+    Edge-to-edge gap: 310px
+    Vertical diff: -40px (uphill)
+    Max allowed gap: 231.93px
+    Excess: 78.07px
+
+  Gap #3:
+    Platform A: (4200, 650) 360x40 [snow]
+    Platform B: (4732.5, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 302.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 75.12px
+
+  Gap #4:
+    Platform A: (5100, 650) 480x40 [snow]
+    Platform B: (5700, 600) 100x20 [platform_easy]
+    Edge-to-edge gap: 310px
+    Vertical diff: -40px (uphill)
+    Max allowed gap: 231.93px
+    Excess: 78.07px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 22: "Iceberg Ascent" (ice-snow)
+  Platforms: 42 | Gap issues: 3
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (111.20000000000002, 650) 667.2x40 [snow]
+    Platform B: (889.6000000000001, 570) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 411.44px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 192.9px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (5170.8, 650) 556x40 [snow]
+    Platform B: (5949.200000000001, 570) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 467.04px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 248.5px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (7172.400000000001, 650) 667.2x40 [snow]
+    Platform B: (8062.000000000001, 570) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 522.64px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 304.1px
+
+--------------------------------------------------------------------------------
+  Level 23: "Polar Heights" (ice-snow)
+  Platforms: 20 | Gap issues: 3
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (100, 650) 1000x40 [snow]
+    Platform B: (1250, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 600px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 372.62px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1600, 650) 800x40 [snow]
+    Platform B: (2500, 600) 100x20 [platform_easy]
+    Edge-to-edge gap: 450px
+    Vertical diff: -40px (uphill)
+    Max allowed gap: 231.93px
+    Excess: 218.07px
+
+  Gap #3:
+    Platform A: (3600, 650) 1000x40 [snow]
+    Platform B: (4750, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 600px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 372.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 24: "Frozen Finale" (ice-snow)
+  Platforms: 32 | Gap issues: 4
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (90, 750) 540x40 [snow]
+    Platform B: (810, 700) 120x28 [platform_easy]
+    Edge-to-edge gap: 390px
+    Vertical diff: -44px (uphill)
+    Max allowed gap: 230.44px
+    Excess: 159.56px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1485, 750) 450x40 [snow]
+    Platform B: (2115, 690) 100x24 [platform_easy]
+    Edge-to-edge gap: 355px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 127.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2475, 750) 360x40 [snow]
+    Platform B: (2970, 700) 100x20 [platform_easy]
+    Edge-to-edge gap: 265px
+    Vertical diff: -40px (uphill)
+    Max allowed gap: 231.93px
+    Excess: 33.07px
+
+  Gap #4:
+    Platform A: (4905, 750) 540x40 [snow]
+    Platform B: (5574.375, 690) 100x24 [platform_easy]
+    Edge-to-edge gap: 349.38px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 121.99px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 25: "Cloud Hop" (sky-clouds)
+  Platforms: 9 | Gap issues: 3
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1040, 480) 195x40 [cloud]
+    Platform B: (1511.25, 420) 100x24 [platform_easy]
+    Edge-to-edge gap: 323.75px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 96.37px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2015, 460) 292.5x40 [cloud]
+    Platform B: (2600, 430) 227.5x40 [cloud]
+    Edge-to-edge gap: 325px
+    Vertical diff: -30px (uphill)
+    Max allowed gap: 235.6px
+    Excess: 89.4px
+
+  Gap #3:
+    Platform A: (2600, 430) 227.5x40 [cloud]
+    Platform B: (3120, 400) 325x40 [cloud]
+    Edge-to-edge gap: 243.75px
+    Vertical diff: -30px (uphill)
+    Max allowed gap: 235.6px
+    Excess: 8.15px
+
+--------------------------------------------------------------------------------
+  Level 26: "Sky Gap Run" (sky-clouds)
+  Platforms: 34 | Gap issues: 8
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (593.75, 540) 218.75x40 [cloud]
+    Platform B: (1137.5, 480) 100x24 [platform_easy]
+    Edge-to-edge gap: 384.38px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 156.99px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1750, 520) 312.5x40 [cloud]
+    Platform B: (2312.5, 500) 218.75x40 [cloud]
+    Edge-to-edge gap: 296.88px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 57.71px
+
+  Gap #3:
+    Platform A: (2312.5, 500) 218.75x40 [cloud]
+    Platform B: (2822.916666666667, 440) 100x24 [platform_easy]
+    Edge-to-edge gap: 351.04px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 123.66px
+
+  Gap #4:
+    Platform A: (3562.5, 480) 312.5x40 [cloud]
+    Platform B: (4125, 460) 218.75x40 [cloud]
+    Edge-to-edge gap: 296.88px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 57.71px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (4125, 460) 218.75x40 [cloud]
+    Platform B: (4645.833333333333, 400) 100x24 [platform_easy]
+    Edge-to-edge gap: 361.46px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 134.08px
+
+  Gap #6:
+    Platform A: (5437.5, 440) 312.5x40 [cloud]
+    Platform B: (6010.416666666666, 380) 100x24 [platform_easy]
+    Edge-to-edge gap: 366.67px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 139.28px
+
+  Gap #7:
+    Platform A: (6750, 420) 281.25x40 [cloud]
+    Platform B: (7250, 400) 187.5x40 [cloud]
+    Edge-to-edge gap: 265.63px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 26.46px
+
+  Gap #8:
+    Platform A: (7250, 400) 187.5x40 [cloud]
+    Platform B: (7708.333333333334, 340) 100x24 [platform_easy]
+    Edge-to-edge gap: 314.58px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 87.2px
+
+--------------------------------------------------------------------------------
+  Level 27: "Pipe Labyrinth" (sky-clouds)
+  Platforms: 68 | Gap issues: 13
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (600, 560) 210x40 [cloud]
+    Platform B: (1192, 526) 80x24 [pipe_top]
+    Edge-to-edge gap: 447px
+    Vertical diff: -26px (uphill)
+    Max allowed gap: 237.04px
+    Excess: 209.96px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1830, 570) 64x64 [pipe]
+    Platform B: (2280, 560) 300x40 [cloud]
+    Edge-to-edge gap: 268px
+    Vertical diff: 2px (downhill)
+    Max allowed gap: 246.67px
+    Excess: 21.33px
+
+  Gap #3:
+    Platform A: (2280, 560) 300x40 [cloud]
+    Platform B: (2880, 540) 210x40 [cloud]
+    Edge-to-edge gap: 345px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 105.84px
+
+  Gap #4:
+    Platform A: (2880, 540) 210x40 [cloud]
+    Platform B: (3472, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 447px
+    Vertical diff: -26px (uphill)
+    Max allowed gap: 237.04px
+    Excess: 209.96px
+
+  Gap #5:
+    Platform A: (4320, 550) 64x64 [pipe]
+    Platform B: (4920, 540) 300x40 [cloud]
+    Edge-to-edge gap: 418px
+    Vertical diff: 2px (downhill)
+    Max allowed gap: 246.67px
+    Excess: 171.33px
+
+  Gap #6:
+    Platform A: (4920, 540) 300x40 [cloud]
+    Platform B: (5520, 520) 210x40 [cloud]
+    Edge-to-edge gap: 345px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 105.84px
+
+  Gap #7:
+    Platform A: (5520, 520) 210x40 [cloud]
+    Platform B: (6112, 486) 80x24 [pipe_top]
+    Edge-to-edge gap: 447px
+    Vertical diff: -26px (uphill)
+    Max allowed gap: 237.04px
+    Excess: 209.96px
+
+  Gap #8:
+    Platform A: (6960, 530) 64x64 [pipe]
+    Platform B: (7560, 520) 300x40 [cloud]
+    Edge-to-edge gap: 418px
+    Vertical diff: 2px (downhill)
+    Max allowed gap: 246.67px
+    Excess: 171.33px
+
+  Gap #9:
+    Platform A: (7560, 520) 300x40 [cloud]
+    Platform B: (8212, 486) 80x24 [pipe_top]
+    Edge-to-edge gap: 462px
+    Vertical diff: -26px (uphill)
+    Max allowed gap: 237.04px
+    Excess: 224.96px
+
+  Gap #10:
+    Platform A: (9270, 530) 64x64 [pipe]
+    Platform B: (9900, 510) 270x40 [cloud]
+    Edge-to-edge gap: 463px
+    Vertical diff: -8px (uphill)
+    Max allowed gap: 243.31px
+    Excess: 219.69px
+
+  Gap #11:
+    Platform A: (9900, 510) 270x40 [cloud]
+    Platform B: (10492, 476) 80x24 [pipe_top]
+    Edge-to-edge gap: 417px
+    Vertical diff: -26px (uphill)
+    Max allowed gap: 237.04px
+    Excess: 179.96px
+
+  Gap #12:
+    Platform A: (11340, 520) 64x64 [pipe]
+    Platform B: (11940, 500) 270x40 [cloud]
+    Edge-to-edge gap: 433px
+    Vertical diff: -8px (uphill)
+    Max allowed gap: 243.31px
+    Excess: 189.69px
+
+  Gap #13:
+    Platform A: (11940, 500) 270x40 [cloud]
+    Platform B: (12472, 466) 80x24 [pipe_top]
+    Edge-to-edge gap: 357px
+    Vertical diff: -26px (uphill)
+    Max allowed gap: 237.04px
+    Excess: 119.96px
+
+--------------------------------------------------------------------------------
+  Level 28: "Vertical Ascent" (sky-clouds)
+  Platforms: 37 | Gap issues: 6
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (556, 580) 194.60000000000002x40 [cloud]
+    Platform B: (1000.8000000000001, 510) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 314.14px
+    Vertical diff: -64px (uphill)
+    Max allowed gap: 222.65px
+    Excess: 91.49px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2335.2000000000003, 560) 278x40 [cloud]
+    Platform B: (2891.2000000000003, 540) 194.60000000000002x40 [cloud]
+    Edge-to-edge gap: 319.7px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 80.54px
+
+  Gap #3:
+    Platform A: (2891.2000000000003, 540) 194.60000000000002x40 [cloud]
+    Platform B: (3336.0000000000005, 480) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 314.14px
+    Vertical diff: -54px (uphill)
+    Max allowed gap: 226.61px
+    Excess: 87.53px
+
+  Gap #4:
+    Platform A: (4670.400000000001, 530) 278x40 [cloud]
+    Platform B: (5226.400000000001, 510) 194.60000000000002x40 [cloud]
+    Edge-to-edge gap: 319.7px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 80.54px
+
+  Gap #5:
+    Platform A: (5226.400000000001, 510) 194.60000000000002x40 [cloud]
+    Platform B: (5671.200000000001, 440) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 314.14px
+    Vertical diff: -64px (uphill)
+    Max allowed gap: 222.65px
+    Excess: 91.49px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (7005.6, 490) 250.20000000000002x40 [cloud]
+    Platform B: (7561.6, 470) 166.8x40 [cloud]
+    Edge-to-edge gap: 347.5px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 108.34px
+
+--------------------------------------------------------------------------------
+  Level 29: "Floating Foes" (sky-clouds)
+  Platforms: 27 | Gap issues: 12
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (100, 600) 300x40 [cloud]
+    Platform B: (600, 570) 225x40 [cloud]
+    Edge-to-edge gap: 237.5px
+    Vertical diff: -30px (uphill)
+    Max allowed gap: 235.6px
+    Excess: 1.9px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (600, 570) 225x40 [cloud]
+    Platform B: (1100, 540) 175x40 [cloud]
+    Edge-to-edge gap: 300px
+    Vertical diff: -30px (uphill)
+    Max allowed gap: 235.6px
+    Excess: 64.4px
+
+  Gap #3:
+    Platform A: (1100, 540) 175x40 [cloud]
+    Platform B: (1580, 480) 100x24 [platform_easy]
+    Edge-to-edge gap: 342.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 115.12px
+
+  Gap #4:
+    Platform A: (2150, 520) 250x40 [cloud]
+    Platform B: (2650, 500) 175x40 [cloud]
+    Edge-to-edge gap: 287.5px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 48.34px
+
+  Gap #5:
+    Platform A: (2650, 500) 175x40 [cloud]
+    Platform B: (3150, 480) 150x40 [cloud]
+    Edge-to-edge gap: 337.5px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 98.34px
+
+  Gap #6:
+    Platform A: (3150, 480) 150x40 [cloud]
+    Platform B: (3625, 420) 100x24 [platform_easy]
+    Edge-to-edge gap: 350px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 122.62px
+
+  Gap #7:
+    Platform A: (4300, 460) 250x40 [cloud]
+    Platform B: (4800, 440) 200x40 [cloud]
+    Edge-to-edge gap: 275px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 35.84px
+
+  Gap #8:
+    Platform A: (4800, 440) 200x40 [cloud]
+    Platform B: (5300, 420) 175x40 [cloud]
+    Edge-to-edge gap: 312.5px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 73.34px
+
+  Gap #9:
+    Platform A: (5300, 420) 175x40 [cloud]
+    Platform B: (5725, 360) 100x24 [platform_easy]
+    Edge-to-edge gap: 287.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 60.12px
+
+  Gap #10:
+    Platform A: (6450, 400) 250x40 [cloud]
+    Platform B: (6950, 380) 200x40 [cloud]
+    Edge-to-edge gap: 275px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 35.84px
+
+  Gap #11:
+    Platform A: (6950, 380) 200x40 [cloud]
+    Platform B: (7450, 360) 175x40 [cloud]
+    Edge-to-edge gap: 312.5px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 73.34px
+
+  Gap #12:
+    Platform A: (7450, 360) 175x40 [cloud]
+    Platform B: (7950, 340) 300x40 [cloud]
+    Edge-to-edge gap: 262.5px
+    Vertical diff: -20px (uphill)
+    Max allowed gap: 239.16px
+    Excess: 23.34px
+
+--------------------------------------------------------------------------------
+  Level 30: "Cloud Islands Finale" (sky-clouds)
+  Platforms: 26 | Gap issues: 19
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1125, 550) 112.5x40 [cloud]
+    Platform B: (1530, 520) 126x28 [platform_medium]
+    Edge-to-edge gap: 285.75px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 48px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1530, 520) 126x28 [platform_medium]
+    Platform B: (1935, 490) 135x40 [cloud]
+    Edge-to-edge gap: 274.5px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 41.09px
+
+  Gap #3:
+    Platform A: (1935, 490) 135x40 [cloud]
+    Platform B: (2340, 520) 99x28 [platform_easy]
+    Edge-to-edge gap: 288px
+    Vertical diff: 36px (downhill)
+    Max allowed gap: 257.51px
+    Excess: 30.49px
+
+  Gap #4:
+    Platform A: (2340, 520) 99x28 [platform_easy]
+    Platform B: (2700, 500) 117x40 [cloud]
+    Edge-to-edge gap: 252px
+    Vertical diff: -26px (uphill)
+    Max allowed gap: 237.04px
+    Excess: 14.96px
+
+  Gap #5:
+    Platform A: (2700, 500) 117x40 [cloud]
+    Platform B: (3105, 470) 108x28 [platform_medium]
+    Edge-to-edge gap: 292.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 54.75px
+
+  Gap #6:
+    Platform A: (3105, 470) 108x28 [platform_medium]
+    Platform B: (3465, 440) 144x40 [cloud]
+    Edge-to-edge gap: 234px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 0.59px
+
+  Gap #7:
+    Platform A: (3465, 440) 144x40 [cloud]
+    Platform B: (3870, 470) 90x28 [platform_hard]
+    Edge-to-edge gap: 288px
+    Vertical diff: 36px (downhill)
+    Max allowed gap: 257.51px
+    Excess: 30.49px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #8:
+    Platform A: (3870, 470) 90x28 [platform_hard]
+    Platform B: (4275, 500) 126x40 [cloud]
+    Edge-to-edge gap: 297px
+    Vertical diff: 24px (downhill)
+    Max allowed gap: 253.78px
+    Excess: 43.22px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #9:
+    Platform A: (4275, 500) 126x40 [cloud]
+    Platform B: (4680, 470) 108x28 [platform_medium]
+    Edge-to-edge gap: 288px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 50.25px
+
+  Gap #10:
+    Platform A: (4680, 470) 108x28 [platform_medium]
+    Platform B: (5085, 440) 135x40 [cloud]
+    Edge-to-edge gap: 283.5px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 50.09px
+
+  Gap #11:
+    Platform A: (5085, 440) 135x40 [cloud]
+    Platform B: (5490, 480) 117x28 [platform_easy]
+    Edge-to-edge gap: 279px
+    Vertical diff: 46px (downhill)
+    Max allowed gap: 260.55px
+    Excess: 18.45px
+
+  Gap #12:
+    Platform A: (5490, 480) 117x28 [platform_easy]
+    Platform B: (5895, 460) 126x40 [cloud]
+    Edge-to-edge gap: 283.5px
+    Vertical diff: -26px (uphill)
+    Max allowed gap: 237.04px
+    Excess: 46.46px
+
+  Gap #13:
+    Platform A: (5895, 460) 126x40 [cloud]
+    Platform B: (6435, 430) 90x40 [cloud]
+    Edge-to-edge gap: 432px
+    Vertical diff: -30px (uphill)
+    Max allowed gap: 235.6px
+    Excess: 196.4px
+
+  Gap #14:
+    Platform A: (6750, 460) 81x28 [platform_medium]
+    Platform B: (7110, 420) 99x40 [cloud]
+    Edge-to-edge gap: 270px
+    Vertical diff: -46px (uphill)
+    Max allowed gap: 229.68px
+    Excess: 40.32px
+
+  Gap #15:
+    Platform A: (7110, 420) 99x40 [cloud]
+    Platform B: (7470, 390) 112.5x28 [platform_hard]
+    Edge-to-edge gap: 254.25px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 16.5px
+
+  Gap #16:
+    Platform A: (7470, 390) 112.5x28 [platform_hard]
+    Platform B: (7875, 410) 108x40 [cloud]
+    Edge-to-edge gap: 294.75px
+    Vertical diff: 14px (downhill)
+    Max allowed gap: 250.59px
+    Excess: 44.16px
+
+  Gap #17:
+    Platform A: (7875, 410) 108x40 [cloud]
+    Platform B: (8235, 380) 117x28 [platform_hard]
+    Edge-to-edge gap: 247.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 9.75px
+
+  Gap #18:
+    Platform A: (8595, 400) 126x40 [cloud]
+    Platform B: (9000, 370) 157.5x40 [cloud]
+    Edge-to-edge gap: 263.25px
+    Vertical diff: -30px (uphill)
+    Max allowed gap: 235.6px
+    Excess: 27.65px
+
+  Gap #19:
+    Platform A: (9360, 340) 135x40 [cloud]
+    Platform B: (9900, 350) 315x40 [cloud]
+    Edge-to-edge gap: 315px
+    Vertical diff: 10px (downhill)
+    Max allowed gap: 249.29px
+    Excess: 65.71px
+
+--------------------------------------------------------------------------------
+  Level 31: "Waldweg" (forest)
+  Platforms: 11 | Gap issues: 4
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (260, 550) 910x40 [wood]
+    Platform B: (1227, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 472px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 238.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1690, 550) 64x64 [pipe]
+    Platform B: (2470, 550) 520x40 [wood]
+    Edge-to-edge gap: 488px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 238.06px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2470, 550) 520x40 [wood]
+    Platform B: (3325.8333333333335, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 545.83px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 318.45px
+
+  Gap #4:
+    Platform A: (3401.6666666666665, 465) 100x24 [platform_medium]
+    Platform B: (4290, 550) 650x40 [wood]
+    Edge-to-edge gap: 513.33px
+    Vertical diff: 77px (downhill)
+    Max allowed gap: 269.6px
+    Excess: 243.73px
+
+--------------------------------------------------------------------------------
+  Level 32: "Lichtungsflug" (forest)
+  Platforms: 17 | Gap issues: 8
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (250, 550) 750x40 [wood]
+    Platform B: (1140.625, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 465.63px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 238.24px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1296.875, 440) 100x24 [platform_hard]
+    Platform B: (2000, 550) 375x40 [wood]
+    Edge-to-edge gap: 465.63px
+    Vertical diff: 102px (downhill)
+    Max allowed gap: 276.54px
+    Excess: 189.08px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2000, 550) 375x40 [wood]
+    Platform B: (2765.625, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 528.13px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 300.74px
+
+  Gap #4:
+    Platform A: (2921.875, 440) 100x24 [platform_hard]
+    Platform B: (3562.5, 550) 375x40 [wood]
+    Edge-to-edge gap: 403.13px
+    Vertical diff: 102px (downhill)
+    Max allowed gap: 276.54px
+    Excess: 126.58px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (3562.5, 550) 375x40 [wood]
+    Platform B: (4328.125, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 528.13px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 300.74px
+
+  Gap #6:
+    Platform A: (4484.375, 440) 100x24 [platform_hard]
+    Platform B: (5125, 550) 375x40 [wood]
+    Edge-to-edge gap: 403.13px
+    Vertical diff: 102px (downhill)
+    Max allowed gap: 276.54px
+    Excess: 126.58px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #7:
+    Platform A: (5125, 550) 375x40 [wood]
+    Platform B: (5890.625, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 528.13px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 300.74px
+
+  Gap #8:
+    Platform A: (6046.875, 440) 100x24 [platform_hard]
+    Platform B: (6687.5, 550) 625x40 [wood]
+    Edge-to-edge gap: 278.13px
+    Vertical diff: 102px (downhill)
+    Max allowed gap: 276.54px
+    Excess: 1.58px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 33: "Röhren-Irrgarten" (forest)
+  Platforms: 53 | Gap issues: 11
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (300, 600) 840x40 [wood]
+    Platform B: (1312, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 552px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 318.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1950, 600) 64x64 [pipe]
+    Platform B: (2460, 600) 300x40 [wood]
+    Edge-to-edge gap: 328px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 78.06px
+
+  Gap #3:
+    Platform A: (2460, 600) 300x40 [wood]
+    Platform B: (3052, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 402px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 168.59px
+
+  Gap #4:
+    Platform A: (3690, 600) 64x64 [pipe]
+    Platform B: (4200, 600) 300x40 [wood]
+    Edge-to-edge gap: 328px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 78.06px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (4200, 600) 300x40 [wood]
+    Platform B: (4852, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 462px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 228.59px
+
+  Gap #6:
+    Platform A: (5490, 600) 64x64 [pipe]
+    Platform B: (6000, 600) 300x40 [wood]
+    Edge-to-edge gap: 328px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 78.06px
+
+  Gap #7:
+    Platform A: (6000, 600) 300x40 [wood]
+    Platform B: (6652, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 462px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 228.59px
+
+  Gap #8:
+    Platform A: (7290, 600) 64x64 [pipe]
+    Platform B: (7800, 600) 300x40 [wood]
+    Edge-to-edge gap: 328px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 78.06px
+
+  Gap #9:
+    Platform A: (7800, 600) 300x40 [wood]
+    Platform B: (8452, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 462px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 228.59px
+
+  Gap #10:
+    Platform A: (9090, 600) 64x64 [pipe]
+    Platform B: (9600, 600) 300x40 [wood]
+    Edge-to-edge gap: 328px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 78.06px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #11:
+    Platform A: (9600, 600) 300x40 [wood]
+    Platform B: (10252, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 462px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 228.59px
+
+--------------------------------------------------------------------------------
+  Level 34: "Baum-Kletterer" (forest)
+  Platforms: 33 | Gap issues: 8
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (278, 600) 778.4000000000001x40 [wood]
+    Platform B: (1000.8000000000001, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 300.24px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 81.7px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2001.6000000000001, 520) 66.72x28 [platform_easy]
+    Platform B: (2668.8, 600) 333.6x40 [wood]
+    Edge-to-edge gap: 467.04px
+    Vertical diff: 74px (downhill)
+    Max allowed gap: 268.75px
+    Excess: 198.29px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2668.8, 600) 333.6x40 [wood]
+    Platform B: (3169.2000000000003, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 300.24px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 81.7px
+
+  Gap #4:
+    Platform A: (4170, 520) 66.72x28 [platform_easy]
+    Platform B: (4781.6, 600) 333.6x40 [wood]
+    Edge-to-edge gap: 411.44px
+    Vertical diff: 74px (downhill)
+    Max allowed gap: 268.75px
+    Excess: 142.69px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (4781.6, 600) 333.6x40 [wood]
+    Platform B: (5282.000000000001, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 300.24px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 81.7px
+
+  Gap #6:
+    Platform A: (6282.8, 520) 66.72x28 [platform_easy]
+    Platform B: (6950.000000000001, 600) 333.6x40 [wood]
+    Edge-to-edge gap: 467.04px
+    Vertical diff: 74px (downhill)
+    Max allowed gap: 268.75px
+    Excess: 198.29px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #7:
+    Platform A: (6950.000000000001, 600) 333.6x40 [wood]
+    Platform B: (7450.400000000001, 520) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 300.24px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 81.7px
+
+  Gap #8:
+    Platform A: (8451.2, 520) 66.72x28 [platform_easy]
+    Platform B: (9452, 600) 778.4000000000001x40 [wood]
+    Edge-to-edge gap: 578.24px
+    Vertical diff: 74px (downhill)
+    Max allowed gap: 268.75px
+    Excess: 309.49px
+
+--------------------------------------------------------------------------------
+  Level 35: "Käfer-Plage" (forest)
+  Platforms: 12 | Gap issues: 6
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (225, 600) 900x40 [wood]
+    Platform B: (1325, 600) 600x40 [wood]
+    Edge-to-edge gap: 350px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 104px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1325, 600) 600x40 [wood]
+    Platform B: (2100, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 425px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 197.62px
+
+  Gap #3:
+    Platform A: (2200, 490) 100x24 [platform_hard]
+    Platform B: (3000, 600) 900x40 [wood]
+    Edge-to-edge gap: 300px
+    Vertical diff: 102px (downhill)
+    Max allowed gap: 276.54px
+    Excess: 23.46px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (3000, 600) 900x40 [wood]
+    Platform B: (3842, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 352px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 118.59px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (4025, 600) 64x64 [pipe]
+    Platform B: (4800, 600) 800x40 [wood]
+    Edge-to-edge gap: 343px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 93.06px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (4800, 600) 800x40 [wood]
+    Platform B: (5800, 600) 600x40 [wood]
+    Edge-to-edge gap: 300px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 54px
+
+--------------------------------------------------------------------------------
+  Level 36: "Wipfel-Pfad" (forest)
+  Platforms: 13 | Gap issues: 8
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (270, 600) 720x40 [wood]
+    Platform B: (1440, 420) 450x30 [wood]
+    Edge-to-edge gap: 585px
+    Vertical diff: -175px (uphill)
+    Max allowed gap: 160.75px
+    Excess: 424.25px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1440, 420) 450x30 [wood]
+    Platform B: (2340, 420) 450x30 [wood]
+    Edge-to-edge gap: 450px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 204px
+
+  Gap #3:
+    Platform A: (2340, 420) 450x30 [wood]
+    Platform B: (3330, 240) 450x30 [wood]
+    Edge-to-edge gap: 540px
+    Vertical diff: -180px (uphill)
+    Max allowed gap: 156px
+    Excess: 384px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (3330, 240) 450x30 [wood]
+    Platform B: (4230, 240) 450x30 [wood]
+    Edge-to-edge gap: 450px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 204px
+
+  Gap #5:
+    Platform A: (4230, 240) 450x30 [wood]
+    Platform B: (5130, 240) 450x30 [wood]
+    Edge-to-edge gap: 450px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 204px
+
+  Gap #6:
+    Platform A: (5130, 240) 450x30 [wood]
+    Platform B: (5940, 420) 450x30 [wood]
+    Edge-to-edge gap: 360px
+    Vertical diff: 180px (downhill)
+    Max allowed gap: 296.54px
+    Excess: 63.46px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #7:
+    Platform A: (5940, 420) 450x30 [wood]
+    Platform B: (6750, 420) 360x30 [wood]
+    Edge-to-edge gap: 405px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 159px
+
+  Gap #8:
+    Platform A: (6750, 420) 360x30 [wood]
+    Platform B: (7470, 600) 270x40 [wood]
+    Edge-to-edge gap: 405px
+    Vertical diff: 175px (downhill)
+    Max allowed gap: 295.32px
+    Excess: 109.68px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 37: "Village Green" (village)
+  Platforms: 15 | Gap issues: 4
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1500, 520) 360x28 [wood]
+    Platform B: (2180, 590) 160x24 [platform_easy]
+    Edge-to-edge gap: 420px
+    Vertical diff: 72px (downhill)
+    Max allowed gap: 268.18px
+    Excess: 151.82px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (3240, 650) 600x40 [grass]
+    Platform B: (3892, 606) 80x24 [pipe_top]
+    Edge-to-edge gap: 312px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 78.59px
+
+  Gap #3:
+    Platform A: (5000, 650) 800x40 [grass]
+    Platform B: (5900, 530) 200x24 [platform_medium]
+    Edge-to-edge gap: 400px
+    Vertical diff: -112px (uphill)
+    Max allowed gap: 201.25px
+    Excess: 198.75px
+
+  Gap #4:
+    Platform A: (5900, 530) 200x24 [platform_medium]
+    Platform B: (6300, 450) 160x24 [platform_hard]
+    Edge-to-edge gap: 220px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 4px
+
+--------------------------------------------------------------------------------
+  Level 38: "Market Road" (village)
+  Platforms: 24 | Gap issues: 5
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (728, 530) 218.4x24 [brick]
+    Platform B: (1547, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 659.8px
+    Vertical diff: 60px (downhill)
+    Max allowed gap: 264.7px
+    Excess: 395.1px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2184, 520) 327.6x28 [wood]
+    Platform B: (3124.3333333333335, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 726.53px
+    Vertical diff: 72px (downhill)
+    Max allowed gap: 268.18px
+    Excess: 458.36px
+
+  Gap #3:
+    Platform A: (3913, 520) 182x24 [brick]
+    Platform B: (4732, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 678px
+    Vertical diff: 70px (downhill)
+    Max allowed gap: 267.6px
+    Excess: 410.4px
+
+  Gap #4:
+    Platform A: (5642, 530) 218.4x24 [wood]
+    Platform B: (6582.333333333333, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 781.13px
+    Vertical diff: 60px (downhill)
+    Max allowed gap: 264.7px
+    Excess: 516.43px
+
+  Gap #5:
+    Platform A: (7098, 650) 728x40 [grass]
+    Platform B: (8099, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 587px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 359.62px
+
+--------------------------------------------------------------------------------
+  Level 39: "Pipe Maze" (village)
+  Platforms: 43 | Gap issues: 10
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1169, 750) 668x40 [brick]
+    Platform B: (1829, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 286px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 52.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2922.5, 750) 668x40 [brick]
+    Platform B: (3582.5, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 286px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 52.59px
+
+  Gap #3:
+    Platform A: (4175, 750) 64x64 [pipe]
+    Platform B: (4918.5, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 671.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 433.75px
+
+  Gap #4:
+    Platform A: (4926.5, 750) 64x64 [pipe]
+    Platform B: (5503, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 504.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 266.75px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (6596.5, 750) 668x40 [grass]
+    Platform B: (7256.5, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 286px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 52.59px
+
+  Gap #6:
+    Platform A: (7264.5, 750) 64x64 [pipe]
+    Platform B: (7841, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 504.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 266.75px
+
+  Gap #7:
+    Platform A: (8600.5, 750) 501x40 [grass]
+    Platform B: (9260.5, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 369.5px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 136.09px
+
+  Gap #8:
+    Platform A: (9268.5, 750) 64x64 [pipe]
+    Platform B: (9845, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 504.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 266.75px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #9:
+    Platform A: (9853, 750) 835x40 [brick]
+    Platform B: (10680, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 369.5px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 136.09px
+
+  Gap #10:
+    Platform A: (10688, 750) 64x64 [pipe]
+    Platform B: (11264.5, 706) 80x24 [pipe_top]
+    Edge-to-edge gap: 504.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 266.75px
+
+--------------------------------------------------------------------------------
+  Level 40: "Chimney Chase" (village)
+  Platforms: 40 | Gap issues: 12
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1332, 720) 177.6x28 [platform_easy]
+    Platform B: (1776, 640) 177.6x28 [platform_medium]
+    Edge-to-edge gap: 266.4px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 50.4px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1776, 640) 177.6x28 [platform_medium]
+    Platform B: (2220, 560) 177.6x28 [platform_hard]
+    Edge-to-edge gap: 266.4px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 50.4px
+
+  Gap #3:
+    Platform A: (2220, 560) 177.6x28 [platform_hard]
+    Platform B: (2664, 480) 222x40 [brick]
+    Edge-to-edge gap: 244.2px
+    Vertical diff: -86px (uphill)
+    Max allowed gap: 213.4px
+    Excess: 30.8px
+
+  Gap #4:
+    Platform A: (4958, 720) 177.6x28 [platform_easy]
+    Platform B: (5402, 640) 177.6x28 [platform_medium]
+    Edge-to-edge gap: 266.4px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 50.4px
+
+  Gap #5:
+    Platform A: (5402, 640) 177.6x28 [platform_medium]
+    Platform B: (5846, 560) 177.6x28 [platform_hard]
+    Edge-to-edge gap: 266.4px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 50.4px
+
+  Gap #6:
+    Platform A: (5846, 560) 177.6x28 [platform_hard]
+    Platform B: (6290, 480) 222x40 [brick]
+    Edge-to-edge gap: 244.2px
+    Vertical diff: -86px (uphill)
+    Max allowed gap: 213.4px
+    Excess: 30.8px
+
+  Gap #7:
+    Platform A: (8584, 720) 177.6x28 [platform_easy]
+    Platform B: (9028, 640) 177.6x28 [platform_medium]
+    Edge-to-edge gap: 266.4px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 50.4px
+
+  Gap #8:
+    Platform A: (9028, 640) 177.6x28 [platform_medium]
+    Platform B: (9472, 560) 177.6x28 [platform_hard]
+    Edge-to-edge gap: 266.4px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 50.4px
+
+  Gap #9:
+    Platform A: (9472, 560) 177.6x28 [platform_hard]
+    Platform B: (9916, 480) 222x40 [grass]
+    Edge-to-edge gap: 244.2px
+    Vertical diff: -86px (uphill)
+    Max allowed gap: 213.4px
+    Excess: 30.8px
+
+  Gap #10:
+    Platform A: (12136, 720) 177.6x28 [platform_easy]
+    Platform B: (12580, 640) 177.6x28 [platform_medium]
+    Edge-to-edge gap: 266.4px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 50.4px
+
+  Gap #11:
+    Platform A: (12580, 640) 177.6x28 [platform_medium]
+    Platform B: (13024, 560) 177.6x28 [platform_hard]
+    Edge-to-edge gap: 266.4px
+    Vertical diff: -80px (uphill)
+    Max allowed gap: 216px
+    Excess: 50.4px
+
+  Gap #12:
+    Platform A: (13024, 560) 177.6x28 [platform_hard]
+    Platform B: (13468, 480) 222x40 [brick]
+    Edge-to-edge gap: 244.2px
+    Vertical diff: -86px (uphill)
+    Max allowed gap: 213.4px
+    Excess: 30.8px
+
+--------------------------------------------------------------------------------
+  Level 41: "Town Square" (village)
+  Platforms: 52 | Gap issues: 5
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1724.9999999999998, 850) 276x40 [grass]
+    Platform B: (2200, 806) 80x24 [pipe_top]
+    Edge-to-edge gap: 297px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 63.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (4623, 850) 413.99999999999994x40 [brick]
+    Platform B: (5236, 806) 80x24 [pipe_top]
+    Edge-to-edge gap: 366px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 132.59px
+
+  Gap #3:
+    Platform A: (5244, 850) 64x64 [pipe]
+    Platform B: (5719, 806) 80x24 [pipe_top]
+    Edge-to-edge gap: 403px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 165.25px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (9315, 850) 413.99999999999994x40 [brick]
+    Platform B: (9928, 806) 80x24 [pipe_top]
+    Edge-to-edge gap: 366px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 132.59px
+
+  Gap #5:
+    Platform A: (11178, 730) 165.6x24 [wood]
+    Platform B: (11592, 730) 138x24 [platform_medium]
+    Edge-to-edge gap: 262.2px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 16.2px
+
+--------------------------------------------------------------------------------
+  Level 42: "Rooftop Finale" (village)
+  Platforms: 45 | Gap issues: 8
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1750, 950) 250x40 [grass]
+    Platform B: (2250, 890) 100x24 [platform_easy]
+    Edge-to-edge gap: 325px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 97.62px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (3812.5, 950) 375x40 [grass]
+    Platform B: (4617, 906) 80x24 [pipe_top]
+    Edge-to-edge gap: 577px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 343.59px
+
+  Gap #3:
+    Platform A: (4625, 950) 64x64 [pipe]
+    Platform B: (5054.5, 906) 80x24 [pipe_top]
+    Edge-to-edge gap: 357.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 119.75px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (5250, 950) 375x40 [brick]
+    Platform B: (5859.375, 890) 100x24 [platform_easy]
+    Edge-to-edge gap: 371.88px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 144.49px
+
+  Gap #5:
+    Platform A: (7875, 950) 375x40 [brick]
+    Platform B: (8679.5, 906) 80x24 [pipe_top]
+    Edge-to-edge gap: 577px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 343.59px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (8687.5, 950) 64x64 [pipe]
+    Platform B: (9117, 906) 80x24 [pipe_top]
+    Edge-to-edge gap: 357.5px
+    Vertical diff: -24px (uphill)
+    Max allowed gap: 237.75px
+    Excess: 119.75px
+
+  Gap #7:
+    Platform A: (11250, 950) 375x40 [grass]
+    Platform B: (11812.5, 890) 100x24 [platform_easy]
+    Edge-to-edge gap: 325px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 97.62px
+
+  Gap #8:
+    Platform A: (12187.5, 950) 375x40 [brick]
+    Platform B: (12750, 830) 187.5x28 [brick]
+    Edge-to-edge gap: 281.25px
+    Vertical diff: -114px (uphill)
+    Max allowed gap: 200.25px
+    Excess: 81px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 43: "Sandy Shores" (beach-island)
+  Platforms: 13 | Gap issues: 3
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (156.25, 550) 1125x40 [sand]
+    Platform B: (1375, 550) 112.5x24 [wood]
+    Edge-to-edge gap: 600px
+    Vertical diff: 8px (downhill)
+    Max allowed gap: 248.64px
+    Excess: 351.36px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2125, 550) 500x40 [sand]
+    Platform B: (2867, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 452px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 218.59px
+
+  Gap #3:
+    Platform A: (3500, 550) 500x40 [sand]
+    Platform B: (4125, 550) 112.5x24 [wood]
+    Edge-to-edge gap: 318.75px
+    Vertical diff: 8px (downhill)
+    Max allowed gap: 248.64px
+    Excess: 70.11px
+
+--------------------------------------------------------------------------------
+  Level 44: "Boardwalk Dash" (beach-island)
+  Platforms: 27 | Gap issues: 6
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (150, 550) 600x40 [sand]
+    Platform B: (780, 550) 108x24 [wood]
+    Edge-to-edge gap: 276px
+    Vertical diff: 8px (downhill)
+    Max allowed gap: 248.64px
+    Excess: 27.36px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1620, 550) 300x40 [sand]
+    Platform B: (2100, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 280px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 52.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2700, 550) 360x40 [sand]
+    Platform B: (3247.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 317.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 90.12px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (3720, 550) 420x40 [sand]
+    Platform B: (4260, 550) 108x24 [wood]
+    Edge-to-edge gap: 276px
+    Vertical diff: 8px (downhill)
+    Max allowed gap: 248.64px
+    Excess: 27.36px
+
+  Gap #5:
+    Platform A: (4380, 550) 108x24 [wood]
+    Platform B: (4740, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 256px
+    Vertical diff: -60px (uphill)
+    Max allowed gap: 224.25px
+    Excess: 31.75px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (5280, 550) 360x40 [sand]
+    Platform B: (5827.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 317.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 90.12px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 45: "Coconut Grove" (beach-island)
+  Platforms: 49 | Gap issues: 8
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (139, 550) 444.80000000000007x40 [sand]
+    Platform B: (667.2, 550) 100.08000000000001x24 [wood]
+    Edge-to-edge gap: 255.76px
+    Vertical diff: 8px (downhill)
+    Max allowed gap: 248.64px
+    Excess: 7.12px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (778.4000000000001, 550) 100.08000000000001x24 [wood]
+    Platform B: (1159.6000000000001, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 291.16px
+    Vertical diff: -44px (uphill)
+    Max allowed gap: 230.44px
+    Excess: 60.72px
+
+  Gap #3:
+    Platform A: (1890.4, 550) 278x40 [sand]
+    Platform B: (2438.4, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 369px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 135.59px
+
+  Gap #4:
+    Platform A: (3391.6000000000004, 480) 333.6x40 [sand]
+    Platform B: (3995.2000000000003, 436) 80x24 [pipe_top]
+    Edge-to-edge gap: 396.8px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 163.39px
+
+  Gap #5:
+    Platform A: (4781.6, 550) 278x40 [sand]
+    Platform B: (5329.6, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 369px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 135.59px
+
+  Gap #6:
+    Platform A: (5921.400000000001, 550) 64x64 [pipe]
+    Platform B: (6282.8, 420) 150x28 [platform_medium]
+    Edge-to-edge gap: 254.4px
+    Vertical diff: -112px (uphill)
+    Max allowed gap: 201.25px
+    Excess: 53.15px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #7:
+    Platform A: (6282.8, 420) 150x28 [platform_medium]
+    Platform B: (6775.200000000001, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 377.4px
+    Vertical diff: 88px (downhill)
+    Max allowed gap: 272.69px
+    Excess: 104.71px
+
+  Gap #8:
+    Platform A: (7506.000000000001, 550) 278x40 [sand]
+    Platform B: (8054.000000000001, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 369px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 135.59px
+
+--------------------------------------------------------------------------------
+  Level 46: "Island Falls" (beach-island)
+  Platforms: 38 | Gap issues: 4
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (125, 550) 400x40 [sand]
+    Platform B: (600, 470) 60x28 [platform_easy]
+    Edge-to-edge gap: 245px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 26.46px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (2800, 550) 400x40 [sand]
+    Platform B: (3250, 470) 60x28 [platform_easy]
+    Edge-to-edge gap: 220px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 1.46px
+
+  Gap #3:
+    Platform A: (4300, 550) 400x40 [sand]
+    Platform B: (4750, 470) 60x28 [platform_easy]
+    Edge-to-edge gap: 220px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 1.46px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (5800, 550) 400x40 [sand]
+    Platform B: (6343.75, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 293.75px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 66.37px
+
+--------------------------------------------------------------------------------
+  Level 47: "Coral Reef" (beach-island)
+  Platforms: 20 | Gap issues: 4
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (113.75, 550) 819x40 [sand]
+    Platform B: (1046.5, 550) 81.9x24 [wood]
+    Edge-to-edge gap: 482.3px
+    Vertical diff: 8px (downhill)
+    Max allowed gap: 248.64px
+    Excess: 233.66px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1729, 550) 728x40 [sand]
+    Platform B: (2775.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 632.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 405.12px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (3139.5, 550) 819x40 [sand]
+    Platform B: (4041.5, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 452.5px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 219.09px
+
+  Gap #4:
+    Platform A: (4823, 550) 728x40 [sand]
+    Platform B: (5772.8125, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 535.81px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 308.43px
+
+--------------------------------------------------------------------------------
+  Level 49: "Gear Grinder" (factory)
+  Platforms: 11 | Gap issues: 4
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (812.5, 600) 500x40 [metal]
+    Platform B: (1406.25, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 293.75px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 66.37px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1750, 600) 375x40 [metal]
+    Platform B: (2429.5, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 452px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 218.59px
+
+  Gap #3:
+    Platform A: (3125, 600) 500x40 [metal]
+    Platform B: (3937.5, 600) 625x40 [metal]
+    Edge-to-edge gap: 250px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 4px
+
+  Gap #4:
+    Platform A: (3937.5, 600) 625x40 [metal]
+    Platform B: (4875, 600) 500x40 [metal]
+    Edge-to-edge gap: 375px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 129px
+
+--------------------------------------------------------------------------------
+  Level 50: "Steel Gaps" (factory)
+  Platforms: 24 | Gap issues: 6
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (150, 600) 480x40 [metal]
+    Platform B: (735, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 295px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 67.62px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1260, 600) 360x40 [metal]
+    Platform B: (1752, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 262px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 34.62px
+
+  Gap #3:
+    Platform A: (2340, 600) 300x40 [metal]
+    Platform B: (2775, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 235px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 7.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (3300, 600) 360x40 [metal]
+    Platform B: (3795, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 265px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 37.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (4320, 600) 480x40 [metal]
+    Platform B: (4932, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 322px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 94.62px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (5520, 600) 480x40 [metal]
+    Platform B: (6180, 600) 300x40 [metal]
+    Edge-to-edge gap: 270px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 24px
+
+--------------------------------------------------------------------------------
+  Level 51: "Pipe Maze" (factory)
+  Platforms: 61 | Gap issues: 5
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (722.8000000000001, 600) 278x40 [metal]
+    Platform B: (1159.6000000000001, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 257.8px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 24.39px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (3113.6000000000004, 500) 333.6x40 [metal]
+    Platform B: (3661.6000000000004, 456) 80x24 [pipe_top]
+    Edge-to-edge gap: 341.2px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 107.79px
+
+  Gap #3:
+    Platform A: (4614.8, 600) 278x40 [metal]
+    Platform B: (5051.6, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 257.8px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 24.39px
+
+  Gap #4:
+    Platform A: (7061.200000000001, 600) 278x40 [metal]
+    Platform B: (7553.6, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 313.4px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 79.99px
+
+  Gap #5:
+    Platform A: (8451.2, 600) 222.40000000000003x40 [metal]
+    Platform B: (8888, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 285.6px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 52.19px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 53: "Robot Rampage" (factory)
+  Platforms: 18 | Gap issues: 5
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (113.75, 650) 819x40 [metal]
+    Platform B: (1114.75, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 541.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 314.12px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1456, 650) 910x40 [metal]
+    Platform B: (2555.5833333333335, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 594.58px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 367.2px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (3048.5, 650) 819x40 [metal]
+    Platform B: (4041.5, 606) 80x24 [pipe_top]
+    Edge-to-edge gap: 543.5px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 310.09px
+
+  Gap #4:
+    Platform A: (4777.5, 650) 910x40 [metal]
+    Platform B: (5831.583333333333, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 549.08px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 321.7px
+
+  Gap #5:
+    Platform A: (6370, 650) 819x40 [metal]
+    Platform B: (7280, 580) 120x28 [platform_easy]
+    Edge-to-edge gap: 440.5px
+    Vertical diff: -64px (uphill)
+    Max allowed gap: 222.65px
+    Excess: 217.85px
+
+--------------------------------------------------------------------------------
+  Level 54: "Conveyor Chaos" (factory)
+  Platforms: 28 | Gap issues: 4
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (104.25, 650) 834x40 [metal]
+    Platform B: (1094.625, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 523.38px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 295.99px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1834.8, 500) 120x28 [platform_medium]
+    Platform B: (2285.5, 606) 80x24 [pipe_top]
+    Edge-to-edge gap: 350.7px
+    Vertical diff: 108px (downhill)
+    Max allowed gap: 278.17px
+    Excess: 72.53px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #3:
+    Platform A: (2710.5, 650) 834x40 [metal]
+    Platform B: (3669.6, 570) 120x28 [platform_easy]
+    Edge-to-edge gap: 482.1px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 263.56px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (4336.8, 650) 834x40 [metal]
+    Platform B: (5371.3, 606) 80x24 [pipe_top]
+    Edge-to-edge gap: 577.5px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 344.09px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 55: "Einfuehrung" (volcano-lava)
+  Platforms: 42 | Gap issues: 8
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (0, 530) 667.2x100 [stone]
+    Platform B: (667.2, 530) 111.20000000000002x100 [lava]
+    Edge-to-edge gap: 278px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 32px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1000.8000000000001, 530) 667.2x100 [stone]
+    Platform B: (1668.0000000000002, 530) 111.20000000000002x100 [lava]
+    Edge-to-edge gap: 278px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 32px
+
+  Gap #3:
+    Platform A: (2001.6000000000001, 530) 667.2x100 [stone]
+    Platform B: (2668.8, 530) 111.20000000000002x100 [lava]
+    Edge-to-edge gap: 278px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 32px
+
+  Gap #4:
+    Platform A: (3002.4, 390) 44.480000000000004x140 [brick]
+    Platform B: (3669.6000000000004, 530) 111.20000000000002x100 [lava]
+    Edge-to-edge gap: 589.36px
+    Vertical diff: 160px (downhill)
+    Max allowed gap: 291.62px
+    Excess: 297.74px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (4003.2000000000003, 530) 667.2x100 [stone]
+    Platform B: (4670.400000000001, 530) 111.20000000000002x100 [lava]
+    Edge-to-edge gap: 278px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 32px
+
+  Gap #6:
+    Platform A: (7005.6, 530) 667.2x100 [stone]
+    Platform B: (7672.800000000001, 530) 111.20000000000002x100 [lava]
+    Edge-to-edge gap: 278px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 32px
+
+  Gap #7:
+    Platform A: (9007.2, 530) 667.2x100 [stone]
+    Platform B: (9674.400000000001, 530) 111.20000000000002x100 [lava]
+    Edge-to-edge gap: 278px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 32px
+
+  Gap #8:
+    Platform A: (10008, 530) 667.2x100 [stone]
+    Platform B: (10675.2, 530) 111.20000000000002x100 [lava]
+    Edge-to-edge gap: 278px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 32px
+
+--------------------------------------------------------------------------------
+  Level 56: "Lava-Spruenge" (volcano-lava)
+  Platforms: 48 | Gap issues: 10
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (0, 550) 631.2x100 [stone]
+    Platform B: (526, 420) 42.08x130 [brick]
+    Edge-to-edge gap: 189.36px
+    Vertical diff: -145px (uphill)
+    Max allowed gap: 182.94px
+    Excess: 6.42px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1893.6000000000001, 550) 631.2x100 [stone]
+    Platform B: (2524.8, 550) 105.2x100 [lava]
+    Edge-to-edge gap: 263px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 17px
+
+  Gap #3:
+    Platform A: (2998.2000000000003, 440) 100x24 [platform_hard]
+    Platform B: (3366.4, 400) 42.08x150 [brick]
+    Edge-to-edge gap: 297.16px
+    Vertical diff: -103px (uphill)
+    Max allowed gap: 205.63px
+    Excess: 91.53px
+
+  Gap #4:
+    Platform A: (4734, 550) 631.2x100 [stone]
+    Platform B: (5365.2, 550) 105.2x100 [lava]
+    Edge-to-edge gap: 263px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 17px
+
+  Gap #5:
+    Platform A: (5680.8, 550) 631.2x100 [stone]
+    Platform B: (6312, 550) 105.2x100 [lava]
+    Edge-to-edge gap: 263px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 17px
+
+  Gap #6:
+    Platform A: (6627.6, 550) 631.2x100 [stone]
+    Platform B: (7258.8, 550) 105.2x100 [lava]
+    Edge-to-edge gap: 263px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 17px
+
+  Gap #7:
+    Platform A: (7574.400000000001, 550) 631.2x100 [stone]
+    Platform B: (8205.6, 550) 105.2x100 [lava]
+    Edge-to-edge gap: 263px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 17px
+
+  Gap #8:
+    Platform A: (8521.2, 550) 631.2x100 [stone]
+    Platform B: (9152.4, 550) 105.2x100 [lava]
+    Edge-to-edge gap: 263px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 17px
+
+  Gap #9:
+    Platform A: (9468, 550) 631.2x100 [stone]
+    Platform B: (10099.2, 550) 105.2x100 [lava]
+    Edge-to-edge gap: 263px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 17px
+
+  Gap #10:
+    Platform A: (10414.800000000001, 550) 631.2x100 [stone]
+    Platform B: (11046, 550) 105.2x100 [lava]
+    Edge-to-edge gap: 263px
+    Vertical diff: 0px (uphill)
+    Max allowed gap: 246px
+    Excess: 17px
+
+--------------------------------------------------------------------------------
+  Level 57: "Roehrenpfad" (volcano-lava)
+  Platforms: 70 | Gap issues: 6
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (500, 430) 40x130 [brick]
+    Platform B: (1042, 516) 80x24 [pipe_top]
+    Edge-to-edge gap: 482px
+    Vertical diff: 139px (downhill)
+    Max allowed gap: 286.31px
+    Excess: 195.69px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1900, 450) 50x24 [platform_easy]
+    Platform B: (2300, 560) 100x100 [lava]
+    Edge-to-edge gap: 325px
+    Vertical diff: 72px (downhill)
+    Max allowed gap: 268.18px
+    Excess: 56.82px
+
+  Gap #3:
+    Platform A: (2300, 560) 100x100 [lava]
+    Platform B: (2642, 516) 80x24 [pipe_top]
+    Edge-to-edge gap: 252px
+    Vertical diff: -6px (uphill)
+    Max allowed gap: 243.98px
+    Excess: 8.02px
+
+  Gap #4:
+    Platform A: (4000, 560) 100x100 [lava]
+    Platform B: (4342, 516) 80x24 [pipe_top]
+    Edge-to-edge gap: 252px
+    Vertical diff: -6px (uphill)
+    Max allowed gap: 243.98px
+    Excess: 8.02px
+
+  Gap #5:
+    Platform A: (6100, 560) 100x100 [lava]
+    Platform B: (6442, 516) 80x24 [pipe_top]
+    Edge-to-edge gap: 252px
+    Vertical diff: -6px (uphill)
+    Max allowed gap: 243.98px
+    Excess: 8.02px
+
+  Gap #6:
+    Platform A: (9700, 560) 100x100 [lava]
+    Platform B: (10042, 516) 80x24 [pipe_top]
+    Edge-to-edge gap: 252px
+    Vertical diff: -6px (uphill)
+    Max allowed gap: 243.98px
+    Excess: 8.02px
+
+--------------------------------------------------------------------------------
+  Level 58: "Aufstieg" (volcano-lava)
+  Platforms: 54 | Gap issues: 3
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (380.79999999999995, 450) 38.08x130 [brick]
+    Platform B: (856.8, 500) 57.12x28 [platform_easy]
+    Edge-to-edge gap: 428.4px
+    Vertical diff: 101px (downhill)
+    Max allowed gap: 276.27px
+    Excess: 152.13px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1999.1999999999998, 440) 38.08x140 [brick]
+    Platform B: (2522.7999999999997, 580) 95.19999999999999x100 [lava]
+    Edge-to-edge gap: 456.96px
+    Vertical diff: 160px (downhill)
+    Max allowed gap: 291.62px
+    Excess: 165.34px
+
+  Gap #3:
+    Platform A: (7711.2, 440) 38.08x140 [brick]
+    Platform B: (8092, 580) 95.19999999999999x100 [lava]
+    Edge-to-edge gap: 314.16px
+    Vertical diff: 160px (downhill)
+    Max allowed gap: 291.62px
+    Excess: 22.54px
+
+--------------------------------------------------------------------------------
+  Level 59: "Asche-Sturm" (volcano-lava)
+  Platforms: 54 | Gap issues: 1
+  Moving platforms: 6
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1820, 380) 45.5x24 [platform_hard]
+    Platform B: (2184, 560) 91x100 [lava]
+    Edge-to-edge gap: 295.75px
+    Vertical diff: 142px (downhill)
+    Max allowed gap: 287.08px
+    Excess: 8.67px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+--------------------------------------------------------------------------------
+  Level 60: "Krater-Finale" (volcano-lava)
+  Platforms: 51 | Gap issues: 9
+  Moving platforms: 8
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (261, 450) 34.8x130 [brick]
+    Platform B: (652.5, 580) 87x100 [lava]
+    Edge-to-edge gap: 330.6px
+    Vertical diff: 145px (downhill)
+    Max allowed gap: 287.85px
+    Excess: 42.75px
+
+  Gap #2:
+    Platform A: (1740, 620) 87x100 [lava]
+    Platform B: (1870.5, 200) 34.8x24 [platform_medium]
+    Edge-to-edge gap: 69.6px
+    Vertical diff: -382px (uphill)
+    Max allowed gap: 0px
+    Excess: 69.6px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! UNREACHABLE (vertical diff exceeds max jump height)
+
+  Gap #3:
+    Platform A: (2697, 620) 87x100 [lava]
+    Platform B: (2827.5, 50) 34.8x24 [platform_hard]
+    Edge-to-edge gap: 69.6px
+    Vertical diff: -532px (uphill)
+    Max allowed gap: 0px
+    Excess: 69.6px
+    ! UNREACHABLE (vertical diff exceeds max jump height)
+
+  Gap #4:
+    Platform A: (4002, -110) 34.8x130 [brick]
+    Platform B: (4480.5, 20) 87x100 [lava]
+    Edge-to-edge gap: 417.6px
+    Vertical diff: 145px (downhill)
+    Max allowed gap: 287.85px
+    Excess: 129.75px
+
+  Gap #5:
+    Platform A: (4480.5, 620) 87x100 [lava]
+    Platform B: (4654.5, 100) 52.2x28 [platform_hard]
+    Edge-to-edge gap: 104.4px
+    Vertical diff: -484px (uphill)
+    Max allowed gap: 0px
+    Excess: 104.4px
+    ! UNREACHABLE (vertical diff exceeds max jump height)
+
+  Gap #6:
+    Platform A: (5437.5, 620) 87x100 [lava]
+    Platform B: (5568, 120) 34.8x24 [platform_medium]
+    Edge-to-edge gap: 69.6px
+    Vertical diff: -462px (uphill)
+    Max allowed gap: 0px
+    Excess: 69.6px
+    ! UNREACHABLE (vertical diff exceeds max jump height)
+
+  Gap #7:
+    Platform A: (6090, -30) 34.8x130 [brick]
+    Platform B: (6525, 100) 87x100 [lava]
+    Edge-to-edge gap: 374.1px
+    Vertical diff: 145px (downhill)
+    Max allowed gap: 287.85px
+    Excess: 86.25px
+
+  Gap #8:
+    Platform A: (6525, 620) 87x100 [lava]
+    Platform B: (6612, 50) 34.8x24 [platform_hard]
+    Edge-to-edge gap: 26.1px
+    Vertical diff: -532px (uphill)
+    Max allowed gap: 0px
+    Excess: 26.1px
+    ! UNREACHABLE (vertical diff exceeds max jump height)
+
+  Gap #9:
+    Platform A: (6873, -30) 34.8x130 [brick]
+    Platform B: (7351.5, 100) 87x100 [lava]
+    Edge-to-edge gap: 417.6px
+    Vertical diff: 145px (downhill)
+    Max allowed gap: 287.85px
+    Excess: 129.75px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 61: "Ghost Hall" (haunted-mansion)
+  Platforms: 135 | Gap issues: 1
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (8929.36, 330) 72.28x28 [platform_medium]
+    Platform B: (9340.800000000001, 560) 77.84x40 [brick]
+    Edge-to-edge gap: 336.38px
+    Vertical diff: 224px (downhill)
+    Max allowed gap: 306.92px
+    Excess: 29.46px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+--------------------------------------------------------------------------------
+  Level 62: "Phantom Foyer" (haunted-mansion)
+  Platforms: 140 | Gap issues: 6
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (2340.7000000000003, 560) 73.64x40 [brick]
+    Platform B: (2800.9500000000003, 500) 100x24 [platform_easy]
+    Edge-to-edge gap: 373.43px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 146.05px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (5286.3, 560) 73.64x40 [brick]
+    Platform B: (5817.56, 500) 100x24 [platform_easy]
+    Edge-to-edge gap: 444.44px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 217.06px
+
+  Gap #3:
+    Platform A: (8494.9, 560) 73.64x40 [brick]
+    Platform B: (8984.08, 500) 100x24 [platform_easy]
+    Edge-to-edge gap: 402.36px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 174.98px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (9741.52, 425) 100x24 [platform_easy]
+    Platform B: (10204.4, 560) 73.64x40 [brick]
+    Edge-to-edge gap: 376.06px
+    Vertical diff: 127px (downhill)
+    Max allowed gap: 283.21px
+    Excess: 92.85px
+
+  Gap #5:
+    Platform A: (12098, 560) 73.64x40 [brick]
+    Platform B: (12666.08, 500) 100x24 [platform_easy]
+    Edge-to-edge gap: 481.26px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 253.88px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (13423.52, 425) 100x24 [platform_easy]
+    Platform B: (14096.800000000001, 560) 73.64x40 [brick]
+    Edge-to-edge gap: 586.46px
+    Vertical diff: 127px (downhill)
+    Max allowed gap: 283.21px
+    Excess: 303.25px
+
+--------------------------------------------------------------------------------
+  Level 63: "Spooky Stairs" (haunted-mansion)
+  Platforms: 234 | Gap issues: 8
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (3925, 580) 70x40 [brick]
+    Platform B: (4342, 536) 80x24 [pipe_top]
+    Edge-to-edge gap: 342px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 108.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (6725, 580) 70x40 [brick]
+    Platform B: (7142, 536) 80x24 [pipe_top]
+    Edge-to-edge gap: 342px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 108.59px
+
+  Gap #3:
+    Platform A: (9150, 580) 70x40 [brick]
+    Platform B: (9642, 536) 80x24 [pipe_top]
+    Edge-to-edge gap: 417px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 183.59px
+
+  Gap #4:
+    Platform A: (10175, 580) 64x64 [pipe]
+    Platform B: (10500, 580) 70x40 [brick]
+    Edge-to-edge gap: 258px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 8.06px
+
+  Gap #5:
+    Platform A: (11925, 580) 70x40 [brick]
+    Platform B: (12442, 536) 80x24 [pipe_top]
+    Edge-to-edge gap: 442px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 208.59px
+
+  Gap #6:
+    Platform A: (15175, 580) 70x40 [brick]
+    Platform B: (15642, 536) 80x24 [pipe_top]
+    Edge-to-edge gap: 392px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 158.59px
+
+  Gap #7:
+    Platform A: (16175, 580) 64x64 [pipe]
+    Platform B: (16500, 580) 70x40 [brick]
+    Edge-to-edge gap: 258px
+    Vertical diff: 12px (downhill)
+    Max allowed gap: 249.94px
+    Excess: 8.06px
+
+  Gap #8:
+    Platform A: (18300, 580) 70x40 [brick]
+    Platform B: (18742, 536) 80x24 [pipe_top]
+    Edge-to-edge gap: 367px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 133.59px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 64: "Curse Corridor" (haunted-mansion)
+  Platforms: 120 | Gap issues: 1
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (5664.4, 640) 66.64x40 [brick]
+    Platform B: (6092.799999999999, 560) 57.12x28 [platform_easy]
+    Edge-to-edge gap: 366.52px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 147.98px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+--------------------------------------------------------------------------------
+  Level 65: "Banshee Barracks" (haunted-mansion)
+  Platforms: 201 | Gap issues: 2
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (5482.75, 600) 63.7x40 [brick]
+    Platform B: (5915, 520) 45.5x28 [platform_easy]
+    Edge-to-edge gap: 377.65px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 159.11px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (9509.5, 600) 63.7x40 [brick]
+    Platform B: (10010, 500) 68.25x40 [brick]
+    Edge-to-edge gap: 434.52px
+    Vertical diff: -100px (uphill)
+    Max allowed gap: 207.05px
+    Excess: 227.48px
+
+--------------------------------------------------------------------------------
+  Level 66: "Crypt Keeper" (haunted-mansion)
+  Platforms: 206 | Gap issues: 2
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (4806.75, 640) 60.9x40 [brick]
+    Platform B: (5220, 560) 43.5x28 [platform_easy]
+    Edge-to-edge gap: 361.05px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 142.51px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (14346.3, 410) 69.6x28 [platform_hard]
+    Platform B: (14790, 640) 60.9x40 [brick]
+    Edge-to-edge gap: 378.45px
+    Vertical diff: 224px (downhill)
+    Max allowed gap: 306.92px
+    Excess: 71.53px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 67: "Vergessener Pfad" (ruins)
+  Platforms: 9 | Gap issues: 1
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (250, 550) 750x50 [ruins]
+    Platform B: (1117, 506) 80x24 [pipe_top]
+    Edge-to-edge gap: 452px
+    Vertical diff: -31px (uphill)
+    Max allowed gap: 235.24px
+    Excess: 216.76px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+--------------------------------------------------------------------------------
+  Level 68: "Säulen-Sprünge" (ruins)
+  Platforms: 17 | Gap issues: 4
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (240, 550) 600x50 [ruins]
+    Platform B: (1027.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 437.5px
+    Vertical diff: -47px (uphill)
+    Max allowed gap: 229.3px
+    Excess: 208.2px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1560, 550) 360x50 [ruins]
+    Platform B: (2287.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 497.5px
+    Vertical diff: -47px (uphill)
+    Max allowed gap: 229.3px
+    Excess: 268.2px
+
+  Gap #3:
+    Platform A: (2820, 550) 360x50 [ruins]
+    Platform B: (3547.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 497.5px
+    Vertical diff: -47px (uphill)
+    Max allowed gap: 229.3px
+    Excess: 268.2px
+
+  Gap #4:
+    Platform A: (4080, 550) 360x50 [ruins]
+    Platform B: (4807.5, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 497.5px
+    Vertical diff: -47px (uphill)
+    Max allowed gap: 229.3px
+    Excess: 268.2px
+
+--------------------------------------------------------------------------------
+  Level 69: "Röhren-Ruinen" (ruins)
+  Platforms: 26 | Gap issues: 5
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (278, 600) 667.2x50 [ruins]
+    Platform B: (1159.6000000000001, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 508px
+    Vertical diff: -31px (uphill)
+    Max allowed gap: 235.24px
+    Excess: 272.76px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1556.8000000000002, 600) 500.40000000000003x50 [ruins]
+    Platform B: (2327.2000000000003, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 480.2px
+    Vertical diff: -31px (uphill)
+    Max allowed gap: 235.24px
+    Excess: 244.96px
+
+  Gap #3:
+    Platform A: (2780.0000000000005, 600) 500.40000000000003x50 [ruins]
+    Platform B: (3550.4000000000005, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 480.2px
+    Vertical diff: -31px (uphill)
+    Max allowed gap: 235.24px
+    Excess: 244.96px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (4003.2000000000003, 600) 500.40000000000003x50 [ruins]
+    Platform B: (4773.6, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 480.2px
+    Vertical diff: -31px (uphill)
+    Max allowed gap: 235.24px
+    Excess: 244.96px
+
+  Gap #5:
+    Platform A: (5226.400000000001, 600) 500.40000000000003x50 [ruins]
+    Platform B: (5996.8, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 480.2px
+    Vertical diff: -31px (uphill)
+    Max allowed gap: 235.24px
+    Excess: 244.96px
+
+--------------------------------------------------------------------------------
+  Level 70: "Turmgipfel" (ruins)
+  Platforms: 33 | Gap issues: 4
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (250, 630) 600x50 [ruins]
+    Platform B: (900, 550) 60x28 [platform_easy]
+    Edge-to-edge gap: 320px
+    Vertical diff: -69px (uphill)
+    Max allowed gap: 220.61px
+    Excess: 99.39px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (2200, 630) 300x50 [ruins]
+    Platform B: (2850, 550) 60x28 [platform_easy]
+    Edge-to-edge gap: 470px
+    Vertical diff: -69px (uphill)
+    Max allowed gap: 220.61px
+    Excess: 249.39px
+
+  Gap #3:
+    Platform A: (4150, 630) 300x50 [ruins]
+    Platform B: (4800, 550) 60x28 [platform_easy]
+    Edge-to-edge gap: 470px
+    Vertical diff: -69px (uphill)
+    Max allowed gap: 220.61px
+    Excess: 249.39px
+
+  Gap #4:
+    Platform A: (6100, 630) 300x50 [ruins]
+    Platform B: (6750, 550) 60x28 [platform_easy]
+    Edge-to-edge gap: 470px
+    Vertical diff: -69px (uphill)
+    Max allowed gap: 220.61px
+    Excess: 249.39px
+
+--------------------------------------------------------------------------------
+  Level 71: "Wächter der Ruinen" (ruins)
+  Platforms: 12 | Gap issues: 4
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (382.2, 650) 1456x50 [ruins]
+    Platform B: (1653.1666666666667, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 492.97px
+    Vertical diff: -47px (uphill)
+    Max allowed gap: 229.3px
+    Excess: 263.67px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1713.8333333333333, 565) 100x24 [platform_medium]
+    Platform B: (2502.5, 650) 637x50 [ruins]
+    Edge-to-edge gap: 420.17px
+    Vertical diff: 72px (downhill)
+    Max allowed gap: 268.18px
+    Excess: 151.99px
+
+  Gap #3:
+    Platform A: (2502.5, 650) 637x50 [ruins]
+    Platform B: (3268, 606) 80x24 [pipe_top]
+    Edge-to-edge gap: 407px
+    Vertical diff: -31px (uphill)
+    Max allowed gap: 235.24px
+    Excess: 171.76px
+
+  Gap #4:
+    Platform A: (3685.5, 650) 819x50 [ruins]
+    Platform B: (4428.666666666667, 590) 100x24 [platform_easy]
+    Edge-to-edge gap: 283.67px
+    Vertical diff: -47px (uphill)
+    Max allowed gap: 229.3px
+    Excess: 54.37px
+
+--------------------------------------------------------------------------------
+  Level 72: "Fallender Tempel" (ruins)
+  Platforms: 15 | Gap issues: 5
+  Moving platforms: 5
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (750.6, 420) 417x40 [ruins]
+    Platform B: (1299.6499999999999, 360) 100x24 [platform_easy]
+    Edge-to-edge gap: 290.55px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 63.17px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1751.3999999999999, 340) 333.59999999999997x40 [ruins]
+    Platform B: (2293.5, 280) 100x24 [platform_easy]
+    Edge-to-edge gap: 325.3px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 97.92px
+
+  Gap #3:
+    Platform A: (2835.6, 280) 333.59999999999997x40 [ruins]
+    Platform B: (3475, 220) 100x24 [platform_easy]
+    Edge-to-edge gap: 422.6px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 195.22px
+
+  Gap #4:
+    Platform A: (3530.5999999999995, 195) 100x24 [platform_medium]
+    Platform B: (4003.2, 230) 333.59999999999997x40 [ruins]
+    Edge-to-edge gap: 255.8px
+    Vertical diff: 27px (downhill)
+    Max allowed gap: 254.72px
+    Excess: 1.08px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #5:
+    Platform A: (4003.2, 230) 333.59999999999997x40 [ruins]
+    Platform B: (4552.25, 170) 100x24 [platform_easy]
+    Edge-to-edge gap: 332.25px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 104.87px
+
+--------------------------------------------------------------------------------
+  Level 73: "Canyon Descent" (canyon-base)
+  Platforms: 70 | Gap issues: 3
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (1890.4, 550) 278x40 [stone]
+    Platform B: (2363, 490) 100x24 [platform_easy]
+    Edge-to-edge gap: 283.6px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 56.22px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (6672.000000000001, 390) 222.39999999999964x40 [stone]
+    Platform B: (7130.700000000001, 330) 100x24 [platform_easy]
+    Edge-to-edge gap: 297.5px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 70.12px
+
+  Gap #3:
+    Platform A: (8729.2, 310) 278x40 [stone]
+    Platform B: (9229.6, 310) 66.72x28 [platform_easy]
+    Edge-to-edge gap: 328.04px
+    Vertical diff: 6px (downhill)
+    Max allowed gap: 247.99px
+    Excess: 80.05px
+
+--------------------------------------------------------------------------------
+  Level 74: "Canyon Gaps" (canyon-base)
+  Platforms: 121 | Gap issues: 3
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (11940.2, 420) 263x40 [stone]
+    Platform B: (12361, 420) 63.120000000000005x28 [platform_easy]
+    Edge-to-edge gap: 257.74px
+    Vertical diff: 6px (downhill)
+    Max allowed gap: 247.99px
+    Excess: 9.75px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (14622.800000000001, 340) 263x40 [stone]
+    Platform B: (15033.08, 230) 52.6x24 [platform_medium]
+    Edge-to-edge gap: 252.48px
+    Vertical diff: -102px (uphill)
+    Max allowed gap: 206.11px
+    Excess: 46.37px
+
+  Gap #3:
+    Platform A: (16779.4, 260) 263x40 [stone]
+    Platform B: (17200.2, 260) 63.120000000000005x28 [platform_easy]
+    Edge-to-edge gap: 257.74px
+    Vertical diff: 6px (downhill)
+    Max allowed gap: 247.99px
+    Excess: 9.75px
+
+--------------------------------------------------------------------------------
+  Level 75: "Pipe Maze" (canyon-base)
+  Platforms: 117 | Gap issues: 2
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (5925, 570) 64x64 [pipe]
+    Platform B: (6250, 570) 60x28 [platform_easy]
+    Edge-to-edge gap: 263px
+    Vertical diff: 18px (downhill)
+    Max allowed gap: 251.87px
+    Excess: 11.13px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (9175, 420) 64x64 [pipe]
+    Platform B: (9590, 310) 50x24 [platform_medium]
+    Edge-to-edge gap: 358px
+    Vertical diff: -90px (uphill)
+    Max allowed gap: 211.62px
+    Excess: 146.38px
+
+--------------------------------------------------------------------------------
+  Level 77: "Enemy Horde" (canyon-base)
+  Platforms: 129 | Gap issues: 2
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (5915, 540) 227.5x40 [stone]
+    Platform B: (6333.6, 480) 100x24 [platform_easy]
+    Edge-to-edge gap: 254.85px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 27.47px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (12421.5, 400) 227.5x40 [stone]
+    Platform B: (12842.375, 340) 100x24 [platform_easy]
+    Edge-to-edge gap: 257.13px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 29.74px
+
+--------------------------------------------------------------------------------
+  Level 80: "Asteroid Belt Crossing" (space-star)
+  Platforms: 30 | Gap issues: 1
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (4102.8, 620) 736.4x40 [space]
+    Platform B: (4734, 500) 120x28 [platform_hard]
+    Edge-to-edge gap: 203px
+    Vertical diff: -114px (uphill)
+    Max allowed gap: 200.25px
+    Excess: 2.75px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+--------------------------------------------------------------------------------
+  Level 81: "Nebula Core Expedition" (space-star)
+  Platforms: 41 | Gap issues: 2
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (2950, 640) 500x40 [space]
+    Platform B: (3492, 596) 80x24 [pipe_top]
+    Edge-to-edge gap: 252px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 18.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (5050, 640) 500x40 [space]
+    Platform B: (5592, 596) 80x24 [pipe_top]
+    Edge-to-edge gap: 252px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 18.59px
+
+--------------------------------------------------------------------------------
+  Level 82: "Void Passage Alpha" (space-star)
+  Platforms: 39 | Gap issues: 1
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (4331.599999999999, 630) 333.2x40 [space]
+    Platform B: (4760, 550) 57.12x28 [platform_easy]
+    Edge-to-edge gap: 233.24px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 14.7px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+--------------------------------------------------------------------------------
+  Level 85: "Castle Gates" (castle-final)
+  Platforms: 8 | Gap issues: 2
+  Moving platforms: 1
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (111.20000000000002, 600) 611.6x40 [castle]
+    Platform B: (820.1, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 353.1px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 125.72px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1112, 600) 333.6x40 [castle]
+    Platform B: (1715.6000000000001, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 396.8px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 163.39px
+
+--------------------------------------------------------------------------------
+  Level 86: "Throne Room" (castle-final)
+  Platforms: 17 | Gap issues: 2
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (131.5, 600) 420.8x40 [castle]
+    Platform B: (644.35, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 252.45px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 25.07px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1998.8000000000002, 600) 263x40 [castle]
+    Platform B: (2432.75, 540) 100x24 [platform_easy]
+    Edge-to-edge gap: 252.45px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 25.07px
+    ! Moving platform nearby that COULD bridge this gap
+
+--------------------------------------------------------------------------------
+  Level 87: "Pipe Labyrinth" (castle-final)
+  Platforms: 49 | Gap issues: 7
+  Moving platforms: 2
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (125, 600) 300x40 [castle]
+    Platform B: (642, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 327px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 93.59px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+
+  Gap #2:
+    Platform A: (1300, 600) 200x40 [castle]
+    Platform B: (1742, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 302px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 68.59px
+
+  Gap #3:
+    Platform A: (2600, 480) 300x40 [brick]
+    Platform B: (3092, 436) 80x24 [pipe_top]
+    Edge-to-edge gap: 302px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 68.59px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (3700, 600) 200x40 [castle]
+    Platform B: (4142, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 302px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 68.59px
+
+  Gap #5:
+    Platform A: (4850, 600) 64x64 [pipe]
+    Platform B: (5250, 440) 120x28 [platform_medium]
+    Edge-to-edge gap: 308px
+    Vertical diff: -142px (uphill)
+    Max allowed gap: 184.79px
+    Excess: 123.21px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (5250, 440) 120x28 [platform_medium]
+    Platform B: (5642, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 292px
+    Vertical diff: 118px (downhill)
+    Max allowed gap: 280.84px
+    Excess: 11.16px
+
+  Gap #7:
+    Platform A: (6350, 600) 200x40 [castle]
+    Platform B: (6792, 556) 80x24 [pipe_top]
+    Edge-to-edge gap: 302px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 68.59px
+
+--------------------------------------------------------------------------------
+  Level 89: "Enemy Horde" (castle-final)
+  Platforms: 19 | Gap issues: 5
+  Moving platforms: 3
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (113.75, 620) 728x40 [castle]
+    Platform B: (1008.5833333333333, 560) 100x24 [platform_easy]
+    Edge-to-edge gap: 480.83px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 253.45px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1319.5, 620) 728x40 [castle]
+    Platform B: (2312.5, 576) 80x24 [pipe_top]
+    Edge-to-edge gap: 589px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 355.59px
+
+  Gap #3:
+    Platform A: (2957.5, 620) 682.5x40 [castle]
+    Platform B: (3829.583333333333, 560) 100x24 [platform_easy]
+    Edge-to-edge gap: 480.83px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 253.45px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (4140.5, 620) 728x40 [castle]
+    Platform B: (5012.583333333333, 560) 100x24 [platform_easy]
+    Edge-to-edge gap: 458.08px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 230.7px
+
+  Gap #5:
+    Platform A: (5323.5, 620) 728x40 [castle]
+    Platform B: (6233.5, 550) 110x28 [platform_easy]
+    Edge-to-edge gap: 491px
+    Vertical diff: -64px (uphill)
+    Max allowed gap: 222.65px
+    Excess: 268.35px
+
+--------------------------------------------------------------------------------
+  Level 90: "Final Boss Arena" (castle-final)
+  Platforms: 37 | Gap issues: 6
+  Moving platforms: 4
+--------------------------------------------------------------------------------
+
+  Gap #1:
+    Platform A: (130.5, 660) 522x40 [castle]
+    Platform B: (748.2, 600) 100x24 [platform_easy]
+    Edge-to-edge gap: 306.7px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 79.32px
+    *** FIRST BLOCKING GAP (prevents reaching goal) ***
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #2:
+    Platform A: (1218, 660) 522x40 [castle]
+    Platform B: (1870.5, 580) 52.2x28 [platform_easy]
+    Edge-to-edge gap: 365.4px
+    Vertical diff: -74px (uphill)
+    Max allowed gap: 218.54px
+    Excess: 146.86px
+
+  Gap #3:
+    Platform A: (2784, 660) 435x40 [castle]
+    Platform B: (3393, 600) 110x28 [platform_easy]
+    Edge-to-edge gap: 336.5px
+    Vertical diff: -54px (uphill)
+    Max allowed gap: 226.61px
+    Excess: 109.89px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #4:
+    Platform A: (4785, 660) 435x40 [castle]
+    Platform B: (5473, 616) 80x24 [pipe_top]
+    Edge-to-edge gap: 430.5px
+    Vertical diff: -36px (uphill)
+    Max allowed gap: 233.41px
+    Excess: 197.09px
+
+  Gap #5:
+    Platform A: (6046.5, 660) 522x40 [castle]
+    Platform B: (6794.7, 600) 100x24 [platform_easy]
+    Edge-to-edge gap: 437.2px
+    Vertical diff: -52px (uphill)
+    Max allowed gap: 227.38px
+    Excess: 209.82px
+    ! Moving platform nearby that COULD bridge this gap
+
+  Gap #6:
+    Platform A: (7221, 660) 435x40 [castle]
+    Platform B: (7786.5, 600) 110x28 [platform_easy]
+    Edge-to-edge gap: 293px
+    Vertical diff: -54px (uphill)
+    Max allowed gap: 226.61px
+    Excess: 66.39px
+
+================================================================================
+  SUMMARY: 80 level(s) have problematic gaps
+================================================================================

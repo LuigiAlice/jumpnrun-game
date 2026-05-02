@@ -135,14 +135,15 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 plats.push(createPlat(baseX * S, 550, 1200 * S, 100, 'stone'));
                 if (n < segCount - 1) {
                     plats.push(createPlat((baseX + 1200) * S, 550, 200 * S, 100, 'lava'));
-                    // Staggered helper platforms at varying heights for gap variety
+                    // More stepping platforms for larger gaps - use 3 platforms for 600px gap
                     const hY = n % 3 === 0 ? 460 : (n % 3 === 1 ? 430 : 450);
-                    plats.push(createPlat((baseX + 1500) * S, hY, 100 * S, 24, 'platform_easy'));
+                    plats.push(createPlat((baseX + 1400) * S, hY, 100 * S, 24, 'platform_easy'));
+                    plats.push(createPlat((baseX + 1550) * S, 480, 100 * S, 24, 'platform_easy'));
                 }
             }
 
-            // Extra gapWithPlatforms sections for variety
-            plats.push(...gapWithPlatforms(S, 4500, 550, 1600, 3));
+            // Extra gapWithPlatforms sections - increase platforms for larger gaps
+            plats.push(...gapWithPlatforms(S, 4500, 550, 1600, 8));
 
             // Brick towers
             plats.push(createPlat(1000 * S, 420, 80 * S, 130, 'brick'));
@@ -309,14 +310,18 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             plats.push(createPlat(7500 * S, 440, 100 * S, 24, 'platform_medium'));
             plats.push(createPlat(11600 * S, 450, 100 * S, 24, 'platform_easy'));
             plats.push(createPlat(15300 * S, 440, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(19000 * S, 450, 100 * S, 24, 'platform_easy'));
+      plats.push(createPlat(19000 * S, 450, 100 * S, 24, 'platform_easy'));
 
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.5;
-            const cs: any[] = [];
-            for (let x = 200; x < 1400; x += 250) cs.push(createCoin(x * S, 510));
+      // Bridge platforms to close BFS gaps
+      plats.push(createPlat(761.0, 370, 100, 24, 'platform_easy'));
+      plats.push(createPlat(2087.5, 390, 100, 24, 'platform_easy'));
+
+      return plats;
+    })(),
+    coins: (() => {
+      const S = 0.5;
+      const cs: any[] = [];
+      for (let x = 200; x < 1400; x += 250) cs.push(createCoin(x * S, 510));
             // Pipes 1
             for (let x = 2050; x < 2900; x += 350) cs.push(createCoin(x * S, 470));
             for (let x = 3400; x < 4600; x += 250) cs.push(createCoin(x * S, 510));
@@ -490,6 +495,11 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             plats.push(createPlat(6200 * S, 430, 100 * S, 24, 'platform_medium'));
             plats.push(createPlat(10100 * S, 440, 100 * S, 24, 'platform_easy'));
             plats.push(createPlat(14000 * S, 430, 100 * S, 24, 'platform_medium'));
+
+            // Bridge platforms to close BFS gaps
+            plats.push(createPlat(614.0, 390, 100, 24, 'platform_easy'));
+            plats.push(createPlat(2246.7, 380, 100, 24, 'platform_easy'));
+            plats.push(createPlat(7887.3, 380, 100, 24, 'platform_easy'));
 
             return plats;
         })(),
@@ -843,14 +853,14 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             plats.push(createPlat(10800 * S, 50, 80 * S, 24, 'platform_easy'));
             plats.push(createPlat(12800 * S, 120, 80 * S, 24, 'platform_medium'));
             plats.push(createPlat(15200 * S, 50, 80 * S, 24, 'platform_hard'));
-            plats.push(createPlat(17800 * S, 50, 80 * S, 24, 'platform_easy'));
+      plats.push(createPlat(17800 * S, 50, 80 * S, 24, 'platform_easy'));
 
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.435;
-            const cs: any[] = [];
-            for (let x = 200; x < 1400; x += 200) cs.push(createCoin(x * S, 530));
+      return plats;
+    })(),
+    coins: (() => {
+      const S = 0.435;
+      const cs: any[] = [];
+      for (let x = 200; x < 1400; x += 200) cs.push(createCoin(x * S, 530));
             // Ascent 1
             cs.push(createCoin(2000 * S, 450));
             cs.push(createCoin(2100 * S, 370));

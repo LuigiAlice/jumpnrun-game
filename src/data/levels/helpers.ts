@@ -12,10 +12,13 @@ export const createMovingPlat = (x: number, y: number, w: number, h: number, typ
 
 export const gapWithPlatforms = (S: number, startX: number, baseY: number, gapWidth: number, platformCount: number): any[] => {
   const plats = [];
-  const platformSpacing = gapWidth / (platformCount + 1);
+  const scaledGap = gapWidth * S;
+  const startPx = startX * S;
+  const stepSize = scaledGap / (platformCount + 1);
+  
   for (let i = 0; i < platformCount; i++) {
-    const px = (startX + platformSpacing * (i + 1)) * S;
-    const py = baseY - 60 - (i * 25);
+    const px = startPx + stepSize * (i + 1);
+    const py = baseY - 60 - (i * 20);
     const pw = 100;
     const ptype = i % 3 === 0 ? 'platform_easy' : (i % 3 === 1 ? 'platform_medium' : 'platform_hard');
     plats.push(createPlat(px, py, pw, 24, ptype));
@@ -29,19 +32,19 @@ export const pipeSection = (S: number, startX: number, y: number, pipeCount: num
     const px = (startX + 300 + i * 350) * S;
     const ph = 64;
     plats.push(createPlat(px, y, 64, ph, 'pipe'));
-    plats.push(createPlat(px - 8, y - ph / 2 - 12, 80, 24, 'pipe_top'));
+    plats.push(createPlat(px, y - ph / 2 - 12, 80, 24, 'pipe_top'));
   }
   return plats;
 };
 
 export const verticalClimb = (S: number, startX: number, baseY: number, groundType: PlatformType = 'grass'): any[] => {
   const plats = [];
-  plats.push(createPlat(startX * S, baseY - 80, 120 * S, 28, 'platform_easy'));
-  plats.push(createPlat((startX + 300) * S, baseY - 160, 120 * S, 28, 'platform_medium'));
-  plats.push(createPlat((startX + 600) * S, baseY - 240, 120 * S, 28, 'platform_hard'));
-  plats.push(createPlat((startX + 900) * S, baseY - 320, 150 * S, 40, groundType));
-  plats.push(createPlat((startX + 1200) * S, baseY - 240, 120 * S, 28, 'platform_hard'));
-  plats.push(createPlat((startX + 1500) * S, baseY - 160, 120 * S, 28, 'platform_medium'));
-  plats.push(createPlat((startX + 1800) * S, baseY - 80, 120 * S, 28, 'platform_easy'));
+  plats.push(createPlat(startX * S, baseY - 60, 100 * S, 24, 'platform_easy'));
+  plats.push(createPlat((startX + 180) * S, baseY - 100, 100 * S, 24, 'platform_medium'));
+  plats.push(createPlat((startX + 360) * S, baseY - 140, 100 * S, 24, 'platform_hard'));
+  plats.push(createPlat((startX + 540) * S, baseY - 180, 120 * S, 28, 'platform_medium'));
+  plats.push(createPlat((startX + 720) * S, baseY - 140, 100 * S, 24, 'platform_hard'));
+  plats.push(createPlat((startX + 900) * S, baseY - 100, 100 * S, 24, 'platform_medium'));
+  plats.push(createPlat((startX + 1080) * S, baseY - 60, 100 * S, 24, 'platform_easy'));
   return plats;
 };

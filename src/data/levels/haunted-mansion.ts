@@ -106,15 +106,15 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     platforms: (() => {
       const S = 0.526; const baseY = 560;
       const plats: any[] = [];
-      plats.push(...bridgeSection(S, 100, baseY, 30));            // 53 → 2341
-      plats.push(...gapWithPlatforms(S, 4700, baseY, 2500, 3));   // 2735 → 3419
-      plats.push(...bridgeSection(S, 7200, baseY, 20));            // 3787 → 5360
-      plats.push(...gapWithPlatforms(S, 10500, baseY, 2800, 4));   // 5781 → 6699
-      plats.push(...bridgeSection(S, 13300, baseY, 20));           // 6996 → 8569
-      plats.push(...gapWithPlatforms(S, 16600, baseY, 2400, 4));   // 8996 → 9725
-      plats.push(...bridgeSection(S, 19400, baseY, 25));           // 10204 → 12093
-      plats.push(...gapWithPlatforms(S, 23600, baseY, 2400, 4));   // 12666 → 13474
-      plats.push(...bridgeSection(S, 26800, baseY, 30));           // 14097 → 16367
+      plats.push(...bridgeSection(S, 100, baseY, 33));            // 53 → 2614
+      plats.push(...gapWithPlatforms(S, 4700, baseY, 2500, 3));   // 2751 → 3501
+      plats.push(...bridgeSection(S, 7200, baseY, 23));            // 3713 → 5559
+      plats.push(...gapWithPlatforms(S, 10500, baseY, 2800, 4));   // 5768 → 6751
+      plats.push(...bridgeSection(S, 13300, baseY, 23));           // 6959 → 8768
+      plats.push(...gapWithPlatforms(S, 16600, baseY, 2400, 4));   // 8934 → 9792
+      plats.push(...bridgeSection(S, 19200, baseY, 31));           // 10058 → 12503
+      plats.push(...gapWithPlatforms(S, 23600, baseY, 2400, 4));   // 12616 → 13474
+      plats.push(...bridgeSection(S, 26000, baseY, 35));           // 13639 → 16359
       return plats;
     })(),
     coins: (() => {
@@ -175,28 +175,28 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
 
   // ================== LEVEL 63 – Röhren-Labyrinth – S=0.5 ==================
   {
-    id: 63, name: "Spooky Stairs", width: 20200, height: 620, biome: 'haunted-mansion',
+    id: 63, name: "Spooky Stairs", width: 25000, height: 620, biome: 'haunted-mansion',
     platforms: (() => {
       const S = 0.5; const baseY = 580;
       const plats: any[] = [];
-      plats.push(...bridgeSection(S, 100, baseY, 20));            // 50 → 1475
+      plats.push(...bridgeSection(S, 100, baseY, 22));            // 50 → 1625
       plats.push(...pipeSection(S, 3200, baseY, 5));              // 1750 → 2450
-      plats.push(...bridgeSection(S, 5300, baseY, 18));           // 2650 → 3925
+      plats.push(...bridgeSection(S, 5300, baseY, 22));           // 2650 → 4225
       plats.push(...pipeSection(S, 8400, baseY, 6));              // 4350 → 5225
       // Upper row of pipes
       plats.push(...pipeSection(S, 8800, baseY - 100, 4));        // 4550 → 5075 (at y=480)
-      plats.push(...bridgeSection(S, 10600, baseY, 20));          // 5300 → 6725
+      plats.push(...bridgeSection(S, 10600, baseY, 23));          // 5300 → 7100
       plats.push(...pipeSection(S, 14000, baseY, 5));             // 7150 → 7850
-      plats.push(...bridgeSection(S, 16200, baseY, 15));          // 8100 → 9150
+      plats.push(...bridgeSection(S, 16200, baseY, 20));          // 8100 → 9525
       plats.push(...pipeSection(S, 19000, baseY, 4));             // 9650 → 10175
-      plats.push(...bridgeSection(S, 21000, baseY, 20));          // 10500 → 11925
+      plats.push(...bridgeSection(S, 20800, baseY, 26));          // 10365 → 12275
       plats.push(...pipeSection(S, 24600, baseY, 6));             // 12450 → 13325
-      plats.push(...bridgeSection(S, 27200, baseY, 22));          // 13600 → 15175
+      plats.push(...bridgeSection(S, 27200, baseY, 25));          // 13600 → 15400
       // Lower pipe section near goal
       plats.push(...pipeSection(S, 31000, baseY, 4));             // 15650 → 16175
-      plats.push(...bridgeSection(S, 33000, baseY, 25));          // 16500 → 18300
+      plats.push(...bridgeSection(S, 32500, baseY, 30));          // 16215 → 18425
       plats.push(...pipeSection(S, 37200, baseY, 3));             // 18750 → 19100
-      plats.push(...bridgeSection(S, 38800, baseY, 20));          // 19400 → 20825
+      plats.push(...bridgeSection(S, 38800, baseY, 22));          // 19400 → 20975
       return plats;
     })(),
     coins: (() => {
@@ -362,8 +362,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       plats.push(...bridgeSection(S, 100, baseY, 40));            // 46 → 2740
       plats.push(...verticalShaft(S, 6300, baseY));               // 2867 → 3345
       plats.push(...bridgeSection(S, 7700, baseY, 30));           // 3504 → 5584
+      plats.push(createPlat(12540 * S, 570, 50, 24, 'platform_easy')); // stepping to ghost platforms
       plats.push(...ghostPlatforms(S, 13000, baseY, 15));         // 5915 → 7038
       plats.push(...bridgeSection(S, 15800, baseY, 35));          // 7189 → 9827
+      plats.push(createPlat(21450 * S, 560, 50, 24, 'platform_easy')); // stepping to vertical shaft
       plats.push(...verticalShaft(S, 22000, baseY));              // 10010 → 10489
       plats.push(...bridgeSection(S, 23400, baseY, 30));          // 10647 → 12626
       plats.push(...ghostPlatforms(S, 28000, baseY, 12));         // 12740 → 13676
@@ -457,6 +459,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       plats.push(...ghostPlatforms(S, 4000, baseY, 14));          // 1740 → 2727
       plats.push(...verticalShaft(S, 6800, baseY));               // 2958 → 3416
       plats.push(...bridgeSection(S, 8200, baseY, 20));           // 3567 → 4798
+      plats.push(createPlat(11540 * S, 570, 50, 24, 'platform_easy')); // stepping to ghost platforms
       plats.push(...ghostPlatforms(S, 12000, baseY, 16));         // 5220 → 6359
       plats.push(...bridgeSection(S, 15200, baseY, 15));          // 6612 → 7530
       plats.push(...verticalShaft(S, 17800, baseY));              // 7743 → 8201
@@ -465,6 +468,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       plats.push(...verticalShaft(S, 26000, baseY));              // 11310 → 11768
       plats.push(...bridgeSection(S, 27400, baseY, 25));          // 11919 → 13454
       plats.push(...ghostPlatforms(S, 31000, baseY, 12));         // 13485 → 14360
+      plats.push(createPlat(33500 * S, 540, 50, 24, 'platform_easy')); // stepping to bridge section
       plats.push(...bridgeSection(S, 34000, baseY, 20));          // 14790 → 16021
       return plats;
     })(),

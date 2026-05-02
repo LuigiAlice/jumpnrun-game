@@ -22,7 +22,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       const S = S85;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 600, 1100 * S, 40, 'castle'));
-      plats.push(...gapWithPlatforms(S, 1300, 600, 350, 1));
+      plats.push(...gapWithPlatforms(S, 1195, 600, 350, 1));
       plats.push(createPlat(2000 * S, 600, 600 * S, 40, 'castle'));
       plats.push(...pipeSection(S, 2800, 600, 2));
       plats.push(createPlat(4000 * S, 600, 1000 * S, 40, 'castle'));
@@ -140,7 +140,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       // Start ground
       plats.push(createPlat(250 * S, 600, 600 * S, 40, 'castle'));
       // Pipe section 1
-      plats.push(...pipeSection(S, 1000, 600, 3));
+      plats.push(...pipeSection(S, 935, 600, 3));
       // Ground after pipes
       plats.push(createPlat(2600 * S, 600, 400 * S, 40, 'castle'));
       // Pipe section 2
@@ -152,7 +152,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       // Drop down ground
       plats.push(createPlat(7400 * S, 600, 400 * S, 40, 'castle'));
       // Pipe section 4
-      plats.push(...pipeSection(S, 8000, 600, 5));
+      plats.push(...pipeSection(S, 7986, 600, 5));
       // Mid platform
       plats.push(createPlat(10500 * S, 440, 120, 28, 'platform_medium'));
       // Pipe section 5
@@ -160,7 +160,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       // Ground
       plats.push(createPlat(12700 * S, 600, 400 * S, 40, 'castle'));
       // Pipe section 6
-      plats.push(...pipeSection(S, 13300, 600, 3));
+      plats.push(...pipeSection(S, 13280, 600, 3));
       // Goal ground
       plats.push(createPlat(15100 * S, 600, 800 * S, 40, 'castle'));
       return plats;

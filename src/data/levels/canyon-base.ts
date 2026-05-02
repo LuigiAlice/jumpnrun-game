@@ -75,15 +75,21 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       const plats: any[] = [];
       plats.push(createPlat(0, 550, 900 * S, 40, 'stone'));
       plats.push(...canyonGroundSection(S, 900, 550, 3000));
+      // Stepping bridging canyon ground to gap section
+      plats.push(createPlat(3900 * S, 540, 64, 24, 'stone'));
       plats.push(...gapWithPlatforms(S, 4100, 550, 600, 3));
       plats.push(createPlat(5000 * S, 470, 800 * S, 40, 'stone'));
       plats.push(...canyonGroundSection(S, 5800, 470, 2800));
       plats.push(...canyonWallSection(S, 8800, 470, 150));
       plats.push(createPlat(9300 * S, 390, 700 * S, 40, 'stone'));
       plats.push(...canyonGroundSection(S, 10000, 390, 2400));
+      // Stepping bridging canyon ground to gap section 2
+      plats.push(createPlat(12470 * S, 380, 64, 24, 'stone'));
       plats.push(...gapWithPlatforms(S, 12700, 390, 500, 3));
       plats.push(createPlat(13500 * S, 310, 700 * S, 40, 'stone'));
       plats.push(...canyonGroundSection(S, 14200, 310, 2000));
+      // Stepping bridging canyon ground to vertical section
+      plats.push(createPlat(16240 * S, 300, 64, 24, 'stone'));
       plats.push(...canyonVerticalSection(S, 16600, 310, 5));
       plats.push(createPlat(17600 * S, 80, 800 * S, 40, 'stone'));
       plats.push(...canyonGroundSection(S, 18400, 80, 2000));
@@ -304,6 +310,8 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(createPlat(10300 * S, 570, 500 * S, 40, 'stone'));
       plats.push(...pipeSection(S, 10500, 570, 4));
       plats.push(createPlat(11600 * S, 570, 600 * S, 40, 'stone'));
+      // Stepping between pipe section and vertical section
+      plats.push(createPlat(12180 * S, 565, 50, 24, 'platform_easy'));
       // Pipe section 5
       plats.push(...canyonVerticalSection(S, 12500, 570, 3));
       plats.push(createPlat(13100 * S, 490, 400 * S, 40, 'stone'));
@@ -314,6 +322,8 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(createPlat(16800 * S, 420, 500 * S, 40, 'stone'));
       plats.push(...pipeSection(S, 17000, 420, 4));
       plats.push(createPlat(18100 * S, 420, 700 * S, 40, 'stone'));
+      // Stepping between pipe area and wall section
+      plats.push(createPlat(18790 * S, 380, 50, 24, 'platform_easy'));
       // Goal area
       plats.push(...canyonWallSection(S, 19200, 420, 150));
       plats.push(...canyonVerticalSection(S, 19700, 420, 4));

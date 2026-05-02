@@ -16,14 +16,14 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.65;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 550, 800 * S, 40, 'snow'));
-      plats.push(createPlat(1300 * S, 550, 500 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 2000, 550, 400, 3));
+      plats.push(createPlat(1275 * S, 550, 500 * S, 40, 'snow'));
+      plats.push(...gapWithPlatforms(S, 1950, 550, 400, 3));
       plats.push(createPlat(2700 * S, 550, 1000 * S, 40, 'snow'));
-      plats.push(createPlat(3800 * S, 520, 100, 20, 'platform_easy'));
+      plats.push(createPlat(3700 * S, 520, 100, 20, 'platform_easy'));
       plats.push(...pipeSection(S, 4000, 550, 3));
       plats.push(createPlat(5200 * S, 520, 100, 20, 'platform_easy'));
       plats.push(createPlat(5400 * S, 550, 1000 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 6600, 550, 350, 2));
+      plats.push(...gapWithPlatforms(S, 6200, 550, 350, 2));
       plats.push(createPlat(7200 * S, 550, 800 * S, 40, 'snow'));
       return plats;
     })(),
@@ -76,18 +76,18 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     platforms: (() => {
       const S = 0.625;
       const plats: any[] = [];
-      plats.push(createPlat(200 * S, 600, 1000 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 1300, 600, 500, 4));
+      plats.push(createPlat(200 * S, 650, 1000 * S, 40, 'snow'));
+      plats.push(...gapWithPlatforms(S, 1100, 600, 500, 4));
       plats.push(createPlat(2200 * S, 600, 1000 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 3300, 600, 450, 4));
+      plats.push(...gapWithPlatforms(S, 3100, 600, 450, 4));
       plats.push(createPlat(4200 * S, 600, 1200 * S, 40, 'snow'));
-      plats.push(createPlat(5500 * S, 550, 100, 20, 'platform_easy'));
-      plats.push(...pipeSection(S, 5700, 600, 4));
-      plats.push(createPlat(7300 * S, 550, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 5300, 550, 500, 4));
+      plats.push(...pipeSection(S, 5600, 600, 4));
+      plats.push(...gapWithPlatforms(S, 7300, 550, 600, 4));
       plats.push(createPlat(7500 * S, 600, 1000 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 8600, 600, 400, 3));
+      plats.push(...gapWithPlatforms(S, 8400, 600, 400, 3));
       plats.push(createPlat(9400 * S, 600, 1200 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 10700, 600, 450, 4));
+      plats.push(...gapWithPlatforms(S, 10400, 600, 450, 4));
       plats.push(createPlat(11700 * S, 600, 800 * S, 40, 'snow'));
       return plats;
     })(),
@@ -149,19 +149,19 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.6;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 650, 1000 * S, 40, 'snow'));
-      plats.push(createPlat(1400 * S, 600, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 1250, 600, 350, 3));
       plats.push(...pipeSection(S, 1600, 650, 4));
-      plats.push(createPlat(3400 * S, 600, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 3400, 600, 500, 4));
       plats.push(createPlat(3600 * S, 650, 800 * S, 40, 'snow'));
-      plats.push(createPlat(4600 * S, 600, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 4500, 600, 400, 3));
       plats.push(...pipeSection(S, 4800, 650, 5));
-      plats.push(createPlat(6800 * S, 600, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 6800, 600, 500, 4));
       plats.push(createPlat(7000 * S, 650, 600 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 7800, 650, 350, 3));
+      plats.push(...gapWithPlatforms(S, 7750, 650, 350, 3));
       plats.push(createPlat(8500 * S, 650, 800 * S, 40, 'snow'));
-      plats.push(createPlat(9500 * S, 600, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 9400, 600, 600, 4));
       plats.push(...pipeSection(S, 9700, 650, 5));
-      plats.push(createPlat(11800 * S, 600, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 11800, 600, 600, 4));
       plats.push(createPlat(12000 * S, 650, 1000 * S, 40, 'snow'));
       return plats;
     })(),
@@ -229,7 +229,11 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.556;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 650, 1200 * S, 40, 'snow'));
-      plats.push(...verticalClimb(S, 1600, 650));
+      plats.push(...verticalClimb(S, 1350, 650));
+      
+      // Bridging after climb 1
+      plats.push(...gapWithPlatforms(S, 2200, 650, 1800, 10));
+      
       plats.push(createPlat(3800 * S, 650, 800 * S, 40, 'snow'));
       plats.push(createPlat(4600 * S, 570, 120, 28, 'platform_easy'));
       plats.push(createPlat(4900 * S, 490, 120, 28, 'platform_medium'));
@@ -237,13 +241,25 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       plats.push(createPlat(5600 * S, 490, 120, 28, 'platform_medium'));
       plats.push(createPlat(5900 * S, 570, 120, 28, 'platform_easy'));
       plats.push(createPlat(6300 * S, 650, 600 * S, 40, 'snow'));
+      
+      // Bridge to pipe section
+      plats.push(...gapWithPlatforms(S, 6500, 650, 1000, 6));
+      
       plats.push(createPlat(7100 * S, 600, 100, 20, 'platform_easy'));
       plats.push(...pipeSection(S, 7300, 650, 4));
       plats.push(createPlat(9100 * S, 600, 100, 20, 'platform_easy'));
       plats.push(createPlat(9300 * S, 650, 1000 * S, 40, 'snow'));
-      plats.push(...verticalClimb(S, 10700, 650));
+      
+      // Bridge after pipe to verticalClimb 2
+      plats.push(...gapWithPlatforms(S, 10100, 650, 2800, 15));
+      
+      plats.push(...verticalClimb(S, 10100, 650));
       plats.push(createPlat(12900 * S, 650, 1200 * S, 40, 'snow'));
-      plats.push(...verticalClimb(S, 14500, 650));
+      
+      // Bridge between climbs
+      plats.push(...gapWithPlatforms(S, 14000, 650, 3000, 16));
+      
+      plats.push(...verticalClimb(S, 13950, 650));
       plats.push(createPlat(16700 * S, 650, 1000 * S, 40, 'snow'));
       return plats;
     })(),
@@ -400,23 +416,23 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.45;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 750, 1200 * S, 40, 'snow'));
-      plats.push(createPlat(1800 * S, 700, 120, 28, 'platform_easy'));
+      plats.push(createPlat(1550 * S, 700, 120, 28, 'platform_easy'));
       plats.push(createPlat(2000 * S, 650, 120, 28, 'platform_medium'));
       plats.push(createPlat(2200 * S, 600, 400 * S, 40, 'snow'));
       plats.push(createPlat(2800 * S, 650, 120, 28, 'platform_medium'));
       plats.push(createPlat(3000 * S, 700, 120, 28, 'platform_easy'));
       plats.push(createPlat(3300 * S, 750, 1000 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 4600, 750, 400, 3));
+      plats.push(...gapWithPlatforms(S, 4400, 750, 400, 3));
       plats.push(createPlat(5500 * S, 750, 800 * S, 40, 'snow'));
-      plats.push(createPlat(6600 * S, 700, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 6600, 700, 600, 4));
       plats.push(...pipeSection(S, 6800, 750, 5));
-      plats.push(createPlat(9000 * S, 700, 100, 20, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 9000, 700, 600, 4));
       plats.push(createPlat(9300 * S, 720, 120, 28, 'platform_easy'));
       plats.push(createPlat(9600 * S, 680, 120, 28, 'platform_medium'));
       plats.push(createPlat(9900 * S, 640, 400 * S, 40, 'snow'));
       plats.push(createPlat(10600 * S, 680, 120, 28, 'platform_medium'));
       plats.push(createPlat(10900 * S, 750, 1200 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 12300, 750, 350, 3));
+      plats.push(...gapWithPlatforms(S, 12000, 750, 350, 3));
       plats.push(createPlat(13100 * S, 750, 2000 * S, 40, 'snow'));
       return plats;
     })(),

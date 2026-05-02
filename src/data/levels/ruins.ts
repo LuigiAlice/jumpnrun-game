@@ -18,9 +18,11 @@ export const RUINS_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Ruins start: left=-125, right=625 (top=525)
       plats.push(createPlat(400 * S, 550, 1200 * S, 50, 'ruins'));
-      // Pipes(2): pipe0 left=1093 (gap from 625=468)
+      // Stepping platform bridging gap to pipes
+      plats.push(createPlat(1360 * S, 545, 64, 24, 'platform_easy'));
+      // Pipes(2)
       plats.push(...pipeSection(S, 1500, 550, 2));
-      // Ruins mid: left=1437.5, right=1937.5 (gap from pipe1 right=1375.75 → 61.75)
+      // Ruins mid
       plats.push(createPlat(2700 * S, 550, 800 * S, 50, 'ruins'));
       // Gap(2): float0 left≈2148 (gap from 1937.5=210)
       plats.push(...gapWithPlatforms(S, 3400, 550, 350, 2));
@@ -290,21 +292,29 @@ export const RUINS_LEVELS: LevelData[] = [
     platforms: (() => {
       const S = 0.5;
       const plats: any[] = [];
-      // Ruins start: left=-50, right=550 (top=605)
+      // Ruins start
       plats.push(createPlat(500 * S, 630, 1200 * S, 50, 'ruins'));
-      // Climb 1: climb0 left=870 (gap from 550=320)
+      // Stepping to bridge gap to climb 1
+      plats.push(createPlat(1420 * S, 615, 64, 24, 'ruins'));
+      // Climb 1
       plats.push(...verticalClimb(S, 1800, 630, 'ruins'));
-      // Ruins 2: left=2050, right=2350 (gap from climb6 right=1830 → 220)
+      // Ruins 2
       plats.push(createPlat(4400 * S, 630, 600 * S, 50, 'ruins'));
-      // Climb 2: climb0 left=2820 (gap from 2350=470)
+      // Stepping to bridge gap to climb 2
+      plats.push(createPlat(5170 * S, 615, 64, 24, 'ruins'));
+      // Climb 2
       plats.push(...verticalClimb(S, 5700, 630, 'ruins'));
-      // Ruins 3: left=4000, right=4300 (gap from climb6 right=3780 → 220)
+      // Ruins 3
       plats.push(createPlat(8300 * S, 630, 600 * S, 50, 'ruins'));
-      // Climb 3: climb0 left=4770 (gap from 4300=470)
+      // Stepping to bridge gap to climb 3
+      plats.push(createPlat(9070 * S, 615, 64, 24, 'ruins'));
+      // Climb 3
       plats.push(...verticalClimb(S, 9600, 630, 'ruins'));
-      // Ruins 4: left=5950, right=6250 (gap from climb6 right=5730 → 220)
+      // Ruins 4
       plats.push(createPlat(12200 * S, 630, 600 * S, 50, 'ruins'));
-      // Climb 4: climb0 left=6720 (gap from 6250=470)
+      // Stepping to bridge gap to climb 4
+      plats.push(createPlat(12970 * S, 615, 64, 24, 'ruins'));
+      // Climb 4
       plats.push(...verticalClimb(S, 13500, 630, 'ruins'));
       // Ruins goal: left=7750, right=8350 (top=605)
       plats.push(createPlat(16100 * S, 630, 1200 * S, 50, 'ruins'));

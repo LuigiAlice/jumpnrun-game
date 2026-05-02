@@ -169,6 +169,21 @@ export class Physics {
         return reachable;
     }
 
+    private getMaxHorizontalJump(deltaY: number): number {
+        const GRAVITY = 2000;
+        const JUMP_VEL = 900;
+        const HORIZ_SPEED = 300;
+        const PLAYER_BUFFER = 24;
+
+        if (deltaY <= 0) {
+            const t = (2 * JUMP_VEL) / GRAVITY;
+            return HORIZ_SPEED * t - PLAYER_BUFFER;
+        }
+
+        const t = (JUMP_VEL + Math.sqrt(JUMP_VEL * JUMP_VEL + 2 * GRAVITY * deltaY)) / GRAVITY;
+        return HORIZ_SPEED * t - PLAYER_BUFFER;
+    }
+
     private canJumpTo(from: Platform, to: Platform): boolean {
         const fromLeft = from.x - from.w / 2;
         const fromRight = from.x + from.w / 2;
@@ -179,11 +194,6 @@ export class Physics {
         const toTop = to.y - to.h / 2;
 
         const horizontalGap = Math.max(toLeft - fromRight, fromLeft - toRight, 0);
-
-        if (horizontalGap > DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP) {
-            return false;
-        }
-
         const verticalDiff = toTop - fromTop;
 
         if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) {
@@ -191,6 +201,15 @@ export class Physics {
         }
 
         if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) {
+            return false;
+        }
+
+        const maxGap = Math.max(
+            this.getMaxHorizontalJump(Math.max(0, verticalDiff)),
+            DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP
+        );
+
+        if (horizontalGap > maxGap) {
             return false;
         }
 
@@ -203,11 +222,6 @@ export class Physics {
         const fromTop = from.y - from.h / 2;
 
         const horizontalGap = Math.max(toX - fromRight, fromLeft - toX, 0);
-
-        if (horizontalGap > DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP) {
-            return false;
-        }
-
         const verticalDiff = toY - fromTop;
 
         if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) {
@@ -215,6 +229,15 @@ export class Physics {
         }
 
         if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) {
+            return false;
+        }
+
+        const maxGap = Math.max(
+            this.getMaxHorizontalJump(Math.max(0, verticalDiff)),
+            DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP
+        );
+
+        if (horizontalGap > maxGap) {
             return false;
         }
 

@@ -21,56 +21,56 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.625;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 550, 1800 * S, 40, 'sand'));
-      plats.push(...boardwalkSection(S, 2200, 550, 400));
-      plats.push(...gapWithPlatforms(S, 2700, 550, 400, 1));
-      plats.push(createPlat(3400 * S, 550, 800 * S, 40, 'sand'));
-      plats.push(...pipeSection(S, 4300, 550, 2));
-      plats.push(createPlat(5600 * S, 550, 800 * S, 40, 'sand'));
-      plats.push(...boardwalkSection(S, 6600, 550, 400));
-      plats.push(createPlat(7300 * S, 550, 600 * S, 40, 'sand'));
+      plats.push(...boardwalkSection(S, 1700, 550, 400));
+      plats.push(...gapWithPlatforms(S, 2300, 550, 400, 1));
+      plats.push(createPlat(3000 * S, 550, 800 * S, 40, 'sand'));
+      plats.push(...pipeSection(S, 3950, 550, 2));
+      plats.push(createPlat(5400 * S, 550, 800 * S, 40, 'sand'));
+      plats.push(...boardwalkSection(S, 6200, 550, 600));
+      plats.push(createPlat(7200 * S, 550, 600 * S, 40, 'sand'));
       return plats;
     })(),
     coins: (() => {
       const S = 0.625;
       const cs: any[] = [];
       for (let x = 300; x < 2000; x += 250) cs.push(createCoin(x * S, 500));
-      for (let x = 2800; x < 3400; x += 100) cs.push(createCoin(x * S, 520));
-      for (let x = 3400 * S; x < 4200 * S; x += 200) cs.push(createCoin(x, 500));
-      for (let x = 5600 * S; x < 6400 * S; x += 200) cs.push(createCoin(x, 500));
-      for (let x = 7300 * S; x < 7900 * S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 2400; x < 3000; x += 100) cs.push(createCoin(x * S, 520));
+      for (let x = 3000 * S; x < 3800 * S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 5400 * S; x < 6200 * S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 7200 * S; x < 7800 * S; x += 200) cs.push(createCoin(x, 500));
       return cs;
     })(),
     questionBlocks: (() => {
       const S = 0.625;
       return [
         createQB(600 * S, 480, 'mushroom'),
-        createQB(2000 * S, 480, 'coin'),
-        createQB(3600 * S, 480, 'flower'),
+        createQB(1800 * S, 480, 'coin'),
+        createQB(3200 * S, 480, 'flower'),
       ];
     })(),
     enemies: (() => {
       const S = 0.625;
       return [
         createEnemy(500 * S, 510, 'goomba'),
-        createEnemy(2000 * S, 510, 'crab'),
-        createEnemy(3600 * S, 510, 'goomba'),
-        createEnemy(4400 * S, 470, 'piranha'),
+        createEnemy(1800 * S, 510, 'crab'),
+        createEnemy(3200 * S, 510, 'goomba'),
+        createEnemy(4100 * S, 470, 'piranha'),
       ];
     })(),
     decorations: (() => {
       const S = 0.625;
       return [
         createDeco(400 * S, 510, 'palm'),
-        createDeco(2200 * S, 510, 'seagull'),
-        createDeco(5800 * S, 510, 'shell'),
-        createDeco(7500 * S, 510, 'palm'),
+        createDeco(1800 * S, 510, 'seagull'),
+        createDeco(5600 * S, 510, 'shell'),
+        createDeco(7400 * S, 510, 'palm'),
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 7600 * 0.625, y: 528 },
+    goal: { x: 7400 * 0.625, y: 528 },
     timeBonus: 100,
     movingPlatforms: [
-      createMovingPlat(3000 * 0.625, 500, 120, 24, 'platform_medium', 'horizontal', 250, 18),
+      createMovingPlat(2600 * 0.625, 500, 120, 24, 'platform_medium', 'horizontal', 250, 18),
     ],
   },
 
@@ -166,18 +166,41 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.556;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 550, 800 * S, 40, 'sand'));
-      plats.push(...boardwalkSection(S, 1200, 550, 400));
+      // Bridge to pipes
+      plats.push(...gapWithPlatforms(S, 1200, 550, 400, 3));
       plats.push(...pipeSection(S, 1800, 550, 3));
+      // Bridge after pipes 1
+      plats.push(...gapWithPlatforms(S, 3400, 550, 600, 4));
       plats.push(createPlat(3400 * S, 550, 500 * S, 40, 'sand'));
+      // Bridge to pipes 2
+      plats.push(...gapWithPlatforms(S, 4100, 550, 600, 4));
       plats.push(...pipeSection(S, 4100, 550, 4));
+      // Bridge after pipes 2
+      plats.push(...gapWithPlatforms(S, 6100, 480, 600, 4));
       plats.push(createPlat(6100 * S, 480, 600 * S, 40, 'sand'));
+      // Bridge to pipes 3
+      plats.push(...gapWithPlatforms(S, 6900, 480, 400, 3));
       plats.push(...pipeSection(S, 6900, 480, 3));
+      // Bridge after pipes 3
+      plats.push(...gapWithPlatforms(S, 8600, 550, 400, 3));
       plats.push(createPlat(8600 * S, 550, 500 * S, 40, 'sand'));
+      // Bridge to pipes 4
+      plats.push(...gapWithPlatforms(S, 9300, 550, 600, 4));
       plats.push(...pipeSection(S, 9300, 550, 4));
+      // Bridge after pipes 4 to higher platform
+      plats.push(...gapWithPlatforms(S, 11500, 420, 400, 3));
       plats.push(createPlat(11300 * S, 420, 150, 28, 'platform_medium'));
+      // Bridge to pipes 5
+      plats.push(...gapWithPlatforms(S, 11900, 550, 600, 4));
       plats.push(...pipeSection(S, 11900, 550, 3));
+      // Bridge after pipes 5
+      plats.push(...gapWithPlatforms(S, 13500, 550, 400, 3));
       plats.push(createPlat(13500 * S, 550, 500 * S, 40, 'sand'));
+      // Bridge to pipes 6
+      plats.push(...gapWithPlatforms(S, 14200, 550, 400, 3));
       plats.push(...pipeSection(S, 14200, 550, 3));
+      // Bridge to final ground
+      plats.push(...gapWithPlatforms(S, 15900, 550, 400, 3));
       plats.push(createPlat(15900 * S, 550, 800 * S, 40, 'sand'));
       return plats;
     })(),
@@ -254,18 +277,33 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.5;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 550, 800 * S, 40, 'sand'));
+      // Bridge to vertical climb 1
+      plats.push(...gapWithPlatforms(S, 1200, 550, 400, 3));
       plats.push(...verticalClimb(S, 1200, 550, 'sand'));
+      // Bridge after climb 1
+      plats.push(...gapWithPlatforms(S, 3300, 550, 400, 3));
       plats.push(createPlat(3300 * S, 550, 800 * S, 40, 'sand'));
-      plats.push(...boardwalkSection(S, 4200, 550, 400));
+      // Bridge to vertical climb 2
+      plats.push(...gapWithPlatforms(S, 4200, 550, 500, 4));
       plats.push(...gapWithPlatforms(S, 4800, 550, 350, 3));
       plats.push(createPlat(5600 * S, 550, 800 * S, 40, 'sand'));
+      // Bridge to vertical climb 3
+      plats.push(...gapWithPlatforms(S, 6500, 550, 400, 3));
       plats.push(...verticalClimb(S, 6500, 550, 'sand'));
+      // Bridge after climb 3
+      plats.push(...gapWithPlatforms(S, 8600, 550, 400, 3));
       plats.push(createPlat(8600 * S, 550, 800 * S, 40, 'sand'));
+      // Bridge to vertical climb 4
+      plats.push(...gapWithPlatforms(S, 9500, 550, 400, 3));
       plats.push(...verticalClimb(S, 9500, 550, 'sand'));
+      // Bridge after climb 4
+      plats.push(...gapWithPlatforms(S, 11600, 550, 400, 3));
       plats.push(createPlat(11600 * S, 550, 800 * S, 40, 'sand'));
+      // Gap to final
       plats.push(...gapWithPlatforms(S, 12600, 550, 350, 3));
       plats.push(createPlat(13300 * S, 550, 800 * S, 40, 'sand'));
-      plats.push(...boardwalkSection(S, 14200, 550, 400));
+      // Bridge to goal
+      plats.push(...gapWithPlatforms(S, 14200, 550, 400, 3));
       plats.push(createPlat(14800 * S, 550, 500 * S, 40, 'sand'));
       return plats;
     })(),
@@ -352,6 +390,11 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(createPlat(10600 * S, 550, 1600 * S, 40, 'sand'));
       plats.push(...gapWithPlatforms(S, 12600, 550, 350, 3));
       plats.push(createPlat(13800 * S, 550, 1000 * S, 40, 'sand'));
+      // Bridge platforms to close BFS gaps
+      plats.push(createPlat(764.4, 490, 100, 24, 'platform_easy'));
+      plats.push(createPlat(2409.3, 430, 100, 24, 'platform_easy'));
+      plats.push(createPlat(3775.3, 446, 100, 24, 'platform_easy'));
+      plats.push(createPlat(5454.9, 430, 100, 24, 'platform_easy'));
       return plats;
     })(),
     coins: (() => {

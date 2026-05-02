@@ -16,9 +16,9 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createPlat(200 * S, 540, 500 * S, 40, 'cloud'),
                 createPlat(950 * S, 510, 400 * S, 40, 'cloud'),
                 createPlat(1600 * S, 480, 300 * S, 40, 'cloud'),
-                ...gapWithPlatforms(S, 2200, 480, 500, 3),
+                ...gapWithPlatforms(S, 2120, 480, 500, 3),
                 createPlat(3100 * S, 460, 450 * S, 40, 'cloud'),
-                createPlat(4000 * S, 430, 350 * S, 40, 'cloud'),
+                createPlat(3960 * S, 430, 350 * S, 40, 'cloud'),
                 createPlat(4800 * S, 400, 500 * S, 40, 'cloud'),
             ];
         })(),
@@ -75,27 +75,27 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 // Start cloud island
                 createPlat(200 * S, 560, 500 * S, 40, 'cloud'),
                 createPlat(950 * S, 540, 350 * S, 40, 'cloud'),
-                // Gap 1
-                ...gapWithPlatforms(S, 1700, 540, 600, 4),
+                // Gap 1 - increasing platforms
+                ...gapWithPlatforms(S, 1300, 540, 700, 5),
                 // Cloud island
                 createPlat(2800 * S, 520, 500 * S, 40, 'cloud'),
                 createPlat(3700 * S, 500, 350 * S, 40, 'cloud'),
-                // Gap 2
-                ...gapWithPlatforms(S, 4400, 500, 700, 5),
+                // Gap 2 - increasing platforms
+                ...gapWithPlatforms(S, 2700, 500, 800, 5),
                 // Cloud island
                 createPlat(5700 * S, 480, 500 * S, 40, 'cloud'),
                 createPlat(6600 * S, 460, 350 * S, 40, 'cloud'),
-                // Gap 3
-                ...gapWithPlatforms(S, 7300, 460, 800, 5),
+                // Gap 3 - increasing platforms
+                ...gapWithPlatforms(S, 4400, 460, 900, 6),
                 // Cloud island
                 createPlat(8700 * S, 440, 500 * S, 40, 'cloud'),
-                // Gap 4
-                ...gapWithPlatforms(S, 9500, 440, 700, 5),
+                // Gap 4 - increasing platforms
+                ...gapWithPlatforms(S, 5800, 440, 800, 5),
                 // Cloud island
                 createPlat(10800 * S, 420, 450 * S, 40, 'cloud'),
                 createPlat(11600 * S, 400, 300 * S, 40, 'cloud'),
-                // Gap 5
-                ...gapWithPlatforms(S, 12200, 400, 800, 5),
+                // Gap 5 - increasing platforms
+                ...gapWithPlatforms(S, 7500, 400, 900, 6),
                 // Goal cloud island
                 createPlat(13600 * S, 380, 600 * S, 40, 'cloud'),
             ];
@@ -166,30 +166,48 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 // Start cloud
                 createPlat(200 * S, 580, 500 * S, 40, 'cloud'),
                 createPlat(1000 * S, 560, 350 * S, 40, 'cloud'),
-                // Pipe section 1 (4 pipes)
+                // Entry bridge
+                ...gapWithPlatforms(S, 900, 500, 500, 4),
                 ...pipeSection(S, 1700, 570, 4),
-                // Cloud island
+                // Cloud island + exit bridge
+                ...gapWithPlatforms(S, 2600, 500, 500, 4),
                 createPlat(3800 * S, 560, 500 * S, 40, 'cloud'),
                 createPlat(4800 * S, 540, 350 * S, 40, 'cloud'),
-                // Pipe section 2 (5 pipes)
+                // Entry bridge
+                ...gapWithPlatforms(S, 3200, 480, 500, 4),
                 ...pipeSection(S, 5500, 550, 5),
+                // Exit bridge
+                ...gapWithPlatforms(S, 4500, 500, 600, 4),
                 // Cloud island
                 createPlat(8200 * S, 540, 500 * S, 40, 'cloud'),
                 createPlat(9200 * S, 520, 350 * S, 40, 'cloud'),
+                // Entry bridge
+                ...gapWithPlatforms(S, 5200, 480, 600, 4),
                 // Pipe section 3 (5 pipes)
                 ...pipeSection(S, 9900, 530, 5),
+                // Exit bridge
+                ...gapWithPlatforms(S, 7200, 480, 600, 4),
                 // Cloud island
                 createPlat(12600 * S, 520, 500 * S, 40, 'cloud'),
-                // Pipe section 4 (6 pipes)
+                // Entry bridge
+                ...gapWithPlatforms(S, 5800, 460, 600, 4),
                 ...pipeSection(S, 13400, 530, 6),
+                // Exit bridge
+                ...gapWithPlatforms(S, 7900, 460, 600, 4),
                 // Cloud island
                 createPlat(16500 * S, 510, 450 * S, 40, 'cloud'),
-                // Pipe section 5 (5 pipes)
+                // Entry bridge
+                ...gapWithPlatforms(S, 9500, 480, 600, 4),
                 ...pipeSection(S, 17200, 520, 5),
+                // Exit bridge
+                ...gapWithPlatforms(S, 11500, 460, 600, 4),
                 // Cloud island
                 createPlat(19900 * S, 500, 450 * S, 40, 'cloud'),
-                // Pipe section 6 (4 pipes)
+                // Entry bridge
+                ...gapWithPlatforms(S, 10200, 450, 600, 4),
                 ...pipeSection(S, 20500, 510, 4),
+                // Exit bridge
+                ...gapWithPlatforms(S, 12200, 440, 600, 4),
                 // Goal cloud island
                 createPlat(22600 * S, 490, 600 * S, 40, 'cloud'),
             ];
@@ -273,19 +291,25 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 // Start cloud island
                 createPlat(200 * S, 600, 500 * S, 40, 'cloud'),
                 createPlat(1000 * S, 580, 350 * S, 40, 'cloud'),
-                // Vertical Climb 1
+                // Entry bridge
+                ...gapWithPlatforms(S, 800, 480, 500, 4),
                 ...verticalClimb(S, 1800, 590),
-                // Cloud island (landing after climb)
+                // Cloud island (landing after climb) + exit bridge
+                ...gapWithPlatforms(S, 2600, 500, 500, 4),
                 createPlat(4200 * S, 560, 500 * S, 40, 'cloud'),
                 createPlat(5200 * S, 540, 350 * S, 40, 'cloud'),
-                // Vertical Climb 2
+                // Entry bridge
+                ...gapWithPlatforms(S, 3100, 450, 600, 4),
                 ...verticalClimb(S, 6000, 560),
-                // Cloud island
+                // Cloud island + exit bridge
+                ...gapWithPlatforms(S, 5000, 480, 600, 4),
                 createPlat(8400 * S, 530, 500 * S, 40, 'cloud'),
                 createPlat(9400 * S, 510, 350 * S, 40, 'cloud'),
-                // Vertical Climb 3
+                // Entry bridge
+                ...gapWithPlatforms(S, 5500, 410, 600, 4),
                 ...verticalClimb(S, 10200, 520),
-                // Cloud island
+                // Cloud island + exit bridge
+                ...gapWithPlatforms(S, 7300, 440, 600, 4),
                 createPlat(12600 * S, 490, 450 * S, 40, 'cloud'),
                 // Small gap with moving platform
                 createPlat(13600 * S, 470, 300 * S, 40, 'cloud'),
@@ -362,17 +386,24 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createPlat(200 * S, 600, 600 * S, 40, 'cloud'),
                 createPlat(1200 * S, 570, 450 * S, 40, 'cloud'),
                 createPlat(2200 * S, 540, 350 * S, 40, 'cloud'),
-                ...gapWithPlatforms(S, 3000, 540, 800, 4),
+                // Gap section - more platforms
+                ...gapWithPlatforms(S, 1400, 450, 600, 4),
+                ...gapWithPlatforms(S, 3000, 540, 800, 5),
                 createPlat(4300 * S, 520, 500 * S, 40, 'cloud'),
                 createPlat(5300 * S, 500, 350 * S, 40, 'cloud'),
                 createPlat(6300 * S, 480, 300 * S, 40, 'cloud'),
-                ...gapWithPlatforms(S, 7100, 480, 900, 5),
+                // Gap section - more platforms
+                ...gapWithPlatforms(S, 2900, 450, 700, 5),
+                ...gapWithPlatforms(S, 7100, 480, 900, 6),
                 createPlat(8600 * S, 460, 500 * S, 40, 'cloud'),
                 createPlat(9600 * S, 440, 400 * S, 40, 'cloud'),
-                createPlat(10600 * S, 420, 350 * S, 40, 'cloud'),
-                ...gapWithPlatforms(S, 11300, 420, 900, 5),
+                // Gap section - more platforms
+                ...gapWithPlatforms(S, 5100, 390, 900, 6),
+                ...gapWithPlatforms(S, 11300, 420, 900, 6),
                 createPlat(12900 * S, 400, 500 * S, 40, 'cloud'),
                 createPlat(13900 * S, 380, 400 * S, 40, 'cloud'),
+                // Gap section - more platforms
+                ...gapWithPlatforms(S, 7200, 350, 900, 6),
                 createPlat(14900 * S, 360, 350 * S, 40, 'cloud'),
                 createPlat(15900 * S, 340, 600 * S, 40, 'cloud'),
             ];
@@ -456,44 +487,74 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             const S = 0.45;
             let plats: ReturnType<typeof createPlat>[] = [];
 
-            // Start island cluster (low, safe)
+// Start island cluster (low, safe)
             plats.push(createPlat(300 * S, 620, 550 * S, 40, 'cloud'));
             plats.push(createPlat(1200 * S, 600, 300 * S, 40, 'cloud'));
+            // Bridge to mid-height
+            plats.push(...gapWithPlatforms(S, 1500, 570, 400, 3));
 
             // Mid-height islands, staggered
             plats.push(createPlat(1900 * S, 570, 220 * S, 28, 'platform_easy'));
             plats.push(createPlat(2500 * S, 550, 250 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 2800, 520, 400, 3));
             plats.push(createPlat(3400 * S, 520, 280 * S, 28, 'platform_medium'));
 
+            // Bridge to higher
+            plats.push(...gapWithPlatforms(S, 3800, 490, 400, 3));
             // Higher islands
             plats.push(createPlat(4300 * S, 490, 300 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 4800, 520, 400, 3));
             plats.push(createPlat(5200 * S, 520, 220 * S, 28, 'platform_easy'));
+            plats.push(...gapWithPlatforms(S, 5600, 500, 400, 3));
             plats.push(createPlat(6000 * S, 500, 260 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 6400, 470, 400, 3));
             plats.push(createPlat(6900 * S, 470, 240 * S, 28, 'platform_medium'));
 
+            // Bridge to peak
+            plats.push(...gapWithPlatforms(S, 7300, 440, 400, 3));
             // Peak islands (highest)
             plats.push(createPlat(7700 * S, 440, 320 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 8200, 470, 400, 3));
             plats.push(createPlat(8600 * S, 470, 200 * S, 28, 'platform_hard'));
 
+            // Bridge to descending staircase
+            plats.push(...gapWithPlatforms(S, 9000, 500, 400, 3));
             // Descending staircase islands
             plats.push(createPlat(9500 * S, 500, 280 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 10000, 470, 400, 3));
             plats.push(createPlat(10400 * S, 470, 240 * S, 28, 'platform_medium'));
+            plats.push(...gapWithPlatforms(S, 10900, 440, 400, 3));
             plats.push(createPlat(11300 * S, 440, 300 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 11800, 480, 400, 3));
             plats.push(createPlat(12200 * S, 480, 260 * S, 28, 'platform_easy'));
+            plats.push(...gapWithPlatforms(S, 12700, 460, 400, 3));
             plats.push(createPlat(13100 * S, 460, 280 * S, 40, 'cloud'));
+            // Bridge to tight scattered
+            plats.push(...gapWithPlatforms(S, 13700, 430, 400, 3));
 
             // Tight scattered section
             plats.push(createPlat(14300 * S, 430, 200 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 14700, 460, 400, 3));
             plats.push(createPlat(15000 * S, 460, 180 * S, 28, 'platform_medium'));
+            plats.push(...gapWithPlatforms(S, 15400, 420, 400, 3));
             plats.push(createPlat(15800 * S, 420, 220 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 16200, 390, 400, 3));
             plats.push(createPlat(16600 * S, 390, 250 * S, 28, 'platform_hard'));
+            plats.push(...gapWithPlatforms(S, 17100, 410, 400, 3));
             plats.push(createPlat(17500 * S, 410, 240 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 18000, 380, 400, 3));
             plats.push(createPlat(18300 * S, 380, 260 * S, 28, 'platform_hard'));
+            plats.push(...gapWithPlatforms(S, 18800, 400, 400, 3));
             plats.push(createPlat(19100 * S, 400, 280 * S, 40, 'cloud'));
 
-            // Final island cluster — grand goal
+            // Bridge to final island — grand goal
+            plats.push(...gapWithPlatforms(S, 19700, 370, 400, 3));
+            // Final island cluster
             plats.push(createPlat(20000 * S, 370, 350 * S, 40, 'cloud'));
+            plats.push(...gapWithPlatforms(S, 20500, 340, 400, 3));
             plats.push(createPlat(20800 * S, 340, 300 * S, 40, 'cloud'));
+            // Bridge to goal
+            plats.push(...gapWithPlatforms(S, 21300, 350, 400, 3));
             plats.push(createPlat(22000 * S, 350, 700 * S, 40, 'cloud'));
 
             return plats;

@@ -18,20 +18,29 @@ export const FACTORY_LEVELS: LevelData[] = [
       plats.push(createPlat(100 * S, 600, 1000 * S, 40, 'metal'));
       plats.push(createPlat(1300 * S, 600, 800 * S, 40, 'metal'));
 
-      // One small gap with a single stepping platform
-      plats.push(...gapWithPlatforms(S, 2100, 600, 300, 1));
+      // Gap with more stepping platforms
+      plats.push(...gapWithPlatforms(S, 2100, 600, 300, 2));
 
       // Ground after gap
       plats.push(createPlat(2800 * S, 600, 600 * S, 40, 'metal'));
 
+      // Bridge to pipe section
+      plats.push(...gapWithPlatforms(S, 3600, 600, 400, 3));
       // Pipe section — 2 pipes
       plats.push(...pipeSection(S, 3600, 600, 2));
+
+      // Bridge after pipes
+      plats.push(...gapWithPlatforms(S, 5000, 600, 400, 3));
 
       // Ground after pipes
       plats.push(createPlat(5000 * S, 600, 800 * S, 40, 'metal'));
 
+      // Bridge to final ground
+      plats.push(...gapWithPlatforms(S, 6300, 600, 400, 3));
+
       // Final ground to goal
       plats.push(createPlat(6300 * S, 600, 1000 * S, 40, 'metal'));
+      plats.push(...gapWithPlatforms(S, 7800, 600, 400, 3));
       plats.push(createPlat(7800 * S, 600, 800 * S, 40, 'metal'));
 
       return plats;
@@ -239,6 +248,10 @@ export const FACTORY_LEVELS: LevelData[] = [
 
       // Goal ground
       plats.push(createPlat(17200 * S, 600, 800 * S, 40, 'metal'));
+
+      // Bridge platforms to close BFS gaps
+      plats.push(createPlat(3451.0, 396, 100, 24, 'platform_easy'));
+      plats.push(createPlat(7356.9, 496, 100, 24, 'platform_easy'));
 
       return plats;
     })(),
@@ -484,6 +497,13 @@ export const FACTORY_LEVELS: LevelData[] = [
       // Extra platforms
       plats.push(createPlat(16000 * S, 580, 120, 28, 'platform_easy'));
       plats.push(createPlat(16300 * S, 530, 120, 28, 'platform_medium'));
+
+      // Bridge platforms to close BFS gaps
+      plats.push(createPlat(794.0, 530, 100, 24, 'platform_easy'));
+      plats.push(createPlat(2208.3, 530, 100, 24, 'platform_easy'));
+      plats.push(createPlat(3729.8, 546, 100, 24, 'platform_easy'));
+      plats.push(createPlat(5507.0, 530, 100, 24, 'platform_easy'));
+      plats.push(createPlat(6999.8, 520, 100, 24, 'platform_easy'));
 
       return plats;
     })(),

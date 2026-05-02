@@ -15,17 +15,17 @@ export const WATER_LEVELS: LevelData[] = [
       // Start ground
       plats.push(createPlat(100 * S, 500, 1200 * S, 40, 'water'));
       // Small bridge upward
-      plats.push(createPlat(1400 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(1700 * S, 370, 80, 24, 'platform_medium'));
+      plats.push(createPlat(1150 * S, 440, 100, 24, 'platform_easy'));
+      plats.push(createPlat(1350 * S, 370, 80, 24, 'platform_medium'));
       // Second ground
       plats.push(createPlat(2200 * S, 500, 1200 * S, 40, 'water'));
       // Pipe section (moved closer to ground)
-      plats.push(...pipeSection(S, 3100, 500, 2));
+      plats.push(...pipeSection(S, 2900, 500, 2));
       // Bridge after pipes
       plats.push(createPlat(3800 * S, 440, 100, 24, 'platform_easy'));
       plats.push(createPlat(4500 * S, 500, 1200 * S, 40, 'water'));
       // Small gap
-      plats.push(...gapWithPlatforms(S, 5900, 500, 400, 2));
+      plats.push(...gapWithPlatforms(S, 5400, 500, 400, 2));
       // Final ground + goal
       plats.push(createPlat(6500 * S, 500, 1500 * S, 40, 'water'));
       return plats;
@@ -83,32 +83,32 @@ export const WATER_LEVELS: LevelData[] = [
   // LEVEL 14 (Gap-Strecke) - Viele Lücken mit beweglichen Plattformen
   // ============================================================
   {
-    id: 14, name: "Tidal Tunnels", width: 12000, height: 600, biome: 'water',
+    id: 14, name: "Tidal Tunnels", width: 10000, height: 600, biome: 'water',
     platforms: (() => {
       const S = 0.625;
       const plats: any[] = [];
       // Start ground
-      plats.push(createPlat(100 * S, 500, 800 * S, 40, 'water'));
-      // Gap 1 (with moving platform)
-      plats.push(...gapWithPlatforms(S, 1100, 500, 450, 3));
+      plats.push(createPlat(200 * S, 500, 600 * S, 40, 'water'));
+      // Gap 1 - reduced startX from 1100 to 500 to close gap
+      plats.push(...gapWithPlatforms(S, 500, 500, 300, 4));
       // Ground 2
-      plats.push(createPlat(1800 * S, 500, 600 * S, 40, 'water'));
-      // Gap 2
-      plats.push(...gapWithPlatforms(S, 2600, 500, 500, 4));
+      plats.push(createPlat(1200 * S, 500, 600 * S, 40, 'water'));
+      // Gap 2 - reduced startX from 2600 to 1500
+      plats.push(...gapWithPlatforms(S, 1500, 500, 400, 4));
       // Ground 3
-      plats.push(createPlat(3400 * S, 500, 600 * S, 40, 'water'));
-      // Gap 3
-      plats.push(...gapWithPlatforms(S, 4200, 500, 450, 3));
+      plats.push(createPlat(2300 * S, 500, 600 * S, 40, 'water'));
+      // Gap 3 - reduced startX from 4200 to 2600
+      plats.push(...gapWithPlatforms(S, 2600, 500, 350, 4));
       // Ground 4
-      plats.push(createPlat(4900 * S, 500, 600 * S, 40, 'water'));
-      // Gap 4
-      plats.push(...gapWithPlatforms(S, 5700, 500, 500, 4));
+      plats.push(createPlat(3400 * S, 500, 600 * S, 40, 'water'));
+      // Gap 4 - reduced startX from 5700 to 3800
+      plats.push(...gapWithPlatforms(S, 3800, 500, 400, 4));
       // Ground 5
-      plats.push(createPlat(6500 * S, 500, 600 * S, 40, 'water'));
-      // Gap 5 (small)
-      plats.push(...gapWithPlatforms(S, 7300, 500, 350, 2));
+      plats.push(createPlat(4900 * S, 500, 600 * S, 40, 'water'));
+      // Gap 5 - reduced startX from 7300 to 5200
+      plats.push(...gapWithPlatforms(S, 5200, 500, 350, 3));
       // Final ground + goal
-      plats.push(createPlat(7900 * S, 500, 1200 * S, 40, 'water'));
+      plats.push(createPlat(6000 * S, 500, 800 * S, 40, 'water'));
       return plats;
     })(),
     coins: (() => {
@@ -167,7 +167,7 @@ export const WATER_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 460 },
-    goal: { x: 4938, y: 478 },
+    goal: { x: 3750, y: 478 },  // 6000 * 0.625
     timeBonus: 140,
   },
 
@@ -182,40 +182,40 @@ export const WATER_LEVELS: LevelData[] = [
       // Start ground
       plats.push(createPlat(100 * S, 500, 600 * S, 40, 'water'));
       // Pipe section 1 (3 pipes)
-      plats.push(...pipeSection(S, 1000, 500, 3));
-      // Bridge
-      plats.push(createPlat(2400 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(2700 * S, 500, 500 * S, 40, 'water'));
+      plats.push(...pipeSection(S, 600, 500, 3));
+      // Bridge - reduced startX from 2200 to 1300
+      plats.push(...gapWithPlatforms(S, 1300, 440, 300, 4));
+      plats.push(createPlat(1900 * S, 500, 400 * S, 40, 'water'));
       // Pipe section 2 (4 pipes)
-      plats.push(...pipeSection(S, 3400, 500, 4));
-      // Bridge
-      plats.push(createPlat(5100 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(5400 * S, 500, 400 * S, 40, 'water'));
+      plats.push(...pipeSection(S, 2200, 500, 4));
+      // Bridge - reduced startX from 4900 to 3200
+      plats.push(...gapWithPlatforms(S, 3200, 440, 300, 4));
+      plats.push(createPlat(3800 * S, 500, 400 * S, 40, 'water'));
       // Pipe section 3 (3 pipes)
-      plats.push(...pipeSection(S, 6100, 500, 3));
-      // Bridge
-      plats.push(createPlat(7500 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(7800 * S, 500, 500 * S, 40, 'water'));
+      plats.push(...pipeSection(S, 4100, 500, 3));
+      // Bridge - reduced startX from 7300 to 5300
+      plats.push(...gapWithPlatforms(S, 5300, 440, 300, 4));
+      plats.push(createPlat(5900 * S, 500, 400 * S, 40, 'water'));
       // Pipe section 4 (4 pipes)
-      plats.push(...pipeSection(S, 8500, 500, 4));
-      // Bridge
-      plats.push(createPlat(10200 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(10500 * S, 500, 400 * S, 40, 'water'));
-      // Pipe section 5 (3 pipes)
-      plats.push(...pipeSection(S, 11200, 500, 3));
-      // Bridge
-      plats.push(createPlat(12600 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(12900 * S, 500, 500 * S, 40, 'water'));
-      // Pipe section 6 (4 pipes)
-      plats.push(...pipeSection(S, 13600, 500, 4));
-      // Bridge
-      plats.push(createPlat(15300 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(15600 * S, 500, 400 * S, 40, 'water'));
-      // Pipe section 7 (3 pipes)
-      plats.push(...pipeSection(S, 16300, 500, 3));
-      // Final ground
-      plats.push(createPlat(17700 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(18000 * S, 500, 1200 * S, 40, 'water'));
+      plats.push(...pipeSection(S, 6200, 500, 4));
+      // Bridge - reduced startX from 10000 to 7500
+      plats.push(...gapWithPlatforms(S, 7500, 440, 300, 4));
+      plats.push(createPlat(8100 * S, 500, 400 * S, 40, 'water'));
+      // Pipe section 5 (3 pipes) - reduced from 10900 to 8500
+      plats.push(...pipeSection(S, 8500, 500, 3));
+      // Bridge - reduced startX from 12400 to 9700
+      plats.push(...gapWithPlatforms(S, 9700, 440, 300, 4));
+      plats.push(createPlat(10300 * S, 500, 400 * S, 40, 'water'));
+      // Pipe section 6 (4 pipes) - reduced from 13400 to 10600
+      plats.push(...pipeSection(S, 10600, 500, 4));
+      // Bridge - reduced startX from 15100 to 11800
+      plats.push(...gapWithPlatforms(S, 11800, 440, 300, 4));
+      plats.push(createPlat(12400 * S, 500, 400 * S, 40, 'water'));
+      // Pipe section 7 (3 pipes) - reduced from 16000 to 12700
+      plats.push(...pipeSection(S, 12700, 500, 3));
+      // Final bridge - reduced from 17500 to 14200
+      plats.push(...gapWithPlatforms(S, 14200, 440, 300, 4));
+      plats.push(createPlat(15000 * S, 500, 1000 * S, 40, 'water'));
       return plats;
     })(),
     coins: (() => {
@@ -304,7 +304,7 @@ export const WATER_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 460 },
-    goal: { x: 10800, y: 478 },
+    goal: { x: 9000, y: 478 },
     timeBonus: 160,
   },
 
@@ -318,35 +318,40 @@ export const WATER_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Start ground
       plats.push(createPlat(100 * S, 600, 800 * S, 40, 'water'));
-      // Vertical climb 1
-      plats.push(...verticalClimb(S, 1400, 600));
+      // Vertical climb 1 - moved closer (800 -> 600)
+      plats.push(...verticalClimb(S, 600, 600));
+      // Bridge after climb 1 - MUCH more platforms (4 -> 8)
+      plats.push(...gapWithPlatforms(S, 2200, 600, 400, 8));
       // Ground after climb 1
-      plats.push(createPlat(3800 * S, 600, 800 * S, 40, 'water'));
-      // Gap section
-      plats.push(...gapWithPlatforms(S, 4800, 600, 400, 3));
+      plats.push(createPlat(3200 * S, 600, 600 * S, 40, 'water'));
+      // Gap section - MORE platforms (3 -> 6)
+      plats.push(...gapWithPlatforms(S, 3600, 600, 350, 6));
       // Ground
-      plats.push(createPlat(5600 * S, 600, 600 * S, 40, 'water'));
-      // Vertical climb 2
-      plats.push(...verticalClimb(S, 6600, 600));
-      // Ground after climb 2
-      plats.push(createPlat(9000 * S, 600, 600 * S, 40, 'water'));
-      // Pipe section for variety
-      plats.push(...pipeSection(S, 9800, 600, 3));
-      // Bridge after pipes
-      plats.push(createPlat(11000 * S, 540, 100, 24, 'platform_easy'));
-      plats.push(createPlat(11300 * S, 600, 800 * S, 40, 'water'));
-      // Vertical climb 3
-      plats.push(...verticalClimb(S, 12500, 600));
+      plats.push(createPlat(4500 * S, 600, 600 * S, 40, 'water'));
+      // Vertical climb 2 - moved closer (5400 -> 4800)
+      plats.push(...verticalClimb(S, 4800, 600));
+      // Bridge after climb 2 - MORE platforms (4 -> 8)
+      plats.push(...gapWithPlatforms(S, 6400, 540, 400, 8));
+      plats.push(createPlat(7400 * S, 600, 600 * S, 40, 'water'));
+      // Pipe section - moved closer (9000 -> 7600)
+      plats.push(...pipeSection(S, 7600, 600, 3));
+      // Bridge after pipes - MORE platforms (4 -> 8)
+      plats.push(...gapWithPlatforms(S, 8600, 540, 400, 8));
+      plats.push(createPlat(9600 * S, 600, 600 * S, 40, 'water'));
+      // Vertical climb 3 - moved closer (11300 -> 10000)
+      plats.push(...verticalClimb(S, 10000, 600));
+      // Bridge after climb 3 - MORE platforms (3 -> 6)
+      plats.push(...gapWithPlatforms(S, 12000, 600, 350, 6));
       // Ground after climb 3
-      plats.push(createPlat(14900 * S, 600, 600 * S, 40, 'water'));
-      // Gap
-      plats.push(...gapWithPlatforms(S, 15700, 600, 400, 3));
+      plats.push(createPlat(12800 * S, 600, 600 * S, 40, 'water'));
+      // Gap - MORE platforms (3 -> 6)
+      plats.push(...gapWithPlatforms(S, 13200, 600, 350, 6));
       // Ground
-      plats.push(createPlat(16500 * S, 600, 600 * S, 40, 'water'));
-      // Vertical climb 4
-      plats.push(...verticalClimb(S, 17500, 600));
-      // Final ground + goal
-      plats.push(createPlat(19900 * S, 600, 1200 * S, 40, 'water'));
+      plats.push(createPlat(14200 * S, 600, 600 * S, 40, 'water'));
+      // Vertical climb 4 - moved closer (16000 -> 14600)
+      plats.push(...verticalClimb(S, 14600, 600));
+      // Final ground + goal - moved closer
+      plats.push(createPlat(16500 * S, 600, 800 * S, 40, 'water'));
       return plats;
     })(),
     coins: (() => {
@@ -427,7 +432,7 @@ export const WATER_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 560 },
-    goal: { x: 11064, y: 578 },
+    goal: { x: 9180, y: 578 },  // 16500 * 0.556
     timeBonus: 180,
   },
 
@@ -441,32 +446,32 @@ export const WATER_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Long ground section 1
       plats.push(createPlat(100 * S, 600, 3000 * S, 40, 'water'));
-      // Gap
-      plats.push(...gapWithPlatforms(S, 2500, 600, 500, 4));
+      // Gap - MORE platforms (4 -> 8)
+      plats.push(...gapWithPlatforms(S, 2800, 600, 400, 8));
       // Long ground section 2
-      plats.push(createPlat(3600 * S, 600, 3000 * S, 40, 'water'));
-      // Pipe section
-      plats.push(...pipeSection(S, 5800, 600, 4));
-      // Bridge
-      plats.push(createPlat(7300 * S, 540, 100, 24, 'platform_easy'));
-      plats.push(createPlat(7600 * S, 600, 1500 * S, 40, 'water'));
-      // Gap
-      plats.push(...gapWithPlatforms(S, 9400, 600, 500, 4));
+      plats.push(createPlat(3400 * S, 600, 2500 * S, 40, 'water'));
+      // Pipe section - moved closer (5400 -> 4800)
+      plats.push(...pipeSection(S, 4800, 600, 4));
+      // Bridge - MORE platforms (4 -> 8)
+      plats.push(...gapWithPlatforms(S, 6000, 540, 400, 8));
+      plats.push(createPlat(6800 * S, 600, 1500 * S, 40, 'water'));
+      // Gap - MORE platforms (4 -> 8)
+      plats.push(...gapWithPlatforms(S, 7800, 600, 400, 8));
       // Long ground section 3
-      plats.push(createPlat(10500 * S, 600, 2000 * S, 40, 'water'));
-      // Vertical climb
-      plats.push(...verticalClimb(S, 12500, 600));
+      plats.push(createPlat(9000 * S, 600, 2000 * S, 40, 'water'));
+      // Vertical climb - moved closer (11700 -> 10500)
+      plats.push(...verticalClimb(S, 10500, 600));
       // Ground
-      plats.push(createPlat(14900 * S, 600, 800 * S, 40, 'water'));
-      // Pipe section
-      plats.push(...pipeSection(S, 16000, 600, 3));
-      // Bridge
-      plats.push(createPlat(17200 * S, 540, 100, 24, 'platform_easy'));
-      plats.push(createPlat(17500 * S, 600, 800 * S, 40, 'water'));
-      // Small gap
-      plats.push(...gapWithPlatforms(S, 18600, 600, 350, 2));
-      // Final ground + goal
-      plats.push(createPlat(19200 * S, 600, 1500 * S, 40, 'water'));
+      plats.push(createPlat(13300 * S, 600, 800 * S, 40, 'water'));
+      // Pipe section - moved closer (15100 -> 13700)
+      plats.push(...pipeSection(S, 13700, 600, 3));
+      // Bridge - MORE platforms (4 -> 8)
+      plats.push(...gapWithPlatforms(S, 14800, 540, 400, 8));
+      plats.push(createPlat(15800 * S, 600, 800 * S, 40, 'water'));
+      // Small gap - MORE platforms (3 -> 6)
+      plats.push(...gapWithPlatforms(S, 16400, 600, 300, 6));
+      // Final ground + goal - moved closer
+      plats.push(createPlat(17500 * S, 600, 1200 * S, 40, 'water'));
       return plats;
     })(),
     coins: (() => {
@@ -558,7 +563,7 @@ export const WATER_LEVELS: LevelData[] = [
       ];
     })(),
     playerStart: { x: 150, y: 560 },
-    goal: { x: 9600, y: 578 },
+    goal: { x: 8750, y: 578 },
     timeBonus: 200,
   },
 
@@ -582,9 +587,9 @@ export const WATER_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 3300, 560, 450, 3));
       plats.push(createPlat(4000 * S, 600, 800 * S, 40, 'water'));
       // Pipe section at depth
-      plats.push(...pipeSection(S, 5000, 600, 4));
+      plats.push(...pipeSection(S, 4850, 600, 4));
       // Bridge
-      plats.push(createPlat(6600 * S, 540, 100, 24, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 6600, 540, 600, 4));
       plats.push(createPlat(6900 * S, 600, 600 * S, 40, 'water'));
       // Step down level 4
       plats.push(createPlat(7600 * S, 620, 100, 24, 'platform_easy'));
@@ -597,9 +602,9 @@ export const WATER_LEVELS: LevelData[] = [
       // Deepest section
       plats.push(createPlat(12700 * S, 700, 800 * S, 40, 'water'));
       // Final challenge: pipes at deepest
-      plats.push(...pipeSection(S, 13700, 700, 5));
+      plats.push(...pipeSection(S, 13550, 700, 5));
       // Bridge
-      plats.push(createPlat(15600 * S, 640, 100, 24, 'platform_easy'));
+      plats.push(...gapWithPlatforms(S, 15600, 640, 600, 4));
       plats.push(createPlat(15900 * S, 700, 600 * S, 40, 'water'));
       // Final gap
       plats.push(...gapWithPlatforms(S, 16700, 700, 500, 4));

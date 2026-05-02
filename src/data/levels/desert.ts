@@ -164,24 +164,64 @@ export const DESERT_LEVELS: LevelData[] = [
       const S = 0.6;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 550, 700 * S, 40, 'sand'));
+      
+      // Stepping to pipe section 1
+      plats.push(...gapWithPlatforms(S, 200, 550, 700, 4));
+      
       // Pipe section 1
-      plats.push(...pipeSection(S, 1100, 550, 3));
+      plats.push(...pipeSection(S, 800, 550, 3));
+      
+      // Stepping to ground connector
+      plats.push(...gapWithPlatforms(S, 1800, 550, 800, 4));
+      
       // Ground connector
       plats.push(createPlat(2500 * S, 550, 600 * S, 40, 'sand'));
+      
+      // Stepping to pipe section 2
+      plats.push(...gapWithPlatforms(S, 2500, 550, 700, 4));
+      
       // Pipe section 2
-      plats.push(...pipeSection(S, 3400, 550, 4));
+      plats.push(...pipeSection(S, 3000, 550, 4));
+      
+      // Stepping to ground connector
+      plats.push(...gapWithPlatforms(S, 4200, 550, 1000, 4));
+      
       // Ground connector
       plats.push(createPlat(5100 * S, 550, 600 * S, 40, 'sand'));
+      
+      // Stepping to pipe section 3
+      plats.push(...gapWithPlatforms(S, 5100, 550, 600, 4));
+      
       // Pipe section 3
-      plats.push(...pipeSection(S, 6000, 550, 4));
+      plats.push(...pipeSection(S, 5600, 550, 4));
+      
+      // Stepping to ground connector
+      plats.push(...gapWithPlatforms(S, 6800, 550, 1000, 4));
+      
       // Ground connector
-      plats.push(createPlat(7700 * S, 550, 500 * S, 40, 'sand'));
+      plats.push(createPlat(7650 * S, 550, 500 * S, 40, 'sand'));
+      
+      // Stepping to pipe section 4
+      plats.push(...gapWithPlatforms(S, 7650, 550, 600, 4));
+      
       // Pipe section 4
-      plats.push(...pipeSection(S, 8500, 550, 4));
+      plats.push(...pipeSection(S, 8100, 550, 4));
+      
+      // Stepping to ground connector
+      plats.push(...gapWithPlatforms(S, 9300, 550, 1000, 4));
+      
       // Ground connector
       plats.push(createPlat(10200 * S, 550, 600 * S, 40, 'sand'));
+      
+      // Stepping to pipe section 5
+      plats.push(...gapWithPlatforms(S, 10200, 550, 600, 4));
+      
       // Pipe section 5
-      plats.push(...pipeSection(S, 11100, 550, 3));
+      plats.push(...pipeSection(S, 10700, 550, 3));
+      
+      // Stepping to final ground
+      plats.push(...gapWithPlatforms(S, 11500, 550, 1200, 4));
+      
       // Final ground
       plats.push(createPlat(12400 * S, 550, 800 * S, 40, 'sand'));
       return plats;
@@ -197,7 +237,7 @@ export const DESERT_LEVELS: LevelData[] = [
       for (let x = 300; x < 900; x += 200) coins.push(createCoin(x * S, 500));
       for (let x = 2500 * S; x < 3100 * S; x += 200) coins.push(createCoin(x, 500));
       for (let x = 5200 * S; x < 5700 * S; x += 200) coins.push(createCoin(x, 500));
-      for (let x = 7700 * S; x < 8200 * S; x += 200) coins.push(createCoin(x, 500));
+      for (let x = 7650 * S; x < 8100 * S; x += 200) coins.push(createCoin(x, 500));
       for (let x = 10200 * S; x < 10800 * S; x += 200) coins.push(createCoin(x, 500));
       coins.push(createCoin(12000 * S, 500));
       coins.push(createCoin(12200 * S, 500));
@@ -209,7 +249,7 @@ export const DESERT_LEVELS: LevelData[] = [
         createQB(500 * S, 480, 'mushroom'),
         createQB(2800 * S, 480, 'coin'),
         createQB(5400 * S, 480, 'flower'),
-        createQB(8000 * S, 480, 'star'),
+        createQB(7900 * S, 480, 'star'),
         createQB(10500 * S, 480, 'mushroom'),
       ];
     })(),
@@ -217,22 +257,22 @@ export const DESERT_LEVELS: LevelData[] = [
       const S = 0.6;
       return [
         createEnemy(600 * S, 510, 'goomba'),
-        createEnemy(1400 * S, 510, 'piranha'),
-        createEnemy(1750 * S, 510, 'piranha'),
+        createEnemy(1100 * S, 510, 'piranha'),
+        createEnemy(1450 * S, 510, 'piranha'),
         createEnemy(2600 * S, 510, 'crab'),
         createEnemy(2900 * S, 510, 'goomba'),
-        createEnemy(3700 * S, 510, 'piranha'),
-        createEnemy(4050 * S, 510, 'piranha'),
-        createEnemy(4400 * S, 510, 'piranha'),
+        createEnemy(3300 * S, 510, 'piranha'),
+        createEnemy(3650 * S, 510, 'piranha'),
+        createEnemy(4000 * S, 510, 'piranha'),
         createEnemy(5400 * S, 510, 'spiny'),
-        createEnemy(6300 * S, 510, 'piranha'),
-        createEnemy(6650 * S, 510, 'piranha'),
-        createEnemy(7950 * S, 510, 'crab'),
-        createEnemy(8800 * S, 510, 'piranha'),
-        createEnemy(9150 * S, 510, 'piranha'),
+        createEnemy(5900 * S, 510, 'piranha'),
+        createEnemy(6250 * S, 510, 'piranha'),
+        createEnemy(7900 * S, 510, 'crab'),
+        createEnemy(8400 * S, 510, 'piranha'),
+        createEnemy(8750 * S, 510, 'piranha'),
         createEnemy(10300 * S, 510, 'koopa'),
-        createEnemy(11400 * S, 510, 'piranha'),
-        createEnemy(11750 * S, 510, 'piranha'),
+        createEnemy(11000 * S, 510, 'piranha'),
+        createEnemy(11350 * S, 510, 'piranha'),
       ];
     })(),
     decorations: (() => {
@@ -263,18 +303,34 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(200 * S, 600, 700 * S, 40, 'sand'));
       // Vertical Climb 1: up to peak then down
       plats.push(...verticalClimb(S, 1100, 600, 'sand'));
+      
+      // Bridging to ground at 3100
+      plats.push(...gapWithPlatforms(S, 1800, 600, 1400, 8));
+      
       // Ground connector
       plats.push(createPlat(3100 * S, 600, 700 * S, 40, 'sand'));
       // Vertical Climb 2
       plats.push(...verticalClimb(S, 4000, 600, 'sand'));
+      
+      // Bridging to ground at 6100
+      plats.push(...gapWithPlatforms(S, 4800, 600, 1400, 8));
+      
       // Ground connector
       plats.push(createPlat(6100 * S, 600, 700 * S, 40, 'sand'));
       // Vertical Climb 3
       plats.push(...verticalClimb(S, 7000, 600, 'sand'));
+      
+      // Bridging to ground at 9100
+      plats.push(...gapWithPlatforms(S, 7800, 600, 1400, 8));
+      
       // Ground connector
       plats.push(createPlat(9100 * S, 600, 700 * S, 40, 'sand'));
       // Vertical Climb 4
       plats.push(...verticalClimb(S, 10000, 600, 'sand'));
+      
+      // Bridging to final ground
+      plats.push(...gapWithPlatforms(S, 10800, 600, 1400, 8));
+      
       // Final ground
       plats.push(createPlat(12000 * S, 600, 800 * S, 40, 'sand'));
       return plats;
@@ -364,18 +420,20 @@ export const DESERT_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Long first ground stretch
       plats.push(createPlat(200 * S, 550, 1800 * S, 40, 'sand'));
-      // Gap
-      plats.push(...gapWithPlatforms(S, 2200, 550, 400, 3));
+      // Gap - increased platforms
+      plats.push(...gapWithPlatforms(S, 1700, 550, 1400, 8));
       // Long second ground
       plats.push(createPlat(2800 * S, 550, 2000 * S, 40, 'sand'));
-      // Gap
-      plats.push(...gapWithPlatforms(S, 5000, 550, 400, 3));
+      // Gap - increased platforms
+      plats.push(...gapWithPlatforms(S, 4300, 550, 1400, 8));
       // Long third ground
       plats.push(createPlat(5600 * S, 550, 2000 * S, 40, 'sand'));
       // Pipe section (piranha danger)
-      plats.push(...pipeSection(S, 7800, 550, 3));
+      plats.push(...pipeSection(S, 6950, 550, 3));
+      // Bridge after pipe to final ground
+      plats.push(...gapWithPlatforms(S, 8000, 550, 1200, 7));
       // Final ground
-      plats.push(createPlat(9100 * S, 550, 1000 * S, 40, 'sand'));
+      plats.push(createPlat(9000 * S, 550, 1000 * S, 40, 'sand'));
       return plats;
     })(),
     movingPlatforms: [
@@ -421,9 +479,9 @@ export const DESERT_LEVELS: LevelData[] = [
         createEnemy(6200 * S, 510, 'crab'),
         createEnemy(6600 * S, 510, 'koopa'),
         createEnemy(7000 * S, 510, 'goomba'),
-        createEnemy(8100 * S, 510, 'piranha'),
-        createEnemy(8450 * S, 510, 'piranha'),
-        createEnemy(9600 * S, 510, 'goomba'),
+        createEnemy(7250 * S, 510, 'piranha'),
+        createEnemy(7600 * S, 510, 'piranha'),
+        createEnemy(9400 * S, 510, 'goomba'),
       ];
     })(),
     decorations: (() => {

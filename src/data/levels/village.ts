@@ -24,15 +24,15 @@ export const VILLAGE_LEVELS: LevelData[] = [
       // Ground continue
       plats.push(createPlat(650 * S, 650, 400 * S, 40, 'grass'));
       plats.push(createPlat(750 * S, 520, 180 * S, 28, 'wood'));
-      // Small gap with 1 helper platform
-      plats.push(createPlat(1090 * S, 590, 80 * S, 24, 'platform_easy'));
+      // More bridge platforms for gap
+      plats.push(...gapWithPlatforms(S, 1090, 590, 300, 3));
       // Ground after gap
       plats.push(createPlat(1200 * S, 650, 400 * S, 40, 'brick'));
       // Pipe area
       plats.push(createPlat(1620 * S, 650, 300 * S, 40, 'grass'));
       plats.push(...pipeSection(S, 1650, 650, 1));
-      // Ground continue + elevated
-      plats.push(createPlat(2050 * S, 650, 400 * S, 40, 'brick'));
+      // More bridge after pipe
+      plats.push(...gapWithPlatforms(S, 2050, 650, 350, 3));
       plats.push(createPlat(2150 * S, 520, 100 * S, 24, 'wood'));
       // Final ground
       plats.push(createPlat(2500 * S, 650, 400 * S, 40, 'grass'));
@@ -201,35 +201,46 @@ export const VILLAGE_LEVELS: LevelData[] = [
       // Start ground
       plats.push(createPlat(150 * S, 750, 500 * S, 40, 'grass'));
       plats.push(createPlat(350 * S, 630, 120 * S, 24, 'brick'));
+      // Bridge to pipes
+      plats.push(...gapWithPlatforms(S, 700, 750, 350, 3));
       // Pipe section 1
       plats.push(createPlat(700 * S, 750, 400 * S, 40, 'brick'));
       plats.push(...pipeSection(S, 800, 750, 2));
-      // Ground segment
-      plats.push(createPlat(1350 * S, 750, 300 * S, 40, 'grass'));
+      // Bridge after pipes
+      plats.push(...gapWithPlatforms(S, 1350, 750, 350, 3));
       plats.push(createPlat(1450 * S, 630, 150 * S, 28, 'wood'));
+      // Bridge to pipes 2
+      plats.push(...gapWithPlatforms(S, 1750, 750, 350, 3));
       // Pipe section 2
       plats.push(createPlat(1750 * S, 750, 400 * S, 40, 'brick'));
       plats.push(...pipeSection(S, 1850, 750, 2));
-      // Ground segment
-      plats.push(createPlat(2450 * S, 750, 400 * S, 40, 'grass'));
-      // Pipe section 3
+      // Bridge after pipes
+      plats.push(...gapWithPlatforms(S, 2450, 750, 350, 3));
+      // Bridge to pipes 3
+      plats.push(...gapWithPlatforms(S, 2650, 750, 350, 3));
       plats.push(...pipeSection(S, 2650, 750, 3));
-      // Ground segment
-      plats.push(createPlat(3450 * S, 750, 400 * S, 40, 'brick'));
+      // Bridge after pipe3
+      plats.push(...gapWithPlatforms(S, 3450, 750, 350, 3));
       plats.push(createPlat(3550 * S, 630, 120 * S, 24, 'wood'));
+      // Bridge to pipes 4
+      plats.push(...gapWithPlatforms(S, 3950, 750, 350, 3));
       // Pipe section 4
       plats.push(createPlat(3950 * S, 750, 400 * S, 40, 'grass'));
       plats.push(...pipeSection(S, 4050, 750, 2));
-      // Ground segment + elevated
-      plats.push(createPlat(4700 * S, 750, 400 * S, 40, 'brick'));
+      // Bridge after pipes
+      plats.push(...gapWithPlatforms(S, 4700, 750, 350, 3));
+      // Bridge to pipes 5
+      plats.push(...gapWithPlatforms(S, 5150, 750, 350, 3));
       // Pipe section 5
       plats.push(createPlat(5150 * S, 750, 300 * S, 40, 'grass'));
-      plats.push(...pipeSection(S, 5250, 750, 2));
-      // Pipe section 6 (final)
-      plats.push(createPlat(5900 * S, 750, 500 * S, 40, 'brick'));
+      plats.push(...gapWithPlatforms(S, 5520, 750, 350, 3));
+      // Bridge to pipe section 6 (final)
+      plats.push(...gapWithPlatforms(S, 5900, 750, 350, 3));
+      // Bridge to pipes6
+      plats.push(...gapWithPlatforms(S, 6100, 750, 350, 3));
       plats.push(...pipeSection(S, 6100, 750, 3));
-      // Goal area
-      plats.push(createPlat(6900 * S, 630, 120 * S, 24, 'wood'));
+      // Bridge to goal area
+      plats.push(...gapWithPlatforms(S, 6900, 630, 350, 3));
       plats.push(createPlat(7100 * S, 510, 200 * S, 40, 'brick'));
       return plats;
     })(),
@@ -317,26 +328,42 @@ export const VILLAGE_LEVELS: LevelData[] = [
       // Start ground
       plats.push(createPlat(150 * S, 800, 500 * S, 40, 'grass'));
       plats.push(createPlat(400 * S, 680, 120 * S, 24, 'brick'));
+      // Bridge to vertical climb 1
+      plats.push(...gapWithPlatforms(S, 700, 800, 400, 3));
       // Vertical climb 1
       plats.push(createPlat(700 * S, 800, 400 * S, 40, 'brick'));
       plats.push(...verticalClimb(S, 900, 800, 'brick'));
+      // Bridge after climb 1
+      plats.push(...gapWithPlatforms(S, 2700, 800, 400, 3));
       // Ground segment
       plats.push(createPlat(2700 * S, 800, 400 * S, 40, 'grass'));
       plats.push(createPlat(2850 * S, 680, 150 * S, 28, 'wood'));
+      // Bridge to vertical climb 2
+      plats.push(...gapWithPlatforms(S, 3150, 800, 400, 3));
       // Vertical climb 2
       plats.push(createPlat(3150 * S, 800, 400 * S, 40, 'brick'));
       plats.push(...verticalClimb(S, 3350, 800, 'brick'));
+      // Bridge after climb 2
+      plats.push(...gapWithPlatforms(S, 5150, 800, 400, 3));
       // Ground segment
       plats.push(createPlat(5150 * S, 800, 400 * S, 40, 'grass'));
       plats.push(createPlat(5300 * S, 680, 120 * S, 24, 'wood'));
+      // Bridge to vertical climb 3
+      plats.push(...gapWithPlatforms(S, 5600, 800, 400, 3));
       // Vertical climb 3
       plats.push(createPlat(5600 * S, 800, 400 * S, 40, 'brick'));
       plats.push(...verticalClimb(S, 5800, 800, 'grass'));
+      // Bridge after climb 3
+      plats.push(...gapWithPlatforms(S, 7600, 800, 400, 3));
       // Ground segment
       plats.push(createPlat(7600 * S, 800, 400 * S, 40, 'grass'));
+      // Bridge to vertical climb 4
+      plats.push(...gapWithPlatforms(S, 8050, 800, 400, 3));
       // Vertical climb 4
       plats.push(createPlat(8050 * S, 800, 300 * S, 40, 'brick'));
       plats.push(...verticalClimb(S, 8200, 800, 'brick'));
+      // Bridge to goal platform
+      plats.push(...gapWithPlatforms(S, 9800, 520, 400, 3));
       // Goal platform
       plats.push(createPlat(9800 * S, 520, 300 * S, 40, 'brick'));
       return plats;
@@ -446,8 +473,10 @@ export const VILLAGE_LEVELS: LevelData[] = [
       plats.push(createPlat(3100 * S, 730, 120 * S, 24, 'brick'));
       plats.push(createPlat(3200 * S, 610, 100 * S, 24, 'wood'));
       plats.push(createPlat(3350 * S, 850, 300 * S, 40, 'brick'));
+      plats.push(createPlat(4988, 782, 60, 20, 'platform_easy'));
       // Pipe section 2
       plats.push(...pipeSection(S, 3500, 850, 3));
+      plats.push(createPlat(5447, 782, 60, 20, 'platform_easy'));
       // Ground segment
       plats.push(createPlat(4250 * S, 850, 400 * S, 40, 'grass'));
       plats.push(createPlat(4550 * S, 730, 120 * S, 24, 'brick'));
@@ -464,6 +493,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       plats.push(createPlat(6550 * S, 730, 100 * S, 24, 'wood'));
       // More ground + pipe
       plats.push(createPlat(6750 * S, 850, 300 * S, 40, 'brick'));
+      plats.push(createPlat(9680, 782, 60, 20, 'platform_easy'));
       plats.push(...pipeSection(S, 6900, 850, 2));
       // Gap section 4
       plats.push(createPlat(7450 * S, 850, 200 * S, 40, 'grass'));
@@ -574,6 +604,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       plats.push(createPlat(850 * S, 830, 220 * S, 28, 'brick'));
       plats.push(createPlat(1150 * S, 830, 220 * S, 28, 'brick'));
       plats.push(createPlat(1400 * S, 950, 200 * S, 40, 'grass')); // ground rest
+      plats.push(createPlat(2019, 866, 60, 20, 'platform_easy'));
       // Gap with elevated stepping
       plats.push(...gapWithPlatforms(S, 1700, 950, 300, 2));
       // Rooftop row 2 (high)
@@ -582,9 +613,12 @@ export const VILLAGE_LEVELS: LevelData[] = [
       plats.push(createPlat(2550 * S, 710, 200 * S, 28, 'wood'));
       plats.push(createPlat(2800 * S, 710, 200 * S, 28, 'wood'));
       plats.push(createPlat(3050 * S, 950, 300 * S, 40, 'grass')); // ground rest
+      plats.push(createPlat(4232, 882, 60, 20, 'platform_easy'));
       // Pipe section (chimneys)
       plats.push(...pipeSection(S, 3400, 950, 2));
+      plats.push(createPlat(4812, 882, 60, 20, 'platform_easy'));
       plats.push(createPlat(4200 * S, 950, 300 * S, 40, 'brick'));
+      plats.push(createPlat(5598, 866, 60, 20, 'platform_easy'));
       // Roof gap section
       plats.push(...gapWithPlatforms(S, 4600, 950, 350, 3));
       // Rooftop row 3 (varied heights)
@@ -594,8 +628,10 @@ export const VILLAGE_LEVELS: LevelData[] = [
       plats.push(createPlat(5800 * S, 710, 200 * S, 28, 'wood'));
       plats.push(createPlat(6050 * S, 710, 200 * S, 28, 'wood'));
       plats.push(createPlat(6300 * S, 950, 300 * S, 40, 'brick')); // ground rest
+      plats.push(createPlat(8294, 882, 60, 20, 'platform_easy'));
       // Pipe section (more chimneys)
       plats.push(...pipeSection(S, 6650, 950, 2));
+      plats.push(createPlat(8875, 882, 60, 20, 'platform_easy'));
       plats.push(createPlat(7450 * S, 950, 300 * S, 40, 'grass'));
       // Final rooftop gauntlet (highest)
       plats.push(createPlat(7800 * S, 830, 180 * S, 28, 'wood'));
@@ -604,6 +640,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       plats.push(createPlat(8500 * S, 590, 220 * S, 28, 'wood'));
       plats.push(createPlat(8750 * S, 590, 180 * S, 28, 'wood'));
       plats.push(createPlat(9000 * S, 950, 300 * S, 40, 'grass')); // ground rest
+      plats.push(createPlat(11581, 866, 60, 20, 'platform_easy'));
       // Gap + goal area
       plats.push(...gapWithPlatforms(S, 9350, 950, 300, 2));
       plats.push(createPlat(9750 * S, 950, 300 * S, 40, 'brick'));
