@@ -1,851 +1,698 @@
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
+// Village World - 6 Levels (37-42) - Redesign
+// 37: Tutorial (village path, one gap, few enemies)
+// 38: Gap-Strecke (4-5 gaps with moving platforms)
+// 39: Röhren-Labyrinth (5-8 pipe sections with piranhas)
+// 40: Vertikal-Kletterer (3-4 verticalClimb sections)
+// 41: Gegner-Horde (15-20 enemies)
+// 42: Dach-Rennen Finale (rooftop-hopping, multi-height platforms)
+
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const VILLAGE_LEVELS: LevelData[] = [
-    {
-        id: 37, name: "Village Green", width: 20000, height: 800, biome: 'village',
-        platforms: (() => {
-            const S = 2.0;
-            return [
-                createPlat(100 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(350 * S, 540, 120 * S, 24, 'brick'),
-                createPlat(550 * S, 470, 80 * S, 24, 'platform_easy'),
-                createPlat(750 * S, 650, 400 * S, 40, 'brick'),
-                createPlat(780 * S, 530, 180 * S, 28, 'wood'),
-                createPlat(1050 * S, 600, 60 * S, 64, 'pipe'),
-                createPlat(1250 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(1400 * S, 520, 160 * S, 28, 'brick'),
-                createPlat(1700 * S, 380, 200 * S, 28, 'brick'),
-                createPlat(1800 * S, 650, 600 * S, 40, 'grass'),
-                createPlat(2000 * S, 600, 60 * S, 50, 'pipe'),
-                createPlat(2450 * S, 470, 200 * S, 28, 'brick'),
-                createPlat(2500 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(2750 * S, 550, 150 * S, 24, 'wood'),
-                createPlat(3100 * S, 650, 600 * S, 40, 'grass'),
-                createPlat(3300 * S, 480, 150 * S, 28, 'brick'),
-                createPlat(3550 * S, 600, 60 * S, 50, 'pipe'),
-                createPlat(3700 * S, 530, 100 * S, 24, 'platform_medium'),
-                createPlat(3900 * S, 650, 600 * S, 40, 'brick'),
-                createPlat(4200 * S, 450, 180 * S, 28, 'brick'),
-                createPlat(4500 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(4550 * S, 300, 150 * S, 28, 'brick'),
-                createPlat(4600 * S, 600, 60 * S, 50, 'pipe'),
-                createPlat(5050 * S, 470, 80 * S, 24, 'platform_medium'),
-                createPlat(5200 * S, 400, 120 * S, 24, 'wood'),
-                createPlat(5050 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(5400 * S, 330, 150 * S, 28, 'brick'),
-                createPlat(5650 * S, 410, 80 * S, 24, 'platform_medium'),
-                createPlat(5850 * S, 490, 80 * S, 24, 'platform_medium'),
-                createPlat(5600 * S, 650, 600 * S, 40, 'grass'),
-                createPlat(6000 * S, 600, 60 * S, 50, 'pipe'),
-                createPlat(6250 * S, 490, 120 * S, 24, 'wood'),
-                createPlat(6500 * S, 400, 180 * S, 28, 'brick'),
-                createPlat(6200 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(6700 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(6850 * S, 440, 80 * S, 24, 'platform_hard'),
-                createPlat(6750 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(7100 * S, 530, 100 * S, 24, 'brick'),
-                createPlat(7300 * S, 440, 100 * S, 24, 'wood'),
-                createPlat(7450 * S, 370, 180 * S, 28, 'brick'),
-                createPlat(7300 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(7900 * S, 550, 60 * S, 64, 'pipe'),
-                createPlat(7850 * S, 450, 80 * S, 24, 'platform_hard'),
-                createPlat(8000 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(8600 * S, 440, 100 * S, 24, 'brick'),
-                createPlat(8500 * S, 360, 200 * S, 28, 'brick'),
-                createPlat(8550 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(8900 * S, 520, 60 * S, 50, 'pipe'),
-                createPlat(9100 * S, 650, 400 * S, 40, 'grass'),
-                createPlat(9400 * S, 310, 300 * S, 40, 'brick'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 2.0;
-            return [
-                createCoin(380 * S, 500), createCoin(580 * S, 430),
-                createCoin(850 * S, 490), createCoin(1400 * S, 480),
-                createCoin(1700 * S, 340), createCoin(2550 * S, 430),
-                createCoin(3350 * S, 440), createCoin(3750 * S, 490),
-                createCoin(4250 * S, 410), createCoin(4550 * S, 270),
-                createCoin(5250 * S, 360), createCoin(5450 * S, 290),
-                createCoin(5750 * S, 370), createCoin(5850 * S, 450),
-                createCoin(6300 * S, 450), createCoin(6550 * S, 360),
-                createCoin(6900 * S, 400), createCoin(7150 * S, 490),
-                createCoin(7500 * S, 330), createCoin(8600 * S, 320),
-                createCoin(8750 * S, 400), createCoin(9500 * S, 270),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 2.0;
-            return [
-                createQB(1700 * S, 120, 'mushroom'),
-                createQB(2450 * S, 100, 'coin'),
-                createQB(4200 * S, 330, 'flower'),
-                createQB(6500 * S, 300, 'coin'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 2.0;
-            return [
-                createEnemy(850 * S, 610, 'goomba'), createEnemy(1100 * S, 610, 'robot'),
-                createEnemy(1060 * S, 550, 'piranha'), createEnemy(1600 * S, 550, 'spiny'),
-                createEnemy(3200 * S, 610, 'koopa'), createEnemy(3560 * S, 550, 'piranha'),
-                createEnemy(4100 * S, 550, 'crab'), createEnemy(5000 * S, 550, 'robot'),
-                createEnemy(6000 * S, 550, 'piranha'), createEnemy(6800 * S, 550, 'spiny'),
-                createEnemy(7900 * S, 500, 'piranha'), createEnemy(8800 * S, 500, 'goomba'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 2.0;
-            return [
-                createDeco(150 * S, 610, 'house'), createDeco(1400 * S, 480, 'fence'),
-                createDeco(3200 * S, 610, 'bush'), createDeco(4600 * S, 610, 'tree'),
-                createDeco(6700 * S, 610, 'house'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 600 },
-        goal: { x: 19100, y: 288 },
-        timeBonus: 55,
-        movingPlatforms: (() => {
-            const S = 2.0;
-            return [
-                createMovingPlat(2700 * S, 500, 100 * S, 20, 'wood', 'horizontal', 180, 20),
-                createMovingPlat(4400, 480, 120, 20, 'wood', 'horizontal', 250, 18),
-                createMovingPlat(9500, 400, 120, 20, 'wood', 'horizontal', 300, 18),
-                createMovingPlat(5200 * S, 350, 80 * S, 20, 'wood', 'vertical', 120, 18),
-            ];
-        })(),
-    },
-    {
-        id: 38, name: "Market Road", width: 20020, height: 800, biome: 'village',
-        platforms: (() => {
-            const S = 1.82;
-            return [
-                createPlat(100 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(350 * S, 540, 120 * S, 24, 'brick'),
-                createPlat(550 * S, 460, 80 * S, 24, 'platform_easy'),
-                createPlat(780 * S, 650, 400 * S, 40, 'brick'),
-                createPlat(800 * S, 530, 180 * S, 28, 'wood'),
-                createPlat(1200 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(1100 * S, 600, 60 * S, 64, 'pipe'),
-                createPlat(1350 * S, 520, 160 * S, 28, 'brick'),
-                createPlat(1650 * S, 370, 200 * S, 28, 'brick'),
-                createPlat(1750 * S, 650, 600 * S, 40, 'grass'),
-                createPlat(2050 * S, 590, 60 * S, 64, 'pipe'),
-                createPlat(2400 * S, 470, 200 * S, 28, 'brick'),
-                createPlat(2400 * S, 650, 500 * S, 40, 'brick'),
-                createPlat(2600 * S, 600, 60 * S, 64, 'pipe'),
-                createPlat(2950 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(2900 * S, 560, 150 * S, 24, 'wood'),
-                createPlat(3250 * S, 480, 150 * S, 28, 'brick'),
-                createPlat(3500 * S, 650, 600 * S, 40, 'grass'),
-                createPlat(3450 * S, 600, 60 * S, 64, 'pipe'),
-                createPlat(3750 * S, 460, 80 * S, 24, 'platform_medium'),
-                createPlat(4000 * S, 380, 180 * S, 28, 'brick'),
-                createPlat(4150 * S, 650, 500 * S, 40, 'brick'),
-                createPlat(4250 * S, 460, 100 * S, 24, 'wood'),
-                createPlat(4700 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(4800 * S, 310, 150 * S, 28, 'brick'),
-                createPlat(4650 * S, 600, 60 * S, 50, 'pipe'),
-                createPlat(5050 * S, 460, 80 * S, 24, 'platform_hard'),
-                createPlat(5200 * S, 300, 150 * S, 28, 'brick'),
-                createPlat(5250 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(5350 * S, 380, 80 * S, 24, 'platform_hard'),
-                createPlat(5550 * S, 460, 80 * S, 24, 'platform_hard'),
-                createPlat(5800 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(5850 * S, 600, 60 * S, 64, 'pipe'),
-                createPlat(6000 * S, 540, 120 * S, 24, 'brick'),
-                createPlat(6250 * S, 460, 100 * S, 24, 'wood'),
-                createPlat(6450 * S, 380, 180 * S, 28, 'brick'),
-                createPlat(6300 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(6800 * S, 320, 80 * S, 24, 'platform_hard'),
-                createPlat(7000 * S, 400, 80 * S, 24, 'platform_hard'),
-                createPlat(6850 * S, 650, 500 * S, 40, 'brick'),
-                createPlat(7200 * S, 480, 120 * S, 24, 'brick'),
-                createPlat(7400 * S, 400, 100 * S, 24, 'wood'),
-                createPlat(7350 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(7550 * S, 320, 180 * S, 28, 'brick'),
-                createPlat(7600 * S, 700, 60 * S, 50, 'pipe'),
-                createPlat(7800 * S, 400, 80 * S, 24, 'platform_hard'),
-                createPlat(7900 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(8000 * S, 480, 100 * S, 24, 'wood'),
-                createPlat(8200 * S, 400, 180 * S, 28, 'brick'),
-                createPlat(8500 * S, 600, 60 * S, 50, 'pipe'),
-                createPlat(8450 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(8600 * S, 490, 80 * S, 24, 'platform_hard'),
-                createPlat(8800 * S, 410, 80 * S, 24, 'platform_hard'),
-                createPlat(9000 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(9050 * S, 330, 200 * S, 28, 'brick'),
-                createPlat(9400 * S, 410, 80 * S, 24, 'platform_hard'),
-                createPlat(9550 * S, 650, 500 * S, 40, 'grass'),
-                createPlat(9600 * S, 250, 300 * S, 40, 'brick'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 1.82;
-            return [
-                createCoin(380 * S, 500), createCoin(570 * S, 420),
-                createCoin(850 * S, 490), createCoin(1400 * S, 480),
-                createCoin(1700 * S, 330), createCoin(2500 * S, 430),
-                createCoin(2950 * S, 520), createCoin(3300 * S, 440),
-                createCoin(3900 * S, 420), createCoin(4100 * S, 340),
-                createCoin(4800 * S, 270), createCoin(5100 * S, 420),
-                createCoin(5250 * S, 260), createCoin(5400 * S, 340),
-                createCoin(5650 * S, 420), createCoin(6100 * S, 500),
-                createCoin(6300 * S, 420), createCoin(6500 * S, 340),
-                createCoin(6850 * S, 280), createCoin(7100 * S, 360),
-                createCoin(7600 * S, 280), createCoin(8200 * S, 360),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 1.82;
-            return [
-                createQB(1650 * S, 250, 'mushroom'),
-                createQB(2400 * S, 320, 'coin'),
-                createQB(3550 * S, 300, 'flower'),
-                createQB(4800 * S, 180, 'star'),
-                createQB(6450 * S, 250, 'coin'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 1.82;
-            return [
-                createEnemy(820 * S, 610, 'goomba'), createEnemy(1100 * S, 610, 'robot'),
-                createEnemy(1110 * S, 550, 'piranha'), createEnemy(1800 * S, 550, 'spiny'),
-                createEnemy(2060 * S, 530, 'piranha'), createEnemy(2610 * S, 540, 'piranha'),
-                createEnemy(3200 * S, 550, 'crab'), createEnemy(3460 * S, 550, 'piranha'),
-                createEnemy(4100 * S, 550, 'robot'), createEnemy(4660 * S, 640, 'piranha'),
-                createEnemy(5400 * S, 550, 'spiny'), createEnemy(5860 * S, 540, 'piranha'),
-                createEnemy(6600 * S, 550, 'goomba'), createEnemy(7610 * S, 640, 'piranha'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 1.82;
-            return [
-                createDeco(150 * S, 610, 'house'), createDeco(800 * S, 490, 'fence'),
-                createDeco(1500 * S, 610, 'barrel'), createDeco(3100 * S, 610, 'bush'),
-                createDeco(4800 * S, 610, 'tree'), createDeco(6300 * S, 610, 'house'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 600 },
-        goal: { x: 17836, y: 628 },
-        timeBonus: 62,
-        movingPlatforms: (() => {
-            const S = 1.82;
-            return [
-                createMovingPlat(4300 * S, 450, 100 * S, 20, 'wood', 'horizontal', 200, 20),
-                createMovingPlat(7800 * S, 380, 100 * S, 20, 'wood', 'horizontal', 180, 22),
-            ];
-        })(),
-    },
-    {
-        id: 39, name: "Rooftop Run", width: 20040, height: 900, biome: 'village',
-        platforms: (() => {
-            const S = 1.67;
-            return [
-                createPlat(100 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(350 * S, 640, 120 * S, 24, 'brick'),
-                createPlat(550 * S, 570, 80 * S, 24, 'platform_easy'),
-                createPlat(750 * S, 500, 180 * S, 28, 'wood'),
-                createPlat(700 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(1000 * S, 650, 60 * S, 60, 'pipe'),
-                createPlat(1300 * S, 750, 600 * S, 40, 'grass'),
-                createPlat(1500 * S, 630, 160 * S, 28, 'brick'),
-                createPlat(1700 * S, 550, 100 * S, 24, 'wood'),
-                createPlat(1950 * S, 750, 500 * S, 40, 'brick'),
-                createPlat(2300 * S, 690, 60 * S, 60, 'pipe'),
-                createPlat(2450 * S, 620, 200 * S, 28, 'brick'),
-                createPlat(2550 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(2800 * S, 700, 150 * S, 24, 'wood'),
-                createPlat(3100 * S, 750, 600 * S, 40, 'grass'),
-                createPlat(3250 * S, 640, 120 * S, 24, 'brick'),
-                createPlat(3450 * S, 560, 150 * S, 28, 'brick'),
-                createPlat(3550 * S, 700, 60 * S, 50, 'pipe'),
-                createPlat(3800 * S, 480, 80 * S, 24, 'platform_medium'),
-                createPlat(3700 * S, 750, 600 * S, 40, 'grass'),
-                createPlat(4050 * S, 610, 80 * S, 24, 'wood'),
-                createPlat(4300 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(4200 * S, 530, 180 * S, 28, 'brick'),
-                createPlat(4500 * S, 450, 80 * S, 24, 'platform_medium'),
-                createPlat(4650 * S, 750, 350 * S, 40, 'brick'),
-                createPlat(4700 * S, 380, 150 * S, 28, 'brick'),
-                createPlat(4900 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(4900 * S, 690, 60 * S, 50, 'pipe'),
-                createPlat(4900 * S, 450, 100 * S, 24, 'wood'),
-                createPlat(5100 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(5300 * S, 290, 150 * S, 28, 'brick'),
-                createPlat(5450 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(5550 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(5750 * S, 450, 80 * S, 24, 'platform_hard'),
-                createPlat(6000 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(6000 * S, 700, 60 * S, 60, 'pipe'),
-                createPlat(6150 * S, 530, 120 * S, 24, 'wood'),
-                createPlat(6400 * S, 450, 100 * S, 24, 'wood'),
-                createPlat(6550 * S, 750, 350 * S, 40, 'brick'),
-                createPlat(6600 * S, 370, 180 * S, 28, 'brick'),
-                createPlat(6950 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(6950 * S, 700, 60 * S, 50, 'pipe'),
-                createPlat(6950 * S, 290, 80 * S, 24, 'platform_hard'),
-                createPlat(7150 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(7450 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(7200 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(7400 * S, 370, 100 * S, 24, 'wood'),
-                createPlat(7600 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(7550 * S, 290, 180 * S, 28, 'brick'),
-                createPlat(7800 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(8000 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(8100 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(8100 * S, 700, 60 * S, 50, 'pipe'),
-                createPlat(8300 * S, 370, 200 * S, 28, 'brick'),
-                createPlat(8600 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(8600 * S, 450, 80 * S, 24, 'platform_hard'),
-                createPlat(8800 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(8950 * S, 700, 60 * S, 50, 'pipe'),
-                createPlat(9100 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(9100 * S, 290, 200 * S, 28, 'brick'),
-                createPlat(9350 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(9550 * S, 750, 500 * S, 40, 'grass'),
-                createPlat(9600 * S, 240, 2000 * S, 40, 'brick'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 1.67;
-            return [
-                createCoin(380 * S, 600), createCoin(570 * S, 530),
-                createCoin(800 * S, 460), createCoin(1550 * S, 590),
-                createCoin(1750 * S, 510), createCoin(2500 * S, 580),
-                createCoin(2850 * S, 660), createCoin(3350 * S, 520),
-                createCoin(3500 * S, 440), createCoin(3850 * S, 440),
-                createCoin(4070 * S, 570), createCoin(4300 * S, 490),
-                createCoin(4520 * S, 410), createCoin(4750 * S, 340),
-                createCoin(5150 * S, 330), createCoin(5350 * S, 250),
-                createCoin(5650 * S, 330), createCoin(5850 * S, 410),
-                createCoin(6200 * S, 490), createCoin(6450 * S, 410),
-                createCoin(6650 * S, 330), createCoin(7000 * S, 250),
-                createCoin(7250 * S, 410), createCoin(7850 * S, 330),
-                createCoin(9200 * S, 250),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 1.67;
-            return [
-                createQB(1700 * S, 380, 'mushroom'),
-                createQB(2450 * S, 420, 'coin'),
-                createQB(3450 * S, 350, 'flower'),
-                createQB(4700 * S, 220, 'star'),
-                createQB(6600 * S, 200, 'coin'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 1.67;
-            return [
-                createEnemy(820 * S, 710, 'goomba'), createEnemy(1000 * S, 710, 'robot'),
-                createEnemy(1010 * S, 600, 'piranha'), createEnemy(1500 * S, 600, 'spiny'),
-                createEnemy(2310 * S, 640, 'piranha'), createEnemy(2900 * S, 640, 'crab'),
-                createEnemy(3560 * S, 650, 'piranha'), createEnemy(4300 * S, 650, 'robot'),
-                createEnemy(4910 * S, 640, 'piranha'), createEnemy(5600 * S, 640, 'spiny'),
-                createEnemy(6010 * S, 640, 'piranha'), createEnemy(6600 * S, 640, 'goomba'),
-                createEnemy(6960 * S, 640, 'piranha'), createEnemy(7600 * S, 640, 'crab'),
-                createEnemy(8110 * S, 640, 'piranha'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 1.67;
-            return [
-                createDeco(150 * S, 710, 'house'), createDeco(800 * S, 460, 'fence'),
-                createDeco(1500 * S, 710, 'tree'), createDeco(3200 * S, 710, 'bush'),
-                createDeco(4700 * S, 710, 'house'), createDeco(6900 * S, 710, 'barrel'),
-                createDeco(8700 * S, 710, 'cloud'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 700 },
-        goal: { x: 17702, y: 218 },
-        timeBonus: 68,
-        movingPlatforms: (() => {
-            const S = 1.67;
-            return [
-                createMovingPlat(5000 * S, 380, 100 * S, 20, 'wood', 'horizontal', 200, 20),
-                createMovingPlat(8200 * S, 320, 100 * S, 20, 'wood', 'horizontal', 180, 22),
-            ];
-        })(),
-    },
-    {
-        id: 40, name: "Chimney Chase", width: 19980, height: 950, biome: 'village',
-        platforms: (() => {
-            const S = 1.48;
-            return [
-                createPlat(100 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(350 * S, 690, 120 * S, 24, 'brick'),
-                createPlat(550 * S, 620, 80 * S, 24, 'platform_easy'),
-                createPlat(750 * S, 550, 180 * S, 28, 'wood'),
-                createPlat(700 * S, 800, 500 * S, 40, 'brick'),
-                createPlat(1000 * S, 700, 60 * S, 60, 'pipe'),
-                createPlat(1300 * S, 800, 600 * S, 40, 'grass'),
-                createPlat(1500 * S, 680, 160 * S, 28, 'brick'),
-                createPlat(1750 * S, 530, 200 * S, 28, 'brick'),
-                createPlat(2000 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(2000 * S, 740, 60 * S, 60, 'pipe'),
-                createPlat(2550 * S, 620, 200 * S, 28, 'brick'),
-                createPlat(2550 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(2850 * S, 700, 150 * S, 24, 'wood'),
-                createPlat(3100 * S, 800, 600 * S, 40, 'grass'),
-                createPlat(3250 * S, 690, 120 * S, 24, 'brick'),
-                createPlat(3450 * S, 610, 150 * S, 28, 'brick'),
-                createPlat(3600 * S, 690, 60 * S, 50, 'pipe'),
-                createPlat(3700 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(3700 * S, 530, 80 * S, 24, 'platform_medium'),
-                createPlat(3900 * S, 450, 150 * S, 28, 'brick'),
-                createPlat(4250 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(4200 * S, 600, 180 * S, 28, 'brick'),
-                createPlat(4500 * S, 510, 80 * S, 24, 'platform_medium'),
-                createPlat(4750 * S, 800, 350 * S, 40, 'brick'),
-                createPlat(4500 * S, 420, 180 * S, 28, 'brick'),
-                createPlat(4900 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(4900 * S, 750, 60 * S, 50, 'pipe'),
-                createPlat(4850 * S, 340, 180 * S, 28, 'brick'),
-                createPlat(5100 * S, 420, 80 * S, 24, 'platform_hard'),
-                createPlat(5450 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(5300 * S, 340, 80 * S, 24, 'platform_hard'),
-                createPlat(5500 * S, 420, 80 * S, 24, 'platform_hard'),
-                createPlat(5600 * S, 800, 400 * S, 40, 'grass'),
-                createPlat(5500 * S, 270, 150 * S, 28, 'brick'),
-                createPlat(5800 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(6050 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(6050 * S, 750, 60 * S, 60, 'pipe'),
-                createPlat(6000 * S, 430, 120 * S, 24, 'wood'),
-                createPlat(6250 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(6600 * S, 800, 400 * S, 40, 'brick'),
-                createPlat(6400 * S, 270, 80 * S, 24, 'platform_hard'),
-                createPlat(6600 * S, 350, 120 * S, 24, 'brick'),
-                createPlat(7050 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(7000 * S, 200, 180 * S, 28, 'brick'),
-                createPlat(7300 * S, 280, 80 * S, 24, 'platform_hard'),
-                createPlat(7550 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(7500 * S, 360, 120 * S, 24, 'brick'),
-                createPlat(7700 * S, 800, 60 * S, 50, 'pipe'),
-                createPlat(7700 * S, 280, 180 * S, 28, 'brick'),
-                createPlat(8100 * S, 800, 400 * S, 40, 'grass'),
-                createPlat(7950 * S, 360, 80 * S, 24, 'platform_hard'),
-                createPlat(8100 * S, 280, 200 * S, 28, 'brick'),
-                createPlat(8500 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(8550 * S, 750, 60 * S, 50, 'pipe'),
-                createPlat(8550 * S, 360, 80 * S, 24, 'platform_hard'),
-                createPlat(8750 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(8750 * S, 280, 200 * S, 28, 'brick'),
-                createPlat(9000 * S, 360, 80 * S, 24, 'platform_hard'),
-                createPlat(9150 * S, 700, 60 * S, 64, 'pipe'),
-                createPlat(9300 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(9000 * S, 440, 120 * S, 24, 'brick'),
-                createPlat(9550 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(9500 * S, 360, 80 * S, 24, 'platform_hard'),
-                createPlat(9700 * S, 280, 200 * S, 28, 'brick'),
-                createPlat(10050 * S, 800, 400 * S, 40, 'grass'),
-                createPlat(10000 * S, 210, 200 * S, 28, 'brick'),
-                createPlat(10300 * S, 290, 80 * S, 24, 'platform_hard'),
-                createPlat(10500 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(10650 * S, 800, 400 * S, 40, 'grass'),
-                createPlat(10700 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(10900 * S, 370, 100 * S, 24, 'wood'),
-                createPlat(11050 * S, 280, 180 * S, 28, 'brick'),
-                createPlat(11250 * S, 210, 80 * S, 24, 'platform_hard'),
-                createPlat(11250 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(11500 * S, 290, 80 * S, 24, 'platform_hard'),
-                createPlat(11700 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(11850 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(11900 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(12100 * S, 750, 200 * S, 24, 'wood'),
-                createPlat(12150 * S, 800, 60 * S, 50, 'pipe'),
-                createPlat(12400 * S, 800, 500 * S, 40, 'grass'),
-                createPlat(12400 * S, 680, 60 * S, 50, 'pipe'),
-                createPlat(12650 * S, 230, 80 * S, 24, 'platform_hard'),
-                createPlat(12800 * S, 300, 80 * S, 24, 'platform_hard'),
-                createPlat(12950 * S, 370, 300 * S, 40, 'brick'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 1.48;
-            return [
-                createCoin(380 * S, 650), createCoin(570 * S, 580),
-                createCoin(800 * S, 510), createCoin(1550 * S, 640),
-                createCoin(1800 * S, 490), createCoin(2600 * S, 580),
-                createCoin(2950 * S, 660), createCoin(3400 * S, 570),
-                createCoin(3750 * S, 490), createCoin(3950 * S, 410),
-                createCoin(4300 * S, 560), createCoin(4500 * S, 470),
-                createCoin(4650 * S, 380), createCoin(4900 * S, 300),
-                createCoin(5150 * S, 380), createCoin(5350 * S, 300),
-                createCoin(5600 * S, 240), createCoin(5850 * S, 310),
-                createCoin(6050 * S, 390), createCoin(6300 * S, 310),
-                createCoin(6500 * S, 230), createCoin(7050 * S, 160),
-                createCoin(7350 * S, 240), createCoin(7550 * S, 320),
-                createCoin(7850 * S, 240), createCoin(8150 * S, 240),
-                createCoin(8600 * S, 320),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 1.48;
-            return [
-                createQB(1750 * S, 350, 'mushroom'),
-                createQB(2550 * S, 420, 'coin'),
-                createQB(3900 * S, 300, 'flower'),
-                createQB(4500 * S, 280, 'star'),
-                createQB(7000 * S, 60, 'coin'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 1.48;
-            return [
-                createEnemy(820 * S, 760, 'goomba'), createEnemy(1000 * S, 760, 'robot'),
-                createEnemy(1010 * S, 650, 'piranha'), createEnemy(1500 * S, 650, 'spiny'),
-                createEnemy(2010 * S, 680, 'piranha'), createEnemy(2700 * S, 680, 'crab'),
-                createEnemy(3610 * S, 640, 'piranha'), createEnemy(4300 * S, 640, 'robot'),
-                createEnemy(4910 * S, 690, 'piranha'), createEnemy(5700 * S, 690, 'spiny'),
-                createEnemy(6060 * S, 690, 'piranha'), createEnemy(6800 * S, 690, 'goomba'),
-                createEnemy(7710 * S, 750, 'piranha'), createEnemy(8500 * S, 750, 'crab'),
-                createEnemy(9160 * S, 640, 'piranha'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 1.48;
-            return [
-                createDeco(150 * S, 760, 'house'), createDeco(800 * S, 510, 'fence'),
-                createDeco(1500 * S, 760, 'tree'), createDeco(3200 * S, 760, 'bush'),
-                createDeco(4700 * S, 760, 'house'), createDeco(6400 * S, 760, 'barrel'),
-                createDeco(8700 * S, 760, 'cloud'), createDeco(11000 * S, 760, 'house'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 750 },
-        goal: { x: 19388, y: 348 },
-        timeBonus: 75,
-        movingPlatforms: (() => {
-            const S = 1.48;
-            return [
-                createMovingPlat(3950 * S, 550, 100 * S, 20, 'wood', 'vertical', 150, 22),
-                createMovingPlat(5700 * S, 380, 80 * S, 20, 'wood', 'horizontal', 160, 20),
-            ];
-        })(),
-    },
-    {
-        id: 41, name: "Town Square", width: 20010, height: 1050, biome: 'village',
-        platforms: (() => {
-            const S = 1.38;
-            return [
-                createPlat(100 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(350 * S, 740, 120 * S, 24, 'brick'),
-                createPlat(550 * S, 670, 80 * S, 24, 'platform_easy'),
-                createPlat(750 * S, 600, 180 * S, 28, 'wood'),
-                createPlat(700 * S, 850, 500 * S, 40, 'brick'),
-                createPlat(1000 * S, 750, 60 * S, 60, 'pipe'),
-                createPlat(1300 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(1350 * S, 730, 160 * S, 28, 'brick'),
-                createPlat(1600 * S, 650, 100 * S, 24, 'wood'),
-                createPlat(1750 * S, 580, 200 * S, 28, 'brick'),
-                createPlat(1850 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(2400 * S, 850, 400 * S, 40, 'brick'),
-                createPlat(2400 * S, 790, 60 * S, 60, 'pipe'),
-                createPlat(2550 * S, 620, 200 * S, 28, 'brick'),
-                createPlat(2550 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(2850 * S, 700, 150 * S, 24, 'wood'),
-                createPlat(3100 * S, 850, 600 * S, 40, 'grass'),
-                createPlat(3200 * S, 740, 120 * S, 24, 'brick'),
-                createPlat(3400 * S, 660, 150 * S, 28, 'brick'),
-                createPlat(3500 * S, 750, 60 * S, 50, 'pipe'),
-                createPlat(3600 * S, 580, 80 * S, 24, 'platform_medium'),
-                createPlat(3700 * S, 850, 600 * S, 40, 'grass'),
-                createPlat(3800 * S, 450, 150 * S, 28, 'brick'),
-                createPlat(4150 * S, 680, 180 * S, 28, 'brick'),
-                createPlat(4400 * S, 530, 80 * S, 24, 'platform_medium'),
-                createPlat(4350 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(4500 * S, 420, 180 * S, 28, 'brick'),
-                createPlat(4700 * S, 590, 100 * S, 24, 'wood'),
-                createPlat(4900 * S, 850, 400 * S, 40, 'brick'),
-                createPlat(4900 * S, 800, 60 * S, 50, 'pipe'),
-                createPlat(4950 * S, 340, 180 * S, 28, 'brick'),
-                createPlat(5200 * S, 510, 80 * S, 24, 'platform_hard'),
-                createPlat(5300 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(5400 * S, 430, 80 * S, 24, 'platform_hard'),
-                createPlat(5600 * S, 350, 150 * S, 28, 'brick'),
-                createPlat(5800 * S, 850, 400 * S, 40, 'grass'),
-                createPlat(5850 * S, 430, 80 * S, 24, 'platform_hard'),
-                createPlat(6050 * S, 580, 80 * S, 24, 'platform_hard'),
-                createPlat(6300 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(6100 * S, 800, 60 * S, 60, 'pipe'),
-                createPlat(6200 * S, 500, 120 * S, 24, 'wood'),
-                createPlat(6400 * S, 420, 80 * S, 24, 'platform_hard'),
-                createPlat(6600 * S, 850, 350 * S, 40, 'brick'),
-                createPlat(6600 * S, 340, 80 * S, 24, 'platform_hard'),
-                createPlat(6750 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(6800 * S, 420, 120 * S, 24, 'brick'),
-                createPlat(7000 * S, 340, 80 * S, 24, 'platform_hard'),
-                createPlat(7200 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(7000 * S, 270, 180 * S, 28, 'brick'),
-                createPlat(7300 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(7250 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(7450 * S, 430, 120 * S, 24, 'brick'),
-                createPlat(7850 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(7700 * S, 800, 60 * S, 50, 'pipe'),
-                createPlat(7700 * S, 270, 180 * S, 28, 'brick'),
-                createPlat(7950 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(8150 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(8100 * S, 430, 120 * S, 24, 'brick'),
-                createPlat(8400 * S, 270, 200 * S, 28, 'brick'),
-                createPlat(8400 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(8650 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(8650 * S, 800, 60 * S, 50, 'pipe'),
-                createPlat(8700 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(8900 * S, 430, 60 * S, 64, 'pipe'),
-                createPlat(9150 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(9000 * S, 270, 200 * S, 28, 'brick'),
-                createPlat(9250 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(9400 * S, 800, 60 * S, 50, 'pipe'),
-                createPlat(9650 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(9500 * S, 270, 80 * S, 24, 'platform_hard'),
-                createPlat(9700 * S, 350, 80 * S, 24, 'platform_hard'),
-                createPlat(9900 * S, 850, 400 * S, 40, 'grass'),
-                createPlat(9800 * S, 210, 200 * S, 28, 'brick'),
-                createPlat(10100 * S, 290, 80 * S, 24, 'platform_hard'),
-                createPlat(10500 * S, 850, 400 * S, 40, 'grass'),
-                createPlat(10300 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(10500 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(10700 * S, 370, 100 * S, 24, 'wood'),
-                createPlat(10850 * S, 290, 180 * S, 28, 'brick'),
-                createPlat(11000 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(11050 * S, 220, 80 * S, 24, 'platform_hard'),
-                createPlat(11250 * S, 300, 80 * S, 24, 'platform_hard'),
-                createPlat(11500 * S, 850, 500 * S, 40, 'grass'),
-                createPlat(11700 * S, 380, 80 * S, 24, 'platform_hard'),
-                createPlat(11900 * S, 460, 120 * S, 24, 'brick'),
-                createPlat(12000 * S, 850, 400 * S, 40, 'grass'),
-                createPlat(12100 * S, 800, 60 * S, 50, 'pipe'),
-                createPlat(12100 * S, 380, 80 * S, 24, 'platform_hard'),
-                createPlat(12300 * S, 300, 200 * S, 28, 'brick'),
-                createPlat(12500 * S, 850, 600 * S, 40, 'grass'),
-                createPlat(12500 * S, 790, 60 * S, 50, 'pipe'),
-                createPlat(12750 * S, 220, 80 * S, 24, 'platform_hard'),
-                createPlat(12950 * S, 300, 80 * S, 24, 'platform_hard'),
-                createPlat(13150 * S, 380, 300 * S, 40, 'brick'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 1.38;
-            return [
-                createCoin(380 * S, 700), createCoin(570 * S, 630),
-                createCoin(800 * S, 560), createCoin(1400 * S, 690),
-                createCoin(1650 * S, 610), createCoin(1800 * S, 540),
-                createCoin(2600 * S, 580), createCoin(2950 * S, 660),
-                createCoin(3300 * S, 620), createCoin(3650 * S, 540),
-                createCoin(3850 * S, 410), createCoin(4200 * S, 640),
-                createCoin(4450 * S, 490), createCoin(4600 * S, 380),
-                createCoin(4750 * S, 550), createCoin(5000 * S, 300),
-                createCoin(5250 * S, 470), createCoin(5450 * S, 390),
-                createCoin(5650 * S, 310), createCoin(5900 * S, 390),
-                createCoin(6100 * S, 540), createCoin(6300 * S, 460),
-                createCoin(6500 * S, 380), createCoin(6850 * S, 300),
-                createCoin(7100 * S, 390),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 1.38;
-            return [
-                createQB(1750 * S, 380, 'mushroom'),
-                createQB(3600 * S, 360, 'coin'),
-                createQB(4500 * S, 280, 'flower'),
-                createQB(5600 * S, 200, 'star'),
-                createQB(6800 * S, 230, 'mushroom'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 1.38;
-            return [
-                createEnemy(750 * S, 810, 'goomba'), createEnemy(1000 * S, 810, 'robot'),
-                createEnemy(1010 * S, 700, 'piranha'), createEnemy(1500 * S, 700, 'spiny'),
-                createEnemy(2410 * S, 730, 'piranha'), createEnemy(2900 * S, 730, 'crab'),
-                createEnemy(3510 * S, 700, 'piranha'), createEnemy(4200 * S, 700, 'robot'),
-                createEnemy(4710 * S, 800, 'piranha'), createEnemy(5400 * S, 800, 'spiny'),
-                createEnemy(6110 * S, 740, 'piranha'), createEnemy(6900 * S, 740, 'goomba'),
-                createEnemy(7710 * S, 740, 'piranha'), createEnemy(8500 * S, 740, 'crab'),
-                createEnemy(8660 * S, 740, 'piranha'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 1.38;
-            return [
-                createDeco(150 * S, 810, 'house'), createDeco(800 * S, 560, 'fence'),
-                createDeco(1500 * S, 810, 'tree'), createDeco(3200 * S, 810, 'bush'),
-                createDeco(4700 * S, 810, 'house'), createDeco(6800 * S, 810, 'barrel'),
-                createDeco(8700 * S, 810, 'cloud'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 800 },
-        goal: { x: 18354, y: 358 },
-        timeBonus: 82,
-        movingPlatforms: (() => {
-            const S = 1.38;
-            return [
-                createMovingPlat(5400 * S, 430, 100 * S, 20, 'wood', 'horizontal', 200, 20),
-                createMovingPlat(8500 * S, 320, 100 * S, 20, 'wood', 'horizontal', 180, 22),
-            ];
-        })(),
-    },
-    {
-        id: 42, name: "Village Finale", width: 20000, height: 1100, biome: 'village',
-        platforms: (() => {
-            const S = 1.25;
-            return [
-                createPlat(100 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(350 * S, 840, 120 * S, 24, 'brick'),
-                createPlat(550 * S, 770, 80 * S, 24, 'platform_easy'),
-                createPlat(750 * S, 700, 180 * S, 28, 'wood'),
-                createPlat(700 * S, 950, 500 * S, 40, 'brick'),
-                createPlat(1000 * S, 850, 60 * S, 60, 'pipe'),
-                createPlat(1300 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(1350 * S, 830, 160 * S, 28, 'brick'),
-                createPlat(1600 * S, 750, 100 * S, 24, 'wood'),
-                createPlat(1750 * S, 680, 200 * S, 28, 'brick'),
-                createPlat(1850 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(2400 * S, 950, 400 * S, 40, 'brick'),
-                createPlat(2400 * S, 890, 60 * S, 60, 'pipe'),
-                createPlat(2550 * S, 730, 200 * S, 28, 'brick'),
-                createPlat(2550 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(2850 * S, 810, 150 * S, 24, 'wood'),
-                createPlat(3100 * S, 950, 600 * S, 40, 'grass'),
-                createPlat(3200 * S, 840, 120 * S, 24, 'brick'),
-                createPlat(3400 * S, 760, 150 * S, 28, 'brick'),
-                createPlat(3500 * S, 870, 60 * S, 50, 'pipe'),
-                createPlat(3600 * S, 690, 80 * S, 24, 'platform_medium'),
-                createPlat(3700 * S, 950, 600 * S, 40, 'grass'),
-                createPlat(3800 * S, 610, 150 * S, 28, 'brick'),
-                createPlat(4150 * S, 760, 80 * S, 24, 'wood'),
-                createPlat(4200 * S, 680, 180 * S, 28, 'brick'),
-                createPlat(4350 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(4400 * S, 600, 80 * S, 24, 'platform_medium'),
-                createPlat(4500 * S, 520, 180 * S, 28, 'brick'),
-                createPlat(4700 * S, 690, 100 * S, 24, 'wood'),
-                createPlat(4900 * S, 950, 400 * S, 40, 'brick'),
-                createPlat(4900 * S, 900, 60 * S, 50, 'pipe'),
-                createPlat(4950 * S, 440, 180 * S, 28, 'brick'),
-                createPlat(5200 * S, 520, 80 * S, 24, 'platform_hard'),
-                createPlat(5300 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(5400 * S, 440, 80 * S, 24, 'platform_hard'),
-                createPlat(5600 * S, 370, 150 * S, 28, 'brick'),
-                createPlat(5750 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(5850 * S, 450, 80 * S, 24, 'platform_hard'),
-                createPlat(6050 * S, 530, 120 * S, 24, 'wood'),
-                createPlat(6300 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(6100 * S, 900, 60 * S, 60, 'pipe'),
-                createPlat(6250 * S, 450, 80 * S, 24, 'platform_hard'),
-                createPlat(6450 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(6650 * S, 950, 400 * S, 40, 'brick'),
-                createPlat(6600 * S, 290, 80 * S, 24, 'platform_hard'),
-                createPlat(6800 * S, 370, 120 * S, 24, 'brick'),
-                createPlat(7000 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(7000 * S, 900, 60 * S, 50, 'pipe'),
-                createPlat(7000 * S, 290, 180 * S, 28, 'brick'),
-                createPlat(7250 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(7450 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(7650 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(7650 * S, 900, 60 * S, 50, 'pipe'),
-                createPlat(7700 * S, 290, 180 * S, 28, 'brick'),
-                createPlat(7950 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(8150 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(8100 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(8350 * S, 370, 100 * S, 24, 'wood'),
-                createPlat(8400 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(8500 * S, 290, 200 * S, 28, 'brick'),
-                createPlat(8750 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(8950 * S, 890, 60 * S, 64, 'pipe'),
-                createPlat(8900 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(8950 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(9100 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(9300 * S, 290, 200 * S, 28, 'brick'),
-                createPlat(9400 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(9400 * S, 900, 60 * S, 50, 'pipe'),
-                createPlat(9600 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(9800 * S, 290, 80 * S, 24, 'platform_hard'),
-                createPlat(9900 * S, 950, 400 * S, 40, 'grass'),
-                createPlat(10000 * S, 210, 200 * S, 28, 'brick'),
-                createPlat(10300 * S, 290, 80 * S, 24, 'platform_hard'),
-                createPlat(10500 * S, 370, 80 * S, 24, 'platform_hard'),
-                createPlat(10400 * S, 950, 400 * S, 40, 'grass'),
-                createPlat(10700 * S, 450, 120 * S, 24, 'brick'),
-                createPlat(10900 * S, 370, 100 * S, 24, 'wood'),
-                createPlat(10900 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(11050 * S, 290, 180 * S, 28, 'brick'),
-                createPlat(11300 * S, 220, 80 * S, 24, 'platform_hard'),
-                createPlat(11500 * S, 300, 80 * S, 24, 'platform_hard'),
-                createPlat(11450 * S, 950, 500 * S, 40, 'grass'),
-                createPlat(11700 * S, 380, 80 * S, 24, 'platform_hard'),
-                createPlat(11900 * S, 460, 120 * S, 24, 'brick'),
-                createPlat(12000 * S, 950, 400 * S, 40, 'grass'),
-                createPlat(12100 * S, 900, 60 * S, 50, 'pipe'),
-                createPlat(12100 * S, 380, 80 * S, 24, 'platform_hard'),
-                createPlat(12300 * S, 300, 200 * S, 28, 'brick'),
-                createPlat(12500 * S, 950, 600 * S, 40, 'grass'),
-                createPlat(12500 * S, 890, 60 * S, 50, 'pipe'),
-                createPlat(12750 * S, 220, 80 * S, 24, 'platform_hard'),
-                createPlat(12950 * S, 300, 80 * S, 24, 'platform_hard'),
-                createPlat(13150 * S, 380, 1700 * S, 40, 'brick'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 1.25;
-            return [
-                createCoin(380 * S, 800), createCoin(570 * S, 730),
-                createCoin(800 * S, 660), createCoin(1400 * S, 790),
-                createCoin(1650 * S, 710), createCoin(1800 * S, 640),
-                createCoin(2600 * S, 690), createCoin(2950 * S, 770),
-                createCoin(3300 * S, 720), createCoin(3650 * S, 650),
-                createCoin(3850 * S, 580), createCoin(4200 * S, 640),
-                createCoin(4450 * S, 560), createCoin(4600 * S, 480),
-                createCoin(4750 * S, 650), createCoin(5000 * S, 400),
-                createCoin(5250 * S, 480), createCoin(5450 * S, 400),
-                createCoin(5650 * S, 330), createCoin(5900 * S, 410),
-                createCoin(6100 * S, 490), createCoin(6300 * S, 400),
-                createCoin(6650 * S, 250), createCoin(6850 * S, 330),
-                createCoin(7100 * S, 250), createCoin(7500 * S, 410),
-                createCoin(7800 * S, 250), createCoin(8200 * S, 430),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 1.25;
-            return [
-                createQB(1750 * S, 480, 'mushroom'),
-                createQB(3800 * S, 450, 'coin'),
-                createQB(4500 * S, 360, 'flower'),
-                createQB(5600 * S, 200, 'star'),
-                createQB(6800 * S, 180, 'mushroom'),
-                createQB(8500 * S, 140, 'coin'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 1.25;
-            return [
-                createEnemy(750 * S, 910, 'goomba'), createEnemy(1000 * S, 910, 'robot'),
-                createEnemy(1010 * S, 800, 'piranha'), createEnemy(1500 * S, 800, 'spiny'),
-                createEnemy(1750 * S, 910, 'koopa'), createEnemy(2200 * S, 910, 'crab'),
-                createEnemy(2410 * S, 830, 'piranha'), createEnemy(3100 * S, 830, 'robot'),
-                createEnemy(3510 * S, 820, 'piranha'), createEnemy(4200 * S, 820, 'spiny'),
-                createEnemy(4910 * S, 850, 'piranha'), createEnemy(5700 * S, 850, 'goomba'),
-                createEnemy(6110 * S, 840, 'piranha'), createEnemy(6800 * S, 840, 'crab'),
-                createEnemy(7660 * S, 840, 'piranha'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 1.25;
-            return [
-                createDeco(150 * S, 910, 'house'), createDeco(800 * S, 660, 'fence'),
-                createDeco(1500 * S, 910, 'tree'), createDeco(3200 * S, 910, 'bush'),
-                createDeco(4700 * S, 910, 'house'), createDeco(6300 * S, 910, 'barrel'),
-                createDeco(8700 * S, 910, 'cloud'), createDeco(11000 * S, 910, 'house'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 900 },
-        goal: { x: 17500, y: 358 },
-        timeBonus: 90,
-        movingPlatforms: (() => {
-            const S = 1.25;
-            return [
-                createMovingPlat(5900 * S, 480, 80 * S, 20, 'wood', 'vertical', 140, 20),
-                createMovingPlat(8000 * S, 500, 100 * S, 20, 'wood', 'horizontal', 180, 22),
-            ];
-        })(),
-    },
+  // ============================================================
+  // LEVEL 37 - Tutorial (S=2.0)
+  // Simple village path, one small gap, 3 enemies, 1 pipe
+  // ============================================================
+  {
+    id: 37, name: "Village Green", width: 8000, height: 800, biome: 'village',
+    platforms: (() => {
+      const S = 2.0;
+      const plats: any[] = [];
+      // Start ground
+      plats.push(createPlat(100 * S, 650, 500 * S, 40, 'grass'));
+      plats.push(createPlat(350 * S, 530, 120 * S, 24, 'brick'));
+      // Ground continue
+      plats.push(createPlat(650 * S, 650, 400 * S, 40, 'grass'));
+      plats.push(createPlat(750 * S, 520, 180 * S, 28, 'wood'));
+      // Small gap with 1 helper platform
+      plats.push(createPlat(1090 * S, 590, 80 * S, 24, 'platform_easy'));
+      // Ground after gap
+      plats.push(createPlat(1200 * S, 650, 400 * S, 40, 'brick'));
+      // Pipe area
+      plats.push(createPlat(1620 * S, 650, 300 * S, 40, 'grass'));
+      plats.push(...pipeSection(S, 1650, 650, 1));
+      // Ground continue + elevated
+      plats.push(createPlat(2050 * S, 650, 400 * S, 40, 'brick'));
+      plats.push(createPlat(2150 * S, 520, 100 * S, 24, 'wood'));
+      // Final ground
+      plats.push(createPlat(2500 * S, 650, 400 * S, 40, 'grass'));
+      // Step-ups to goal
+      plats.push(createPlat(2950 * S, 530, 100 * S, 24, 'platform_medium'));
+      plats.push(createPlat(3150 * S, 450, 80 * S, 24, 'platform_hard'));
+      plats.push(createPlat(3300 * S, 380, 300 * S, 40, 'brick'));
+      return plats;
+    })(),
+    coins: (() => {
+      const S = 2.0;
+      const c: any[] = [];
+      c.push(createCoin(380 * S, 490), createCoin(410 * S, 490));
+      c.push(createCoin(820 * S, 480), createCoin(860 * S, 480), createCoin(900 * S, 480));
+      c.push(createCoin(1350 * S, 500));
+      c.push(createCoin(1750 * S, 500), createCoin(1800 * S, 500));
+      c.push(createCoin(2200 * S, 480), createCoin(2250 * S, 480));
+      c.push(createCoin(3000 * S, 490), createCoin(3050 * S, 490));
+      c.push(createCoin(3350 * S, 340));
+      return c;
+    })(),
+    questionBlocks: (() => {
+      const S = 2.0;
+      return [
+        createQB(380 * S, 440, 'mushroom'),
+        createQB(1800 * S, 440, 'coin'),
+      ];
+    })(),
+    enemies: (() => {
+      const S = 2.0;
+      return [
+        createEnemy(850 * S, 610, 'goomba'),
+        createEnemy(1750 * S, 600, 'piranha'),
+        createEnemy(2200 * S, 610, 'goomba'),
+      ];
+    })(),
+    decorations: (() => {
+      const S = 2.0;
+      return [
+        createDeco(150 * S, 610, 'house'),
+        createDeco(650 * S, 610, 'fence'),
+        createDeco(1400 * S, 610, 'tree'),
+        createDeco(2600 * S, 610, 'barrel'),
+        createDeco(3300 * S, 610, 'cloud'),
+      ];
+    })(),
+    movingPlatforms: (() => {
+      const S = 2.0;
+      return [
+        createMovingPlat(2400 * S, 480, 80 * S, 20, 'wood', 'horizontal', 150, 18),
+      ];
+    })(),
+    playerStart: { x: 150, y: 600 },
+    goal: { x: 3450 * 2.0, y: 358 },
+    timeBonus: 55,
+  },
+
+  // ============================================================
+  // LEVEL 38 - Gap-Strecke (S=1.82)
+  // 5 gap sections with moving platforms bridging the gaps
+  // ============================================================
+  {
+    id: 38, name: "Market Road", width: 10000, height: 800, biome: 'village',
+    platforms: (() => {
+      const S = 1.82;
+      const plats: any[] = [];
+      // Start ground
+      plats.push(createPlat(150 * S, 650, 500 * S, 40, 'grass'));
+      plats.push(createPlat(400 * S, 530, 120 * S, 24, 'brick'));
+      // Gap 1: 2 helper platforms
+      plats.push(...gapWithPlatforms(S, 750, 650, 300, 2));
+      // Ground segment
+      plats.push(createPlat(1100 * S, 650, 400 * S, 40, 'brick'));
+      plats.push(createPlat(1200 * S, 520, 180 * S, 28, 'wood'));
+      // Gap 2: 2 helper platforms
+      plats.push(...gapWithPlatforms(S, 1600, 650, 350, 2));
+      // Ground segment
+      plats.push(createPlat(2000 * S, 650, 400 * S, 40, 'grass'));
+      plats.push(createPlat(2150 * S, 520, 100 * S, 24, 'brick'));
+      // Gap 3: 3 helper platforms
+      plats.push(...gapWithPlatforms(S, 2500, 650, 400, 3));
+      // Ground segment
+      plats.push(createPlat(2950 * S, 650, 500 * S, 40, 'brick'));
+      plats.push(createPlat(3100 * S, 530, 120 * S, 24, 'wood'));
+      // Gap 4: 2 helper platforms
+      plats.push(...gapWithPlatforms(S, 3500, 650, 350, 2));
+      // Ground segment
+      plats.push(createPlat(3900 * S, 650, 400 * S, 40, 'grass'));
+      // Gap 5: 3 helper platforms
+      plats.push(...gapWithPlatforms(S, 4350, 650, 400, 3));
+      // Goal ground
+      plats.push(createPlat(4800 * S, 650, 500 * S, 40, 'brick'));
+      plats.push(createPlat(4950 * S, 530, 120 * S, 24, 'wood'));
+      plats.push(createPlat(5150 * S, 410, 200 * S, 40, 'brick'));
+      return plats;
+    })(),
+    coins: (() => {
+      const S = 1.82;
+      const c: any[] = [];
+      c.push(createCoin(280 * S, 500), createCoin(430 * S, 490));
+      c.push(createCoin(800 * S, 590), createCoin(870 * S, 570));
+      c.push(createCoin(1250 * S, 480), createCoin(1350 * S, 480));
+      c.push(createCoin(1700 * S, 590), createCoin(1770 * S, 570));
+      c.push(createCoin(2150 * S, 480));
+      c.push(createCoin(2580 * S, 580), createCoin(2720 * S, 540));
+      c.push(createCoin(3050 * S, 500), createCoin(3200 * S, 490));
+      c.push(createCoin(3580 * S, 580), createCoin(3650 * S, 560));
+      c.push(createCoin(4100 * S, 500), createCoin(4430 * S, 580));
+      c.push(createCoin(4950 * S, 490), createCoin(5200 * S, 370));
+      return c;
+    })(),
+    questionBlocks: (() => {
+      const S = 1.82;
+      return [
+        createQB(430 * S, 440, 'mushroom'),
+        createQB(2150 * S, 440, 'coin'),
+        createQB(3150 * S, 440, 'flower'),
+        createQB(5200 * S, 310, 'star'),
+      ];
+    })(),
+    enemies: (() => {
+      const S = 1.82;
+      return [
+        createEnemy(500 * S, 610, 'goomba'),
+        createEnemy(1300 * S, 610, 'robot'),
+        createEnemy(2200 * S, 610, 'crab'),
+        createEnemy(3100 * S, 610, 'goomba'),
+        createEnemy(4100 * S, 610, 'koopa'),
+        createEnemy(4900 * S, 610, 'robot'),
+      ];
+    })(),
+    decorations: (() => {
+      const S = 1.82;
+      return [
+        createDeco(200 * S, 610, 'house'),
+        createDeco(1200 * S, 610, 'fence'),
+        createDeco(2300 * S, 610, 'tree'),
+        createDeco(3300 * S, 610, 'barrel'),
+        createDeco(4400 * S, 610, 'house'),
+      ];
+    })(),
+    movingPlatforms: (() => {
+      const S = 1.82;
+      return [
+        createMovingPlat(900 * S, 500, 80 * S, 20, 'wood', 'vertical', 80, 18),
+        createMovingPlat(1800 * S, 500, 100 * S, 20, 'wood', 'horizontal', 180, 20),
+        createMovingPlat(2700 * S, 480, 100 * S, 20, 'wood', 'horizontal', 200, 22),
+        createMovingPlat(3650 * S, 480, 80 * S, 20, 'wood', 'vertical', 90, 18),
+        createMovingPlat(4600 * S, 500, 100 * S, 20, 'wood', 'horizontal', 200, 20),
+      ];
+    })(),
+    playerStart: { x: 150, y: 600 },
+    goal: { x: 5250 * 1.82, y: 388 },
+    timeBonus: 62,
+  },
+
+  // ============================================================
+  // LEVEL 39 - Röhren-Labyrinth (S=1.67)
+  // 6 pipe sections with piranhas, ground segments between
+  // ============================================================
+  {
+    id: 39, name: "Pipe Maze", width: 12000, height: 900, biome: 'village',
+    platforms: (() => {
+      const S = 1.67;
+      const plats: any[] = [];
+      // Start ground
+      plats.push(createPlat(150 * S, 750, 500 * S, 40, 'grass'));
+      plats.push(createPlat(350 * S, 630, 120 * S, 24, 'brick'));
+      // Pipe section 1
+      plats.push(createPlat(700 * S, 750, 400 * S, 40, 'brick'));
+      plats.push(...pipeSection(S, 800, 750, 2));
+      // Ground segment
+      plats.push(createPlat(1350 * S, 750, 300 * S, 40, 'grass'));
+      plats.push(createPlat(1450 * S, 630, 150 * S, 28, 'wood'));
+      // Pipe section 2
+      plats.push(createPlat(1750 * S, 750, 400 * S, 40, 'brick'));
+      plats.push(...pipeSection(S, 1850, 750, 2));
+      // Ground segment
+      plats.push(createPlat(2450 * S, 750, 400 * S, 40, 'grass'));
+      // Pipe section 3
+      plats.push(...pipeSection(S, 2650, 750, 3));
+      // Ground segment
+      plats.push(createPlat(3450 * S, 750, 400 * S, 40, 'brick'));
+      plats.push(createPlat(3550 * S, 630, 120 * S, 24, 'wood'));
+      // Pipe section 4
+      plats.push(createPlat(3950 * S, 750, 400 * S, 40, 'grass'));
+      plats.push(...pipeSection(S, 4050, 750, 2));
+      // Ground segment + elevated
+      plats.push(createPlat(4700 * S, 750, 400 * S, 40, 'brick'));
+      // Pipe section 5
+      plats.push(createPlat(5150 * S, 750, 300 * S, 40, 'grass'));
+      plats.push(...pipeSection(S, 5250, 750, 2));
+      // Pipe section 6 (final)
+      plats.push(createPlat(5900 * S, 750, 500 * S, 40, 'brick'));
+      plats.push(...pipeSection(S, 6100, 750, 3));
+      // Goal area
+      plats.push(createPlat(6900 * S, 630, 120 * S, 24, 'wood'));
+      plats.push(createPlat(7100 * S, 510, 200 * S, 40, 'brick'));
+      return plats;
+    })(),
+    coins: (() => {
+      const S = 1.67;
+      const c: any[] = [];
+      c.push(createCoin(280 * S, 600), createCoin(380 * S, 590));
+      c.push(createCoin(950 * S, 590), createCoin(1050 * S, 590));
+      c.push(createCoin(1500 * S, 590), createCoin(1550 * S, 590));
+      c.push(createCoin(2000 * S, 590), createCoin(2100 * S, 590));
+      c.push(createCoin(2650 * S, 590), createCoin(2900 * S, 590), createCoin(3150 * S, 590));
+      c.push(createCoin(3600 * S, 590), createCoin(3700 * S, 590));
+      c.push(createCoin(4200 * S, 590), createCoin(4350 * S, 590));
+      c.push(createCoin(4900 * S, 590), createCoin(5400 * S, 590), createCoin(5550 * S, 590));
+      c.push(createCoin(6250 * S, 590), createCoin(6500 * S, 590), createCoin(6750 * S, 590));
+      c.push(createCoin(7150 * S, 470));
+      return c;
+    })(),
+    questionBlocks: (() => {
+      const S = 1.67;
+      return [
+        createQB(380 * S, 530, 'mushroom'),
+        createQB(1480 * S, 530, 'coin'),
+        createQB(3600 * S, 530, 'flower'),
+        createQB(4800 * S, 530, 'coin'),
+        createQB(7200 * S, 400, 'star'),
+      ];
+    })(),
+    enemies: (() => {
+      const S = 1.67;
+      return [
+        createEnemy(500 * S, 710, 'goomba'),
+        createEnemy(1000 * S, 700, 'piranha'),
+        createEnemy(1200 * S, 700, 'piranha'),
+        createEnemy(1550 * S, 710, 'robot'),
+        createEnemy(2000 * S, 700, 'piranha'),
+        createEnemy(2200 * S, 700, 'piranha'),
+        createEnemy(2600 * S, 710, 'goomba'),
+        createEnemy(2800 * S, 700, 'piranha'),
+        createEnemy(3050 * S, 700, 'piranha'),
+        createEnemy(3300 * S, 700, 'piranha'),
+        createEnemy(4200 * S, 700, 'piranha'),
+        createEnemy(4350 * S, 700, 'piranha'),
+        createEnemy(5400 * S, 700, 'piranha'),
+        createEnemy(5550 * S, 700, 'piranha'),
+        createEnemy(6250 * S, 700, 'piranha'),
+        createEnemy(6500 * S, 700, 'piranha'),
+        createEnemy(6750 * S, 700, 'piranha'),
+        createEnemy(7000 * S, 710, 'goomba'),
+      ];
+    })(),
+    decorations: (() => {
+      const S = 1.67;
+      return [
+        createDeco(200 * S, 710, 'house'),
+        createDeco(800 * S, 710, 'fence'),
+        createDeco(1600 * S, 710, 'tree'),
+        createDeco(3000 * S, 710, 'barrel'),
+        createDeco(4200 * S, 710, 'house'),
+        createDeco(5600 * S, 710, 'tree'),
+        createDeco(7000 * S, 710, 'cloud'),
+      ];
+    })(),
+    movingPlatforms: (() => {
+      const S = 1.67;
+      return [
+        createMovingPlat(3300 * S, 600, 100 * S, 20, 'wood', 'horizontal', 200, 20),
+        createMovingPlat(5800 * S, 600, 100 * S, 20, 'wood', 'horizontal', 180, 22),
+      ];
+    })(),
+    playerStart: { x: 150, y: 700 },
+    goal: { x: 7200 * 1.67, y: 488 },
+    timeBonus: 68,
+  },
+
+  // ============================================================
+  // LEVEL 40 - Vertikal-Kletterer (S=1.48)
+  // 4 verticalClimb sections with ground segments between
+  // ============================================================
+  {
+    id: 40, name: "Chimney Chase", width: 14000, height: 950, biome: 'village',
+    platforms: (() => {
+      const S = 1.48;
+      const plats: any[] = [];
+      // Start ground
+      plats.push(createPlat(150 * S, 800, 500 * S, 40, 'grass'));
+      plats.push(createPlat(400 * S, 680, 120 * S, 24, 'brick'));
+      // Vertical climb 1
+      plats.push(createPlat(700 * S, 800, 400 * S, 40, 'brick'));
+      plats.push(...verticalClimb(S, 900, 800, 'brick'));
+      // Ground segment
+      plats.push(createPlat(2700 * S, 800, 400 * S, 40, 'grass'));
+      plats.push(createPlat(2850 * S, 680, 150 * S, 28, 'wood'));
+      // Vertical climb 2
+      plats.push(createPlat(3150 * S, 800, 400 * S, 40, 'brick'));
+      plats.push(...verticalClimb(S, 3350, 800, 'brick'));
+      // Ground segment
+      plats.push(createPlat(5150 * S, 800, 400 * S, 40, 'grass'));
+      plats.push(createPlat(5300 * S, 680, 120 * S, 24, 'wood'));
+      // Vertical climb 3
+      plats.push(createPlat(5600 * S, 800, 400 * S, 40, 'brick'));
+      plats.push(...verticalClimb(S, 5800, 800, 'grass'));
+      // Ground segment
+      plats.push(createPlat(7600 * S, 800, 400 * S, 40, 'grass'));
+      // Vertical climb 4
+      plats.push(createPlat(8050 * S, 800, 300 * S, 40, 'brick'));
+      plats.push(...verticalClimb(S, 8200, 800, 'brick'));
+      // Goal platform
+      plats.push(createPlat(9800 * S, 520, 300 * S, 40, 'brick'));
+      return plats;
+    })(),
+    coins: (() => {
+      const S = 1.48;
+      const c: any[] = [];
+      c.push(createCoin(280 * S, 650), createCoin(430 * S, 640));
+      // Climb 1 coins
+      c.push(createCoin(900 * S, 720), createCoin(1200 * S, 640), createCoin(1500 * S, 560));
+      c.push(createCoin(1800 * S, 480), createCoin(2100 * S, 560), createCoin(2400 * S, 640), createCoin(2700 * S, 720));
+      c.push(createCoin(2900 * S, 640));
+      // Climb 2 coins
+      c.push(createCoin(3350 * S, 720), createCoin(3650 * S, 640), createCoin(3950 * S, 560));
+      c.push(createCoin(4250 * S, 480), createCoin(4550 * S, 560), createCoin(4850 * S, 640), createCoin(5150 * S, 720));
+      c.push(createCoin(5350 * S, 640));
+      // Climb 3 coins
+      c.push(createCoin(5800 * S, 720), createCoin(6100 * S, 640), createCoin(6400 * S, 560));
+      c.push(createCoin(6700 * S, 480), createCoin(7000 * S, 560), createCoin(7300 * S, 640), createCoin(7600 * S, 720));
+      // Climb 4 coins
+      c.push(createCoin(8200 * S, 720), createCoin(8500 * S, 640), createCoin(8800 * S, 560));
+      c.push(createCoin(9100 * S, 480), createCoin(9400 * S, 560), createCoin(9700 * S, 640));
+      c.push(createCoin(9900 * S, 480));
+      return c;
+    })(),
+    questionBlocks: (() => {
+      const S = 1.48;
+      return [
+        createQB(430 * S, 580, 'mushroom'),
+        createQB(1900 * S, 400, 'coin'),
+        createQB(4350 * S, 400, 'flower'),
+        createQB(6800 * S, 400, 'star'),
+        createQB(9200 * S, 400, 'coin'),
+      ];
+    })(),
+    enemies: (() => {
+      const S = 1.48;
+      return [
+        createEnemy(500 * S, 760, 'goomba'),
+        createEnemy(1400 * S, 760, 'robot'),
+        createEnemy(2900 * S, 760, 'crab'),
+        createEnemy(3800 * S, 760, 'goomba'),
+        createEnemy(4500 * S, 760, 'koopa'),
+        createEnemy(5500 * S, 760, 'spiny'),
+        createEnemy(6200 * S, 760, 'robot'),
+        createEnemy(7000 * S, 760, 'goomba'),
+        createEnemy(8400 * S, 760, 'crab'),
+        createEnemy(9100 * S, 760, 'koopa'),
+        createEnemy(9600 * S, 760, 'goomba'),
+      ];
+    })(),
+    decorations: (() => {
+      const S = 1.48;
+      return [
+        createDeco(200 * S, 760, 'house'),
+        createDeco(1000 * S, 760, 'fence'),
+        createDeco(2800 * S, 760, 'tree'),
+        createDeco(4000 * S, 760, 'barrel'),
+        createDeco(6000 * S, 760, 'house'),
+        createDeco(7800 * S, 760, 'tree'),
+        createDeco(9000 * S, 760, 'cloud'),
+      ];
+    })(),
+    movingPlatforms: (() => {
+      const S = 1.48;
+      return [
+        createMovingPlat(2200 * S, 650, 80 * S, 20, 'wood', 'horizontal', 200, 20),
+        createMovingPlat(4700 * S, 650, 80 * S, 20, 'wood', 'vertical', 120, 18),
+        createMovingPlat(7200 * S, 650, 100 * S, 20, 'wood', 'horizontal', 250, 22),
+      ];
+    })(),
+    playerStart: { x: 150, y: 750 },
+    goal: { x: 9950 * 1.48, y: 498 },
+    timeBonus: 75,
+  },
+
+  // ============================================================
+  // LEVEL 41 - Gegner-Horde (S=1.38)
+  // 18 enemies across varied platform structures
+  // All gaps ≤ ~480px in-game to ensure BFS solvability
+  // ============================================================
+  {
+    id: 41, name: "Town Square", width: 16000, height: 1000, biome: 'village',
+    platforms: (() => {
+      const S = 1.38;
+      const plats: any[] = [];
+      // Start ground
+      plats.push(createPlat(100 * S, 850, 400 * S, 40, 'grass'));
+      plats.push(createPlat(350 * S, 730, 120 * S, 24, 'brick'));
+      // Ground bridge to gap
+      plats.push(createPlat(550 * S, 850, 200 * S, 40, 'grass'));
+      // Gap section 1
+      plats.push(...gapWithPlatforms(S, 650, 850, 250, 2));
+      // Ground + pipe
+      plats.push(createPlat(950 * S, 850, 300 * S, 40, 'brick'));
+      plats.push(createPlat(1250 * S, 850, 200 * S, 40, 'grass'));
+      plats.push(...pipeSection(S, 1300, 850, 2));
+      // Ground segment
+      plats.push(createPlat(1750 * S, 850, 300 * S, 40, 'brick'));
+      plats.push(createPlat(2050 * S, 850, 200 * S, 40, 'grass'));
+      plats.push(createPlat(2150 * S, 730, 180 * S, 28, 'wood'));
+      // Gap section 2
+      plats.push(createPlat(2400 * S, 850, 200 * S, 40, 'brick'));
+      plats.push(...gapWithPlatforms(S, 2500, 850, 300, 2));
+      // Ground + elevated
+      plats.push(createPlat(2850 * S, 850, 400 * S, 40, 'grass'));
+      plats.push(createPlat(3100 * S, 730, 120 * S, 24, 'brick'));
+      plats.push(createPlat(3200 * S, 610, 100 * S, 24, 'wood'));
+      plats.push(createPlat(3350 * S, 850, 300 * S, 40, 'brick'));
+      // Pipe section 2
+      plats.push(...pipeSection(S, 3500, 850, 3));
+      // Ground segment
+      plats.push(createPlat(4250 * S, 850, 400 * S, 40, 'grass'));
+      plats.push(createPlat(4550 * S, 730, 120 * S, 24, 'brick'));
+      // Gap section 3
+      plats.push(createPlat(4750 * S, 850, 200 * S, 40, 'brick'));
+      plats.push(...gapWithPlatforms(S, 4850, 850, 250, 2));
+      // Enemy-heavy ground area
+      plats.push(createPlat(5150 * S, 850, 500 * S, 40, 'grass'));
+      plats.push(createPlat(5500 * S, 730, 120 * S, 24, 'brick'));
+      plats.push(createPlat(5750 * S, 850, 300 * S, 40, 'brick'));
+      // Gap + elevated
+      plats.push(...gapWithPlatforms(S, 5950, 850, 300, 2));
+      plats.push(createPlat(6300 * S, 850, 400 * S, 40, 'grass'));
+      plats.push(createPlat(6550 * S, 730, 100 * S, 24, 'wood'));
+      // More ground + pipe
+      plats.push(createPlat(6750 * S, 850, 300 * S, 40, 'brick'));
+      plats.push(...pipeSection(S, 6900, 850, 2));
+      // Gap section 4
+      plats.push(createPlat(7450 * S, 850, 200 * S, 40, 'grass'));
+      plats.push(...gapWithPlatforms(S, 7550, 850, 200, 2));
+      // Final ground
+      plats.push(createPlat(7800 * S, 850, 500 * S, 40, 'brick'));
+      plats.push(createPlat(8100 * S, 730, 120 * S, 24, 'wood'));
+      // Goal area via step-ups
+      plats.push(createPlat(8400 * S, 730, 100 * S, 24, 'platform_medium'));
+      plats.push(createPlat(8600 * S, 610, 80 * S, 24, 'platform_hard'));
+      plats.push(createPlat(8800 * S, 490, 300 * S, 40, 'brick'));
+      return plats;
+    })(),
+    coins: (() => {
+      const S = 1.38;
+      const c: any[] = [];
+      c.push(createCoin(280 * S, 700), createCoin(380 * S, 690));
+      c.push(createCoin(680 * S, 790), createCoin(730 * S, 770));
+      c.push(createCoin(1100 * S, 790), createCoin(1450 * S, 790), createCoin(1600 * S, 790));
+      c.push(createCoin(2000 * S, 700), createCoin(2200 * S, 690));
+      c.push(createCoin(2550 * S, 780), createCoin(2650 * S, 750));
+      c.push(createCoin(3100 * S, 690), createCoin(3250 * S, 570));
+      c.push(createCoin(3650 * S, 790), createCoin(3900 * S, 790), createCoin(4150 * S, 790));
+      c.push(createCoin(4500 * S, 700), createCoin(4600 * S, 690));
+      c.push(createCoin(4900 * S, 780), createCoin(5000 * S, 760));
+      c.push(createCoin(5300 * S, 700), createCoin(5600 * S, 690));
+      c.push(createCoin(6000 * S, 780), createCoin(6100 * S, 750));
+      c.push(createCoin(6500 * S, 690), createCoin(7100 * S, 790), createCoin(7250 * S, 790));
+      c.push(createCoin(7600 * S, 780), createCoin(7700 * S, 760));
+      c.push(createCoin(8100 * S, 690), createCoin(8850 * S, 450));
+      return c;
+    })(),
+    questionBlocks: (() => {
+      const S = 1.38;
+      return [
+        createQB(380 * S, 630, 'mushroom'),
+        createQB(2200 * S, 630, 'coin'),
+        createQB(3250 * S, 500, 'flower'),
+        createQB(5550 * S, 630, 'coin'),
+        createQB(8150 * S, 630, 'star'),
+      ];
+    })(),
+    enemies: (() => {
+      const S = 1.38;
+      const enemies: any[] = [];
+      enemies.push(createEnemy(300 * S, 810, 'goomba'));
+      enemies.push(createEnemy(500 * S, 810, 'goomba'));
+      enemies.push(createEnemy(700 * S, 810, 'robot'));
+      enemies.push(createEnemy(1100 * S, 810, 'koopa'));
+      enemies.push(createEnemy(1500 * S, 800, 'piranha'));
+      enemies.push(createEnemy(1750 * S, 800, 'piranha'));
+      enemies.push(createEnemy(2000 * S, 810, 'spiny'));
+      enemies.push(createEnemy(2300 * S, 810, 'crab'));
+      enemies.push(createEnemy(2600 * S, 810, 'goomba'));
+      enemies.push(createEnemy(3000 * S, 810, 'robot'));
+      enemies.push(createEnemy(3650 * S, 800, 'piranha'));
+      enemies.push(createEnemy(3900 * S, 800, 'piranha'));
+      enemies.push(createEnemy(4150 * S, 800, 'piranha'));
+      enemies.push(createEnemy(4600 * S, 810, 'spiny'));
+      enemies.push(createEnemy(5400 * S, 810, 'goomba'));
+      enemies.push(createEnemy(5900 * S, 810, 'koopa'));
+      enemies.push(createEnemy(7100 * S, 800, 'piranha'));
+      enemies.push(createEnemy(7250 * S, 800, 'piranha'));
+      enemies.push(createEnemy(8000 * S, 810, 'robot'));
+      enemies.push(createEnemy(8300 * S, 810, 'crab'));
+      return enemies;
+    })(),
+    decorations: (() => {
+      const S = 1.38;
+      return [
+        createDeco(200 * S, 810, 'house'),
+        createDeco(600 * S, 810, 'fence'),
+        createDeco(1200 * S, 810, 'tree'),
+        createDeco(2400 * S, 810, 'barrel'),
+        createDeco(3800 * S, 810, 'house'),
+        createDeco(5500 * S, 810, 'tree'),
+        createDeco(6800 * S, 810, 'cloud'),
+        createDeco(8200 * S, 810, 'fence'),
+      ];
+    })(),
+    movingPlatforms: (() => {
+      const S = 1.38;
+      return [
+        createMovingPlat(1800 * S, 700, 80 * S, 20, 'wood', 'horizontal', 180, 20),
+        createMovingPlat(4100 * S, 700, 100 * S, 20, 'wood', 'horizontal', 200, 22),
+        createMovingPlat(6200 * S, 700, 80 * S, 20, 'wood', 'vertical', 100, 18),
+      ];
+    })(),
+    playerStart: { x: 150, y: 800 },
+    goal: { x: 8950 * 1.38, y: 468 },
+    timeBonus: 82,
+  },
+
+  // ============================================================
+  // LEVEL 42 - Dach-Rennen Finale (S=1.25)
+  // Rooftop-hopping with platforms at multiple heights, minimal ground
+  // ============================================================
+  {
+    id: 42, name: "Rooftop Finale", width: 18000, height: 1100, biome: 'village',
+    platforms: (() => {
+      const S = 1.25;
+      const plats: any[] = [];
+      // Start roof
+      plats.push(createPlat(200 * S, 950, 400 * S, 40, 'grass'));
+      plats.push(createPlat(100 * S, 830, 180 * S, 28, 'wood'));  // low roof
+      // Rooftop row 1 (med height)
+      plats.push(createPlat(600 * S, 830, 220 * S, 28, 'brick'));
+      plats.push(createPlat(850 * S, 830, 220 * S, 28, 'brick'));
+      plats.push(createPlat(1150 * S, 830, 220 * S, 28, 'brick'));
+      plats.push(createPlat(1400 * S, 950, 200 * S, 40, 'grass')); // ground rest
+      // Gap with elevated stepping
+      plats.push(...gapWithPlatforms(S, 1700, 950, 300, 2));
+      // Rooftop row 2 (high)
+      plats.push(createPlat(2100 * S, 950, 300 * S, 40, 'brick'));
+      plats.push(createPlat(2300 * S, 710, 200 * S, 28, 'wood'));
+      plats.push(createPlat(2550 * S, 710, 200 * S, 28, 'wood'));
+      plats.push(createPlat(2800 * S, 710, 200 * S, 28, 'wood'));
+      plats.push(createPlat(3050 * S, 950, 300 * S, 40, 'grass')); // ground rest
+      // Pipe section (chimneys)
+      plats.push(...pipeSection(S, 3400, 950, 2));
+      plats.push(createPlat(4200 * S, 950, 300 * S, 40, 'brick'));
+      // Roof gap section
+      plats.push(...gapWithPlatforms(S, 4600, 950, 350, 3));
+      // Rooftop row 3 (varied heights)
+      plats.push(createPlat(5100 * S, 950, 200 * S, 40, 'grass'));
+      plats.push(createPlat(5350 * S, 830, 180 * S, 28, 'brick'));
+      plats.push(createPlat(5550 * S, 830, 180 * S, 28, 'brick'));
+      plats.push(createPlat(5800 * S, 710, 200 * S, 28, 'wood'));
+      plats.push(createPlat(6050 * S, 710, 200 * S, 28, 'wood'));
+      plats.push(createPlat(6300 * S, 950, 300 * S, 40, 'brick')); // ground rest
+      // Pipe section (more chimneys)
+      plats.push(...pipeSection(S, 6650, 950, 2));
+      plats.push(createPlat(7450 * S, 950, 300 * S, 40, 'grass'));
+      // Final rooftop gauntlet (highest)
+      plats.push(createPlat(7800 * S, 830, 180 * S, 28, 'wood'));
+      plats.push(createPlat(8000 * S, 710, 200 * S, 28, 'brick'));
+      plats.push(createPlat(8250 * S, 710, 200 * S, 28, 'brick'));
+      plats.push(createPlat(8500 * S, 590, 220 * S, 28, 'wood'));
+      plats.push(createPlat(8750 * S, 590, 180 * S, 28, 'wood'));
+      plats.push(createPlat(9000 * S, 950, 300 * S, 40, 'grass')); // ground rest
+      // Gap + goal area
+      plats.push(...gapWithPlatforms(S, 9350, 950, 300, 2));
+      plats.push(createPlat(9750 * S, 950, 300 * S, 40, 'brick'));
+      // Goal climb
+      plats.push(createPlat(10200 * S, 830, 150 * S, 28, 'brick'));
+      plats.push(createPlat(10450 * S, 710, 120 * S, 24, 'wood'));
+      plats.push(createPlat(10650 * S, 590, 200 * S, 28, 'brick'));
+      plats.push(createPlat(10950 * S, 470, 250 * S, 40, 'brick'));
+      return plats;
+    })(),
+    coins: (() => {
+      const S = 1.25;
+      const c: any[] = [];
+      // Coins above rooftops
+      c.push(createCoin(300 * S, 790), createCoin(500 * S, 790));
+      c.push(createCoin(650 * S, 790), createCoin(900 * S, 790), createCoin(1100 * S, 790));
+      c.push(createCoin(1750 * S, 880), createCoin(1850 * S, 860));
+      c.push(createCoin(2350 * S, 670), createCoin(2600 * S, 670), createCoin(2850 * S, 670));
+      c.push(createCoin(3500 * S, 890), createCoin(3750 * S, 890));
+      c.push(createCoin(4700 * S, 880), createCoin(4850 * S, 860), createCoin(5000 * S, 840));
+      c.push(createCoin(5400 * S, 790), createCoin(5600 * S, 790));
+      c.push(createCoin(5850 * S, 670), createCoin(6100 * S, 670));
+      c.push(createCoin(6750 * S, 890), createCoin(7000 * S, 890));
+      c.push(createCoin(7850 * S, 790), createCoin(8050 * S, 670), createCoin(8300 * S, 670));
+      c.push(createCoin(8550 * S, 550), createCoin(8800 * S, 550));
+      c.push(createCoin(9450 * S, 880), createCoin(9550 * S, 860));
+      c.push(createCoin(10250 * S, 790), createCoin(10500 * S, 670), createCoin(10700 * S, 550));
+      c.push(createCoin(11000 * S, 430));
+      return c;
+    })(),
+    questionBlocks: (() => {
+      const S = 1.25;
+      return [
+        createQB(200 * S, 720, 'mushroom'),
+        createQB(2350 * S, 600, 'coin'),
+        createQB(5850 * S, 600, 'flower'),
+        createQB(8550 * S, 480, 'star'),
+        createQB(10700 * S, 480, 'coin'),
+        createQB(11050 * S, 360, 'mushroom'),
+      ];
+    })(),
+    enemies: (() => {
+      const S = 1.25;
+      const enemies: any[] = [];
+      enemies.push(createEnemy(250 * S, 910, 'goomba'));
+      enemies.push(createEnemy(700 * S, 790, 'robot'));
+      enemies.push(createEnemy(1100 * S, 790, 'spiny'));
+      enemies.push(createEnemy(1500 * S, 910, 'koopa'));
+      enemies.push(createEnemy(1900 * S, 910, 'crab'));
+      enemies.push(createEnemy(2400 * S, 670, 'goomba'));
+      enemies.push(createEnemy(2800 * S, 670, 'robot'));
+      enemies.push(createEnemy(3500 * S, 900, 'piranha'));
+      enemies.push(createEnemy(3750 * S, 900, 'piranha'));
+      enemies.push(createEnemy(5400 * S, 790, 'spiny'));
+      enemies.push(createEnemy(5900 * S, 670, 'koopa'));
+      enemies.push(createEnemy(6100 * S, 670, 'goomba'));
+      enemies.push(createEnemy(6750 * S, 900, 'piranha'));
+      enemies.push(createEnemy(7000 * S, 900, 'piranha'));
+      enemies.push(createEnemy(8300 * S, 670, 'crab'));
+      enemies.push(createEnemy(8600 * S, 550, 'robot'));
+      enemies.push(createEnemy(10300 * S, 790, 'goomba'));
+      enemies.push(createEnemy(10700 * S, 910, 'koopa'));
+      return enemies;
+    })(),
+    decorations: (() => {
+      const S = 1.25;
+      return [
+        createDeco(300 * S, 910, 'house'),
+        createDeco(800 * S, 790, 'fence'),
+        createDeco(1600 * S, 910, 'tree'),
+        createDeco(2900 * S, 910, 'barrel'),
+        createDeco(4000 * S, 910, 'house'),
+        createDeco(5600 * S, 910, 'tree'),
+        createDeco(6600 * S, 790, 'barrel'),
+        createDeco(7800 * S, 790, 'cloud'),
+        createDeco(9400 * S, 910, 'house'),
+        createDeco(11000 * S, 910, 'fence'),
+      ];
+    })(),
+    movingPlatforms: (() => {
+      const S = 1.25;
+      return [
+        createMovingPlat(3850 * S, 800, 80 * S, 20, 'wood', 'horizontal', 200, 20),
+        createMovingPlat(6500 * S, 800, 100 * S, 20, 'wood', 'horizontal', 250, 22),
+        createMovingPlat(10000 * S, 800, 80 * S, 20, 'wood', 'vertical', 120, 18),
+      ];
+    })(),
+    playerStart: { x: 150, y: 900 },
+    goal: { x: 11075 * 1.25, y: 448 },
+    timeBonus: 90,
+  },
 ];

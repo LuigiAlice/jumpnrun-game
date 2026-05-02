@@ -1,404 +1,642 @@
-// Grasslands World - 6 Super Mario-style Side-Scrolling Levels (IDs 1-6)
-// Long horizontal levels with ground sections, gaps, pipes, and vertical passages
+// Grasslands World - 6 distinct level types (IDs 1-6)
+// Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Flaggen-Run
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 const S = 0.65;
 
-const gapWithPlatforms = (startX: number, baseY: number, gapWidth: number, platformCount: number): any[] => {
-  const plats = [];
-  const platformSpacing = gapWidth / (platformCount + 1);
-  for (let i = 0; i < platformCount; i++) {
-    const px = startX + platformSpacing * (i + 1);
-    const py = baseY - 60 - (i * 25);
-    const pw = 100;
-    const ptype = i % 3 === 0 ? 'platform_easy' : (i % 3 === 1 ? 'platform_medium' : 'platform_hard');
-    plats.push(createPlat(px, py, pw, 24, ptype));
-  }
-  return plats;
-};
-
-const pipeSection = (startX: number, y: number, pipeCount: number): any[] => {
-  const plats = [];
-  for (let i = 0; i < pipeCount; i++) {
-    const px = startX + 250 + i * 280; // Reduced spacing for jump safety (315px limit)
-    const ph = 64;
-    plats.push(createPlat(px, y, 64, ph, 'pipe'));
-    plats.push(createPlat(px - 8, y - ph / 2 - 12, 80, 24, 'pipe_top'));
-  }
-  return plats;
-};
-
 export const GRASSLANDS_LEVELS: LevelData[] = [
+  // ============================================================
+  // LEVEL 1: Tutorial — Linear, simple, one pipe, one small gap
+  // S=0.65, width=20000
+  // ============================================================
   {
     id: 1, name: "Grasslands Plains", width: 20000, height: 600, biome: 'grasslands',
     platforms: (() => {
       const plats: any[] = [];
-      plats.push(createPlat(250 * S, 550, 600 * S, 40, 'grass'));
-      plats.push(createPlat(1000 * S, 550, 500 * S, 40, 'grass'));
-      plats.push(createPlat(1700 * S, 550, 600 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(2300 * S, 550, 400 * S, 3));
-      plats.push(createPlat(3000 * S, 550, 800 * S, 40, 'grass'));
-      plats.push(createPlat(4100 * S, 550, 500 * S, 40, 'grass'));
-      plats.push(createPlat(4450 * S, 500, 100, 20, 'platform_easy'));
-      plats.push(...pipeSection(4600 * S, 550, 4));
-      plats.push(createPlat(5950 * S, 500, 100, 20, 'platform_easy'));
-      plats.push(createPlat(6200 * S, 550, 1000 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(7400 * S, 550, 350 * S, 2));
+      // Start ground — long enough for player to learn movement
+      plats.push(createPlat(250 * S, 550, 1000 * S, 40, 'grass'));
+      // Continue ground
+      plats.push(createPlat(1700 * S, 550, 800 * S, 40, 'grass'));
+
+      // One small gap with a single stepping platform
+      plats.push(...gapWithPlatforms(S, 2500, 550, 300, 1));
+
+      // Ground after gap
+      plats.push(createPlat(3200 * S, 550, 600 * S, 40, 'grass'));
+
+      // Pipe section — 2 pipes
+      plats.push(...pipeSection(S, 3800, 550, 2));
+
+      // Ground after pipes
+      plats.push(createPlat(5100 * S, 550, 800 * S, 40, 'grass'));
+
+      // Final stretch
+      plats.push(createPlat(6500 * S, 550, 1000 * S, 40, 'grass'));
       plats.push(createPlat(8000 * S, 550, 800 * S, 40, 'grass'));
-      plats.push(createPlat(9000 * S, 480, 120, 28, 'platform_easy'));
-      plats.push(createPlat(9300 * S, 400, 120, 28, 'platform_medium'));
-      plats.push(createPlat(9600 * S, 320, 120, 28, 'platform_hard'));
-      plats.push(createPlat(9900 * S, 240, 150, 40, 'grass'));
-      plats.push(createPlat(10300 * S, 320, 120, 28, 'platform_hard'));
-      plats.push(createPlat(10600 * S, 400, 120, 28, 'platform_medium'));
-      plats.push(createPlat(10900 * S, 480, 120, 28, 'platform_easy'));
-      plats.push(createPlat(11200 * S, 550, 600 * S, 40, 'grass'));
-      plats.push(createPlat(12100 * S, 550, 200, 40, 'grass'));
-      plats.push(createPlat(13000 * S, 550, 1200 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(14400 * S, 550, 400 * S, 3));
-      plats.push(createPlat(15100 * S, 550, 800 * S, 40, 'grass'));
-      plats.push(...pipeSection(15900 * S, 550, 3));
-      plats.push(createPlat(17500 * S, 550, 1000 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(18700 * S, 550, 350 * S, 2));
-      plats.push(createPlat(19300 * S, 550, 600 * S, 40, 'grass'));
+
       return plats;
     })(),
     coins: (() => {
-      const coins: any[] = [];
-      for (let x = 300; x < 2500; x += 200) coins.push(createCoin(x * S, 500));
-      for (let x = 3000; x < 4000; x += 200) coins.push(createCoin(x * S, 500));
-      for (let x = 6200 * S; x < 7200 * S; x += 200) coins.push(createCoin(x, 500));
-      return coins;
+      const cs: any[] = [];
+      for (let x = 300; x < 2500; x += 200) cs.push(createCoin(x * S, 500));
+      for (let x = 3200 * S; x < 3800 * S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 5100 * S; x < 6000 * S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 6500 * S; x < 7500 * S; x += 200) cs.push(createCoin(x, 500));
+      return cs;
     })(),
     questionBlocks: (() => {
       return [
-        createQB(500 * S, 480, 'mushroom'),
-        createQB(1500 * S, 480, 'coin'),
+        createQB(550 * S, 480, 'mushroom'),
+        createQB(2000 * S, 480, 'coin'),
         createQB(3500 * S, 480, 'mushroom'),
-        createQB(7500 * S, 480, 'flower'),
-        createQB(9500 * S, 170, 'star'),
-        createQB(10500 * S, 250, 'mushroom'),
+        createQB(5500 * S, 480, 'flower'),
+        createQB(7000 * S, 480, 'coin'),
       ];
     })(),
     enemies: (() => {
       return [
-        createEnemy(800 * S, 510, 'goomba'),
-        createEnemy(1200 * S, 510, 'goomba'),
-        createEnemy(1800 * S, 510, 'koopa'),
-        createEnemy(3200 * S, 510, 'goomba'),
-        createEnemy(3700 * S, 510, 'robot'),
-        createEnemy(4400 * S, 510, 'piranha'),
-        createEnemy(6400 * S, 510, 'crab'),
-        createEnemy(7000 * S, 510, 'spiny'),
-        createEnemy(8500 * S, 510, 'goomba'),
+        createEnemy(600 * S, 510, 'goomba'),
+        createEnemy(2000 * S, 510, 'goomba'),
+        createEnemy(3900 * S, 510, 'piranha'),
       ];
     })(),
     decorations: (() => {
       return [
         createDeco(400 * S, 510, 'tree'),
-        createDeco(1200 * S, 510, 'bush'),
-        createDeco(2000 * S, 510, 'tree'),
+        createDeco(1600 * S, 510, 'bush'),
+        createDeco(7000 * S, 510, 'tree'),
       ];
     })(),
     playerStart: { x: 150, y: 500 },
-    goal: { x: 12545, y: 528 },
+    goal: { x: 8000 * S, y: 528 },
     timeBonus: 120,
     movingPlatforms: [
-      createMovingPlat(11700 * S, 480, 150, 24, 'platform_medium', 'horizontal', 350, 20),
-      createMovingPlat(6800, 480, 120, 24, 'platform_medium', 'horizontal', 380, 18),
+      createMovingPlat(5900 * S, 500, 130, 24, 'platform_easy', 'horizontal', 280, 20),
     ],
   },
+
+  // ============================================================
+  // LEVEL 2: Gap-Strecke — 5 gap sections, 4 moving platforms
+  // S=0.625, width=21000
+  // ============================================================
   {
-    id: 2, name: "Grasslands Hills", width: 21000, height: 700, biome: 'grasslands',
+    id: 2, name: "Grasslands Gaps", width: 21000, height: 600, biome: 'grasslands',
     platforms: (() => {
+      const L2S = 0.625;
       const plats: any[] = [];
-      plats.push(createPlat(200 * S, 600, 800 * S, 40, 'grass'));
-      plats.push(createPlat(1200 * S, 600, 600 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(1900 * S, 600, 400 * S, 3));
-      plats.push(createPlat(2600 * S, 600, 1000 * S, 40, 'grass'));
-      plats.push(...pipeSection(3600 * S, 600, 4));
-      // Bridge gap after pipes
-      plats.push(createPlat(5000 * S, 550, 150, 20, 'platform_easy'));
-      plats.push(createPlat(5400 * S, 600, 1200 * S, 40, 'grass'));
-      // Bridge gap to platforms
-      plats.push(createPlat(6600 * S, 550, 150, 20, 'platform_easy'));
-      plats.push(createPlat(7000 * S, 520, 120, 28, 'platform_easy'));
-      plats.push(createPlat(7300 * S, 440, 120, 28, 'platform_medium'));
-      plats.push(createPlat(7600 * S, 360, 120, 28, 'platform_hard'));
-      plats.push(createPlat(7900 * S, 280, 150, 40, 'grass'));
-      plats.push(createPlat(8300 * S, 360, 120, 28, 'platform_hard'));
-      plats.push(createPlat(8600 * S, 440, 120, 28, 'platform_medium'));
-      plats.push(createPlat(8900 * S, 520, 120, 28, 'platform_easy'));
-      plats.push(createPlat(9200 * S, 600, 800 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(10200 * S, 600, 400 * S, 3));
-      plats.push(createPlat(10900 * S, 600, 1000 * S, 40, 'grass'));
+
+      // Ground A
+      plats.push(createPlat(250 * L2S, 550, 800 * L2S, 40, 'grass'));
+
+      // Gap 1: 3 stepping platforms
+      plats.push(...gapWithPlatforms(L2S, 1100, 550, 500, 3));
+
+      // Ground B
+      plats.push(createPlat(2100 * L2S, 550, 600 * L2S, 40, 'grass'));
+
+      // Gap 2: 4 stepping platforms
+      plats.push(...gapWithPlatforms(L2S, 2800, 550, 600, 4));
+
+      // Ground C
+      plats.push(createPlat(3900 * L2S, 550, 500 * L2S, 40, 'grass'));
+
+      // Gap 3: 3 stepping platforms
+      plats.push(...gapWithPlatforms(L2S, 4500, 550, 500, 3));
+
+      // Ground D
+      plats.push(createPlat(5500 * L2S, 550, 600 * L2S, 40, 'grass'));
+
+      // Gap 4: 3 stepping platforms
+      plats.push(...gapWithPlatforms(L2S, 6200, 550, 500, 3));
+
+      // Ground E
+      plats.push(createPlat(7200 * L2S, 550, 800 * L2S, 40, 'grass'));
+
+      // Gap 5: 4 stepping platforms
+      plats.push(...gapWithPlatforms(L2S, 8100, 550, 600, 4));
+
+      // Ground F (goal area)
+      plats.push(createPlat(9200 * L2S, 550, 800 * L2S, 40, 'grass'));
+
+      // Extra small platform to ensure reachability
+      plats.push(createPlat(10300 * L2S, 550, 500 * L2S, 40, 'grass'));
+
       return plats;
     })(),
     coins: (() => {
-      const coins: any[] = [];
-      for (let x = 300; x < 2000; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 2600 * S; x < 3600 * S; x += 200) coins.push(createCoin(x, 550));
-      for (let x = 5400 * S; x < 6600 * S; x += 200) coins.push(createCoin(x, 550));
-      return coins;
+      const L2S = 0.625;
+      const cs: any[] = [];
+      for (let x = 300; x < 1100; x += 200) cs.push(createCoin(x * L2S, 500));
+      for (let x = 2100 * L2S; x < 2700 * L2S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 5500 * L2S; x < 6100 * L2S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 7200 * L2S; x < 8000 * L2S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 9200 * L2S; x < 10000 * L2S; x += 200) cs.push(createCoin(x, 500));
+      return cs;
     })(),
     questionBlocks: (() => {
+      const L2S = 0.625;
       return [
-        createQB(800 * S, 530, 'mushroom'),
-        createQB(1500 * S, 530, 'coin'),
-        createQB(2800 * S, 530, 'mushroom'),
-        createQB(4000 * S, 530, 'flower'),
-        createQB(5500 * S, 530, 'star'),
-        createQB(7200 * S, 290, 'mushroom'),
-        createQB(8500 * S, 450, 'coin'),
+        createQB(500 * L2S, 480, 'mushroom'),
+        createQB(2300 * L2S, 480, 'coin'),
+        createQB(5000 * L2S, 480, 'flower'),
+        createQB(6500 * L2S, 480, 'mushroom'),
+        createQB(9500 * L2S, 480, 'coin'),
       ];
     })(),
     enemies: (() => {
+      const L2S = 0.625;
       return [
-        createEnemy(600 * S, 560, 'goomba'),
-        createEnemy(1400 * S, 560, 'koopa'),
-        createEnemy(2200 * S, 560, 'goomba'),
-        createEnemy(2800 * S, 560, 'robot'),
-        createEnemy(3700 * S, 560, 'piranha'),
-        createEnemy(4600 * S, 560, 'crab'),
-        createEnemy(7000 * S, 560, 'goomba'),
-        createEnemy(7500 * S, 560, 'spiny'),
+        createEnemy(500 * L2S, 510, 'goomba'),
+        createEnemy(1500 * L2S, 510, 'koopa'),
+        createEnemy(2400 * L2S, 510, 'goomba'),
+        createEnemy(3300 * L2S, 510, 'robot'),
+        createEnemy(4100 * L2S, 510, 'piranha'),
+        createEnemy(5700 * L2S, 510, 'crab'),
+        createEnemy(7500 * L2S, 510, 'goomba'),
+        createEnemy(8500 * L2S, 510, 'spiny'),
       ];
     })(),
     decorations: (() => {
+      const L2S = 0.625;
       return [
-        createDeco(400 * S, 560, 'tree'),
-        createDeco(1800 * S, 560, 'bush'),
-        createDeco(3000 * S, 560, 'tree'),
+        createDeco(400 * L2S, 510, 'tree'),
+        createDeco(2200 * L2S, 510, 'bush'),
+        createDeco(5600 * L2S, 510, 'tree'),
+        createDeco(9400 * L2S, 510, 'bush'),
       ];
     })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 11000 * S, y: 580 },
+    playerStart: { x: 150, y: 500 },
+    goal: { x: 10300 * 0.625, y: 528 },
     timeBonus: 140,
     movingPlatforms: [
-      createMovingPlat(4800 * S, 470, 140, 24, 'platform_medium', 'horizontal', 280, 20),
-      createMovingPlat(8500 * S, 480, 120, 24, 'platform_medium', 'vertical', 200, 22),
+      // Bridge between Ground B and Ground C
+      createMovingPlat(2400 * 0.625, 490, 140, 24, 'platform_medium', 'horizontal', 350, 22),
+      // Bridge between Ground C and Ground D
+      createMovingPlat(4000 * 0.625, 480, 130, 24, 'platform_medium', 'horizontal', 320, 20),
+      // Bridge between Ground D and Ground E
+      createMovingPlat(5700 * 0.625, 490, 140, 24, 'platform_medium', 'horizontal', 380, 22),
+      // Vertical helper near middle
+      createMovingPlat(8000 * 0.625, 480, 120, 24, 'platform_easy', 'vertical', 200, 18),
     ],
   },
+
+  // ============================================================
+  // LEVEL 3: Röhren-Labyrinth — 6 pipe sections, piranhas, vertical
+  // S=0.6, width=20000
+  // ============================================================
   {
-    id: 3, name: "Grasslands Mountains", width: 20000, height: 800, biome: 'grasslands',
+    id: 3, name: "Grasslands Pipes", width: 20000, height: 900, biome: 'grasslands',
     platforms: (() => {
+      const L3S = 0.6;
       const plats: any[] = [];
-      plats.push(createPlat(200 * S, 700, 800 * S, 40, 'grass'));
-      plats.push(createPlat(1200 * S, 700, 600 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(1900 * S, 700, 400 * S, 3));
-      plats.push(createPlat(2600 * S, 700, 1000 * S, 40, 'grass'));
-      plats.push(...pipeSection(3600 * S, 700, 5));
-      // Bridge gap after pipes
-      plats.push(createPlat(5200 * S, 650, 150, 20, 'platform_easy'));
-      plats.push(createPlat(5600 * S, 700, 1200 * S, 40, 'grass'));
+
+      // Start ground
+      plats.push(createPlat(250 * L3S, 550, 800 * L3S, 40, 'grass'));
+      plats.push(createPlat(1300 * L3S, 550, 500 * L3S, 40, 'grass'));
+
+      // Pipe section 1 — 3 pipes at ground level
+      plats.push(...pipeSection(L3S, 1800, 550, 3));
+
+      // Small ground between pipe groups
+      plats.push(createPlat(3300 * L3S, 550, 400 * L3S, 40, 'grass'));
+
+      // Pipe section 2 — 4 pipes at ground level
+      plats.push(...pipeSection(L3S, 3700, 550, 4));
+
+      // Elevated ground — players jump up via pipe tops
+      plats.push(createPlat(5600 * L3S, 480, 600 * L3S, 40, 'grass'));
+
+      // Pipe section 3 — 3 pipes at elevated level
+      plats.push(...pipeSection(L3S, 6200, 480, 3));
+
+      // Drop down to ground
+      plats.push(createPlat(7700 * L3S, 550, 500 * L3S, 40, 'grass'));
+
+      // Pipe section 4 — 5 pipes, mix of heights (some lower by using placement)
+      plats.push(...pipeSection(L3S, 8200, 550, 5));
+
+      // Mid-level platform
+      plats.push(createPlat(10200 * L3S, 420, 150, 28, 'platform_medium'));
+
+      // Pipe section 5 — 3 pipes at a different height
+      plats.push(...pipeSection(L3S, 10800, 550, 3));
+
+      // Ground stretch
+      plats.push(createPlat(12300 * L3S, 550, 500 * L3S, 40, 'grass'));
+
+      // Pipe section 6 — 3 pipes
+      plats.push(...pipeSection(L3S, 12800, 550, 3));
+
+      // Goal ground
+      plats.push(createPlat(14300 * L3S, 550, 800 * L3S, 40, 'grass'));
+
       return plats;
     })(),
     coins: (() => {
-      const coins: any[] = [];
-      for (let x = 300; x < 2400; x += 200) coins.push(createCoin(x * S, 650));
-      for (let x = 2600 * S; x < 3600 * S; x += 200) coins.push(createCoin(x, 650));
-      return coins;
+      const L3S = 0.6;
+      const cs: any[] = [];
+      for (let x = 300; x < 1800; x += 200) cs.push(createCoin(x * L3S, 500));
+      for (let x = 3300 * L3S; x < 3700 * L3S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 5600 * L3S; x < 6200 * L3S; x += 200) cs.push(createCoin(x, 430));
+      for (let x = 7700 * L3S; x < 8200 * L3S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 12300 * L3S; x < 12800 * L3S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 14300 * L3S; x < 15100 * L3S; x += 200) cs.push(createCoin(x, 500));
+      return cs;
     })(),
     questionBlocks: (() => {
+      const L3S = 0.6;
       return [
-        createQB(600 * S, 630, 'mushroom'),
-        createQB(1400 * S, 630, 'coin'),
-        createQB(2800 * S, 630, 'mushroom'),
-        createQB(3200 * S, 630, 'flower'),
-        createQB(3800 * S, 630, 'star'),
+        createQB(500 * L3S, 480, 'mushroom'),
+        createQB(1600 * L3S, 480, 'coin'),
+        createQB(3500 * L3S, 480, 'flower'),
+        createQB(5800 * L3S, 410, 'mushroom'),
+        createQB(9000 * L3S, 480, 'star'),
+        createQB(12600 * L3S, 480, 'coin'),
       ];
     })(),
     enemies: (() => {
+      const L3S = 0.6;
       return [
-        createEnemy(500 * S, 660, 'goomba'),
-        createEnemy(1000 * S, 660, 'koopa'),
-        createEnemy(1600 * S, 660, 'goomba'),
-        createEnemy(2200 * S, 660, 'robot'),
-        createEnemy(3700 * S, 660, 'piranha'),
-        createEnemy(4400 * S, 660, 'crab'),
+        createEnemy(500 * L3S, 510, 'goomba'),
+        createEnemy(1900 * L3S, 510, 'piranha'),
+        createEnemy(2300 * L3S, 510, 'piranha'),
+        createEnemy(2900 * L3S, 510, 'piranha'),
+        createEnemy(3900 * L3S, 510, 'piranha'),
+        createEnemy(6300 * L3S, 440, 'piranha'),
+        createEnemy(8400 * L3S, 510, 'piranha'),
+        createEnemy(8800 * L3S, 510, 'piranha'),
+        createEnemy(11000 * L3S, 510, 'piranha'),
+        createEnemy(13000 * L3S, 510, 'piranha'),
+        createEnemy(14600 * L3S, 510, 'goomba'),
       ];
     })(),
     decorations: (() => {
+      const L3S = 0.6;
       return [
-        createDeco(400 * S, 660, 'tree'),
-        createDeco(2000 * S, 660, 'bush'),
+        createDeco(400 * L3S, 510, 'tree'),
+        createDeco(2400 * L3S, 510, 'bush'),
+        createDeco(5700 * L3S, 440, 'tree'),
+        createDeco(12500 * L3S, 510, 'bush'),
       ];
     })(),
-    playerStart: { x: 150, y: 650 },
-    goal: { x: 6000 * S, y: 680 },
+    playerStart: { x: 150, y: 500 },
+    goal: { x: 14700 * 0.6, y: 528 },
     timeBonus: 160,
     movingPlatforms: [
-      createMovingPlat(3000 * S, 620, 140, 24, 'platform_medium', 'horizontal', 280, 20),
-      createMovingPlat(5400 * S, 580, 120, 24, 'platform_easy', 'vertical', 160, 18),
+      // Help transition between ground and elevated section
+      createMovingPlat(5000 * 0.6, 490, 130, 24, 'platform_medium', 'horizontal', 400, 22),
+      // Bridge between mid-level and pipe section 5
+      createMovingPlat(9800 * 0.6, 480, 120, 24, 'platform_medium', 'vertical', 180, 20),
     ],
   },
+
+  // ============================================================
+  // LEVEL 4: Vertikal-Kletterer — 3× verticalClimb, varied heights
+  // S=0.556, width=22000
+  // ============================================================
   {
-    id: 4, name: "Grasslands Valley", width: 20250, height: 700, biome: 'grasslands',
+    id: 4, name: "Grasslands Ascent", width: 22000, height: 900, biome: 'grasslands',
     platforms: (() => {
+      const L4S = 0.556;
       const plats: any[] = [];
-      plats.push(createPlat(200 * S, 600, 1000 * S, 40, 'grass'));
-      plats.push(createPlat(1500 * S, 600, 800 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(2400 * S, 600, 500 * S, 3));
-      plats.push(createPlat(3200 * S, 600, 1200 * S, 40, 'grass'));
-      plats.push(...pipeSection(4400 * S, 600, 5));
-      // Bridge gap
-      plats.push(createPlat(5800 * S, 550, 150, 20, 'platform_easy'));
-      plats.push(createPlat(6200 * S, 600, 1500 * S, 40, 'grass'));
+
+      // Start ground
+      plats.push(createPlat(250 * L4S, 550, 600 * L4S, 40, 'grass'));
+
+      // Short bridge platform
+      plats.push(createPlat(950 * L4S, 500, 120, 28, 'platform_easy'));
+
+      // Vertical climb 1: arc going up and down
+      plats.push(...verticalClimb(L4S, 1100, 550));
+
+      // Ground after climb 1
+      plats.push(createPlat(3200 * L4S, 550, 600 * L4S, 40, 'grass'));
+
+      // Vertical climb 2: higher arc
+      plats.push(...verticalClimb(L4S, 3800, 550));
+
+      // Ground after climb 2
+      plats.push(createPlat(5900 * L4S, 550, 500 * L4S, 40, 'grass'));
+
+      // Scattered platforms at mixed heights for varied climbing
+      plats.push(createPlat(6600 * L4S, 480, 120, 28, 'platform_easy'));
+      plats.push(createPlat(6900 * L4S, 400, 120, 28, 'platform_medium'));
+      plats.push(createPlat(7200 * L4S, 320, 120, 28, 'platform_hard'));
+      plats.push(createPlat(7500 * L4S, 240, 150, 40, 'grass'));
+      plats.push(createPlat(7900 * L4S, 320, 120, 28, 'platform_hard'));
+      plats.push(createPlat(8200 * L4S, 400, 120, 28, 'platform_medium'));
+      plats.push(createPlat(8500 * L4S, 480, 120, 28, 'platform_easy'));
+
+      // Ground mid-section
+      plats.push(createPlat(9100 * L4S, 550, 600 * L4S, 40, 'grass'));
+
+      // Vertical climb 3
+      plats.push(...verticalClimb(L4S, 9700, 550));
+
+      // Ground after climb 3
+      plats.push(createPlat(11800 * L4S, 550, 600 * L4S, 40, 'grass'));
+
+      // Scattered platforms at different heights (secondary climb)
+      plats.push(createPlat(12600 * L4S, 490, 120, 28, 'platform_easy'));
+      plats.push(createPlat(12900 * L4S, 430, 120, 28, 'platform_medium'));
+      plats.push(createPlat(13200 * L4S, 370, 120, 28, 'platform_hard'));
+      plats.push(createPlat(13500 * L4S, 310, 140, 32, 'platform_hard'));
+
+      // Descending platforms
+      plats.push(createPlat(13900 * L4S, 370, 120, 28, 'platform_hard'));
+      plats.push(createPlat(14200 * L4S, 430, 120, 28, 'platform_medium'));
+      plats.push(createPlat(14500 * L4S, 490, 120, 28, 'platform_easy'));
+
+      // Final ground to goal
+      plats.push(createPlat(15100 * L4S, 550, 800 * L4S, 40, 'grass'));
+
       return plats;
     })(),
     coins: (() => {
-      const coins: any[] = [];
-      for (let x = 300; x < 2400; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 3200 * S; x < 4400 * S; x += 200) coins.push(createCoin(x, 550));
-      return coins;
+      const L4S = 0.556;
+      const cs: any[] = [];
+      for (let x = 300; x < 900; x += 200) cs.push(createCoin(x * L4S, 500));
+      // Coins along verticalClimb 1 top
+      for (let x = 1900; x < 2100; x += 100) cs.push(createCoin(x * L4S, 190));
+      for (let x = 3200 * L4S; x < 3800 * L4S; x += 200) cs.push(createCoin(x, 500));
+      // Coins at climb 2 peak
+      for (let x = 4600; x < 4800; x += 100) cs.push(createCoin(x * L4S, 190));
+      // Coins along mixed-height section
+      cs.push(createCoin(7500 * L4S, 190));
+      for (let x = 9100 * L4S; x < 9700 * L4S; x += 200) cs.push(createCoin(x, 500));
+      // Climb 3 peak
+      for (let x = 10600; x < 10800; x += 100) cs.push(createCoin(x * L4S, 190));
+      for (let x = 11800 * L4S; x < 12400 * L4S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 15100 * L4S; x < 16000 * L4S; x += 200) cs.push(createCoin(x, 500));
+      return cs;
     })(),
     questionBlocks: (() => {
+      const L4S = 0.556;
       return [
-        createQB(800 * S, 530, 'mushroom'),
-        createQB(1800 * S, 530, 'coin'),
-        createQB(3500 * S, 530, 'flower'),
-        createQB(4000 * S, 530, 'star'),
-        createQB(4500 * S, 530, 'mushroom'),
+        createQB(500 * L4S, 480, 'mushroom'),
+        createQB(2000 * L4S, 170, 'star'),
+        createQB(3400 * L4S, 480, 'flower'),
+        createQB(4700 * L4S, 170, 'mushroom'),
+        createQB(9200 * L4S, 480, 'coin'),
+        createQB(15300 * L4S, 480, 'mushroom'),
       ];
     })(),
     enemies: (() => {
+      const L4S = 0.556;
       return [
-        createEnemy(600 * S, 560, 'goomba'),
-        createEnemy(1300 * S, 560, 'koopa'),
-        createEnemy(1900 * S, 560, 'goomba'),
-        createEnemy(2500 * S, 560, 'robot'),
-        createEnemy(4500 * S, 560, 'piranha'),
-        createEnemy(5500 * S, 560, 'crab'),
+        createEnemy(400 * L4S, 510, 'goomba'),
+        createEnemy(1600 * L4S, 470, 'crab'),
+        createEnemy(2200 * L4S, 190, 'goomba'),
+        createEnemy(3300 * L4S, 510, 'koopa'),
+        createEnemy(4300 * L4S, 470, 'robot'),
+        createEnemy(5000 * L4S, 190, 'spiny'),
+        createEnemy(6100 * L4S, 510, 'goomba'),
+        createEnemy(7400 * L4S, 200, 'goomba'),
+        createEnemy(9900 * L4S, 510, 'robot'),
+        createEnemy(10300 * L4S, 190, 'spiny'),
       ];
     })(),
     decorations: (() => {
+      const L4S = 0.556;
       return [
-        createDeco(400 * S, 560, 'tree'),
-        createDeco(2000 * S, 560, 'bush'),
-        createDeco(5000 * S, 560, 'tree'),
+        createDeco(300 * L4S, 510, 'tree'),
+        createDeco(2500 * L4S, 190, 'bush'),
+        createDeco(6000 * L4S, 510, 'tree'),
+        createDeco(10000 * L4S, 190, 'bush'),
+        createDeco(15500 * L4S, 510, 'tree'),
       ];
     })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 4518, y: 578 },
+    playerStart: { x: 150, y: 500 },
+    goal: { x: 15500 * 0.556, y: 528 },
     timeBonus: 180,
     movingPlatforms: [
-      createMovingPlat(5500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 400, 22),
+      // Bridge between start ground and climb 1 approach
+      createMovingPlat(700 * 0.556, 490, 120, 24, 'platform_medium', 'horizontal', 300, 20),
+      // Helper between scattered platforms
+      createMovingPlat(8800 * 0.556, 470, 130, 24, 'platform_medium', 'horizontal', 280, 22),
     ],
   },
+
+  // ============================================================
+  // LEVEL 5: Gegner-Horde — 15-20 enemies, simpler layout, combat focus
+  // S=0.5, width=18000
+  // ============================================================
   {
-    id: 5, name: "Grasslands Fortress", width: 20160, height: 700, biome: 'grasslands',
+    id: 5, name: "Grasslands Horde", width: 18000, height: 600, biome: 'grasslands',
     platforms: (() => {
+      const L5S = 0.5;
       const plats: any[] = [];
-      plats.push(createPlat(200 * S, 600, 1200 * S, 40, 'grass'));
-      plats.push(createPlat(1700 * S, 600, 800 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(2600 * S, 600, 500 * S, 4));
-      plats.push(createPlat(3500 * S, 600, 1500 * S, 40, 'grass'));
-      plats.push(...pipeSection(5000 * S, 600, 6));
-      // Bridge gap
-      plats.push(createPlat(6800 * S, 550, 150, 20, 'platform_easy'));
-      plats.push(createPlat(7200 * S, 600, 1800 * S, 40, 'grass'));
+
+      // Long combat arenas — mostly continuous ground with brief gaps
+      // Arena 1
+      plats.push(createPlat(250 * L5S, 550, 1600 * L5S, 40, 'grass'));
+
+      // Short gap
+      plats.push(...gapWithPlatforms(L5S, 2100, 550, 300, 1));
+
+      // Arena 2
+      plats.push(createPlat(2900 * L5S, 550, 1800 * L5S, 40, 'grass'));
+
+      // Short gap
+      plats.push(...gapWithPlatforms(L5S, 5000, 550, 300, 2));
+
+      // Arena 3
+      plats.push(createPlat(6000 * L5S, 550, 1600 * L5S, 40, 'grass'));
+
+      // Pipe section (to populate with piranha) — start earlier to keep gap ≤ 600
+      plats.push(...pipeSection(L5S, 7700, 550, 3));
+
+      // Arena 4
+      plats.push(createPlat(9500 * L5S, 550, 1800 * L5S, 40, 'grass'));
+
+      // Short gap
+      plats.push(...gapWithPlatforms(L5S, 11500, 550, 350, 2));
+
+      // Arena 5 (goal arena)
+      plats.push(createPlat(12500 * L5S, 550, 1800 * L5S, 40, 'grass'));
+
+      // Extra platform for exploration past goal
+      plats.push(createPlat(14500 * L5S, 500, 120, 28, 'platform_easy'));
+      plats.push(createPlat(14800 * L5S, 450, 120, 28, 'platform_medium'));
+
       return plats;
     })(),
     coins: (() => {
-      const coins: any[] = [];
-      for (let x = 300; x < 2600; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 3500 * S; x < 5000 * S; x += 200) coins.push(createCoin(x, 550));
-      return coins;
+      const L5S = 0.5;
+      const cs: any[] = [];
+      for (let x = 300; x < 2000; x += 200) cs.push(createCoin(x * L5S, 500));
+      for (let x = 2900 * L5S; x < 4700 * L5S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 6000 * L5S; x < 7800 * L5S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 9500 * L5S; x < 11300 * L5S; x += 200) cs.push(createCoin(x, 500));
+      for (let x = 12500 * L5S; x < 14300 * L5S; x += 200) cs.push(createCoin(x, 500));
+      return cs;
     })(),
     questionBlocks: (() => {
+      const L5S = 0.5;
       return [
-        createQB(500 * S, 480, 'mushroom'),
-        createQB(1500 * S, 480, 'coin'),
-        createQB(3000 * S, 586, 'mushroom'),
-        createQB(3700 * S, 586, 'flower'),
-        createQB(4500 * S, 586, 'star'),
-        createQB(6000 * S, 586, 'mushroom'),
+        createQB(400 * L5S, 480, 'mushroom'),
+        createQB(3200 * L5S, 480, 'coin'),
+        createQB(6500 * L5S, 480, 'flower'),
+        createQB(9800 * L5S, 480, 'mushroom'),
+        createQB(13000 * L5S, 480, 'star'),
       ];
     })(),
     enemies: (() => {
+      const L5S = 0.5;
       return [
-        createEnemy(500 * S, 560, 'goomba'),
-        createEnemy(1100 * S, 560, 'koopa'),
-        createEnemy(1700 * S, 560, 'goomba'),
-        createEnemy(2400 * S, 560, 'robot'),
-        createEnemy(5100 * S, 560, 'piranha'),
-        createEnemy(5600 * S, 560, 'crab'),
-        createEnemy(6200 * S, 560, 'spiny'),
+        // Arena 1: 5 enemies
+        createEnemy(350 * L5S, 510, 'goomba'),
+        createEnemy(600 * L5S, 510, 'goomba'),
+        createEnemy(900 * L5S, 510, 'koopa'),
+        createEnemy(1200 * L5S, 510, 'goomba'),
+        createEnemy(1500 * L5S, 510, 'robot'),
+        // Arena 2: 4 enemies  
+        createEnemy(3000 * L5S, 510, 'spiny'),
+        createEnemy(3400 * L5S, 510, 'goomba'),
+        createEnemy(3800 * L5S, 510, 'crab'),
+        createEnemy(4300 * L5S, 510, 'koopa'),
+        // Arena 3: 4 enemies (plus piranhas)
+        createEnemy(6200 * L5S, 510, 'robot'),
+        createEnemy(6700 * L5S, 510, 'goomba'),
+        createEnemy(7200 * L5S, 510, 'spiny'),
+        createEnemy(8100 * L5S, 510, 'piranha'),
+        createEnemy(8500 * L5S, 510, 'piranha'),
+        // Arena 4: 4 enemies
+        createEnemy(9700 * L5S, 510, 'goomba'),
+        createEnemy(10300 * L5S, 510, 'koopa'),
+        createEnemy(10800 * L5S, 510, 'crab'),
+        createEnemy(11200 * L5S, 510, 'robot'),
+        // Arena 5: 2 enemies
+        createEnemy(12600 * L5S, 510, 'goomba'),
+        createEnemy(14000 * L5S, 510, 'spiny'),
       ];
     })(),
     decorations: (() => {
+      const L5S = 0.5;
       return [
-        createDeco(400 * S, 560, 'tree'),
-        createDeco(2800 * S, 560, 'bush'),
-        createDeco(6000 * S, 560, 'tree'),
+        createDeco(500 * L5S, 510, 'tree'),
+        createDeco(5000 * L5S, 510, 'bush'),
+        createDeco(7000 * L5S, 510, 'tree'),
+        createDeco(11000 * L5S, 510, 'bush'),
+        createDeco(13500 * L5S, 510, 'tree'),
       ];
     })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 5265, y: 578 },
+    playerStart: { x: 150, y: 500 },
+    goal: { x: 12500 * 0.5, y: 528 },
     timeBonus: 200,
     movingPlatforms: [
-      createMovingPlat(3200 * S, 520, 150, 24, 'platform_medium', 'horizontal', 320, 22),
-      createMovingPlat(4500 * S, 500, 120, 24, 'platform_medium', 'vertical', 400, 20),
-      createMovingPlat(3115, 540, 120, 24, 'platform_medium', 'horizontal', 403, 20),
+      // Quick skip over gap 2
+      createMovingPlat(5500 * 0.5, 490, 130, 24, 'platform_medium', 'horizontal', 350, 25),
+      // Bridge over pipe section
+      createMovingPlat(9000 * 0.5, 480, 120, 24, 'platform_medium', 'horizontal', 400, 24),
     ],
   },
+
+  // ============================================================
+  // LEVEL 6: Flaggen-Run — Long, fast dash with many coins
+  // S=0.45, width=21000
+  // ============================================================
   {
-    id: 6, name: "Grasslands Finale", width: 20000, height: 700, biome: 'grasslands',
+    id: 6, name: "Grasslands Dash", width: 21000, height: 600, biome: 'grasslands',
     platforms: (() => {
+      const L6S = 0.45;
       const plats: any[] = [];
-      plats.push(createPlat(200 * S, 600, 1500 * S, 40, 'grass'));
-      plats.push(createPlat(2000 * S, 600, 1000 * S, 40, 'grass'));
-      plats.push(...gapWithPlatforms(3100 * S, 600, 600 * S, 4));
-      plats.push(createPlat(4100 * S, 600, 1800 * S, 40, 'grass'));
-      plats.push(...pipeSection(5900 * S, 600, 6));
-      // Bridge gap
-      plats.push(createPlat(7800 * S, 550, 150, 20, 'platform_easy'));
-      plats.push(createPlat(8200 * S, 600, 2000 * S, 40, 'grass'));
+
+      // Long dash sections with minimal gaps — just run and jump
+      // Section 1: Sprint start
+      plats.push(createPlat(250 * L6S, 550, 2000 * L6S, 40, 'grass'));
+
+      // Brief gap
+      plats.push(...gapWithPlatforms(L6S, 2500, 550, 250, 1));
+
+      // Section 2: Run
+      plats.push(createPlat(3200 * L6S, 550, 2000 * L6S, 40, 'grass'));
+
+      // Brief gap
+      plats.push(...gapWithPlatforms(L6S, 5500, 550, 250, 1));
+
+      // Section 3: Run
+      plats.push(createPlat(6200 * L6S, 550, 2000 * L6S, 40, 'grass'));
+
+      // Pipe section — quick obstacle (start earlier to keep gap ≤ 600)
+      plats.push(...pipeSection(L6S, 8000, 550, 2));
+
+      // Section 4: Run
+      plats.push(createPlat(9800 * L6S, 550, 2000 * L6S, 40, 'grass'));
+
+      // Brief gap
+      plats.push(...gapWithPlatforms(L6S, 12100, 550, 250, 1));
+
+      // Section 5: Run
+      plats.push(createPlat(12800 * L6S, 550, 2000 * L6S, 40, 'grass'));
+
+      // Section 6: Final sprint
+      plats.push(createPlat(15100 * L6S, 550, 2000 * L6S, 40, 'grass'));
+
       return plats;
     })(),
     coins: (() => {
-      const coins: any[] = [];
-      for (let x = 300; x < 3100; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 4100 * S; x < 5900 * S; x += 200) coins.push(createCoin(x, 550));
-      return coins;
+      const L6S = 0.45;
+      const cs: any[] = [];
+      // Dense coin trails along all run sections
+      for (let x = 300; x < 2400; x += 180) cs.push(createCoin(x * L6S, 500));
+      for (let x = 3200 * L6S; x < 5200 * L6S; x += 180) cs.push(createCoin(x, 500));
+      for (let x = 6200 * L6S; x < 8200 * L6S; x += 180) cs.push(createCoin(x, 500));
+      for (let x = 9800 * L6S; x < 11800 * L6S; x += 180) cs.push(createCoin(x, 500));
+      for (let x = 12800 * L6S; x < 14800 * L6S; x += 180) cs.push(createCoin(x, 500));
+      for (let x = 15100 * L6S; x < 17100 * L6S; x += 180) cs.push(createCoin(x, 500));
+      return cs;
     })(),
     questionBlocks: (() => {
+      const L6S = 0.45;
       return [
-        createQB(800 * S, 530, 'mushroom'),
-        createQB(1500 * S, 530, 'coin'),
-        createQB(2200 * S, 530, 'mushroom'),
-        createQB(3000 * S, 530, 'flower'),
-        createQB(4500 * S, 530, 'star'),
-        createQB(5500 * S, 530, 'mushroom'),
-        createQB(6500 * S, 530, 'coin'),
+        createQB(1000 * L6S, 480, 'mushroom'),
+        createQB(5000 * L6S, 480, 'flower'),
+        createQB(7000 * L6S, 480, 'coin'),
+        createQB(10000 * L6S, 480, 'star'),
+        createQB(14000 * L6S, 480, 'coin'),
+        createQB(16000 * L6S, 480, 'mushroom'),
       ];
     })(),
     enemies: (() => {
+      const L6S = 0.45;
       return [
-        createEnemy(600 * S, 560, 'goomba'),
-        createEnemy(1200 * S, 560, 'koopa'),
-        createEnemy(1900 * S, 560, 'goomba'),
-        createEnemy(2700 * S, 560, 'robot'),
-        createEnemy(4200 * S, 560, 'piranha'),
-        createEnemy(4800 * S, 560, 'crab'),
-        createEnemy(6000 * S, 560, 'spiny'),
+        createEnemy(1200 * L6S, 510, 'goomba'),
+        createEnemy(1600 * L6S, 510, 'goomba'),
+        createEnemy(4000 * L6S, 510, 'koopa'),
+        createEnemy(4500 * L6S, 510, 'robot'),
+        createEnemy(7000 * L6S, 510, 'spiny'),
+        createEnemy(7500 * L6S, 510, 'crab'),
+        createEnemy(8700 * L6S, 510, 'piranha'),
+        createEnemy(9000 * L6S, 510, 'piranha'),
+        createEnemy(10800 * L6S, 510, 'goomba'),
+        createEnemy(13500 * L6S, 510, 'koopa'),
+        createEnemy(14000 * L6S, 510, 'robot'),
+        createEnemy(15800 * L6S, 510, 'crab'),
       ];
     })(),
     decorations: (() => {
+      const L6S = 0.45;
       return [
-        createDeco(400 * S, 560, 'tree'),
-        createDeco(2500 * S, 560, 'bush'),
-        createDeco(5000 * S, 560, 'tree'),
-        createDeco(7000 * S, 560, 'bush'),
+        createDeco(500 * L6S, 510, 'tree'),
+        createDeco(3000 * L6S, 510, 'bush'),
+        createDeco(6500 * L6S, 510, 'tree'),
+        createDeco(10000 * L6S, 510, 'bush'),
+        createDeco(14000 * L6S, 510, 'tree'),
+        createDeco(16500 * L6S, 510, 'bush'),
       ];
     })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 5980, y: 578 },
+    playerStart: { x: 150, y: 500 },
+    goal: { x: 15100 * 0.45, y: 528 },
     timeBonus: 220,
     movingPlatforms: [
-      createMovingPlat(5200, 480, 150, 24, 'platform_medium', 'horizontal', 420, 22),
-      createMovingPlat(3644, 540, 120, 24, 'platform_medium', 'horizontal', 443, 20),
+      // Speed across gap 1
+      createMovingPlat(2800 * 0.45, 490, 140, 24, 'platform_medium', 'horizontal', 350, 26),
+      // Speed across gap 2
+      createMovingPlat(5800 * 0.45, 490, 130, 24, 'platform_medium', 'horizontal', 320, 26),
+      // Bridge gap 3
+      createMovingPlat(12400 * 0.45, 490, 140, 24, 'platform_medium', 'horizontal', 350, 24),
     ],
   },
 ];

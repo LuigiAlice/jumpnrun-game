@@ -1,4 +1,4 @@
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, pipeSection, verticalClimb, gapWithPlatforms } from './helpers';
 
 const canyonGroundSection = (S: number, startX: number, baseY: number, width: number): any[] => {
   const plats = [];
@@ -59,572 +59,719 @@ const canyonVerticalSection = (S: number, startX: number, baseY: number, steps: 
 };
 
 export const CANYON_BASE_LEVELS: LevelData[] = [
+  // ============================================================
+  // LEVEL 73 — Canyon Descent (Tutorial)
+  // Linear descent through descending stone ground sections.
+  // Few enemies, lots of coins, learn the mechanics.
+  // ============================================================
   {
     id: 73,
     name: "Canyon Descent",
-    width: 19460,
+    width: 17000,
     height: 600,
     biome: 'canyon-base',
     platforms: (() => {
       const S = 0.556;
       const plats: any[] = [];
-      plats.push(createPlat(0, 550, 800 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 800, 550, 3000));
-      plats.push(...canyonWallSection(S, 3800, 550, 200));
-      plats.push(...canyonFloatingPlatforms(S, 4200, 550, 8));
-      plats.push(createPlat(5800 * S, 550, 1000 * S, 40, 'stone'));
-      plats.push(createPlat(5000 * S, 376, 100, 24, 'platform_easy'));
-      plats.push(...canyonGroundSection(S, 6800, 550, 2500));
-      plats.push(...canyonVerticalSection(S, 9400, 550, 6));
-      plats.push(createPlat(10100 * S, 350, 600 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 10700, 350, 3000));
-      plats.push(...canyonWallSection(S, 13700, 350, 180));
-      plats.push(...canyonFloatingPlatforms(S, 14100, 350, 10));
-      plats.push(createPlat(16200 * S, 350, 800 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 17000, 350, 2500));
-      plats.push(...canyonVerticalSection(S, 19600, 350, 5));
-      plats.push(createPlat(20300 * S, 150, 600 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 20900, 150, 3000));
-      plats.push(...canyonWallSection(S, 23900, 150, 200));
-      plats.push(...canyonFloatingPlatforms(S, 24300, 150, 8));
-      plats.push(createPlat(26400 * S, 150, 800 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 27200, 150, 2500));
-      plats.push(...canyonVerticalSection(S, 29800, 150, 6));
-      plats.push(createPlat(30600 * S, 150, 4000 * S, 40, 'stone'));
+      plats.push(createPlat(0, 550, 900 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 900, 550, 3000));
+      plats.push(...gapWithPlatforms(S, 4100, 550, 600, 3));
+      plats.push(createPlat(5000 * S, 470, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 5800, 470, 2800));
+      plats.push(...canyonWallSection(S, 8800, 470, 150));
+      plats.push(createPlat(9300 * S, 390, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 10000, 390, 2400));
+      plats.push(...gapWithPlatforms(S, 12700, 390, 500, 3));
+      plats.push(createPlat(13500 * S, 310, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 14200, 310, 2000));
+      plats.push(...canyonVerticalSection(S, 16600, 310, 5));
+      plats.push(createPlat(17600 * S, 80, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 18400, 80, 2000));
+      plats.push(createPlat(20800 * S, 80, 1000 * S, 40, 'stone'));
       return plats;
     })(),
-    movingPlatforms: [
-      createMovingPlat(5400 * 0.556, 300, 150, 24, 'platform_medium', 'horizontal', 600, 20),
-      createMovingPlat(10200 * 0.556, 280, 150, 24, 'platform_medium', 'vertical', 200, 20),
-    ],
+    movingPlatforms: (() => {
+      const S = 0.556;
+      return [
+        createMovingPlat(4500 * S, 420, 150, 24, 'platform_medium', 'horizontal', 400, 18),
+      ];
+    })(),
     coins: (() => {
       const S = 0.556;
       const coins: any[] = [];
       for (let x = 200 * S; x < 3800 * S; x += 150 * S) coins.push(createCoin(x, 500));
-      for (let x = 4200 * S; x < 5800 * S; x += 120 * S) coins.push(createCoin(x, 380));
-      for (let x = 5800 * S; x < 6800 * S; x += 150 * S) coins.push(createCoin(x, 500));
-      for (let x = 6800 * S; x < 9300 * S; x += 150 * S) coins.push(createCoin(x, 500));
-      for (let x = 9400 * S; x < 10100 * S; x += 100 * S) coins.push(createCoin(x, 280));
-      for (let x = 10700 * S; x < 13700 * S; x += 150 * S) coins.push(createCoin(x, 300));
-      for (let x = 14100 * S; x < 16200 * S; x += 120 * S) coins.push(createCoin(x, 220));
-      for (let x = 17000 * S; x < 19600 * S; x += 150 * S) coins.push(createCoin(x, 300));
-      for (let x = 20300 * S; x < 23900 * S; x += 150 * S) coins.push(createCoin(x, 100));
-      for (let x = 24300 * S; x < 26400 * S; x += 120 * S) coins.push(createCoin(x, 80));
-      for (let x = 27200 * S; x < 29800 * S; x += 150 * S) coins.push(createCoin(x, 100));
-      for (let x = 30600 * S; x < 34000 * S; x += 150 * S) coins.push(createCoin(x, 100));
+      for (let x = 4400 * S; x < 5800 * S; x += 120 * S) coins.push(createCoin(x, 420));
+      for (let x = 5800 * S; x < 8800 * S; x += 150 * S) coins.push(createCoin(x, 420));
+      for (let x = 8800 * S; x < 9300 * S; x += 100 * S) coins.push(createCoin(x, 350));
+      for (let x = 10000 * S; x < 12600 * S; x += 150 * S) coins.push(createCoin(x, 340));
+      for (let x = 13000 * S; x < 14200 * S; x += 120 * S) coins.push(createCoin(x, 260));
+      for (let x = 14200 * S; x < 16600 * S; x += 150 * S) coins.push(createCoin(x, 260));
+      for (let x = 16600 * S; x < 17600 * S; x += 100 * S) coins.push(createCoin(x, 160));
+      for (let x = 18400 * S; x < 20800 * S; x += 150 * S) coins.push(createCoin(x, 30));
+      for (let x = 20800 * S; x < 21800 * S; x += 150 * S) coins.push(createCoin(x, 30));
       return coins;
     })(),
     questionBlocks: (() => {
       const S = 0.556;
       return [
         createQB(1500 * S, 480, 'coin'),
-        createQB(3200 * S, 480, 'mushroom'),
-        createQB(5000 * S, 380, 'flower'),
-        createQB(7200 * S, 480, 'star'),
-        createQB(9600 * S, 320, 'mushroom'),
-        createQB(11400 * S, 280, 'coin'),
-        createQB(14800 * S, 250, 'flower'),
-        createQB(17800 * S, 280, 'star'),
-        createQB(20900 * S, 120, 'mushroom'),
-        createQB(25000 * S, 120, 'coin'),
+        createQB(4000 * S, 450, 'mushroom'),
+        createQB(6800 * S, 400, 'coin'),
+        createQB(10300 * S, 320, 'flower'),
+        createQB(16200 * S, 220, 'star'),
       ];
     })(),
     enemies: (() => {
       const S = 0.556;
       return [
-        createEnemy(600 * S, 460, 'goomba'), createEnemy(900 * S, 460, 'goomba'), createEnemy(1200 * S, 460, 'koopa'),
-        createEnemy(1800 * S, 460, 'crab'), createEnemy(2400 * S, 460, 'spiny'), createEnemy(3000 * S, 460, 'goomba'),
-        createEnemy(3600 * S, 460, 'koopa'), createEnemy(4200 * S, 460, 'fireball'), createEnemy(4500 * S, 340, 'thwomp'),
-        createEnemy(5100 * S, 460, 'crab'), createEnemy(5700 * S, 460, 'spiny'), createEnemy(6300 * S, 460, 'goomba'),
-        createEnemy(6900 * S, 460, 'koopa'), createEnemy(7500 * S, 460, 'fireball'), createEnemy(10200 * S, 260, 'thwomp'),
-        createEnemy(12000 * S, 460, 'goomba'), createEnemy(12600 * S, 460, 'koopa'), createEnemy(15500 * S, 230, 'thwomp'),
-        createEnemy(18500 * S, 460, 'goomba'), createEnemy(22000 * S, 80, 'koopa'), createEnemy(25800 * S, 60, 'thwomp'),
-        createEnemy(28500 * S, 80, 'goomba'),
+        createEnemy(1200 * S, 460, 'goomba'),
+        createEnemy(6000 * S, 380, 'goomba'),
+        createEnemy(10500 * S, 300, 'goomba'),
+        createEnemy(18000 * S, 30, 'koopa'),
       ];
     })(),
     decorations: (() => {
       const S = 0.556;
       return [
-        createDeco(300 * S, 500, 'canyon-rock'), createDeco(900 * S, 450, 'formation'), createDeco(1800 * S, 400, 'eagle'),
-        createDeco(3000 * S, 480, 'canyon-rock'), createDeco(4500 * S, 350, 'formation'), createDeco(6000 * S, 450, 'eagle'),
-        createDeco(7500 * S, 400, 'canyon-rock'), createDeco(9500 * S, 280, 'formation'), createDeco(11500 * S, 350, 'eagle'),
-        createDeco(14000 * S, 250, 'canyon-rock'), createDeco(16000 * S, 300, 'formation'), createDeco(19000 * S, 280, 'eagle'),
-        createDeco(22000 * S, 80, 'canyon-rock'), createDeco(26000 * S, 60, 'formation'), createDeco(30000 * S, 80, 'eagle'),
+        createDeco(500 * S, 500, 'canyon-rock'),
+        createDeco(2000 * S, 480, 'formation'),
+        createDeco(4500 * S, 400, 'eagle'),
+        createDeco(7500 * S, 400, 'canyon-rock'),
+        createDeco(11000 * S, 320, 'formation'),
+        createDeco(15000 * S, 240, 'canyon-rock'),
+        createDeco(19000 * S, 60, 'eagle'),
       ];
     })(),
-    playerStart: { x: 150, y: 460 },
-    goal: createGoal(18126, 128, 1500, 'easy'),
+    playerStart: { x: 100, y: 470 },
+    goal: createGoal(21300 * 0.556, 48, 1200, 'easy'),
     timeBonus: 180,
   },
+
+  // ============================================================
+  // LEVEL 74 — Canyon Gaps (Gap-Strecke)
+  // 5 gap sections across canyons with moving platforms.
+  // ============================================================
   {
     id: 74,
-    name: "Rocky Heights",
-    width: 20000,
+    name: "Canyon Gaps",
+    width: 22000,
     height: 650,
     biome: 'canyon-base',
     platforms: (() => {
       const S = 0.526;
       const plats: any[] = [];
-      plats.push(createPlat(0, 600, 900 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 900, 600, 3500));
-      plats.push(...canyonWallSection(S, 4400, 600, 220));
-      plats.push(...canyonFloatingPlatforms(S, 4800, 600, 10));
-      plats.push(createPlat(6800 * S, 600, 1200 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 8000, 600, 3000));
-      plats.push(...canyonVerticalSection(S, 11100, 600, 7));
-      plats.push(createPlat(12000 * S, 380, 700 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 12700, 380, 3500));
-      plats.push(...canyonWallSection(S, 16200, 380, 200));
-      plats.push(...canyonFloatingPlatforms(S, 16600, 380, 12));
-      plats.push(createPlat(18800 * S, 380, 900 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 19700, 380, 3000));
-      plats.push(...canyonVerticalSection(S, 22800, 380, 6));
-      plats.push(createPlat(23600 * S, 180, 700 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 24300, 180, 3500));
-      plats.push(...canyonWallSection(S, 27800, 180, 200));
-      plats.push(...canyonFloatingPlatforms(S, 28200, 180, 10));
-      plats.push(createPlat(30400 * S, 180, 1000 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 31400, 180, 3000));
-      plats.push(...canyonVerticalSection(S, 34500, 180, 7));
-      plats.push(createPlat(35400 * S, 180, 2600 * S, 40, 'stone'));
+      plats.push(createPlat(0, 600, 1000 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 1000, 600, 2500));
+      // Gap 1
+      plats.push(createPlat(3800 * S, 600, 600 * S, 40, 'stone'));
+      plats.push(...gapWithPlatforms(S, 4400, 600, 800, 4));
+      plats.push(createPlat(5600 * S, 600, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 6400, 600, 2000));
+      // Gap 2
+      plats.push(createPlat(8700 * S, 550, 500 * S, 40, 'stone'));
+      plats.push(...gapWithPlatforms(S, 9200, 550, 900, 5));
+      plats.push(...canyonWallSection(S, 10500, 550, 160));
+      plats.push(createPlat(11000 * S, 550, 900 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 11900, 550, 2000));
+      // Gap 3
+      plats.push(createPlat(14200 * S, 480, 500 * S, 40, 'stone'));
+      plats.push(...gapWithPlatforms(S, 14700, 480, 700, 4));
+      plats.push(createPlat(15800 * S, 480, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 16500, 480, 2000));
+      // Gap 4
+      plats.push(createPlat(18800 * S, 420, 500 * S, 40, 'stone'));
+      plats.push(...gapWithPlatforms(S, 19300, 420, 900, 5));
+      plats.push(createPlat(20600 * S, 420, 600 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 21200, 420, 2000));
+      plats.push(...canyonVerticalSection(S, 23500, 420, 4));
+      // Gap 5
+      plats.push(createPlat(24300 * S, 340, 400 * S, 40, 'stone'));
+      plats.push(...gapWithPlatforms(S, 24700, 340, 600, 4));
+      plats.push(createPlat(25700 * S, 340, 600 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 26300, 340, 2000));
+      plats.push(...canyonWallSection(S, 28600, 340, 150));
+      plats.push(createPlat(29100 * S, 260, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 29900, 260, 2500));
+      // Goal area
+      plats.push(...canyonVerticalSection(S, 32700, 260, 4));
+      plats.push(createPlat(33600 * S, 150, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 34400, 150, 2000));
+      plats.push(createPlat(36800 * S, 150, 600 * S, 40, 'stone'));
       return plats;
     })(),
     movingPlatforms: (() => {
       const S = 0.526;
       return [
-        createMovingPlat(6000 * S, 480, 150, 24, 'platform_medium', 'horizontal', 500, 18),
-        createMovingPlat(11600 * S, 340, 150, 24, 'platform_medium', 'vertical', 200, 20),
+        createMovingPlat(4900 * S, 480, 150, 24, 'platform_medium', 'horizontal', 500, 20),
+        createMovingPlat(15000 * S, 380, 150, 24, 'platform_medium', 'vertical', 150, 18),
+        createMovingPlat(20000 * S, 320, 150, 24, 'platform_medium', 'horizontal', 400, 22),
       ];
     })(),
     coins: (() => {
       const S = 0.526;
       const coins: any[] = [];
-      for (let x = 200 * S; x < 4400 * S; x += 160 * S) coins.push(createCoin(x, 550));
-      for (let x = 4800 * S; x < 6800 * S; x += 130 * S) coins.push(createCoin(x, 420));
-      for (let x = 6800 * S; x < 8000 * S; x += 160 * S) coins.push(createCoin(x, 550));
-      for (let x = 8000 * S; x < 11100 * S; x += 160 * S) coins.push(createCoin(x, 550));
-      for (let x = 11100 * S; x < 12000 * S; x += 100 * S) coins.push(createCoin(x, 300));
-      for (let x = 12700 * S; x < 16200 * S; x += 160 * S) coins.push(createCoin(x, 330));
-      for (let x = 16600 * S; x < 18800 * S; x += 130 * S) coins.push(createCoin(x, 250));
-      for (let x = 19700 * S; x < 22800 * S; x += 160 * S) coins.push(createCoin(x, 330));
-      for (let x = 22800 * S; x < 23600 * S; x += 100 * S) coins.push(createCoin(x, 150));
-      for (let x = 24300 * S; x < 27800 * S; x += 160 * S) coins.push(createCoin(x, 130));
-      for (let x = 28200 * S; x < 30400 * S; x += 130 * S) coins.push(createCoin(x, 100));
-      for (let x = 31400 * S; x < 34500 * S; x += 160 * S) coins.push(createCoin(x, 130));
-      for (let x = 34500 * S; x < 35400 * S; x += 100 * S) coins.push(createCoin(x, 100));
-      for (let x = 35400 * S; x < 37500 * S; x += 160 * S) coins.push(createCoin(x, 130));
+      for (let x = 200 * S; x < 3500 * S; x += 150 * S) coins.push(createCoin(x, 550));
+      for (let x = 3800 * S; x < 6400 * S; x += 120 * S) coins.push(createCoin(x, 550));
+      for (let x = 6400 * S; x < 8700 * S; x += 150 * S) coins.push(createCoin(x, 550));
+      for (let x = 9200 * S; x < 11000 * S; x += 120 * S) coins.push(createCoin(x, 500));
+      for (let x = 11000 * S; x < 14200 * S; x += 150 * S) coins.push(createCoin(x, 500));
+      for (let x = 14200 * S; x < 16500 * S; x += 120 * S) coins.push(createCoin(x, 430));
+      for (let x = 16500 * S; x < 18800 * S; x += 150 * S) coins.push(createCoin(x, 430));
+      for (let x = 19300 * S; x < 21200 * S; x += 120 * S) coins.push(createCoin(x, 370));
+      for (let x = 21200 * S; x < 23500 * S; x += 150 * S) coins.push(createCoin(x, 370));
+      for (let x = 23500 * S; x < 24700 * S; x += 100 * S) coins.push(createCoin(x, 300));
+      for (let x = 25700 * S; x < 28600 * S; x += 150 * S) coins.push(createCoin(x, 290));
+      for (let x = 29100 * S; x < 32700 * S; x += 150 * S) coins.push(createCoin(x, 210));
+      for (let x = 32700 * S; x < 34400 * S; x += 100 * S) coins.push(createCoin(x, 140));
+      for (let x = 34400 * S; x < 36800 * S; x += 150 * S) coins.push(createCoin(x, 100));
       return coins;
     })(),
     questionBlocks: (() => {
       const S = 0.526;
       return [
-        createQB(1800 * S, 514, 'mushroom'), createQB(3800 * S, 530, 'coin'), createQB(5600 * S, 420, 'flower'),
-        createQB(7800 * S, 530, 'star'), createQB(10000 * S, 380, 'mushroom'), createQB(12200 * S, 320, 'coin'),
-        createQB(15000 * S, 320, 'flower'), createQB(17500 * S, 310, 'star'), createQB(21000 * S, 310, 'mushroom'),
-        createQB(23200 * S, 146, 'coin'), createQB(26800 * S, 550, 'flower'),
+        createQB(200 * S, 530, 'mushroom'),
+        createQB(4100 * S, 530, 'coin'),
+        createQB(6000 * S, 530, 'flower'),
+        createQB(11400 * S, 480, 'coin'),
+        createQB(16200 * S, 410, 'star'),
+        createQB(26000 * S, 270, 'mushroom'),
+        createQB(34000 * S, 80, 'coin'),
       ];
     })(),
     enemies: (() => {
       const S = 0.526;
       return [
-        createEnemy(700 * S, 510, 'goomba'), createEnemy(1100 * S, 510, 'crab'), createEnemy(1500 * S, 510, 'goomba'),
-        createEnemy(1900 * S, 510, 'koopa'), createEnemy(2300 * S, 510, 'spiny'), createEnemy(2600 * S, 510, 'koopa'),
-        createEnemy(3000 * S, 510, 'fireball'), createEnemy(3400 * S, 510, 'goomba'), createEnemy(3800 * S, 510, 'crab'),
-        createEnemy(4200 * S, 390, 'thwomp'), createEnemy(5000 * S, 390, 'thwomp'), createEnemy(5800 * S, 510, 'spiny'),
-        createEnemy(6200 * S, 510, 'goomba'), createEnemy(6600 * S, 510, 'koopa'), createEnemy(7000 * S, 510, 'crab'),
-        createEnemy(7400 * S, 510, 'fireball'), createEnemy(7800 * S, 510, 'goomba'), createEnemy(8200 * S, 510, 'spiny'),
-        createEnemy(8600 * S, 510, 'koopa'), createEnemy(9000 * S, 510, 'crab'), createEnemy(9400 * S, 510, 'goomba'),
-        createEnemy(9800 * S, 510, 'fireball'), createEnemy(10200 * S, 510, 'spiny'), createEnemy(10600 * S, 510, 'koopa'),
-        createEnemy(11500 * S, 290, 'thwomp'),
+        createEnemy(2000 * S, 510, 'goomba'),
+        createEnemy(5000 * S, 510, 'spiny'),
+        createEnemy(7000 * S, 510, 'crab'),
+        createEnemy(10200 * S, 460, 'goomba'),
+        createEnemy(12000 * S, 460, 'koopa'),
+        createEnemy(14800 * S, 390, 'thwomp'),
+        createEnemy(17500 * S, 390, 'spiny'),
+        createEnemy(22000 * S, 330, 'crab'),
+        createEnemy(27000 * S, 250, 'goomba'),
+        createEnemy(35000 * S, 60, 'koopa'),
       ];
     })(),
     decorations: (() => {
       const S = 0.526;
       return [
-        createDeco(400 * S, 520, 'canyon-rock'), createDeco(1100 * S, 470, 'formation'), createDeco(2200 * S, 420, 'eagle'),
-        createDeco(3800 * S, 500, 'canyon-rock'), createDeco(5200 * S, 380, 'formation'), createDeco(7000 * S, 500, 'eagle'),
-        createDeco(9000 * S, 420, 'canyon-rock'), createDeco(10800 * S, 320, 'formation'), createDeco(13000 * S, 340, 'eagle'),
-        createDeco(15800 * S, 300, 'canyon-rock'), createDeco(18000 * S, 320, 'formation'), createDeco(21000 * S, 280, 'eagle'),
-        createDeco(25000 * S, 120, 'canyon-rock'), createDeco(29000 * S, 80, 'formation'), createDeco(33000 * S, 100, 'eagle'),
+        createDeco(800 * S, 520, 'canyon-rock'),
+        createDeco(3200 * S, 500, 'formation'),
+        createDeco(8000 * S, 460, 'eagle'),
+        createDeco(13000 * S, 420, 'canyon-rock'),
+        createDeco(18000 * S, 380, 'formation'),
+        createDeco(24000 * S, 260, 'canyon-rock'),
+        createDeco(31000 * S, 200, 'eagle'),
+        createDeco(36000 * S, 100, 'formation'),
       ];
     })(),
-    playerStart: { x: 150, y: 510 },
-    goal: createGoal(19304, 158, 1800, 'medium'),
+    playerStart: { x: 100, y: 520 },
+    goal: createGoal(37100 * 0.526, 118, 1500, 'medium'),
     timeBonus: 200,
   },
+
+  // ============================================================
+  // LEVEL 75 — Pipe Maze (Röhren-Labyrinth)
+  // 6 pipe sections with piranhas. Navigate the pipe labyrinth.
+  // ============================================================
   {
     id: 75,
-    name: "Stone Passages",
-    width: 20000,
-    height: 700,
+    name: "Pipe Maze",
+    width: 22000,
+    height: 750,
     biome: 'canyon-base',
     platforms: (() => {
-      const S = 0.476;
+      const S = 0.5;
       const plats: any[] = [];
-      plats.push(createPlat(0, 650, 1000 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 1000, 650, 4000));
-      plats.push(...canyonWallSection(S, 5000, 650, 250));
-      plats.push(...canyonFloatingPlatforms(S, 5500, 650, 12));
-      plats.push(createPlat(7800 * S, 650, 1400 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 9200, 650, 3500));
-      plats.push(...canyonVerticalSection(S, 12800, 650, 8));
-      plats.push(createPlat(13800 * S, 420, 800 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 14600, 420, 4000));
-      plats.push(...canyonWallSection(S, 18600, 420, 220));
-      plats.push(...canyonFloatingPlatforms(S, 19000, 420, 14));
-      plats.push(createPlat(21400 * S, 420, 1000 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 22400, 420, 3500));
-      plats.push(...canyonVerticalSection(S, 26000, 420, 7));
-      plats.push(createPlat(27000 * S, 200, 800 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 27800, 200, 4000));
-      plats.push(...canyonWallSection(S, 31800, 200, 250));
-      plats.push(...canyonFloatingPlatforms(S, 32200, 200, 12));
-      plats.push(createPlat(34600 * S, 200, 1200 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 35800, 200, 3500));
-      plats.push(...canyonVerticalSection(S, 39400, 200, 8));
-      plats.push(createPlat(40400 * S, 200, 1600 * S, 40, 'stone'));
+      plats.push(createPlat(0, 700, 800 * S, 40, 'stone'));
+      // Pipe section 1
+      plats.push(createPlat(1000 * S, 700, 500 * S, 40, 'stone'));
+      plats.push(...pipeSection(S, 1200, 700, 3));
+      plats.push(createPlat(2200 * S, 700, 400 * S, 40, 'stone'));
+      // Pipe section 2
+      plats.push(...canyonGroundSection(S, 2800, 700, 1200));
+      plats.push(createPlat(4200 * S, 700, 600 * S, 40, 'stone'));
+      plats.push(...pipeSection(S, 4500, 700, 4));
+      plats.push(createPlat(5600 * S, 700, 500 * S, 40, 'stone'));
+      // Pipe section 3
+      plats.push(...canyonWallSection(S, 6300, 700, 160));
+      plats.push(createPlat(6800 * S, 640, 400 * S, 40, 'stone'));
+      plats.push(...pipeSection(S, 7000, 640, 3));
+      plats.push(createPlat(7900 * S, 640, 500 * S, 40, 'stone'));
+      // Pipe section 4
+      plats.push(...canyonGroundSection(S, 8600, 640, 1500));
+      plats.push(createPlat(10300 * S, 570, 500 * S, 40, 'stone'));
+      plats.push(...pipeSection(S, 10500, 570, 4));
+      plats.push(createPlat(11600 * S, 570, 600 * S, 40, 'stone'));
+      // Pipe section 5
+      plats.push(...canyonVerticalSection(S, 12500, 570, 3));
+      plats.push(createPlat(13100 * S, 490, 400 * S, 40, 'stone'));
+      plats.push(...pipeSection(S, 13300, 490, 3));
+      plats.push(createPlat(14200 * S, 490, 600 * S, 40, 'stone'));
+      // Pipe section 6
+      plats.push(...canyonGroundSection(S, 15000, 490, 1500));
+      plats.push(createPlat(16800 * S, 420, 500 * S, 40, 'stone'));
+      plats.push(...pipeSection(S, 17000, 420, 4));
+      plats.push(createPlat(18100 * S, 420, 700 * S, 40, 'stone'));
+      // Goal area
+      plats.push(...canyonWallSection(S, 19200, 420, 150));
+      plats.push(...canyonVerticalSection(S, 19700, 420, 4));
+      plats.push(createPlat(20600 * S, 330, 600 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 21200, 330, 2000));
+      plats.push(createPlat(23600 * S, 250, 600 * S, 40, 'stone'));
+      plats.push(...canyonFloatingPlatforms(S, 24200, 250, 6));
+      plats.push(createPlat(25800 * S, 170, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 26600, 170, 2000));
+      plats.push(createPlat(29000 * S, 170, 1000 * S, 40, 'stone'));
       return plats;
     })(),
     movingPlatforms: (() => {
-      const S = 0.476;
+      const S = 0.5;
       return [
-        createMovingPlat(7000 * S, 500, 150, 24, 'platform_medium', 'horizontal', 520, 20),
-        createMovingPlat(13300 * S, 400, 150, 24, 'platform_medium', 'vertical', 200, 22),
+        createMovingPlat(5300 * S, 560, 150, 24, 'platform_medium', 'horizontal', 400, 20),
+        createMovingPlat(23500 * S, 180, 150, 24, 'platform_medium', 'vertical', 150, 18),
       ];
     })(),
     coins: (() => {
-      const S = 0.476;
+      const S = 0.5;
       const coins: any[] = [];
-      for (let x = 200 * S; x < 5000 * S; x += 170 * S) coins.push(createCoin(x, 600));
-      for (let x = 5500 * S; x < 7800 * S; x += 140 * S) coins.push(createCoin(x, 480));
-      for (let x = 7800 * S; x < 9200 * S; x += 170 * S) coins.push(createCoin(x, 600));
-      for (let x = 9200 * S; x < 12800 * S; x += 170 * S) coins.push(createCoin(x, 600));
-      for (let x = 12800 * S; x < 13800 * S; x += 110 * S) coins.push(createCoin(x, 360));
-      for (let x = 14600 * S; x < 18600 * S; x += 170 * S) coins.push(createCoin(x, 370));
-      for (let x = 19000 * S; x < 21400 * S; x += 140 * S) coins.push(createCoin(x, 290));
-      for (let x = 22400 * S; x < 26000 * S; x += 170 * S) coins.push(createCoin(x, 370));
-      for (let x = 26000 * S; x < 27000 * S; x += 110 * S) coins.push(createCoin(x, 160));
-      for (let x = 27800 * S; x < 31800 * S; x += 170 * S) coins.push(createCoin(x, 150));
-      for (let x = 32200 * S; x < 34600 * S; x += 140 * S) coins.push(createCoin(x, 120));
-      for (let x = 35800 * S; x < 39400 * S; x += 170 * S) coins.push(createCoin(x, 150));
-      for (let x = 39400 * S; x < 40400 * S; x += 110 * S) coins.push(createCoin(x, 120));
-      for (let x = 40400 * S; x < 41500 * S; x += 170 * S) coins.push(createCoin(x, 150));
+      for (let x = 200 * S; x < 1000 * S; x += 120 * S) coins.push(createCoin(x, 650));
+      for (let x = 1000 * S; x < 2800 * S; x += 130 * S) coins.push(createCoin(x, 650));
+      for (let x = 2800 * S; x < 4200 * S; x += 150 * S) coins.push(createCoin(x, 650));
+      for (let x = 4200 * S; x < 6300 * S; x += 130 * S) coins.push(createCoin(x, 650));
+      for (let x = 6800 * S; x < 8600 * S; x += 150 * S) coins.push(createCoin(x, 590));
+      for (let x = 8600 * S; x < 10300 * S; x += 130 * S) coins.push(createCoin(x, 590));
+      for (let x = 10300 * S; x < 12500 * S; x += 120 * S) coins.push(createCoin(x, 520));
+      for (let x = 12500 * S; x < 13300 * S; x += 100 * S) coins.push(createCoin(x, 450));
+      for (let x = 13300 * S; x < 15000 * S; x += 130 * S) coins.push(createCoin(x, 440));
+      for (let x = 15000 * S; x < 16800 * S; x += 150 * S) coins.push(createCoin(x, 440));
+      for (let x = 16800 * S; x < 19200 * S; x += 120 * S) coins.push(createCoin(x, 370));
+      for (let x = 19700 * S; x < 20600 * S; x += 100 * S) coins.push(createCoin(x, 290));
+      for (let x = 21200 * S; x < 23600 * S; x += 150 * S) coins.push(createCoin(x, 280));
+      for (let x = 24200 * S; x < 25800 * S; x += 100 * S) coins.push(createCoin(x, 190));
+      for (let x = 25800 * S; x < 26600 * S; x += 130 * S) coins.push(createCoin(x, 120));
+      for (let x = 26600 * S; x < 29000 * S; x += 150 * S) coins.push(createCoin(x, 120));
       return coins;
     })(),
     questionBlocks: (() => {
-      const S = 0.476;
+      const S = 0.5;
       return [
-        createQB(2200 * S, 580, 'coin'), createQB(4500 * S, 580, 'mushroom'), createQB(6500 * S, 587, 'flower'),
-        createQB(8800 * S, 580, 'star'), createQB(11500 * S, 420, 'mushroom'), createQB(13400 * S, 360, 'coin'),
-        createQB(16200 * S, 360, 'flower'), createQB(20000 * S, 350, 'star'), createQB(23200 * S, 350, 'mushroom'),
-        createQB(26600 * S, 140, 'coin'), createQB(29600 * S, 140, 'flower'), createQB(33600 * S, 140, 'star'),
+        createQB(3000 * S, 630, 'coin'),
+        createQB(6000 * S, 630, 'mushroom'),
+        createQB(9000 * S, 570, 'flower'),
+        createQB(12100 * S, 500, 'coin'),
+        createQB(15500 * S, 420, 'star'),
+        createQB(20500 * S, 260, 'mushroom'),
+        createQB(27000 * S, 100, 'flower'),
       ];
     })(),
     enemies: (() => {
-      const S = 0.476;
+      const S = 0.5;
       return [
-        createEnemy(800 * S, 550, 'goomba'), createEnemy(1300 * S, 550, 'crab'), createEnemy(1800 * S, 550, 'goomba'),
-        createEnemy(2300 * S, 550, 'koopa'), createEnemy(2800 * S, 550, 'spiny'), createEnemy(3300 * S, 550, 'goomba'),
-        createEnemy(3800 * S, 550, 'fireball'), createEnemy(4300 * S, 550, 'crab'), createEnemy(4800 * S, 550, 'spiny'),
-        createEnemy(5300 * S, 550, 'koopa'), createEnemy(5800 * S, 440, 'thwomp'), createEnemy(6600 * S, 550, 'goomba'),
-        createEnemy(7100 * S, 550, 'crab'), createEnemy(7600 * S, 550, 'spiny'), createEnemy(8100 * S, 550, 'goomba'),
-        createEnemy(8600 * S, 550, 'fireball'), createEnemy(9100 * S, 550, 'koopa'), createEnemy(9600 * S, 550, 'crab'),
-        createEnemy(10100 * S, 550, 'spiny'), createEnemy(10600 * S, 550, 'goomba'), createEnemy(11100 * S, 550, 'fireball'),
-        createEnemy(11800 * S, 550, 'koopa'), createEnemy(12300 * S, 550, 'crab'), createEnemy(12800 * S, 550, 'spiny'),
-        createEnemy(13200 * S, 330, 'thwomp'),
+        createEnemy(600 * S, 650, 'goomba'),
+        createEnemy(1400 * S, 650, 'piranha'),
+        createEnemy(1600 * S, 650, 'piranha'),
+        createEnemy(1900 * S, 650, 'piranha'),
+        createEnemy(3200 * S, 650, 'goomba'),
+        createEnemy(4700 * S, 650, 'piranha'),
+        createEnemy(4900 * S, 650, 'piranha'),
+        createEnemy(5100 * S, 650, 'piranha'),
+        createEnemy(5400 * S, 650, 'piranha'),
+        createEnemy(7200 * S, 590, 'piranha'),
+        createEnemy(7400 * S, 590, 'piranha'),
+        createEnemy(7700 * S, 590, 'piranha'),
+        createEnemy(9000 * S, 590, 'crab'),
+        createEnemy(10700 * S, 520, 'piranha'),
+        createEnemy(10900 * S, 520, 'piranha'),
+        createEnemy(11100 * S, 520, 'piranha'),
+        createEnemy(11400 * S, 520, 'piranha'),
+        createEnemy(13500 * S, 440, 'piranha'),
+        createEnemy(13700 * S, 440, 'piranha'),
+        createEnemy(14000 * S, 440, 'piranha'),
+        createEnemy(15300 * S, 440, 'thwomp'),
+        createEnemy(17200 * S, 370, 'piranha'),
+        createEnemy(17400 * S, 370, 'piranha'),
+        createEnemy(17600 * S, 370, 'piranha'),
+        createEnemy(17900 * S, 370, 'piranha'),
+        createEnemy(22000 * S, 280, 'spiny'),
+        createEnemy(27200 * S, 120, 'goomba'),
       ];
     })(),
     decorations: (() => {
-      const S = 0.476;
+      const S = 0.5;
       return [
-        createDeco(500 * S, 570, 'canyon-rock'), createDeco(1300 * S, 520, 'formation'), createDeco(2600 * S, 470, 'eagle'),
-        createDeco(4300 * S, 550, 'canyon-rock'), createDeco(6000 * S, 420, 'formation'), createDeco(8200 * S, 520, 'eagle'),
-        createDeco(10500 * S, 480, 'canyon-rock'), createDeco(12400 * S, 350, 'formation'), createDeco(14800 * S, 380, 'eagle'),
-        createDeco(17800 * S, 350, 'canyon-rock'), createDeco(20500 * S, 320, 'formation'), createDeco(23800 * S, 320, 'eagle'),
-        createDeco(27200 * S, 130, 'canyon-rock'), createDeco(30600 * S, 90, 'formation'), createDeco(35000 * S, 100, 'eagle'),
+        createDeco(600 * S, 650, 'canyon-rock'),
+        createDeco(2000 * S, 650, 'formation'),
+        createDeco(4600 * S, 650, 'eagle'),
+        createDeco(7000 * S, 590, 'canyon-rock'),
+        createDeco(10000 * S, 520, 'formation'),
+        createDeco(15000 * S, 440, 'canyon-rock'),
+        createDeco(19500 * S, 370, 'eagle'),
+        createDeco(25000 * S, 170, 'formation'),
+        createDeco(28000 * S, 120, 'canyon-rock'),
       ];
     })(),
-    playerStart: { x: 150, y: 550 },
-    goal: createGoal(19500, 178, 2000, 'medium'),
+    playerStart: { x: 100, y: 620 },
+    goal: createGoal(29500 * 0.5, 138, 1500, 'medium'),
     timeBonus: 210,
   },
+
+  // ============================================================
+  // LEVEL 76 — Vertical Climber (Vertikal-Kletterer)
+  // 4 verticalClimb sections on canyon walls. Ascend through the heights.
+  // ============================================================
   {
     id: 76,
-    name: "Canyon Climb",
-    width: 19536,
-    height: 680,
-    biome: 'canyon-base',
-    platforms: (() => {
-      const S = 0.444;
-      const plats: any[] = [];
-      plats.push(createPlat(0, 630, 1100 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 1100, 630, 4500));
-      plats.push(...canyonWallSection(S, 5600, 630, 280));
-      plats.push(...canyonFloatingPlatforms(S, 6100, 630, 14));
-      plats.push(createPlat(8600 * S, 630, 1500 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 10100, 630, 4000));
-      plats.push(...canyonVerticalSection(S, 14200, 630, 9));
-      plats.push(createPlat(15300 * S, 400, 900 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 16200, 400, 4500));
-      plats.push(...canyonWallSection(S, 20700, 400, 250));
-      plats.push(...canyonFloatingPlatforms(S, 21200, 400, 16));
-      plats.push(createPlat(23800 * S, 400, 1100 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 24900, 400, 4000));
-      plats.push(...canyonVerticalSection(S, 29000, 400, 8));
-      plats.push(createPlat(30000 * S, 180, 900 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 30900, 180, 4500));
-      plats.push(...canyonWallSection(S, 35400, 180, 280));
-      plats.push(...canyonFloatingPlatforms(S, 35900, 180, 14));
-      plats.push(createPlat(38500 * S, 180, 1200 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 39700, 180, 4000));
-      plats.push(...canyonVerticalSection(S, 43800, 180, 9));
-      plats.push(createPlat(44800 * S, 180, 200 * S, 40, 'stone'));
-      return plats;
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.444;
-      return [
-        createMovingPlat(7800 * S, 480, 150, 24, 'platform_medium', 'horizontal', 520, 18),
-        createMovingPlat(14800 * S, 340, 150, 24, 'platform_medium', 'vertical', 180, 20),
-      ];
-    })(),
-    coins: (() => {
-      const S = 0.444;
-      const coins: any[] = [];
-      for (let x = 200 * S; x < 5600 * S; x += 180 * S) coins.push(createCoin(x, 580));
-      for (let x = 6100 * S; x < 8600 * S; x += 150 * S) coins.push(createCoin(x, 480));
-      for (let x = 8600 * S; x < 10100 * S; x += 180 * S) coins.push(createCoin(x, 580));
-      for (let x = 10100 * S; x < 14200 * S; x += 180 * S) coins.push(createCoin(x, 580));
-      for (let x = 14200 * S; x < 15300 * S; x += 120 * S) coins.push(createCoin(x, 380));
-      for (let x = 16200 * S; x < 20700 * S; x += 180 * S) coins.push(createCoin(x, 350));
-      for (let x = 21200 * S; x < 23800 * S; x += 150 * S) coins.push(createCoin(x, 280));
-      for (let x = 24900 * S; x < 29000 * S; x += 180 * S) coins.push(createCoin(x, 350));
-      for (let x = 29000 * S; x < 30000 * S; x += 120 * S) coins.push(createCoin(x, 180));
-      for (let x = 30900 * S; x < 35400 * S; x += 180 * S) coins.push(createCoin(x, 130));
-      for (let x = 35900 * S; x < 38500 * S; x += 150 * S) coins.push(createCoin(x, 100));
-      for (let x = 39700 * S; x < 43800 * S; x += 180 * S) coins.push(createCoin(x, 130));
-      for (let x = 43800 * S; x < 44800 * S; x += 120 * S) coins.push(createCoin(x, 100));
-      for (let x = 44800 * S; x < 44800 * S; x += 180 * S) coins.push(createCoin(x, 130));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.444;
-      return [
-        createQB(2500 * S, 560, 'mushroom'), createQB(5000 * S, 560, 'coin'), createQB(7200 * S, 560, 'flower'),
-        createQB(9400 * S, 560, 'star'), createQB(12000 * S, 380, 'mushroom'), createQB(14500 * S, 340, 'coin'),
-        createQB(17400 * S, 340, 'flower'), createQB(22000 * S, 330, 'star'), createQB(25800 * S, 330, 'mushroom'),
-        createQB(28600 * S, 120, 'coin'), createQB(32200 * S, 120, 'flower'), createQB(36800 * S, 120, 'star'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.444;
-      return [
-        createEnemy(900 * S, 530, 'goomba'), createEnemy(1400 * S, 530, 'crab'), createEnemy(1900 * S, 530, 'spiny'),
-        createEnemy(2400 * S, 530, 'goomba'), createEnemy(2900 * S, 530, 'koopa'), createEnemy(3400 * S, 530, 'fireball'),
-        createEnemy(3900 * S, 530, 'crab'), createEnemy(4400 * S, 530, 'spiny'), createEnemy(4900 * S, 530, 'goomba'),
-        createEnemy(5400 * S, 530, 'koopa'), createEnemy(5900 * S, 530, 'fireball'), createEnemy(6400 * S, 420, 'thwomp'),
-        createEnemy(7400 * S, 530, 'crab'), createEnemy(7900 * S, 530, 'spiny'), createEnemy(8400 * S, 530, 'goomba'),
-        createEnemy(8900 * S, 530, 'koopa'), createEnemy(9400 * S, 530, 'fireball'), createEnemy(9900 * S, 530, 'crab'),
-        createEnemy(10400 * S, 530, 'spiny'), createEnemy(10900 * S, 530, 'goomba'), createEnemy(11400 * S, 530, 'koopa'),
-        createEnemy(11900 * S, 530, 'fireball'), createEnemy(12400 * S, 530, 'crab'), createEnemy(12900 * S, 530, 'spiny'),
-        createEnemy(13400 * S, 530, 'goomba'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.444;
-      return [
-        createDeco(600 * S, 550, 'canyon-rock'), createDeco(1500 * S, 500, 'formation'), createDeco(2900 * S, 450, 'eagle'),
-        createDeco(4800 * S, 530, 'canyon-rock'), createDeco(6800 * S, 400, 'formation'), createDeco(9400 * S, 500, 'eagle'),
-        createDeco(11800 * S, 460, 'canyon-rock'), createDeco(13800 * S, 320, 'formation'), createDeco(16800 * S, 360, 'eagle'),
-        createDeco(20000 * S, 320, 'canyon-rock'), createDeco(23000 * S, 300, 'formation'), createDeco(26800 * S, 300, 'eagle'),
-        createDeco(30200 * S, 110, 'canyon-rock'), createDeco(33800 * S, 80, 'formation'), createDeco(38200 * S, 90, 'eagle'),
-      ];
-    })(),
-    playerStart: { x: 150, y: 530 },
-    goal: createGoal(19036, 158, 2200, 'hard'),
-    timeBonus: 180,
-  },
-  {
-    id: 77,
-    name: "Eagle's Crossing",
-    width: 20016,
+    name: "Vertical Climber",
+    width: 22000,
     height: 700,
     biome: 'canyon-base',
     platforms: (() => {
-      const S = 0.417;
+      const S = 0.476;
       const plats: any[] = [];
-      plats.push(createPlat(0, 650, 1200 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 1200, 650, 5000));
-      plats.push(...canyonWallSection(S, 6200, 650, 300));
-      plats.push(...canyonFloatingPlatforms(S, 6800, 650, 16));
-      plats.push(createPlat(9400 * S, 650, 1600 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 11000, 650, 4500));
-      plats.push(...canyonVerticalSection(S, 15600, 650, 10));
-      plats.push(createPlat(16800 * S, 400, 1000 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 17800, 400, 5000));
-      plats.push(...canyonWallSection(S, 22800, 400, 280));
-      plats.push(...canyonFloatingPlatforms(S, 23400, 400, 18));
-      plats.push(createPlat(26200 * S, 400, 1200 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 27400, 400, 4500));
-      plats.push(...canyonVerticalSection(S, 32000, 400, 9));
-      plats.push(createPlat(33200 * S, 180, 1000 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 34200, 180, 5000));
-      plats.push(...canyonWallSection(S, 39200, 180, 300));
-      plats.push(...canyonFloatingPlatforms(S, 39800, 180, 16));
-      plats.push(createPlat(42600 * S, 180, 1400 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 44000, 180, 4000));
+      plats.push(createPlat(0, 650, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 800, 650, 2000));
+      // verticalClimb 1
+      plats.push(...verticalClimb(S, 3000, 650, 'stone'));
+      plats.push(createPlat(5100 * S, 580, 600 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 5700, 580, 2000));
+      plats.push(...canyonWallSection(S, 7900, 580, 150));
+      // verticalClimb 2
+      plats.push(...verticalClimb(S, 8500, 520, 'stone'));
+      plats.push(createPlat(10600 * S, 440, 600 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 11200, 440, 2000));
+      plats.push(...canyonFloatingPlatforms(S, 13400, 440, 8));
+      plats.push(...canyonVerticalSection(S, 15200, 440, 3));
+      // verticalClimb 3
+      plats.push(...verticalClimb(S, 15800, 400, 'stone'));
+      plats.push(createPlat(17900 * S, 300, 500 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 18400, 300, 2000));
+      plats.push(...canyonWallSection(S, 20600, 300, 150));
+      plats.push(...canyonFloatingPlatforms(S, 21200, 300, 6));
+      // verticalClimb 4
+      plats.push(...verticalClimb(S, 22600, 250, 'stone'));
+      plats.push(createPlat(24700 * S, 150, 600 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 25300, 150, 2000));
+      plats.push(...canyonVerticalSection(S, 27600, 150, 3));
+      plats.push(createPlat(28200 * S, 100, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 29000, 100, 2000));
+      plats.push(createPlat(31400 * S, 100, 1000 * S, 40, 'stone'));
       return plats;
     })(),
     movingPlatforms: (() => {
-      const S = 0.417;
+      const S = 0.476;
       return [
-        createMovingPlat(8500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 500, 22),
-        createMovingPlat(16200 * S, 360, 150, 24, 'platform_medium', 'vertical', 200, 18),
+        createMovingPlat(6000 * S, 450, 150, 24, 'platform_medium', 'horizontal', 420, 20),
+        createMovingPlat(25000 * S, 220, 150, 24, 'platform_medium', 'vertical', 130, 18),
       ];
     })(),
     coins: (() => {
-      const S = 0.417;
+      const S = 0.476;
       const coins: any[] = [];
-      for (let x = 200 * S; x < 6200 * S; x += 190 * S) coins.push(createCoin(x, 600));
-      for (let x = 6800 * S; x < 9400 * S; x += 160 * S) coins.push(createCoin(x, 500));
-      for (let x = 9400 * S; x < 11000 * S; x += 190 * S) coins.push(createCoin(x, 600));
-      for (let x = 11000 * S; x < 15600 * S; x += 190 * S) coins.push(createCoin(x, 600));
-      for (let x = 15600 * S; x < 16800 * S; x += 130 * S) coins.push(createCoin(x, 400));
-      for (let x = 17800 * S; x < 22800 * S; x += 190 * S) coins.push(createCoin(x, 350));
-      for (let x = 23400 * S; x < 26200 * S; x += 160 * S) coins.push(createCoin(x, 280));
-      for (let x = 27400 * S; x < 32000 * S; x += 190 * S) coins.push(createCoin(x, 350));
-      for (let x = 32000 * S; x < 33200 * S; x += 130 * S) coins.push(createCoin(x, 180));
-      for (let x = 34200 * S; x < 39200 * S; x += 190 * S) coins.push(createCoin(x, 130));
-      for (let x = 39800 * S; x < 42600 * S; x += 160 * S) coins.push(createCoin(x, 100));
-      for (let x = 44000 * S; x < 47500 * S; x += 190 * S) coins.push(createCoin(x, 130));
+      for (let x = 200 * S; x < 2800 * S; x += 150 * S) coins.push(createCoin(x, 600));
+      for (let x = 3000 * S; x < 5100 * S; x += 100 * S) coins.push(createCoin(x, 530));
+      for (let x = 5700 * S; x < 7900 * S; x += 150 * S) coins.push(createCoin(x, 530));
+      for (let x = 8500 * S; x < 10600 * S; x += 100 * S) coins.push(createCoin(x, 400));
+      for (let x = 11200 * S; x < 13400 * S; x += 150 * S) coins.push(createCoin(x, 390));
+      for (let x = 13400 * S; x < 15200 * S; x += 100 * S) coins.push(createCoin(x, 350));
+      for (let x = 15200 * S; x < 15800 * S; x += 80 * S) coins.push(createCoin(x, 300));
+      for (let x = 15800 * S; x < 17900 * S; x += 100 * S) coins.push(createCoin(x, 260));
+      for (let x = 18400 * S; x < 20600 * S; x += 150 * S) coins.push(createCoin(x, 250));
+      for (let x = 21200 * S; x < 22600 * S; x += 100 * S) coins.push(createCoin(x, 220));
+      for (let x = 22600 * S; x < 24700 * S; x += 100 * S) coins.push(createCoin(x, 140));
+      for (let x = 25300 * S; x < 27600 * S; x += 150 * S) coins.push(createCoin(x, 100));
+      for (let x = 27600 * S; x < 28200 * S; x += 80 * S) coins.push(createCoin(x, 70));
+      for (let x = 29000 * S; x < 31400 * S; x += 150 * S) coins.push(createCoin(x, 50));
       return coins;
     })(),
     questionBlocks: (() => {
-      const S = 0.417;
+      const S = 0.476;
       return [
-        createQB(2800 * S, 580, 'coin'), createQB(5400 * S, 580, 'mushroom'), createQB(7800 * S, 580, 'flower'),
-        createQB(10200 * S, 580, 'star'), createQB(13200 * S, 380, 'mushroom'), createQB(16000 * S, 340, 'coin'),
-        createQB(19000 * S, 340, 'flower'), createQB(24200 * S, 330, 'star'), createQB(28200 * S, 330, 'mushroom'),
-        createQB(31600 * S, 120, 'coin'), createQB(35400 * S, 120, 'flower'), createQB(40600 * S, 120, 'star'),
+        createQB(2000 * S, 580, 'mushroom'),
+        createQB(5300 * S, 510, 'coin'),
+        createQB(10800 * S, 380, 'flower'),
+        createQB(18100 * S, 240, 'star'),
+        createQB(24900 * S, 80, 'coin'),
+        createQB(28400 * S, 30, 'flower'),
       ];
     })(),
     enemies: (() => {
-      const S = 0.417;
+      const S = 0.476;
       return [
-        createEnemy(1000 * S, 550, 'goomba'), createEnemy(1600 * S, 550, 'crab'), createEnemy(2200 * S, 550, 'spiny'),
-        createEnemy(2800 * S, 550, 'goomba'), createEnemy(3400 * S, 550, 'koopa'), createEnemy(4000 * S, 550, 'fireball'),
-        createEnemy(4600 * S, 550, 'crab'), createEnemy(5200 * S, 550, 'spiny'), createEnemy(5800 * S, 550, 'goomba'),
-        createEnemy(6400 * S, 550, 'koopa'), createEnemy(7000 * S, 550, 'fireball'), createEnemy(7600 * S, 550, 'crab'),
-        createEnemy(8200 * S, 550, 'spiny'), createEnemy(8800 * S, 550, 'goomba'), createEnemy(9400 * S, 550, 'koopa'),
-        createEnemy(10000 * S, 550, 'fireball'), createEnemy(10500 * S, 550, 'crab'), createEnemy(11000 * S, 550, 'spiny'),
-        createEnemy(11500 * S, 550, 'goomba'), createEnemy(12000 * S, 550, 'koopa'), createEnemy(12500 * S, 550, 'fireball'),
-        createEnemy(13000 * S, 550, 'crab'), createEnemy(13500 * S, 550, 'spiny'), createEnemy(14000 * S, 550, 'goomba'),
-        createEnemy(14500 * S, 550, 'koopa'),
+        createEnemy(1500 * S, 560, 'goomba'),
+        createEnemy(4000 * S, 530, 'crab'),
+        createEnemy(6500 * S, 490, 'spiny'),
+        createEnemy(9500 * S, 400, 'thwomp'),
+        createEnemy(11800 * S, 350, 'goomba'),
+        createEnemy(14000 * S, 350, 'crab'),
+        createEnemy(16400 * S, 280, 'spiny'),
+        createEnemy(19000 * S, 210, 'goomba'),
+        createEnemy(26000 * S, 60, 'koopa'),
+        createEnemy(29600 * S, 10, 'spiny'),
       ];
     })(),
     decorations: (() => {
-      const S = 0.417;
+      const S = 0.476;
       return [
-        createDeco(700 * S, 570, 'canyon-rock'), createDeco(1700 * S, 520, 'formation'), createDeco(3200 * S, 470, 'eagle'),
-        createDeco(5300 * S, 550, 'canyon-rock'), createDeco(7600 * S, 430, 'formation'), createDeco(10400 * S, 520, 'eagle'),
-        createDeco(13000 * S, 480, 'canyon-rock'), createDeco(15200 * S, 330, 'formation'), createDeco(18600 * S, 370, 'eagle'),
-        createDeco(22000 * S, 340, 'canyon-rock'), createDeco(25400 * S, 310, 'formation'), createDeco(29600 * S, 310, 'eagle'),
-        createDeco(33600 * S, 120, 'canyon-rock'), createDeco(37400 * S, 90, 'formation'), createDeco(42000 * S, 100, 'eagle'),
+        createDeco(600 * S, 600, 'canyon-rock'),
+        createDeco(3800 * S, 550, 'formation'),
+        createDeco(9000 * S, 480, 'eagle'),
+        createDeco(14000 * S, 390, 'canyon-rock'),
+        createDeco(18000 * S, 280, 'formation'),
+        createDeco(23500 * S, 200, 'eagle'),
+        createDeco(29800 * S, 50, 'canyon-rock'),
       ];
     })(),
-    playerStart: { x: 150, y: 550 },
-    goal: createGoal(19516, 158, 2400, 'hard'),
+    playerStart: { x: 100, y: 570 },
+    goal: createGoal(31900 * 0.476, 68, 1800, 'hard'),
     timeBonus: 200,
   },
+
+  // ============================================================
+  // LEVEL 77 — Enemy Horde (Gegner-Horde)
+  // 18 enemies (goombas, spinys, crabs, thwomps).
+  // Simple layout focused on combat.
+  // ============================================================
   {
-    id: 78,
-    name: "Canyon Summit",
-    width: 20000,
-    height: 700,
+    id: 77,
+    name: "Enemy Horde",
+    width: 22000,
+    height: 650,
     biome: 'canyon-base',
     platforms: (() => {
-      const S = 0.4;
+      const S = 0.455;
       const plats: any[] = [];
-      plats.push(createPlat(0, 650, 1400 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 1400, 650, 5500));
-      plats.push(...canyonWallSection(S, 6900, 650, 320));
-      plats.push(...canyonFloatingPlatforms(S, 7600, 650, 18));
-      plats.push(createPlat(10400 * S, 650, 1800 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 12200, 650, 5000));
-      plats.push(...canyonVerticalSection(S, 17300, 650, 11));
-      plats.push(createPlat(18600 * S, 380, 1100 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 19700, 380, 5500));
-      plats.push(...canyonWallSection(S, 25200, 380, 300));
-      plats.push(...canyonFloatingPlatforms(S, 25900, 380, 20));
-      plats.push(createPlat(28900 * S, 380, 1400 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 30300, 380, 5000));
-      plats.push(...canyonVerticalSection(S, 35400, 380, 10));
-      plats.push(createPlat(36600 * S, 150, 1200 * S, 40, 'stone'));
-      plats.push(...canyonGroundSection(S, 37800, 150, 5500));
-      plats.push(...canyonWallSection(S, 43300, 150, 320));
-      plats.push(...canyonFloatingPlatforms(S, 44000, 150, 18));
-      plats.push(createPlat(47000 * S, 150, 3000 * S, 40, 'stone'));
+      plats.push(createPlat(0, 600, 900 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 900, 600, 4000));
+      plats.push(createPlat(5200 * S, 600, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 6000, 600, 3000));
+      plats.push(...canyonWallSection(S, 9200, 600, 180));
+      plats.push(createPlat(9700 * S, 540, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 10500, 540, 3000));
+      plats.push(...gapWithPlatforms(S, 13800, 540, 600, 4));
+      plats.push(createPlat(14700 * S, 540, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 15500, 540, 3000));
+      plats.push(...canyonVerticalSection(S, 18800, 540, 4));
+      plats.push(createPlat(19700 * S, 460, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 20400, 460, 3000));
+      plats.push(...canyonWallSection(S, 23600, 460, 150));
+      plats.push(createPlat(24100 * S, 400, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 24800, 400, 3000));
+      plats.push(...gapWithPlatforms(S, 28100, 400, 500, 3));
+      plats.push(createPlat(28900 * S, 340, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 29600, 340, 3000));
+      plats.push(...canyonVerticalSection(S, 32900, 340, 3));
+      plats.push(createPlat(33500 * S, 260, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 34300, 260, 2500));
+      plats.push(createPlat(37200 * S, 260, 1000 * S, 40, 'stone'));
       return plats;
     })(),
     movingPlatforms: (() => {
-      const S = 0.4;
+      const S = 0.455;
       return [
-        createMovingPlat(9500 * S, 480, 150, 24, 'platform_medium', 'horizontal', 560, 20),
-        createMovingPlat(18000 * S, 340, 150, 24, 'platform_medium', 'vertical', 220, 25),
+        createMovingPlat(7100 * S, 480, 150, 24, 'platform_medium', 'horizontal', 450, 22),
+        createMovingPlat(25500 * S, 320, 150, 24, 'platform_medium', 'vertical', 180, 20),
       ];
     })(),
     coins: (() => {
-      const S = 0.4;
+      const S = 0.455;
       const coins: any[] = [];
-      for (let x = 200 * S; x < 6900 * S; x += 200 * S) coins.push(createCoin(x, 600));
-      for (let x = 7600 * S; x < 10400 * S; x += 170 * S) coins.push(createCoin(x, 500));
-      for (let x = 10400 * S; x < 12200 * S; x += 200 * S) coins.push(createCoin(x, 600));
-      for (let x = 12200 * S; x < 17300 * S; x += 200 * S) coins.push(createCoin(x, 600));
-      for (let x = 17300 * S; x < 18600 * S; x += 140 * S) coins.push(createCoin(x, 420));
-      for (let x = 19700 * S; x < 25200 * S; x += 200 * S) coins.push(createCoin(x, 330));
-      for (let x = 25900 * S; x < 28900 * S; x += 170 * S) coins.push(createCoin(x, 260));
-      for (let x = 30300 * S; x < 35400 * S; x += 200 * S) coins.push(createCoin(x, 330));
-      for (let x = 35400 * S; x < 36600 * S; x += 140 * S) coins.push(createCoin(x, 170));
-      for (let x = 37800 * S; x < 43300 * S; x += 200 * S) coins.push(createCoin(x, 100));
-      for (let x = 44000 * S; x < 47000 * S; x += 170 * S) coins.push(createCoin(x, 80));
-      for (let x = 47000 * S; x < 49500 * S; x += 200 * S) coins.push(createCoin(x, 100));
+      for (let x = 200 * S; x < 4900 * S; x += 160 * S) coins.push(createCoin(x, 550));
+      for (let x = 5200 * S; x < 9200 * S; x += 150 * S) coins.push(createCoin(x, 550));
+      for (let x = 9700 * S; x < 13800 * S; x += 150 * S) coins.push(createCoin(x, 490));
+      for (let x = 14100 * S; x < 15500 * S; x += 120 * S) coins.push(createCoin(x, 490));
+      for (let x = 15500 * S; x < 18800 * S; x += 150 * S) coins.push(createCoin(x, 490));
+      for (let x = 18800 * S; x < 20400 * S; x += 100 * S) coins.push(createCoin(x, 400));
+      for (let x = 20400 * S; x < 23600 * S; x += 150 * S) coins.push(createCoin(x, 410));
+      for (let x = 24100 * S; x < 28100 * S; x += 150 * S) coins.push(createCoin(x, 350));
+      for (let x = 28400 * S; x < 29600 * S; x += 120 * S) coins.push(createCoin(x, 290));
+      for (let x = 29600 * S; x < 32900 * S; x += 150 * S) coins.push(createCoin(x, 290));
+      for (let x = 32900 * S; x < 33500 * S; x += 80 * S) coins.push(createCoin(x, 220));
+      for (let x = 34300 * S; x < 37200 * S; x += 150 * S) coins.push(createCoin(x, 210));
+      for (let x = 37200 * S; x < 38200 * S; x += 150 * S) coins.push(createCoin(x, 210));
       return coins;
     })(),
     questionBlocks: (() => {
-      const S = 0.4;
+      const S = 0.455;
       return [
-        createQB(3000 * S, 580, 'coin'), createQB(5800 * S, 580, 'mushroom'), createQB(8400 * S, 580, 'flower'),
-        createQB(11000 * S, 580, 'star'), createQB(14200 * S, 380, 'mushroom'), createQB(17200 * S, 340, 'coin'),
-        createQB(20600 * S, 320, 'flower'), createQB(26800 * S, 310, 'star'), createQB(31000 * S, 310, 'mushroom'),
-        createQB(35000 * S, 100, 'coin'), createQB(39000 * S, 100, 'flower'), createQB(45000 * S, 80, 'star'),
+        createQB(2200 * S, 530, 'mushroom'),
+        createQB(7000 * S, 530, 'coin'),
+        createQB(11200 * S, 470, 'flower'),
+        createQB(16400 * S, 470, 'star'),
+        createQB(21200 * S, 390, 'coin'),
+        createQB(25800 * S, 330, 'mushroom'),
+        createQB(35200 * S, 190, 'flower'),
       ];
     })(),
     enemies: (() => {
-      const S = 0.4;
+      const S = 0.455;
       return [
-        createEnemy(1100 * S, 550, 'goomba'), createEnemy(1800 * S, 550, 'crab'), createEnemy(2500 * S, 550, 'spiny'),
-        createEnemy(3200 * S, 550, 'goomba'), createEnemy(3900 * S, 550, 'koopa'), createEnemy(4600 * S, 550, 'fireball'),
-        createEnemy(5300 * S, 550, 'crab'), createEnemy(6000 * S, 550, 'spiny'), createEnemy(6700 * S, 550, 'goomba'),
-        createEnemy(7400 * S, 550, 'koopa'), createEnemy(8100 * S, 550, 'fireball'), createEnemy(8800 * S, 550, 'crab'),
-        createEnemy(9500 * S, 550, 'spiny'), createEnemy(10200 * S, 550, 'goomba'), createEnemy(10900 * S, 550, 'koopa'),
-        createEnemy(11600 * S, 550, 'fireball'), createEnemy(12300 * S, 550, 'crab'), createEnemy(13000 * S, 550, 'spiny'),
-        createEnemy(13700 * S, 550, 'goomba'), createEnemy(14400 * S, 550, 'koopa'), createEnemy(15100 * S, 550, 'fireball'),
-        createEnemy(15800 * S, 550, 'crab'), createEnemy(16500 * S, 550, 'spiny'), createEnemy(17200 * S, 550, 'goomba'),
-        createEnemy(17900 * S, 280, 'thwomp'),
+        createEnemy(1500 * S, 510, 'goomba'),
+        createEnemy(2500 * S, 510, 'spiny'),
+        createEnemy(3500 * S, 510, 'crab'),
+        createEnemy(4500 * S, 510, 'goomba'),
+        createEnemy(5500 * S, 510, 'thwomp'),
+        createEnemy(6500 * S, 510, 'spiny'),
+        createEnemy(7500 * S, 510, 'crab'),
+        createEnemy(8500 * S, 510, 'goomba'),
+        createEnemy(10500 * S, 450, 'spiny'),
+        createEnemy(11500 * S, 450, 'thwomp'),
+        createEnemy(12500 * S, 450, 'crab'),
+        createEnemy(13500 * S, 450, 'goomba'),
+        createEnemy(16000 * S, 450, 'spiny'),
+        createEnemy(17500 * S, 450, 'goomba'),
+        createEnemy(18500 * S, 450, 'crab'),
+        createEnemy(21000 * S, 370, 'thwomp'),
+        createEnemy(22000 * S, 370, 'goomba'),
+        createEnemy(23500 * S, 370, 'spiny'),
       ];
     })(),
     decorations: (() => {
-      const S = 0.4;
+      const S = 0.455;
       return [
-        createDeco(800 * S, 570, 'canyon-rock'), createDeco(1900 * S, 520, 'formation'), createDeco(3600 * S, 470, 'eagle'),
-        createDeco(5900 * S, 550, 'canyon-rock'), createDeco(8500 * S, 430, 'formation'), createDeco(11600 * S, 520, 'eagle'),
-        createDeco(14400 * S, 480, 'canyon-rock'), createDeco(16800 * S, 310, 'formation'), createDeco(20800 * S, 350, 'eagle'),
-        createDeco(24400 * S, 320, 'canyon-rock'), createDeco(28000 * S, 290, 'formation'), createDeco(32800 * S, 290, 'eagle'),
-        createDeco(37000 * S, 100, 'canyon-rock'), createDeco(41000 * S, 70, 'formation'), createDeco(46000 * S, 80, 'eagle'),
+        createDeco(600 * S, 550, 'canyon-rock'),
+        createDeco(3000 * S, 530, 'formation'),
+        createDeco(8000 * S, 500, 'eagle'),
+        createDeco(13000 * S, 450, 'canyon-rock'),
+        createDeco(18000 * S, 450, 'formation'),
+        createDeco(23000 * S, 360, 'canyon-rock'),
+        createDeco(30000 * S, 280, 'eagle'),
+        createDeco(37000 * S, 200, 'formation'),
       ];
     })(),
-    playerStart: { x: 150, y: 550 },
-    goal: createGoal(19400, 128, 2600, 'hard'),
+    playerStart: { x: 100, y: 520 },
+    goal: createGoal(37700 * 0.455, 228, 1600, 'medium'),
+    timeBonus: 200,
+  },
+
+  // ============================================================
+  // LEVEL 78 — Eagle's Nest (Adler-Nest Finale)
+  // Ascend from canyon floor to eagle heights.
+  // Highest point at the end, eagles watching.
+  // ============================================================
+  {
+    id: 78,
+    name: "Eagle's Nest",
+    width: 22000,
+    height: 800,
+    biome: 'canyon-base',
+    platforms: (() => {
+      const S = 0.417;
+      const plats: any[] = [];
+      plats.push(createPlat(0, 750, 900 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 900, 750, 3000));
+      plats.push(...canyonWallSection(S, 4100, 750, 180));
+      plats.push(...canyonVerticalSection(S, 4600, 750, 4));
+      plats.push(createPlat(5400 * S, 670, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 6200, 670, 3000));
+      plats.push(...canyonFloatingPlatforms(S, 9400, 670, 6));
+      plats.push(...canyonWallSection(S, 10800, 590, 160));
+      plats.push(...canyonVerticalSection(S, 11300, 590, 4));
+      plats.push(createPlat(12100 * S, 500, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 12900, 500, 3000));
+      plats.push(...canyonFloatingPlatforms(S, 16100, 500, 8));
+      plats.push(...canyonWallSection(S, 17900, 410, 150));
+      plats.push(...canyonVerticalSection(S, 18400, 410, 3));
+      plats.push(createPlat(19100 * S, 330, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 19800, 330, 2500));
+      plats.push(...canyonFloatingPlatforms(S, 22600, 330, 6));
+      plats.push(...canyonVerticalSection(S, 24000, 330, 3));
+      plats.push(createPlat(24700 * S, 240, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 25400, 240, 3000));
+      plats.push(...canyonWallSection(S, 28600, 240, 150));
+      plats.push(...canyonVerticalSection(S, 29100, 240, 4));
+      plats.push(createPlat(29900 * S, 150, 700 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 30600, 150, 2500));
+      plats.push(...canyonFloatingPlatforms(S, 33400, 150, 4));
+      plats.push(...canyonVerticalSection(S, 34400, 150, 3));
+      plats.push(createPlat(35100 * S, 70, 800 * S, 40, 'stone'));
+      plats.push(...canyonGroundSection(S, 35900, 70, 2500));
+      plats.push(createPlat(38800 * S, 70, 1000 * S, 40, 'stone'));
+      return plats;
+    })(),
+    movingPlatforms: (() => {
+      const S = 0.417;
+      return [
+        createMovingPlat(6800 * S, 520, 150, 24, 'platform_medium', 'horizontal', 400, 22),
+        createMovingPlat(19200 * S, 380, 150, 24, 'platform_medium', 'vertical', 180, 20),
+        createMovingPlat(30800 * S, 180, 150, 24, 'platform_medium', 'horizontal', 350, 18),
+      ];
+    })(),
+    coins: (() => {
+      const S = 0.417;
+      const coins: any[] = [];
+      for (let x = 200 * S; x < 3800 * S; x += 160 * S) coins.push(createCoin(x, 700));
+      for (let x = 4100 * S; x < 4600 * S; x += 100 * S) coins.push(createCoin(x, 660));
+      for (let x = 4600 * S; x < 5400 * S; x += 100 * S) coins.push(createCoin(x, 600));
+      for (let x = 6200 * S; x < 9400 * S; x += 150 * S) coins.push(createCoin(x, 620));
+      for (let x = 9400 * S; x < 10800 * S; x += 100 * S) coins.push(createCoin(x, 560));
+      for (let x = 11300 * S; x < 12100 * S; x += 100 * S) coins.push(createCoin(x, 450));
+      for (let x = 12900 * S; x < 16100 * S; x += 150 * S) coins.push(createCoin(x, 450));
+      for (let x = 16100 * S; x < 17900 * S; x += 100 * S) coins.push(createCoin(x, 400));
+      for (let x = 18400 * S; x < 19100 * S; x += 80 * S) coins.push(createCoin(x, 300));
+      for (let x = 19800 * S; x < 22600 * S; x += 150 * S) coins.push(createCoin(x, 280));
+      for (let x = 22600 * S; x < 24000 * S; x += 100 * S) coins.push(createCoin(x, 250));
+      for (let x = 24000 * S; x < 24700 * S; x += 80 * S) coins.push(createCoin(x, 200));
+      for (let x = 25400 * S; x < 28600 * S; x += 150 * S) coins.push(createCoin(x, 190));
+      for (let x = 29100 * S; x < 29900 * S; x += 100 * S) coins.push(createCoin(x, 120));
+      for (let x = 30600 * S; x < 33400 * S; x += 150 * S) coins.push(createCoin(x, 100));
+      for (let x = 33400 * S; x < 34400 * S; x += 100 * S) coins.push(createCoin(x, 70));
+      for (let x = 34400 * S; x < 35100 * S; x += 80 * S) coins.push(createCoin(x, 50));
+      for (let x = 35900 * S; x < 38800 * S; x += 150 * S) coins.push(createCoin(x, 20));
+      return coins;
+    })(),
+    questionBlocks: (() => {
+      const S = 0.417;
+      return [
+        createQB(2200 * S, 680, 'mushroom'),
+        createQB(5600 * S, 600, 'coin'),
+        createQB(12400 * S, 430, 'flower'),
+        createQB(13800 * S, 430, 'star'),
+        createQB(18500 * S, 340, 'mushroom'),
+        createQB(23400 * S, 260, 'coin'),
+        createQB(30200 * S, 80, 'flower'),
+        createQB(31600 * S, 80, 'star'),
+      ];
+    })(),
+    enemies: (() => {
+      const S = 0.417;
+      return [
+        createEnemy(1200 * S, 660, 'goomba'),
+        createEnemy(3000 * S, 660, 'spiny'),
+        createEnemy(4700 * S, 580, 'crab'),
+        createEnemy(7000 * S, 580, 'goomba'),
+        createEnemy(9800 * S, 500, 'thwomp'),
+        createEnemy(11500 * S, 440, 'spiny'),
+        createEnemy(15000 * S, 410, 'crab'),
+        createEnemy(18600 * S, 320, 'goomba'),
+        createEnemy(20500 * S, 240, 'thwomp'),
+        createEnemy(23000 * S, 240, 'spiny'),
+        createEnemy(26000 * S, 150, 'crab'),
+        createEnemy(29200 * S, 100, 'goomba'),
+        createEnemy(32000 * S, 60, 'thwomp'),
+        createEnemy(37000 * S, 20, 'spiny'),
+      ];
+    })(),
+    decorations: (() => {
+      const S = 0.417;
+      return [
+        createDeco(700 * S, 700, 'canyon-rock'),
+        createDeco(2800 * S, 670, 'formation'),
+        createDeco(8000 * S, 580, 'eagle'),
+        createDeco(12000 * S, 500, 'canyon-rock'),
+        createDeco(14000 * S, 460, 'eagle'),
+        createDeco(17000 * S, 400, 'formation'),
+        createDeco(20000 * S, 320, 'eagle'),
+        createDeco(25000 * S, 200, 'canyon-rock'),
+        createDeco(27000 * S, 190, 'eagle'),
+        createDeco(30000 * S, 130, 'eagle'),
+        createDeco(33000 * S, 80, 'formation'),
+        createDeco(37000 * S, 40, 'eagle'),
+      ];
+    })(),
+    playerStart: { x: 100, y: 670 },
+    goal: createGoal(39300 * 0.417, 38, 2400, 'hard'),
     timeBonus: 220,
   },
 ];

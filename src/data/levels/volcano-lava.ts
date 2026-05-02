@@ -1,944 +1,967 @@
 // Volcano Lava World - 6 Levels (55-60)
-// Long horizontal side-scrolling levels with lava hazards
+// S-Factors: 0.556, 0.526, 0.5, 0.476, 0.455, 0.435
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const VOLCANO_LAVA_LEVELS: LevelData[] = [
+    // ============================================================
+    // LEVEL 55: Tutorial — stone ground, few lava gaps, few enemies
+    // S=0.556, width=22000, height=620
+    // ============================================================
     {
         id: 55,
-        name: "Magma Flow",
-        width: 20000,
+        name: "Einfuehrung",
+        width: 22000,
+        height: 620,
+        biome: 'volcano-lava',
+        platforms: (() => {
+            const S = 0.556;
+            const plats: any[] = [];
+
+            // Stone ground segments at design_x = n*1800, w=1200, plus lava + helpers
+            const segCount = 12;
+            for (let n = 0; n < segCount; n++) {
+                const baseX = n * 1800;
+                plats.push(createPlat(baseX * S, 530, 1200 * S, 100, 'stone'));
+                if (n < segCount - 1) {
+                    plats.push(createPlat((baseX + 1200) * S, 530, 200 * S, 100, 'lava'));
+                    plats.push(createPlat((baseX + 1500) * S, 440, 100 * S, 24, 'platform_easy'));
+                }
+            }
+
+            // Brick towers for decoration
+            plats.push(createPlat(1200 * S, 400, 80 * S, 130, 'brick'));
+            plats.push(createPlat(5400 * S, 390, 80 * S, 140, 'brick'));
+            plats.push(createPlat(9600 * S, 400, 80 * S, 130, 'brick'));
+            plats.push(createPlat(15000 * S, 390, 80 * S, 140, 'brick'));
+
+            // Mid-height platforms for variety
+            plats.push(createPlat(3200 * S, 360, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(7000 * S, 350, 100 * S, 24, 'platform_hard'));
+            plats.push(createPlat(11500 * S, 360, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(17500 * S, 350, 100 * S, 24, 'platform_hard'));
+
+            return plats;
+        })(),
+        coins: (() => {
+            const S = 0.556;
+            const cs: any[] = [];
+            for (let x = 200; x < 1100; x += 200) cs.push(createCoin(x * S, 480));
+            for (let x = 2200; x < 3000; x += 200) cs.push(createCoin(x * S, 480));
+            cs.push(createCoin(3200 * S, 310));
+            cs.push(createCoin(3300 * S, 310));
+            for (let x = 4000; x < 4800; x += 200) cs.push(createCoin(x * S, 480));
+            cs.push(createCoin(7000 * S, 300));
+            cs.push(createCoin(7100 * S, 300));
+            for (let x = 5800; x < 6600; x += 200) cs.push(createCoin(x * S, 480));
+            for (let x = 7600; x < 8400; x += 200) cs.push(createCoin(x * S, 480));
+            cs.push(createCoin(11600 * S, 310));
+            for (let x = 9400; x < 10200; x += 200) cs.push(createCoin(x * S, 480));
+            for (let x = 11200; x < 12000; x += 200) cs.push(createCoin(x * S, 480));
+            for (let x = 13000; x < 13800; x += 200) cs.push(createCoin(x * S, 480));
+            for (let x = 14800; x < 15600; x += 200) cs.push(createCoin(x * S, 480));
+            cs.push(createCoin(17600 * S, 300));
+            for (let x = 16600; x < 17400; x += 200) cs.push(createCoin(x * S, 480));
+            for (let x = 18400; x < 19200; x += 200) cs.push(createCoin(x * S, 480));
+            return cs;
+        })(),
+        questionBlocks: (() => {
+            const S = 0.556;
+            return [
+                createQB(600 * S, 460, 'mushroom'),
+                createQB(3300 * S, 300, 'coin'),
+                createQB(7100 * S, 290, 'flower'),
+                createQB(11600 * S, 300, 'star'),
+                createQB(17600 * S, 290, 'mushroom'),
+            ];
+        })(),
+        enemies: (() => {
+            const S = 0.556;
+            return [
+                createEnemy(800 * S, 490, 'goomba'),
+                createEnemy(4500 * S, 490, 'fireball'),
+                createEnemy(10000 * S, 490, 'goomba'),
+                createEnemy(15500 * S, 490, 'crab'),
+            ];
+        })(),
+        decorations: (() => {
+            const S = 0.556;
+            return [
+                createDeco(300 * S, 460, 'fire'),
+                createDeco(1400 * S, 460, 'ember'),
+                createDeco(2100 * S, 400, 'lava-rock'),
+                createDeco(3800 * S, 460, 'rock'),
+                createDeco(5000 * S, 460, 'fire'),
+                createDeco(5600 * S, 400, 'ember'),
+                createDeco(6600 * S, 460, 'lava-rock'),
+                createDeco(8000 * S, 460, 'fire'),
+                createDeco(9400 * S, 460, 'ember'),
+                createDeco(10500 * S, 400, 'rock'),
+                createDeco(11000 * S, 460, 'lava-rock'),
+                createDeco(12400 * S, 460, 'fire'),
+                createDeco(14000 * S, 460, 'ember'),
+                createDeco(15600 * S, 400, 'lava-rock'),
+                createDeco(16800 * S, 460, 'rock'),
+                createDeco(18000 * S, 460, 'fire'),
+            ];
+        })(),
+        playerStart: { x: 100, y: 480 },
+        goal: { x: 11287, y: 478 },
+        timeBonus: 180,
+        movingPlatforms: [
+            createMovingPlat(3100, 300, 110, 24, 'platform_medium', 'horizontal', 180, 20),
+            createMovingPlat(12500, 310, 120, 24, 'platform_hard', 'horizontal', 200, 22),
+        ],
+    },
+
+    // ============================================================
+    // LEVEL 56: Gap-Strecke — many lava gaps with moving platforms
+    // S=0.526, width=24000, height=640
+    // ============================================================
+    {
+        id: 56,
+        name: "Lava-Spruenge",
+        width: 24000,
+        height: 640,
+        biome: 'volcano-lava',
+        platforms: (() => {
+            const S = 0.526;
+            const plats: any[] = [];
+
+            // Stone ground segments with gaps
+            const segCount = 13;
+            for (let n = 0; n < segCount; n++) {
+                const baseX = n * 1800;
+                plats.push(createPlat(baseX * S, 550, 1200 * S, 100, 'stone'));
+                if (n < segCount - 1) {
+                    plats.push(createPlat((baseX + 1200) * S, 550, 200 * S, 100, 'lava'));
+                    // Staggered helper platforms at varying heights for gap variety
+                    const hY = n % 3 === 0 ? 460 : (n % 3 === 1 ? 430 : 450);
+                    plats.push(createPlat((baseX + 1500) * S, hY, 100 * S, 24, 'platform_easy'));
+                }
+            }
+
+            // Extra gapWithPlatforms sections for variety
+            plats.push(...gapWithPlatforms(S, 4500, 550, 1600, 3));
+
+            // Brick towers
+            plats.push(createPlat(1000 * S, 420, 80 * S, 130, 'brick'));
+            plats.push(createPlat(6400 * S, 400, 80 * S, 150, 'brick'));
+            plats.push(createPlat(12000 * S, 420, 80 * S, 130, 'brick'));
+            plats.push(createPlat(17500 * S, 400, 80 * S, 150, 'brick'));
+
+            // Additional floating platforms
+            plats.push(createPlat(2800 * S, 380, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(8200 * S, 370, 100 * S, 24, 'platform_hard'));
+            plats.push(createPlat(14000 * S, 380, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(19500 * S, 370, 100 * S, 24, 'platform_hard'));
+
+            return plats;
+        })(),
+        coins: (() => {
+            const S = 0.526;
+            const cs: any[] = [];
+            for (let x = 200; x < 1100; x += 200) cs.push(createCoin(x * S, 500));
+            cs.push(createCoin(2800 * S, 330));
+            cs.push(createCoin(2900 * S, 330));
+            for (let x = 2200; x < 4000; x += 300) cs.push(createCoin(x * S, 500));
+            for (let x = 5000; x < 6000; x += 200) cs.push(createCoin(x * S, 500));
+            cs.push(createCoin(8200 * S, 320));
+            cs.push(createCoin(8300 * S, 320));
+            for (let x = 6800; x < 7600; x += 200) cs.push(createCoin(x * S, 500));
+            for (let x = 8600; x < 9400; x += 200) cs.push(createCoin(x * S, 500));
+            for (let x = 10400; x < 11200; x += 200) cs.push(createCoin(x * S, 500));
+            cs.push(createCoin(14000 * S, 330));
+            for (let x = 12200; x < 13000; x += 200) cs.push(createCoin(x * S, 500));
+            for (let x = 14000; x < 14800; x += 200) cs.push(createCoin(x * S, 500));
+            cs.push(createCoin(19500 * S, 320));
+            for (let x = 15800; x < 16600; x += 200) cs.push(createCoin(x * S, 500));
+            for (let x = 17600; x < 18400; x += 200) cs.push(createCoin(x * S, 500));
+            for (let x = 19400; x < 20200; x += 200) cs.push(createCoin(x * S, 500));
+            return cs;
+        })(),
+        questionBlocks: (() => {
+            const S = 0.526;
+            return [
+                createQB(400 * S, 480, 'mushroom'),
+                createQB(2900 * S, 320, 'flower'),
+                createQB(6400 * S, 340, 'star'),
+                createQB(8300 * S, 310, 'coin'),
+                createQB(14000 * S, 320, 'mushroom'),
+                createQB(19500 * S, 310, 'flower'),
+            ];
+        })(),
+        enemies: (() => {
+            const S = 0.526;
+            return [
+                createEnemy(600 * S, 510, 'goomba'),
+                createEnemy(3000 * S, 510, 'fireball'),
+                createEnemy(5000 * S, 510, 'crab'),
+                createEnemy(7200 * S, 510, 'goomba'),
+                createEnemy(9000 * S, 510, 'koopa'),
+                createEnemy(11000 * S, 510, 'fireball'),
+                createEnemy(13500 * S, 510, 'crab'),
+                createEnemy(15500 * S, 510, 'goomba'),
+                createEnemy(17000 * S, 510, 'koopa'),
+                createEnemy(19000 * S, 510, 'fireball'),
+            ];
+        })(),
+        decorations: (() => {
+            const S = 0.526;
+            return [
+                createDeco(300 * S, 480, 'fire'),
+                createDeco(1100 * S, 480, 'ember'),
+                createDeco(2200 * S, 420, 'lava-rock'),
+                createDeco(3400 * S, 480, 'rock'),
+                createDeco(5200 * S, 480, 'fire'),
+                createDeco(6200 * S, 420, 'ember'),
+                createDeco(7400 * S, 480, 'lava-rock'),
+                createDeco(8800 * S, 480, 'fire'),
+                createDeco(10000 * S, 420, 'ember'),
+                createDeco(11600 * S, 480, 'rock'),
+                createDeco(12800 * S, 480, 'lava-rock'),
+                createDeco(15000 * S, 480, 'fire'),
+                createDeco(16200 * S, 420, 'ember'),
+                createDeco(17800 * S, 480, 'rock'),
+                createDeco(18800 * S, 480, 'lava-rock'),
+                createDeco(20000 * S, 480, 'fire'),
+            ];
+        })(),
+        playerStart: { x: 100, y: 500 },
+        goal: { x: 11625, y: 498 },
+        timeBonus: 180,
+        movingPlatforms: [
+            createMovingPlat(3800, 360, 110, 24, 'platform_medium', 'horizontal', 220, 20),
+            createMovingPlat(7800, 350, 120, 24, 'platform_hard', 'vertical', 140, 18),
+            createMovingPlat(11800, 360, 110, 24, 'platform_medium', 'horizontal', 240, 22),
+            createMovingPlat(16200, 350, 120, 24, 'platform_hard', 'horizontal', 200, 20),
+            createMovingPlat(20200, 360, 110, 24, 'platform_medium', 'horizontal', 220, 22),
+        ],
+    },
+
+    // ============================================================
+    // LEVEL 57: Röhren-Labyrinth — 6 pipe sections with piranhas over lava
+    // S=0.5, width=26000, height=650
+    // ============================================================
+    {
+        id: 57,
+        name: "Roehrenpfad",
+        width: 26000,
         height: 650,
         biome: 'volcano-lava',
         platforms: (() => {
-            const S = 0.625;
-            return [
-                createPlat(0 * S, 550, 2500 * S, 100, 'stone'),
-                createPlat(2800 * S, 550, 2000 * S, 100, 'stone'),
-                createPlat(5100 * S, 550, 1800 * S, 100, 'stone'),
-                createPlat(7200 * S, 550, 2200 * S, 100, 'stone'),
-                createPlat(9700 * S, 550, 1500 * S, 100, 'stone'),
-                createPlat(11500 * S, 550, 2000 * S, 100, 'stone'),
-                createPlat(13800 * S, 550, 1800 * S, 100, 'stone'),
-                createPlat(15900 * S, 550, 2200 * S, 100, 'stone'),
-                createPlat(18400 * S, 550, 1500 * S, 100, 'stone'),
-                createPlat(20200 * S, 550, 2000 * S, 100, 'stone'),
-                createPlat(22500 * S, 550, 1800 * S, 100, 'stone'),
-                createPlat(24600 * S, 550, 2200 * S, 100, 'stone'),
-                createPlat(27100 * S, 550, 1500 * S, 100, 'stone'),
-                createPlat(28900 * S, 550, 3000 * S, 100, 'stone'),
-                createPlat(2500 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(4800 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(6900 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(9400 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(11200 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(13500 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(15600 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(18100 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(19900 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(22200 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(24300 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(26800 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(28600 * S, 550, 300 * S, 100, 'lava'),
-                createPlat(1200 * S, 400, 80 * S, 150, 'brick'),
-                createPlat(3800 * S, 350, 80 * S, 200, 'brick'),
-                createPlat(6500 * S, 380, 80 * S, 170, 'brick'),
-                createPlat(8900 * S, 400, 80 * S, 150, 'brick'),
-                createPlat(10800 * S, 350, 80 * S, 200, 'brick'),
-                createPlat(13000 * S, 380, 80 * S, 170, 'brick'),
-                createPlat(15200 * S, 400, 80 * S, 150, 'brick'),
-                createPlat(17500 * S, 350, 80 * S, 200, 'brick'),
-                createPlat(19800 * S, 380, 80 * S, 170, 'brick'),
-                createPlat(21800 * S, 400, 80 * S, 150, 'brick'),
-                createPlat(24000 * S, 350, 80 * S, 200, 'brick'),
-                createPlat(26500 * S, 380, 80 * S, 170, 'brick'),
-                createPlat(28300 * S, 400, 80 * S, 150, 'brick'),
-                createPlat(2600 * S, 450, 150 * S, 30, 'platform_easy'),
-                createPlat(2950 * S, 400, 120 * S, 30, 'platform_easy'),
-                createPlat(4900 * S, 450, 150 * S, 30, 'platform_medium'),
-                createPlat(5300 * S, 380, 120 * S, 30, 'platform_medium'),
-                createPlat(7000 * S, 420, 150 * S, 30, 'platform_easy'),
-                createPlat(7400 * S, 350, 120 * S, 30, 'platform_hard'),
-                createPlat(9500 * S, 450, 150 * S, 30, 'platform_easy'),
-                createPlat(9900 * S, 380, 120 * S, 30, 'platform_medium'),
-                createPlat(11300 * S, 420, 150 * S, 30, 'platform_easy'),
-                createPlat(11700 * S, 350, 120 * S, 30, 'platform_hard'),
-                createPlat(13600 * S, 450, 150 * S, 30, 'platform_medium'),
-                createPlat(14000 * S, 380, 120 * S, 30, 'platform_easy'),
-                createPlat(15700 * S, 420, 150 * S, 30, 'platform_medium'),
-                createPlat(16100 * S, 350, 120 * S, 30, 'platform_hard'),
-                createPlat(18200 * S, 450, 150 * S, 30, 'platform_easy'),
-                createPlat(18600 * S, 380, 120 * S, 30, 'platform_medium'),
-                createPlat(20000 * S, 420, 150 * S, 30, 'platform_easy'),
-                createPlat(20400 * S, 350, 120 * S, 30, 'platform_hard'),
-                createPlat(22300 * S, 450, 150 * S, 30, 'platform_medium'),
-                createPlat(22700 * S, 380, 120 * S, 30, 'platform_easy'),
-                createPlat(24400 * S, 420, 150 * S, 30, 'platform_medium'),
-                createPlat(24800 * S, 350, 120 * S, 30, 'platform_hard'),
-                createPlat(26900 * S, 450, 150 * S, 30, 'platform_easy'),
-                createPlat(27300 * S, 380, 120 * S, 30, 'platform_medium'),
-                createPlat(28700 * S, 420, 150 * S, 30, 'platform_medium'),
-                createPlat(29100 * S, 350, 120 * S, 30, 'platform_easy'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 0.625;
-            return [
-                createCoin(400 * S, 500), createCoin(500 * S, 500), createCoin(600 * S, 500), createCoin(700 * S, 500),
-                createCoin(1100 * S, 500), createCoin(1200 * S, 500), createCoin(1300 * S, 500),
-                createCoin(2900 * S, 400), createCoin(3000 * S, 380), createCoin(3100 * S, 400),
-                createCoin(3300 * S, 500), createCoin(3400 * S, 500),
-                createCoin(4000 * S, 500), createCoin(4100 * S, 500), createCoin(4200 * S, 500),
-                createCoin(5100 * S, 500), createCoin(5200 * S, 500),
-                createCoin(5400 * S, 330), createCoin(5500 * S, 330),
-                createCoin(5900 * S, 500), createCoin(6000 * S, 500), createCoin(6100 * S, 500),
-                createCoin(7200 * S, 500), createCoin(7300 * S, 500),
-                createCoin(7500 * S, 300), createCoin(7600 * S, 280),
-                createCoin(8000 * S, 500), createCoin(8100 * S, 500), createCoin(8200 * S, 500),
-                createCoin(9700 * S, 500), createCoin(9800 * S, 500),
-                createCoin(10000 * S, 330), createCoin(10100 * S, 330),
-                createCoin(10500 * S, 500), createCoin(10600 * S, 500), createCoin(10700 * S, 500),
-                createCoin(11500 * S, 500), createCoin(11600 * S, 500),
-                createCoin(11800 * S, 300), createCoin(11900 * S, 280),
-                createCoin(12300 * S, 500), createCoin(12400 * S, 500), createCoin(12500 * S, 500),
-                createCoin(13800 * S, 500), createCoin(13900 * S, 500),
-                createCoin(14100 * S, 330), createCoin(14200 * S, 330),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 0.625;
-            return [
-                createQB(1200 * S, 340, 'mushroom'), createQB(2950 * S, 340, 'flower'), createQB(4900 * S, 390, 'star'),
-                createQB(7000 * S, 360, 'mushroom'), createQB(9500 * S, 390, 'coin'), createQB(11300 * S, 360, 'flower'),
-                createQB(13600 * S, 390, 'star'), createQB(15700 * S, 360, 'mushroom'), createQB(18200 * S, 390, 'coin'),
-                createQB(20000 * S, 360, 'flower'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.625;
-            return [
-                createEnemy(800 * S, 510, 'fireball'), createEnemy(1500 * S, 510, 'fireball'), createEnemy(3100 * S, 510, 'koopa'),
-                createEnemy(4200 * S, 510, 'fireball'), createEnemy(5600 * S, 510, 'koopa'), createEnemy(6500 * S, 510, 'fireball'),
-                createEnemy(7700 * S, 510, 'thwomp'), createEnemy(8500 * S, 510, 'fireball'), createEnemy(10100 * S, 510, 'koopa'),
-                createEnemy(11000 * S, 510, 'fireball'), createEnemy(2200 * S, 510, 'goomba'), createEnemy(4500 * S, 510, 'spiny'),
-                createEnemy(9000 * S, 510, 'crab'), createEnemy(13000 * S, 510, 'robot'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.625;
-            return [
-                createDeco(200 * S, 480, 'fire'), createDeco(600 * S, 480, 'ember'), createDeco(1000 * S, 480, 'rock'),
-                createDeco(1600 * S, 400, 'lava-rock'), createDeco(2100 * S, 480, 'ember'), createDeco(2600 * S, 400, 'fire'),
-                createDeco(3300 * S, 480, 'ember'), createDeco(3900 * S, 480, 'rock'), createDeco(4500 * S, 400, 'lava-rock'),
-                createDeco(5100 * S, 480, 'ember'), createDeco(5700 * S, 400, 'fire'), createDeco(6300 * S, 480, 'ember'),
-                createDeco(7000 * S, 480, 'rock'), createDeco(7600 * S, 400, 'lava-rock'),
-            ];
-        })(),
-        playerStart: { x: 100, y: 470 },
-        goal: { x: 19000, y: 498 },
-        timeBonus: 180,
-        movingPlatforms: [
-            createMovingPlat(5000, 380, 120, 24, 'platform_medium', 'horizontal', 250, 20),
-            createMovingPlat(12000, 300, 110, 22, 'platform_hard', 'vertical', 150, 18),
-            createMovingPlat(1656, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(3094, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(4406, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(5969, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(7094, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(8531, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(9844, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(11406, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(12531, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(16031, 380, 110, 22, 'platform_medium', 'horizontal', 500, 20),
-        ],
-    },
-    {
-        id: 56,
-        name: "Lava Lake",
-        width: 20016,
-        height: 680,
-        biome: 'volcano-lava',
-        platforms: (() => {
-            const S = 0.556;
-            return [
-                createPlat(400 * S, 580, 2400 * S, 100, 'stone'),
-                createPlat(3100 * S, 580, 2200 * S, 100, 'stone'),
-                createPlat(5600 * S, 580, 2000 * S, 100, 'stone'),
-                createPlat(7900 * S, 580, 2400 * S, 100, 'stone'),
-                createPlat(10600 * S, 580, 1800 * S, 100, 'stone'),
-                createPlat(12700 * S, 580, 2200 * S, 100, 'stone'),
-                createPlat(15200 * S, 580, 2000 * S, 100, 'stone'),
-                createPlat(17500 * S, 580, 2400 * S, 100, 'stone'),
-                createPlat(20200 * S, 580, 1800 * S, 100, 'stone'),
-                createPlat(22300 * S, 580, 2200 * S, 100, 'stone'),
-                createPlat(24800 * S, 580, 2000 * S, 100, 'stone'),
-                createPlat(27100 * S, 580, 2400 * S, 100, 'stone'),
-                createPlat(29800 * S, 580, 2000 * S, 100, 'stone'),
-                createPlat(32100 * S, 580, 3500 * S, 100, 'stone'),
-                createPlat(2800 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(5300 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(7600 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(10300 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(12400 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(14900 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(17200 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(19900 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(22000 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(24500 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(26800 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(29500 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(31800 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(1400 * S, 420, 90 * S, 160, 'brick'),
-                createPlat(4000 * S, 380, 90 * S, 200, 'brick'),
-                createPlat(6800 * S, 400, 90 * S, 180, 'brick'),
-                createPlat(9200 * S, 420, 90 * S, 160, 'brick'),
-                createPlat(11600 * S, 380, 90 * S, 200, 'brick'),
-                createPlat(13900 * S, 400, 90 * S, 180, 'brick'),
-                createPlat(16300 * S, 420, 90 * S, 160, 'brick'),
-                createPlat(18600 * S, 380, 90 * S, 200, 'brick'),
-                createPlat(20900 * S, 400, 90 * S, 180, 'brick'),
-                createPlat(23300 * S, 420, 90 * S, 160, 'brick'),
-                createPlat(25600 * S, 380, 90 * S, 200, 'brick'),
-                createPlat(27900 * S, 400, 90 * S, 180, 'brick'),
-                createPlat(30300 * S, 420, 90 * S, 160, 'brick'),
-                createPlat(2900 * S, 480, 160 * S, 30, 'platform_easy'),
-                createPlat(3250 * S, 420, 130 * S, 30, 'platform_easy'),
-                createPlat(3650 * S, 360, 130 * S, 30, 'platform_medium'),
-                createPlat(5400 * S, 480, 160 * S, 30, 'platform_medium'),
-                createPlat(5800 * S, 400, 130 * S, 30, 'platform_medium'),
-                createPlat(6250 * S, 340, 130 * S, 30, 'platform_hard'),
-                createPlat(7700 * S, 480, 160 * S, 30, 'platform_easy'),
-                createPlat(8100 * S, 400, 130 * S, 30, 'platform_easy'),
-                createPlat(8600 * S, 340, 130 * S, 30, 'platform_medium'),
-                createPlat(10400 * S, 480, 160 * S, 30, 'platform_medium'),
-                createPlat(10800 * S, 400, 130 * S, 30, 'platform_medium'),
-                createPlat(11300 * S, 340, 130 * S, 30, 'platform_hard'),
-                createPlat(12500 * S, 480, 160 * S, 30, 'platform_easy'),
-                createPlat(12900 * S, 400, 130 * S, 30, 'platform_easy'),
-                createPlat(13400 * S, 340, 130 * S, 30, 'platform_medium'),
-                createPlat(15000 * S, 480, 160 * S, 30, 'platform_medium'),
-                createPlat(15400 * S, 400, 130 * S, 30, 'platform_medium'),
-                createPlat(15900 * S, 340, 130 * S, 30, 'platform_hard'),
-                createPlat(17300 * S, 480, 160 * S, 30, 'platform_easy'),
-                createPlat(17700 * S, 400, 130 * S, 30, 'platform_easy'),
-                createPlat(18200 * S, 340, 130 * S, 30, 'platform_medium'),
-                createPlat(20000 * S, 480, 160 * S, 30, 'platform_medium'),
-                createPlat(20400 * S, 400, 130 * S, 30, 'platform_medium'),
-                createPlat(20900 * S, 340, 130 * S, 30, 'platform_hard'),
-                createPlat(22100 * S, 480, 160 * S, 30, 'platform_easy'),
-                createPlat(22500 * S, 400, 130 * S, 30, 'platform_easy'),
-                createPlat(23000 * S, 340, 130 * S, 30, 'platform_medium'),
-                createPlat(24600 * S, 480, 160 * S, 30, 'platform_medium'),
-                createPlat(25000 * S, 400, 130 * S, 30, 'platform_medium'),
-                createPlat(25500 * S, 340, 130 * S, 30, 'platform_hard'),
-                createPlat(26900 * S, 480, 160 * S, 30, 'platform_easy'),
-                createPlat(27300 * S, 400, 130 * S, 30, 'platform_easy'),
-                createPlat(27800 * S, 340, 130 * S, 30, 'platform_medium'),
-                createPlat(29600 * S, 480, 160 * S, 30, 'platform_medium'),
-                createPlat(30000 * S, 400, 130 * S, 30, 'platform_medium'),
-                createPlat(30500 * S, 340, 130 * S, 30, 'platform_hard'),
-                createPlat(31900 * S, 480, 160 * S, 30, 'platform_easy'),
-                createPlat(32300 * S, 400, 130 * S, 30, 'platform_easy'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 0.556;
-            return [
-                createCoin(350 * S, 530), createCoin(450 * S, 530), createCoin(550 * S, 530), createCoin(650 * S, 530),
-                createCoin(1100 * S, 530), createCoin(1200 * S, 530), createCoin(1300 * S, 530),
-                createCoin(1700 * S, 530), createCoin(1800 * S, 530), createCoin(1900 * S, 530),
-                createCoin(3300 * S, 370), createCoin(3400 * S, 350), createCoin(3500 * S, 370),
-                createCoin(3700 * S, 530), createCoin(3800 * S, 530),
-                createCoin(4200 * S, 530), createCoin(4300 * S, 530), createCoin(4400 * S, 530),
-                createCoin(5600 * S, 530), createCoin(5700 * S, 530),
-                createCoin(5900 * S, 350), createCoin(6000 * S, 330),
-                createCoin(6350 * S, 290), createCoin(6450 * S, 290),
-                createCoin(6800 * S, 530), createCoin(6900 * S, 530), createCoin(7000 * S, 530),
-                createCoin(8000 * S, 530), createCoin(8100 * S, 530),
-                createCoin(8300 * S, 290), createCoin(8400 * S, 290),
-                createCoin(8800 * S, 530), createCoin(8900 * S, 530), createCoin(9000 * S, 530),
-                createCoin(10700 * S, 530), createCoin(10800 * S, 530),
-                createCoin(11000 * S, 350), createCoin(11100 * S, 330),
-                createCoin(11500 * S, 290), createCoin(11600 * S, 290),
-                createCoin(12600 * S, 530), createCoin(12700 * S, 530), createCoin(12800 * S, 530),
-                createCoin(13700 * S, 530), createCoin(13800 * S, 530),
-                createCoin(14200 * S, 290), createCoin(14300 * S, 290),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 0.556;
-            return [
-                createQB(1400 * S, 360, 'mushroom'), createQB(3250 * S, 360, 'flower'), createQB(5400 * S, 420, 'star'),
-                createQB(7700 * S, 360, 'mushroom'), createQB(10400 * S, 420, 'coin'), createQB(12500 * S, 360, 'flower'),
-                createQB(15000 * S, 420, 'star'), createQB(17300 * S, 360, 'mushroom'), createQB(20000 * S, 420, 'coin'),
-                createQB(22100 * S, 360, 'flower'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.556;
-            return [
-                createEnemy(900 * S, 540, 'fireball'), createEnemy(2000 * S, 540, 'fireball'), createEnemy(3700 * S, 540, 'koopa'),
-                createEnemy(4500 * S, 540, 'fireball'), createEnemy(6000 * S, 540, 'koopa'), createEnemy(7100 * S, 540, 'fireball'),
-                createEnemy(8300 * S, 540, 'thwomp'), createEnemy(9100 * S, 540, 'fireball'), createEnemy(11100 * S, 540, 'koopa'),
-                createEnemy(12900 * S, 540, 'fireball'), createEnemy(2400 * S, 540, 'goomba'), createEnemy(5200 * S, 540, 'spiny'),
-                createEnemy(7800 * S, 540, 'crab'), createEnemy(10500 * S, 540, 'robot'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.556;
-            return [
-                createDeco(250 * S, 510, 'fire'), createDeco(700 * S, 510, 'ember'), createDeco(1200 * S, 510, 'rock'),
-                createDeco(1800 * S, 430, 'lava-rock'), createDeco(2400 * S, 510, 'ember'), createDeco(3000 * S, 430, 'fire'),
-                createDeco(3600 * S, 510, 'ember'), createDeco(4300 * S, 510, 'rock'), createDeco(5000 * S, 430, 'lava-rock'),
-                createDeco(5600 * S, 510, 'ember'), createDeco(6200 * S, 430, 'fire'), createDeco(6900 * S, 510, 'ember'),
-                createDeco(7600 * S, 510, 'rock'), createDeco(8300 * S, 430, 'lava-rock'),
-            ];
-        })(),
-        playerStart: { x: 400, y: 480 },
-        goal: { x: 18821, y: 528 },
-        timeBonus: 200,
-        movingPlatforms: [
-            createMovingPlat(5500, 400, 130, 24, 'platform_medium', 'horizontal', 280, 22),
-            createMovingPlat(14000, 350, 120, 22, 'platform_hard', 'circular', 120, 16),
-            createMovingPlat(4309, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(6978, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(9647, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(12215, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(14984, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-        ],
-    },
-    {
-        id: 57,
-        name: "Eruption",
-        width: 20000,
-        height: 660,
-        biome: 'volcano-lava',
-        platforms: (() => {
             const S = 0.5;
-            return [
-                createPlat(0 * S, 560, 3000 * S, 100, 'stone'),
-                createPlat(3300 * S, 560, 2500 * S, 100, 'stone'),
-                createPlat(6100 * S, 560, 2200 * S, 100, 'stone'),
-                createPlat(8600 * S, 560, 2800 * S, 100, 'stone'),
-                createPlat(11700 * S, 560, 2000 * S, 100, 'stone'),
-                createPlat(14000 * S, 560, 2500 * S, 100, 'stone'),
-                createPlat(16800 * S, 560, 2200 * S, 100, 'stone'),
-                createPlat(19300 * S, 560, 2800 * S, 100, 'stone'),
-                createPlat(22400 * S, 560, 2000 * S, 100, 'stone'),
-                createPlat(24700 * S, 560, 2500 * S, 100, 'stone'),
-                createPlat(27500 * S, 560, 2200 * S, 100, 'stone'),
-                createPlat(30000 * S, 560, 2800 * S, 100, 'stone'),
-                createPlat(33100 * S, 560, 2000 * S, 100, 'stone'),
-                createPlat(35400 * S, 560, 4500 * S, 100, 'stone'),
-                createPlat(3000 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(5800 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(8300 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(11400 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(13700 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(16500 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(19000 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(22100 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(24400 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(27200 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(29700 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(32800 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(35100 * S, 560, 300 * S, 100, 'lava'),
-                createPlat(1500 * S, 400, 100 * S, 160, 'brick'),
-                createPlat(4200 * S, 350, 100 * S, 210, 'brick'),
-                createPlat(7200 * S, 380, 100 * S, 180, 'brick'),
-                createPlat(9800 * S, 400, 100 * S, 160, 'brick'),
-                createPlat(12600 * S, 350, 100 * S, 210, 'brick'),
-                createPlat(15300 * S, 380, 100 * S, 180, 'brick'),
-                createPlat(17900 * S, 400, 100 * S, 160, 'brick'),
-                createPlat(20800 * S, 350, 100 * S, 210, 'brick'),
-                createPlat(23500 * S, 380, 100 * S, 180, 'brick'),
-                createPlat(26100 * S, 400, 100 * S, 160, 'brick'),
-                createPlat(28800 * S, 350, 100 * S, 210, 'brick'),
-                createPlat(31500 * S, 380, 100 * S, 180, 'brick'),
-                createPlat(34200 * S, 400, 100 * S, 160, 'brick'),
-                createPlat(3100 * S, 470, 170 * S, 30, 'platform_easy'),
-                createPlat(3500 * S, 400, 140 * S, 30, 'platform_easy'),
-                createPlat(3900 * S, 330, 140 * S, 30, 'platform_medium'),
-                createPlat(5950 * S, 470, 170 * S, 30, 'platform_medium'),
-                createPlat(6400 * S, 390, 140 * S, 30, 'platform_medium'),
-                createPlat(6900 * S, 320, 140 * S, 30, 'platform_hard'),
-                createPlat(8450 * S, 470, 170 * S, 30, 'platform_easy'),
-                createPlat(8900 * S, 390, 140 * S, 30, 'platform_easy'),
-                createPlat(9400 * S, 320, 140 * S, 30, 'platform_medium'),
-                createPlat(11500 * S, 470, 170 * S, 30, 'platform_medium'),
-                createPlat(11950 * S, 390, 140 * S, 30, 'platform_medium'),
-                createPlat(12450 * S, 320, 140 * S, 30, 'platform_hard'),
-                createPlat(13800 * S, 470, 170 * S, 30, 'platform_easy'),
-                createPlat(14250 * S, 390, 140 * S, 30, 'platform_easy'),
-                createPlat(14750 * S, 320, 140 * S, 30, 'platform_medium'),
-                createPlat(16600 * S, 470, 170 * S, 30, 'platform_medium'),
-                createPlat(17050 * S, 390, 140 * S, 30, 'platform_medium'),
-                createPlat(17550 * S, 320, 140 * S, 30, 'platform_hard'),
-                createPlat(19100 * S, 470, 170 * S, 30, 'platform_easy'),
-                createPlat(19550 * S, 390, 140 * S, 30, 'platform_easy'),
-                createPlat(20050 * S, 320, 140 * S, 30, 'platform_medium'),
-                createPlat(22200 * S, 470, 170 * S, 30, 'platform_medium'),
-                createPlat(22650 * S, 390, 140 * S, 30, 'platform_medium'),
-                createPlat(23150 * S, 320, 140 * S, 30, 'platform_hard'),
-                createPlat(24500 * S, 470, 170 * S, 30, 'platform_easy'),
-                createPlat(24950 * S, 390, 140 * S, 30, 'platform_easy'),
-                createPlat(25450 * S, 320, 140 * S, 30, 'platform_medium'),
-                createPlat(27300 * S, 470, 170 * S, 30, 'platform_medium'),
-                createPlat(27750 * S, 390, 140 * S, 30, 'platform_medium'),
-                createPlat(28250 * S, 320, 140 * S, 30, 'platform_hard'),
-                createPlat(29800 * S, 470, 170 * S, 30, 'platform_easy'),
-                createPlat(30250 * S, 390, 140 * S, 30, 'platform_easy'),
-                createPlat(30750 * S, 320, 140 * S, 30, 'platform_medium'),
-                createPlat(32900 * S, 470, 170 * S, 30, 'platform_medium'),
-                createPlat(33350 * S, 390, 140 * S, 30, 'platform_medium'),
-                createPlat(33850 * S, 320, 140 * S, 30, 'platform_hard'),
-                createPlat(35200 * S, 470, 170 * S, 30, 'platform_easy'),
-                createPlat(35650 * S, 390, 140 * S, 30, 'platform_easy'),
-            ];
+            const plats: any[] = [];
+
+            // Start ground
+            plats.push(createPlat(0 * S, 560, 1500 * S, 100, 'stone'));
+
+            // Pipe section 1 (3 pipes) at gap
+            plats.push(...pipeSection(S, 1800, 560, 3));
+
+            // Ground segment
+            plats.push(createPlat(3400 * S, 560, 1200 * S, 100, 'stone'));
+            plats.push(createPlat((3400 + 1200) * S, 560, 200 * S, 100, 'lava'));
+
+            // Pipe section 2 (4 pipes)
+            plats.push(...pipeSection(S, 5000, 560, 4));
+
+            // Ground segment
+            plats.push(createPlat(6800 * S, 560, 1200 * S, 100, 'stone'));
+            plats.push(createPlat((6800 + 1200) * S, 560, 200 * S, 100, 'lava'));
+
+            // Pipe section 3 (5 pipes)
+            plats.push(...pipeSection(S, 8400, 560, 5));
+
+            // Ground segment
+            plats.push(createPlat(11000 * S, 560, 1200 * S, 100, 'stone'));
+            plats.push(createPlat((11000 + 1200) * S, 560, 200 * S, 100, 'lava'));
+
+            // Pipe section 4 (4 pipes)
+            plats.push(...pipeSection(S, 12600, 560, 4));
+
+            // Ground segment
+            plats.push(createPlat(14400 * S, 560, 1200 * S, 100, 'stone'));
+            plats.push(createPlat((14400 + 1200) * S, 560, 200 * S, 100, 'lava'));
+
+            // Pipe section 5 (5 pipes)
+            plats.push(...pipeSection(S, 16000, 560, 5));
+
+            // Ground segment
+            plats.push(createPlat(18200 * S, 560, 1200 * S, 100, 'stone'));
+            plats.push(createPlat((18200 + 1200) * S, 560, 200 * S, 100, 'lava'));
+
+            // Pipe section 6 (3 pipes)
+            plats.push(...pipeSection(S, 19800, 560, 3));
+
+            // Final ground to goal
+            plats.push(createPlat(21400 * S, 560, 1600 * S, 100, 'stone'));
+
+            // Brick towers for decoration
+            plats.push(createPlat(1000 * S, 430, 80 * S, 130, 'brick'));
+            plats.push(createPlat(7400 * S, 420, 80 * S, 140, 'brick'));
+            plats.push(createPlat(11800 * S, 430, 80 * S, 130, 'brick'));
+            plats.push(createPlat(15600 * S, 420, 80 * S, 140, 'brick'));
+            plats.push(createPlat(22000 * S, 430, 80 * S, 130, 'brick'));
+
+            // Helper platforms between pipe sections
+            plats.push(createPlat(3800 * S, 450, 100 * S, 24, 'platform_easy'));
+            plats.push(createPlat(7500 * S, 440, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(11600 * S, 450, 100 * S, 24, 'platform_easy'));
+            plats.push(createPlat(15300 * S, 440, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(19000 * S, 450, 100 * S, 24, 'platform_easy'));
+
+            return plats;
         })(),
         coins: (() => {
             const S = 0.5;
-            return [
-                createCoin(400 * S, 510), createCoin(500 * S, 510), createCoin(600 * S, 510), createCoin(700 * S, 510),
-                createCoin(1200 * S, 510), createCoin(1300 * S, 510), createCoin(1400 * S, 510),
-                createCoin(1900 * S, 510), createCoin(2000 * S, 510), createCoin(2100 * S, 510),
-                createCoin(3600 * S, 350), createCoin(3700 * S, 330), createCoin(3800 * S, 350),
-                createCoin(4000 * S, 510), createCoin(4100 * S, 510),
-                createCoin(4600 * S, 510), createCoin(4700 * S, 510), createCoin(4800 * S, 510),
-                createCoin(6200 * S, 510), createCoin(6300 * S, 510),
-                createCoin(6500 * S, 350), createCoin(6600 * S, 330),
-                createCoin(7000 * S, 270), createCoin(7100 * S, 270),
-                createCoin(7500 * S, 510), createCoin(7600 * S, 510), createCoin(7700 * S, 510),
-                createCoin(8700 * S, 510), createCoin(8800 * S, 510),
-                createCoin(9000 * S, 350), createCoin(9100 * S, 330),
-                createCoin(9500 * S, 270), createCoin(9600 * S, 270),
-                createCoin(10000 * S, 510), createCoin(10100 * S, 510), createCoin(10200 * S, 510),
-                createCoin(11800 * S, 510), createCoin(11900 * S, 510),
-                createCoin(12100 * S, 350), createCoin(12200 * S, 330),
-                createCoin(12600 * S, 270), createCoin(12700 * S, 270),
-                createCoin(13900 * S, 510), createCoin(14000 * S, 510), createCoin(14100 * S, 510),
-                createCoin(15100 * S, 510), createCoin(15200 * S, 510),
-                createCoin(15600 * S, 350), createCoin(15700 * S, 330),
-            ];
+            const cs: any[] = [];
+            for (let x = 200; x < 1400; x += 250) cs.push(createCoin(x * S, 510));
+            // Pipes 1
+            for (let x = 2050; x < 2900; x += 350) cs.push(createCoin(x * S, 470));
+            for (let x = 3400; x < 4600; x += 250) cs.push(createCoin(x * S, 510));
+            // Pipes 2
+            for (let x = 5250; x < 6600; x += 350) cs.push(createCoin(x * S, 450));
+            for (let x = 6800; x < 8000; x += 250) cs.push(createCoin(x * S, 510));
+            // Pipes 3
+            for (let x = 8650; x < 10600; x += 350) cs.push(createCoin(x * S, 450));
+            for (let x = 11000; x < 12200; x += 250) cs.push(createCoin(x * S, 510));
+            // Pipes 4
+            for (let x = 12850; x < 14200; x += 350) cs.push(createCoin(x * S, 470));
+            for (let x = 14400; x < 15600; x += 250) cs.push(createCoin(x * S, 510));
+            // Pipes 5
+            for (let x = 16250; x < 18000; x += 350) cs.push(createCoin(x * S, 450));
+            for (let x = 18200; x < 19400; x += 250) cs.push(createCoin(x * S, 510));
+            // Pipes 6
+            for (let x = 20050; x < 21200; x += 350) cs.push(createCoin(x * S, 470));
+            for (let x = 21500; x < 22800; x += 200) cs.push(createCoin(x * S, 510));
+            return cs;
         })(),
         questionBlocks: (() => {
             const S = 0.5;
             return [
-                createQB(1500 * S, 340, 'mushroom'), createQB(3500 * S, 340, 'flower'), createQB(5950 * S, 410, 'star'),
-                createQB(8450 * S, 410, 'mushroom'), createQB(11500 * S, 410, 'coin'), createQB(13800 * S, 340, 'flower'),
-                createQB(16600 * S, 410, 'star'), createQB(19100 * S, 340, 'mushroom'), createQB(22200 * S, 410, 'coin'),
-                createQB(24500 * S, 340, 'flower'), createQB(27300 * S, 410, 'star'), createQB(29800 * S, 340, 'mushroom'),
+                createQB(600 * S, 490, 'mushroom'),
+                createQB(2150 * S, 470, 'coin'),
+                createQB(5350 * S, 430, 'flower'),
+                createQB(8750 * S, 430, 'star'),
+                createQB(12950 * S, 470, 'mushroom'),
+                createQB(16350 * S, 430, 'coin'),
+                createQB(20150 * S, 470, 'flower'),
             ];
         })(),
         enemies: (() => {
             const S = 0.5;
             return [
-                createEnemy(1000 * S, 520, 'fireball'), createEnemy(2300 * S, 520, 'fireball'), createEnemy(4100 * S, 520, 'koopa'),
-                createEnemy(5000 * S, 520, 'fireball'), createEnemy(6700 * S, 520, 'koopa'), createEnemy(8000 * S, 520, 'fireball'),
-                createEnemy(9200 * S, 520, 'thwomp'), createEnemy(10400 * S, 520, 'fireball'), createEnemy(12300 * S, 520, 'koopa'),
-                createEnemy(14500 * S, 520, 'fireball'), createEnemy(2600 * S, 520, 'goomba'), createEnemy(5800 * S, 520, 'spiny'),
-                createEnemy(8600 * S, 520, 'crab'), createEnemy(11200 * S, 520, 'robot'),
+                // Piranhas on pipe sections
+                createEnemy(2050 * S, 500, 'piranha'),
+                createEnemy(2400 * S, 500, 'piranha'),
+                createEnemy(2750 * S, 500, 'piranha'),
+                createEnemy(5250 * S, 500, 'piranha'),
+                createEnemy(5600 * S, 500, 'piranha'),
+                createEnemy(5950 * S, 500, 'piranha'),
+                createEnemy(6300 * S, 500, 'piranha'),
+                createEnemy(8650 * S, 500, 'piranha'),
+                createEnemy(9000 * S, 500, 'piranha'),
+                createEnemy(9350 * S, 500, 'piranha'),
+                createEnemy(9700 * S, 500, 'piranha'),
+                createEnemy(10050 * S, 500, 'piranha'),
+                createEnemy(12850 * S, 500, 'piranha'),
+                createEnemy(13200 * S, 500, 'piranha'),
+                createEnemy(13550 * S, 500, 'piranha'),
+                createEnemy(13900 * S, 500, 'piranha'),
+                createEnemy(16250 * S, 500, 'piranha'),
+                createEnemy(16600 * S, 500, 'piranha'),
+                createEnemy(16950 * S, 500, 'piranha'),
+                createEnemy(17300 * S, 500, 'piranha'),
+                createEnemy(17650 * S, 500, 'piranha'),
+                createEnemy(20050 * S, 500, 'piranha'),
+                createEnemy(20400 * S, 500, 'piranha'),
+                createEnemy(20750 * S, 500, 'piranha'),
+                // Other enemies on ground
+                createEnemy(900 * S, 520, 'goomba'),
+                createEnemy(4000 * S, 520, 'fireball'),
+                createEnemy(7500 * S, 520, 'crab'),
+                createEnemy(11600 * S, 520, 'goomba'),
+                createEnemy(15400 * S, 520, 'fireball'),
+                createEnemy(19000 * S, 520, 'goomba'),
             ];
         })(),
         decorations: (() => {
             const S = 0.5;
             return [
-                createDeco(300 * S, 490, 'fire'), createDeco(800 * S, 490, 'ember'), createDeco(1400 * S, 490, 'rock'),
-                createDeco(2000 * S, 410, 'lava-rock'), createDeco(2700 * S, 490, 'ember'), createDeco(3400 * S, 410, 'fire'),
-                createDeco(4100 * S, 490, 'ember'), createDeco(4900 * S, 490, 'rock'), createDeco(5700 * S, 410, 'lava-rock'),
-                createDeco(6400 * S, 490, 'ember'), createDeco(7200 * S, 410, 'fire'), createDeco(8000 * S, 490, 'ember'),
-                createDeco(8800 * S, 490, 'rock'), createDeco(9600 * S, 410, 'lava-rock'),
+                createDeco(300 * S, 490, 'fire'),
+                createDeco(1200 * S, 490, 'ember'),
+                createDeco(2400 * S, 430, 'lava-rock'),
+                createDeco(3800 * S, 490, 'fire'),
+                createDeco(5600 * S, 430, 'rock'),
+                createDeco(6400 * S, 490, 'ember'),
+                createDeco(7600 * S, 490, 'lava-rock'),
+                createDeco(9000 * S, 430, 'fire'),
+                createDeco(10000 * S, 490, 'ember'),
+                createDeco(11800 * S, 490, 'rock'),
+                createDeco(13400 * S, 430, 'lava-rock'),
+                createDeco(14600 * S, 490, 'fire'),
+                createDeco(16400 * S, 430, 'ember'),
+                createDeco(17600 * S, 490, 'rock'),
+                createDeco(19000 * S, 490, 'lava-rock'),
+                createDeco(20600 * S, 430, 'fire'),
+                createDeco(21800 * S, 490, 'ember'),
+                createDeco(22400 * S, 490, 'rock'),
             ];
         })(),
         playerStart: { x: 100, y: 510 },
-        goal: { x: 18825, y: 508 },
-        timeBonus: 210,
+        goal: { x: 11050, y: 508 },
+        timeBonus: 200,
         movingPlatforms: [
-            createMovingPlat(7000, 450, 130, 24, 'platform_medium', 'vertical', 200, 15),
-            createMovingPlat(16000, 350, 120, 22, 'platform_easy', 'horizontal', 300, 25),
-            createMovingPlat(4244, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(8344, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(13694, 380, 110, 22, 'platform_medium', 'horizontal', 280, 20),
+            createMovingPlat(3200, 380, 110, 24, 'platform_easy', 'horizontal', 200, 20),
+            createMovingPlat(7000, 370, 120, 24, 'platform_medium', 'vertical', 150, 18),
+            createMovingPlat(11200, 380, 110, 24, 'platform_easy', 'horizontal', 220, 22),
+            createMovingPlat(15000, 370, 120, 24, 'platform_medium', 'horizontal', 200, 20),
+            createMovingPlat(18800, 380, 110, 24, 'platform_easy', 'vertical', 140, 18),
         ],
     },
+
+    // ============================================================
+    // LEVEL 58: Vertikal-Kletterer — 4 verticalClimb sections with brick towers
+    // S=0.476, width=26000, height=700
+    // ============================================================
     {
         id: 58,
-        name: "Crater Cross",
-        width: 19536,
-        height: 670,
+        name: "Aufstieg",
+        width: 26000,
+        height: 700,
         biome: 'volcano-lava',
         platforms: (() => {
-            const S = 0.444;
-            return [
-                createPlat(0 * S, 570, 3200 * S, 100, 'stone'),
-                createPlat(3500 * S, 570, 2800 * S, 100, 'stone'),
-                createPlat(6600 * S, 570, 2400 * S, 100, 'stone'),
-                createPlat(9300 * S, 570, 3000 * S, 100, 'stone'),
-                createPlat(12600 * S, 570, 2200 * S, 100, 'stone'),
-                createPlat(15100 * S, 570, 2800 * S, 100, 'stone'),
-                createPlat(18200 * S, 570, 2400 * S, 100, 'stone'),
-                createPlat(20900 * S, 570, 3000 * S, 100, 'stone'),
-                createPlat(24200 * S, 570, 2200 * S, 100, 'stone'),
-                createPlat(26700 * S, 570, 2800 * S, 100, 'stone'),
-                createPlat(29800 * S, 570, 2400 * S, 100, 'stone'),
-                createPlat(32500 * S, 570, 3000 * S, 100, 'stone'),
-                createPlat(35800 * S, 570, 2200 * S, 100, 'stone'),
-                createPlat(38300 * S, 570, 5500 * S, 100, 'stone'),
-                createPlat(3200 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(6300 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(9000 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(12300 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(14800 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(17900 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(20600 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(23900 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(26400 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(29500 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(32200 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(35500 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(38000 * S, 570, 300 * S, 100, 'lava'),
-                createPlat(1600 * S, 410, 100 * S, 160, 'brick'),
-                createPlat(4600 * S, 360, 100 * S, 210, 'brick'),
-                createPlat(7900 * S, 390, 100 * S, 180, 'brick'),
-                createPlat(10700 * S, 410, 100 * S, 160, 'brick'),
-                createPlat(13600 * S, 360, 100 * S, 210, 'brick'),
-                createPlat(16500 * S, 390, 100 * S, 180, 'brick'),
-                createPlat(19200 * S, 410, 100 * S, 160, 'brick'),
-                createPlat(22200 * S, 360, 100 * S, 210, 'brick'),
-                createPlat(25200 * S, 390, 100 * S, 180, 'brick'),
-                createPlat(27900 * S, 410, 100 * S, 160, 'brick'),
-                createPlat(30900 * S, 360, 100 * S, 210, 'brick'),
-                createPlat(33800 * S, 390, 100 * S, 180, 'brick'),
-                createPlat(36600 * S, 410, 100 * S, 160, 'brick'),
-                createPlat(3300 * S, 480, 180 * S, 30, 'platform_easy'),
-                createPlat(3750 * S, 410, 150 * S, 30, 'platform_easy'),
-                createPlat(4150 * S, 340, 150 * S, 30, 'platform_medium'),
-                createPlat(6450 * S, 480, 180 * S, 30, 'platform_medium'),
-                createPlat(6950 * S, 400, 150 * S, 30, 'platform_medium'),
-                createPlat(7500 * S, 330, 150 * S, 30, 'platform_hard'),
-                createPlat(9150 * S, 480, 180 * S, 30, 'platform_easy'),
-                createPlat(9600 * S, 400, 150 * S, 30, 'platform_easy'),
-                createPlat(10150 * S, 330, 150 * S, 30, 'platform_medium'),
-                createPlat(12400 * S, 480, 180 * S, 30, 'platform_medium'),
-                createPlat(12900 * S, 400, 150 * S, 30, 'platform_medium'),
-                createPlat(13450 * S, 330, 150 * S, 30, 'platform_hard'),
-                createPlat(14900 * S, 480, 180 * S, 30, 'platform_easy'),
-                createPlat(15400 * S, 400, 150 * S, 30, 'platform_easy'),
-                createPlat(15950 * S, 330, 150 * S, 30, 'platform_medium'),
-                createPlat(18000 * S, 480, 180 * S, 30, 'platform_medium'),
-                createPlat(18500 * S, 400, 150 * S, 30, 'platform_medium'),
-                createPlat(19050 * S, 330, 150 * S, 30, 'platform_hard'),
-                createPlat(20700 * S, 480, 180 * S, 30, 'platform_easy'),
-                createPlat(21200 * S, 400, 150 * S, 30, 'platform_easy'),
-                createPlat(21750 * S, 330, 150 * S, 30, 'platform_medium'),
-                createPlat(24000 * S, 480, 180 * S, 30, 'platform_medium'),
-                createPlat(24500 * S, 400, 150 * S, 30, 'platform_medium'),
-                createPlat(25050 * S, 330, 150 * S, 30, 'platform_hard'),
-                createPlat(26500 * S, 480, 180 * S, 30, 'platform_easy'),
-                createPlat(27000 * S, 400, 150 * S, 30, 'platform_easy'),
-                createPlat(27550 * S, 330, 150 * S, 30, 'platform_medium'),
-                createPlat(29600 * S, 480, 180 * S, 30, 'platform_medium'),
-                createPlat(30100 * S, 400, 150 * S, 30, 'platform_medium'),
-                createPlat(30650 * S, 330, 150 * S, 30, 'platform_hard'),
-                createPlat(32300 * S, 480, 180 * S, 30, 'platform_easy'),
-                createPlat(32800 * S, 400, 150 * S, 30, 'platform_easy'),
-                createPlat(33350 * S, 330, 150 * S, 30, 'platform_medium'),
-                createPlat(35600 * S, 480, 180 * S, 30, 'platform_medium'),
-                createPlat(36100 * S, 400, 150 * S, 30, 'platform_medium'),
-                createPlat(36650 * S, 330, 150 * S, 30, 'platform_hard'),
-                createPlat(38100 * S, 480, 180 * S, 30, 'platform_easy'),
-                createPlat(38600 * S, 400, 150 * S, 30, 'platform_easy'),
-            ];
+            const S = 0.476;
+            const plats: any[] = [];
+
+            // Start ground
+            plats.push(createPlat(0 * S, 580, 1500 * S, 100, 'stone'));
+
+            // Vertical climb 1
+            plats.push(...verticalClimb(S, 1800, 580, 'stone'));
+
+            // Ground after climb 1
+            plats.push(createPlat(4100 * S, 580, 1200 * S, 100, 'stone'));
+            plats.push(createPlat(5300 * S, 580, 200 * S, 100, 'lava'));
+
+            // Vertical climb 2
+            plats.push(...verticalClimb(S, 5700, 580, 'stone'));
+
+            // Ground after climb 2
+            plats.push(createPlat(8000 * S, 580, 1200 * S, 100, 'stone'));
+            plats.push(createPlat(9200 * S, 580, 200 * S, 100, 'lava'));
+
+            // Vertical climb 3
+            plats.push(...verticalClimb(S, 9600, 580, 'stone'));
+
+            // Ground after climb 3
+            plats.push(createPlat(11900 * S, 580, 1200 * S, 100, 'stone'));
+            plats.push(createPlat(13100 * S, 580, 200 * S, 100, 'lava'));
+
+            // Vertical climb 4
+            plats.push(...verticalClimb(S, 13500, 580, 'stone'));
+
+            // Ground after climb 4
+            plats.push(createPlat(15800 * S, 580, 1200 * S, 100, 'stone'));
+            plats.push(createPlat(17000 * S, 580, 200 * S, 100, 'lava'));
+
+            // Scattered high platforms for variety
+            plats.push(createPlat(17500 * S, 480, 100 * S, 28, 'platform_easy'));
+            plats.push(createPlat(17800 * S, 400, 100 * S, 28, 'platform_medium'));
+            plats.push(createPlat(18100 * S, 320, 100 * S, 28, 'platform_hard'));
+            plats.push(createPlat(18400 * S, 250, 140 * S, 40, 'stone'));
+            plats.push(createPlat(18800 * S, 320, 100 * S, 28, 'platform_hard'));
+            plats.push(createPlat(19100 * S, 400, 100 * S, 28, 'platform_medium'));
+            plats.push(createPlat(19400 * S, 480, 100 * S, 28, 'platform_easy'));
+
+            // Final ground to goal
+            plats.push(createPlat(20000 * S, 580, 1600 * S, 100, 'stone'));
+
+            // Brick towers
+            plats.push(createPlat(800 * S, 450, 80 * S, 130, 'brick'));
+            plats.push(createPlat(4200 * S, 440, 80 * S, 140, 'brick'));
+            plats.push(createPlat(12400 * S, 450, 80 * S, 130, 'brick'));
+            plats.push(createPlat(16200 * S, 440, 80 * S, 140, 'brick'));
+            plats.push(createPlat(20500 * S, 450, 80 * S, 130, 'brick'));
+
+            // Helper platforms between climb sections
+            plats.push(createPlat(2400 * S, 440, 100 * S, 24, 'platform_easy'));
+            plats.push(createPlat(6200 * S, 430, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(10100 * S, 440, 100 * S, 24, 'platform_easy'));
+            plats.push(createPlat(14000 * S, 430, 100 * S, 24, 'platform_medium'));
+
+            return plats;
         })(),
         coins: (() => {
-            const S = 0.444;
-            return [
-                createCoin(450 * S, 520), createCoin(550 * S, 520), createCoin(650 * S, 520), createCoin(750 * S, 520),
-                createCoin(1300 * S, 520), createCoin(1400 * S, 520), createCoin(1500 * S, 520),
-                createCoin(2000 * S, 520), createCoin(2100 * S, 520), createCoin(2200 * S, 520),
-                createCoin(3850 * S, 360), createCoin(3950 * S, 340), createCoin(4050 * S, 360),
-                createCoin(4250 * S, 520), createCoin(4350 * S, 520),
-                createCoin(4900 * S, 520), createCoin(5000 * S, 520), createCoin(5100 * S, 520),
-                createCoin(6700 * S, 520), createCoin(6800 * S, 520),
-                createCoin(7050 * S, 350), createCoin(7150 * S, 330),
-                createCoin(7600 * S, 280), createCoin(7700 * S, 280),
-                createCoin(8100 * S, 520), createCoin(8200 * S, 520), createCoin(8300 * S, 520),
-                createCoin(9400 * S, 520), createCoin(9500 * S, 520),
-                createCoin(9750 * S, 350), createCoin(9850 * S, 330),
-                createCoin(10250 * S, 280), createCoin(10350 * S, 280),
-                createCoin(10800 * S, 520), createCoin(10900 * S, 520), createCoin(11000 * S, 520),
-                createCoin(12700 * S, 520), createCoin(12800 * S, 520),
-                createCoin(13050 * S, 350), createCoin(13150 * S, 330),
-                createCoin(13550 * S, 280), createCoin(13650 * S, 280),
-                createCoin(15000 * S, 520), createCoin(15100 * S, 520), createCoin(15200 * S, 520),
-                createCoin(16300 * S, 520), createCoin(16400 * S, 520),
-                createCoin(16800 * S, 350), createCoin(16900 * S, 330),
-            ];
+            const S = 0.476;
+            const cs: any[] = [];
+            for (let x = 200; x < 1400; x += 200) cs.push(createCoin(x * S, 530));
+            // Climb 1 top
+            cs.push(createCoin(2600 * S, 220));
+            cs.push(createCoin(2700 * S, 220));
+            cs.push(createCoin(2800 * S, 220));
+            for (let x = 4100; x < 5200; x += 200) cs.push(createCoin(x * S, 530));
+            // Climb 2 top
+            cs.push(createCoin(6500 * S, 220));
+            cs.push(createCoin(6600 * S, 220));
+            for (let x = 8000; x < 9000; x += 200) cs.push(createCoin(x * S, 530));
+            // Climb 3 top
+            cs.push(createCoin(10400 * S, 220));
+            cs.push(createCoin(10500 * S, 220));
+            cs.push(createCoin(10600 * S, 220));
+            for (let x = 11900; x < 13000; x += 200) cs.push(createCoin(x * S, 530));
+            // Climb 4 top
+            cs.push(createCoin(14300 * S, 220));
+            cs.push(createCoin(14400 * S, 220));
+            for (let x = 15800; x < 16800; x += 200) cs.push(createCoin(x * S, 530));
+            // High scattered
+            cs.push(createCoin(18400 * S, 200));
+            cs.push(createCoin(18500 * S, 200));
+            for (let x = 20000; x < 21400; x += 200) cs.push(createCoin(x * S, 530));
+            return cs;
         })(),
         questionBlocks: (() => {
-            const S = 0.444;
+            const S = 0.476;
             return [
-                createQB(1600 * S, 350, 'mushroom'), createQB(3750 * S, 350, 'flower'), createQB(6450 * S, 420, 'star'),
-                createQB(9150 * S, 420, 'mushroom'), createQB(12400 * S, 420, 'coin'), createQB(14900 * S, 350, 'flower'),
-                createQB(18000 * S, 420, 'star'), createQB(20700 * S, 350, 'mushroom'), createQB(24000 * S, 420, 'coin'),
-                createQB(26500 * S, 350, 'flower'), createQB(29600 * S, 420, 'star'), createQB(32300 * S, 350, 'mushroom'),
+                createQB(400 * S, 510, 'mushroom'),
+                createQB(2700 * S, 200, 'star'),
+                createQB(4300 * S, 390, 'flower'),
+                createQB(6600 * S, 200, 'coin'),
+                createQB(10500 * S, 200, 'mushroom'),
+                createQB(12400 * S, 390, 'flower'),
+                createQB(14400 * S, 200, 'star'),
+                createQB(20600 * S, 390, 'coin'),
             ];
         })(),
         enemies: (() => {
-            const S = 0.444;
+            const S = 0.476;
             return [
-                createEnemy(1100 * S, 530, 'fireball'), createEnemy(2500 * S, 530, 'fireball'), createEnemy(4400 * S, 530, 'koopa'),
-                createEnemy(5400 * S, 530, 'fireball'), createEnemy(7200 * S, 530, 'koopa'), createEnemy(8600 * S, 530, 'fireball'),
-                createEnemy(9900 * S, 530, 'thwomp'), createEnemy(11200 * S, 530, 'fireball'), createEnemy(13200 * S, 530, 'koopa'),
-                createEnemy(15600 * S, 530, 'fireball'), createEnemy(2900 * S, 530, 'goomba'), createEnemy(6100 * S, 530, 'spiny'),
-                createEnemy(9400 * S, 530, 'crab'), createEnemy(12300 * S, 530, 'robot'),
+                createEnemy(500 * S, 540, 'goomba'),
+                createEnemy(2800 * S, 380, 'goomba'),
+                createEnemy(4400 * S, 540, 'fireball'),
+                createEnemy(6800 * S, 380, 'crab'),
+                createEnemy(8500 * S, 540, 'goomba'),
+                createEnemy(10800 * S, 380, 'koopa'),
+                createEnemy(12200 * S, 540, 'fireball'),
+                createEnemy(14700 * S, 380, 'goomba'),
+                createEnemy(16000 * S, 540, 'crab'),
+                createEnemy(17700 * S, 440, 'spiny'),
+                createEnemy(18400 * S, 200, 'goomba'),
+                createEnemy(20400 * S, 540, 'fireball'),
             ];
         })(),
         decorations: (() => {
-            const S = 0.444;
+            const S = 0.476;
             return [
-                createDeco(350 * S, 500, 'fire'), createDeco(900 * S, 500, 'ember'), createDeco(1500 * S, 500, 'rock'),
-                createDeco(2200 * S, 420, 'lava-rock'), createDeco(2900 * S, 500, 'ember'), createDeco(3700 * S, 420, 'fire'),
-                createDeco(4500 * S, 500, 'ember'), createDeco(5300 * S, 500, 'rock'), createDeco(6200 * S, 420, 'lava-rock'),
-                createDeco(7000 * S, 500, 'ember'), createDeco(7800 * S, 420, 'fire'), createDeco(8700 * S, 500, 'ember'),
-                createDeco(9600 * S, 500, 'rock'), createDeco(10500 * S, 420, 'lava-rock'), createDeco(11300 * S, 500, 'ember'),
-            ];
-        })(),
-        playerStart: { x: 100, y: 520 },
-        goal: { x: 18226, y: 518 },
-        timeBonus: 220,
-        movingPlatforms: [
-            createMovingPlat(6500, 320, 120, 24, 'platform_medium', 'circular', 130, 15),
-            createMovingPlat(4063, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(6638, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(10678, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(13165, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-            createMovingPlat(15829, 390, 110, 22, 'platform_medium', 'horizontal', 280, 20),
-        ],
-    },
-    {
-        id: 59,
-        name: "Ash Fall",
-        width: 20016,
-        height: 680,
-        biome: 'volcano-lava',
-        platforms: (() => {
-            const S = 0.417;
-            return [
-                createPlat(0 * S, 580, 3400 * S, 100, 'stone'),
-                createPlat(3700 * S, 580, 3000 * S, 100, 'stone'),
-                createPlat(7000 * S, 580, 2600 * S, 100, 'stone'),
-                createPlat(9900 * S, 580, 3200 * S, 100, 'stone'),
-                createPlat(13400 * S, 580, 2400 * S, 100, 'stone'),
-                createPlat(16100 * S, 580, 3000 * S, 100, 'stone'),
-                createPlat(19400 * S, 580, 2600 * S, 100, 'stone'),
-                createPlat(22300 * S, 580, 3200 * S, 100, 'stone'),
-                createPlat(25800 * S, 580, 2400 * S, 100, 'stone'),
-                createPlat(28500 * S, 580, 3000 * S, 100, 'stone'),
-                createPlat(31800 * S, 580, 2600 * S, 100, 'stone'),
-                createPlat(34700 * S, 580, 3200 * S, 100, 'stone'),
-                createPlat(38200 * S, 580, 2400 * S, 100, 'stone'),
-                createPlat(40900 * S, 580, 3500 * S, 100, 'stone'),
-                createPlat(44700 * S, 580, 3000 * S, 100, 'stone'),
-                createPlat(3400 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(6700 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(9600 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(13100 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(15800 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(19100 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(22000 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(25500 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(28200 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(31500 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(34400 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(37900 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(40600 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(44400 * S, 580, 300 * S, 100, 'lava'),
-                createPlat(1700 * S, 420, 110 * S, 160, 'brick'),
-                createPlat(5000 * S, 370, 110 * S, 210, 'brick'),
-                createPlat(8500 * S, 400, 110 * S, 180, 'brick'),
-                createPlat(11400 * S, 420, 110 * S, 160, 'brick'),
-                createPlat(14500 * S, 370, 110 * S, 210, 'brick'),
-                createPlat(17600 * S, 400, 110 * S, 180, 'brick'),
-                createPlat(20600 * S, 420, 110 * S, 160, 'brick'),
-                createPlat(23800 * S, 370, 110 * S, 210, 'brick'),
-                createPlat(27000 * S, 400, 110 * S, 180, 'brick'),
-                createPlat(29900 * S, 420, 110 * S, 160, 'brick'),
-                createPlat(33100 * S, 370, 110 * S, 210, 'brick'),
-                createPlat(36200 * S, 400, 110 * S, 180, 'brick'),
-                createPlat(39200 * S, 420, 110 * S, 160, 'brick'),
-                createPlat(42200 * S, 370, 110 * S, 210, 'brick'),
-                createPlat(3500 * S, 490, 190 * S, 30, 'platform_easy'),
-                createPlat(3950 * S, 420, 160 * S, 30, 'platform_easy'),
-                createPlat(4400 * S, 350, 160 * S, 30, 'platform_medium'),
-                createPlat(6850 * S, 490, 190 * S, 30, 'platform_medium'),
-                createPlat(7350 * S, 410, 160 * S, 30, 'platform_medium'),
-                createPlat(7900 * S, 340, 160 * S, 30, 'platform_hard'),
-                createPlat(9750 * S, 490, 190 * S, 30, 'platform_easy'),
-                createPlat(10250 * S, 410, 160 * S, 30, 'platform_easy'),
-                createPlat(10750 * S, 340, 160 * S, 30, 'platform_medium'),
-                createPlat(13200 * S, 490, 190 * S, 30, 'platform_medium'),
-                createPlat(13750 * S, 410, 160 * S, 30, 'platform_medium'),
-                createPlat(14300 * S, 340, 160 * S, 30, 'platform_hard'),
-                createPlat(15900 * S, 490, 190 * S, 30, 'platform_easy'),
-                createPlat(16450 * S, 410, 160 * S, 30, 'platform_easy'),
-                createPlat(17000 * S, 340, 160 * S, 30, 'platform_medium'),
-                createPlat(19200 * S, 490, 190 * S, 30, 'platform_medium'),
-                createPlat(19750 * S, 410, 160 * S, 30, 'platform_medium'),
-                createPlat(20300 * S, 340, 160 * S, 30, 'platform_hard'),
-                createPlat(22100 * S, 490, 190 * S, 30, 'platform_easy'),
-                createPlat(22650 * S, 410, 160 * S, 30, 'platform_easy'),
-                createPlat(23200 * S, 340, 160 * S, 30, 'platform_medium'),
-                createPlat(25600 * S, 490, 190 * S, 30, 'platform_medium'),
-                createPlat(26150 * S, 410, 160 * S, 30, 'platform_medium'),
-                createPlat(26700 * S, 340, 160 * S, 30, 'platform_hard'),
-                createPlat(28300 * S, 490, 190 * S, 30, 'platform_easy'),
-                createPlat(28850 * S, 410, 160 * S, 30, 'platform_easy'),
-                createPlat(29400 * S, 340, 160 * S, 30, 'platform_medium'),
-                createPlat(31600 * S, 490, 190 * S, 30, 'platform_medium'),
-                createPlat(32150 * S, 410, 160 * S, 30, 'platform_medium'),
-                createPlat(32700 * S, 340, 160 * S, 30, 'platform_hard'),
-                createPlat(34500 * S, 490, 190 * S, 30, 'platform_easy'),
-                createPlat(35050 * S, 410, 160 * S, 30, 'platform_easy'),
-                createPlat(35600 * S, 340, 160 * S, 30, 'platform_medium'),
-                createPlat(38000 * S, 490, 190 * S, 30, 'platform_medium'),
-                createPlat(38550 * S, 410, 160 * S, 30, 'platform_medium'),
-                createPlat(39100 * S, 340, 160 * S, 30, 'platform_hard'),
-                createPlat(40700 * S, 490, 190 * S, 30, 'platform_easy'),
-                createPlat(41250 * S, 410, 160 * S, 30, 'platform_easy'),
-                createPlat(41800 * S, 340, 160 * S, 30, 'platform_medium'),
-                createPlat(44500 * S, 490, 190 * S, 30, 'platform_medium'),
-                createPlat(45050 * S, 410, 160 * S, 30, 'platform_easy'),
-            ];
-        })(),
-        coins: (() => {
-            const S = 0.417;
-            return [
-                createCoin(500 * S, 530), createCoin(600 * S, 530), createCoin(700 * S, 530), createCoin(800 * S, 530),
-                createCoin(1400 * S, 530), createCoin(1500 * S, 530), createCoin(1600 * S, 530),
-                createCoin(2100 * S, 530), createCoin(2200 * S, 530), createCoin(2300 * S, 530),
-                createCoin(4050 * S, 370), createCoin(4150 * S, 350), createCoin(4250 * S, 370),
-                createCoin(4450 * S, 530), createCoin(4550 * S, 530),
-                createCoin(5100 * S, 530), createCoin(5200 * S, 530), createCoin(5300 * S, 530),
-                createCoin(7100 * S, 530), createCoin(7200 * S, 530),
-                createCoin(7450 * S, 360), createCoin(7550 * S, 340),
-                createCoin(8000 * S, 290), createCoin(8100 * S, 290),
-                createCoin(8500 * S, 530), createCoin(8600 * S, 530), createCoin(8700 * S, 530),
-                createCoin(10000 * S, 530), createCoin(10100 * S, 530),
-                createCoin(10350 * S, 360), createCoin(10450 * S, 340),
-                createCoin(10850 * S, 290), createCoin(10950 * S, 290),
-                createCoin(11400 * S, 530), createCoin(11500 * S, 530), createCoin(11600 * S, 530),
-                createCoin(13500 * S, 530), createCoin(13600 * S, 530),
-                createCoin(13850 * S, 360), createCoin(13950 * S, 340),
-                createCoin(14350 * S, 290), createCoin(14450 * S, 290),
-                createCoin(16000 * S, 530), createCoin(16100 * S, 530), createCoin(16200 * S, 530),
-                createCoin(17400 * S, 530), createCoin(17500 * S, 530),
-                createCoin(17900 * S, 360), createCoin(18000 * S, 340),
-            ];
-        })(),
-        questionBlocks: (() => {
-            const S = 0.417;
-            return [
-                createQB(1700 * S, 360, 'mushroom'), createQB(3950 * S, 360, 'flower'), createQB(6850 * S, 430, 'star'),
-                createQB(9750 * S, 430, 'mushroom'), createQB(13200 * S, 430, 'coin'), createQB(15900 * S, 360, 'flower'),
-                createQB(19200 * S, 430, 'star'), createQB(22100 * S, 360, 'mushroom'), createQB(25600 * S, 430, 'coin'),
-                createQB(28300 * S, 360, 'flower'), createQB(31600 * S, 430, 'star'), createQB(34500 * S, 360, 'mushroom'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.417;
-            return [
-                createEnemy(1200 * S, 540, 'fireball'), createEnemy(2700 * S, 540, 'fireball'), createEnemy(4700 * S, 540, 'koopa'),
-                createEnemy(5700 * S, 540, 'fireball'), createEnemy(7700 * S, 540, 'koopa'), createEnemy(9200 * S, 540, 'fireball'),
-                createEnemy(10550 * S, 540, 'thwomp'), createEnemy(12000 * S, 540, 'fireball'), createEnemy(14100 * S, 540, 'koopa'),
-                createEnemy(16700 * S, 540, 'fireball'), createEnemy(3200 * S, 540, 'goomba'), createEnemy(6400 * S, 540, 'spiny'),
-                createEnemy(10100 * S, 540, 'crab'), createEnemy(13800 * S, 540, 'robot'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.417;
-            return [
-                createDeco(400 * S, 510, 'fire'), createDeco(1000 * S, 510, 'ember'), createDeco(1700 * S, 510, 'rock'),
-                createDeco(2500 * S, 430, 'lava-rock'), createDeco(3300 * S, 510, 'ember'), createDeco(4100 * S, 430, 'fire'),
-                createDeco(5000 * S, 510, 'ember'), createDeco(5900 * S, 510, 'rock'), createDeco(6800 * S, 430, 'lava-rock'),
-                createDeco(7600 * S, 510, 'ember'), createDeco(8500 * S, 430, 'fire'), createDeco(9400 * S, 510, 'ember'),
-                createDeco(10400 * S, 510, 'rock'), createDeco(11300 * S, 430, 'lava-rock'), createDeco(12200 * S, 510, 'ember'),
+                createDeco(300 * S, 510, 'fire'),
+                createDeco(1100 * S, 510, 'ember'),
+                createDeco(2200 * S, 400, 'lava-rock'),
+                createDeco(2700 * S, 230, 'fire'),
+                createDeco(3800 * S, 510, 'ember'),
+                createDeco(5000 * S, 510, 'lava-rock'),
+                createDeco(6200 * S, 400, 'rock'),
+                createDeco(6500 * S, 230, 'fire'),
+                createDeco(7600 * S, 510, 'ember'),
+                createDeco(8800 * S, 510, 'lava-rock'),
+                createDeco(10000 * S, 400, 'rock'),
+                createDeco(10400 * S, 230, 'fire'),
+                createDeco(11500 * S, 510, 'ember'),
+                createDeco(12800 * S, 510, 'lava-rock'),
+                createDeco(14000 * S, 400, 'rock'),
+                createDeco(14300 * S, 230, 'fire'),
+                createDeco(15500 * S, 510, 'ember'),
+                createDeco(16800 * S, 510, 'lava-rock'),
+                createDeco(18000 * S, 400, 'rock'),
+                createDeco(18600 * S, 230, 'fire'),
+                createDeco(19800 * S, 510, 'ember'),
+                createDeco(21000 * S, 510, 'lava-rock'),
             ];
         })(),
         playerStart: { x: 100, y: 530 },
-        goal: { x: 19265, y: 528 },
+        goal: { x: 9853, y: 528 },
         timeBonus: 200,
         movingPlatforms: [
-            createMovingPlat(7000, 420, 140, 24, 'platform_medium', 'horizontal', 260, 19),
-            createMovingPlat(20000, 350, 120, 22, 'platform_hard', 'circular', 140, 17),
-            createMovingPlat(2856, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(5525, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(8027, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(10696, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(13198, 400, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(18056, 380, 110, 22, 'platform_medium', 'horizontal', 500, 20),
+            createMovingPlat(3400, 380, 110, 24, 'platform_easy', 'horizontal', 200, 20),
+            createMovingPlat(7400, 370, 120, 24, 'platform_medium', 'vertical', 160, 22),
+            createMovingPlat(11600, 380, 110, 24, 'platform_easy', 'horizontal', 220, 20),
+            createMovingPlat(15600, 370, 120, 24, 'platform_medium', 'horizontal', 240, 24),
         ],
     },
+
+    // ============================================================
+    // LEVEL 59: Gegner-Horde — 18 enemies (fireballs, goombas, crabs, etc.)
+    // S=0.455, width=26000, height=650
+    // ============================================================
     {
-        id: 60,
-        name: "Core Challenge",
-        width: 20000,
-        height: 690,
+        id: 59,
+        name: "Asche-Sturm",
+        width: 26000,
+        height: 650,
         biome: 'volcano-lava',
         platforms: (() => {
-            const S = 0.4;
-            return [
-                createPlat(0 * S, 590, 3600 * S, 100, 'stone'),
-                createPlat(3900 * S, 590, 3200 * S, 100, 'stone'),
-                createPlat(7400 * S, 590, 2800 * S, 100, 'stone'),
-                createPlat(10500 * S, 590, 3400 * S, 100, 'stone'),
-                createPlat(14200 * S, 590, 2600 * S, 100, 'stone'),
-                createPlat(17100 * S, 590, 3200 * S, 100, 'stone'),
-                createPlat(20600 * S, 590, 2800 * S, 100, 'stone'),
-                createPlat(23700 * S, 590, 3400 * S, 100, 'stone'),
-                createPlat(27400 * S, 590, 2600 * S, 100, 'stone'),
-                createPlat(30300 * S, 590, 3200 * S, 100, 'stone'),
-                createPlat(33800 * S, 590, 2800 * S, 100, 'stone'),
-                createPlat(36900 * S, 590, 3400 * S, 100, 'stone'),
-                createPlat(40600 * S, 590, 2600 * S, 100, 'stone'),
-                createPlat(43500 * S, 590, 3200 * S, 100, 'stone'),
-                createPlat(47000 * S, 590, 3000 * S, 100, 'stone'),
-                createPlat(3600 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(7100 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(10200 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(13900 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(16800 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(20300 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(23400 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(27100 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(30000 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(33500 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(36600 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(40300 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(43200 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(46700 * S, 590, 300 * S, 100, 'lava'),
-                createPlat(1800 * S, 430, 120 * S, 160, 'brick'),
-                createPlat(5300 * S, 380, 120 * S, 210, 'brick'),
-                createPlat(9000 * S, 410, 120 * S, 180, 'brick'),
-                createPlat(12100 * S, 430, 120 * S, 160, 'brick'),
-                createPlat(15400 * S, 380, 120 * S, 210, 'brick'),
-                createPlat(18700 * S, 410, 120 * S, 180, 'brick'),
-                createPlat(21900 * S, 430, 120 * S, 160, 'brick'),
-                createPlat(25300 * S, 380, 120 * S, 210, 'brick'),
-                createPlat(28600 * S, 410, 120 * S, 180, 'brick'),
-                createPlat(31800 * S, 430, 120 * S, 160, 'brick'),
-                createPlat(35200 * S, 380, 120 * S, 210, 'brick'),
-                createPlat(38500 * S, 410, 120 * S, 180, 'brick'),
-                createPlat(41700 * S, 430, 120 * S, 160, 'brick'),
-                createPlat(45000 * S, 380, 120 * S, 210, 'brick'),
-                createPlat(3700 * S, 500, 200 * S, 30, 'platform_easy'),
-                createPlat(4200 * S, 430, 170 * S, 30, 'platform_easy'),
-                createPlat(4700 * S, 360, 170 * S, 30, 'platform_medium'),
-                createPlat(7250 * S, 500, 200 * S, 30, 'platform_medium'),
-                createPlat(7800 * S, 420, 170 * S, 30, 'platform_medium'),
-                createPlat(8400 * S, 350, 170 * S, 30, 'platform_hard'),
-                createPlat(10350 * S, 500, 200 * S, 30, 'platform_easy'),
-                createPlat(10900 * S, 420, 170 * S, 30, 'platform_easy'),
-                createPlat(11450 * S, 350, 170 * S, 30, 'platform_medium'),
-                createPlat(14050 * S, 500, 200 * S, 30, 'platform_medium'),
-                createPlat(14600 * S, 420, 170 * S, 30, 'platform_medium'),
-                createPlat(15200 * S, 350, 170 * S, 30, 'platform_hard'),
-                createPlat(16950 * S, 500, 200 * S, 30, 'platform_easy'),
-                createPlat(17500 * S, 420, 170 * S, 30, 'platform_easy'),
-                createPlat(18050 * S, 350, 170 * S, 30, 'platform_medium'),
-                createPlat(20450 * S, 500, 200 * S, 30, 'platform_medium'),
-                createPlat(21000 * S, 420, 170 * S, 30, 'platform_medium'),
-                createPlat(21550 * S, 350, 170 * S, 30, 'platform_hard'),
-                createPlat(23550 * S, 500, 200 * S, 30, 'platform_easy'),
-                createPlat(24100 * S, 420, 170 * S, 30, 'platform_easy'),
-                createPlat(24650 * S, 350, 170 * S, 30, 'platform_medium'),
-                createPlat(27250 * S, 500, 200 * S, 30, 'platform_medium'),
-                createPlat(27800 * S, 420, 170 * S, 30, 'platform_medium'),
-                createPlat(28350 * S, 350, 170 * S, 30, 'platform_hard'),
-                createPlat(30150 * S, 500, 200 * S, 30, 'platform_easy'),
-                createPlat(30700 * S, 420, 170 * S, 30, 'platform_easy'),
-                createPlat(31250 * S, 350, 170 * S, 30, 'platform_medium'),
-                createPlat(33650 * S, 500, 200 * S, 30, 'platform_medium'),
-                createPlat(34200 * S, 420, 170 * S, 30, 'platform_medium'),
-                createPlat(34750 * S, 350, 170 * S, 30, 'platform_hard'),
-                createPlat(36750 * S, 500, 200 * S, 30, 'platform_easy'),
-                createPlat(37300 * S, 420, 170 * S, 30, 'platform_easy'),
-                createPlat(37850 * S, 350, 170 * S, 30, 'platform_medium'),
-                createPlat(40450 * S, 500, 200 * S, 30, 'platform_medium'),
-                createPlat(41000 * S, 420, 170 * S, 30, 'platform_medium'),
-                createPlat(41550 * S, 350, 170 * S, 30, 'platform_hard'),
-                createPlat(43350 * S, 500, 200 * S, 30, 'platform_easy'),
-                createPlat(43900 * S, 420, 170 * S, 30, 'platform_easy'),
-                createPlat(44450 * S, 350, 170 * S, 30, 'platform_medium'),
-                createPlat(46850 * S, 500, 200 * S, 30, 'platform_medium'),
-                createPlat(47400 * S, 420, 170 * S, 30, 'platform_easy'),
-                createPlat(47950 * S, 350, 170 * S, 30, 'platform_medium'),
-            ];
+            const S = 0.455;
+            const plats: any[] = [];
+
+            // Stone ground segments
+            const segCount = 14;
+            for (let n = 0; n < segCount; n++) {
+                const baseX = n * 1800;
+                plats.push(createPlat(baseX * S, 560, 1200 * S, 100, 'stone'));
+                if (n < segCount - 1) {
+                    plats.push(createPlat((baseX + 1200) * S, 560, 200 * S, 100, 'lava'));
+                    plats.push(createPlat((baseX + 1500) * S, 450, 100 * S, 24, 'platform_easy'));
+                }
+            }
+
+            // Brick towers
+            plats.push(createPlat(1400 * S, 430, 80 * S, 130, 'brick'));
+            plats.push(createPlat(5000 * S, 420, 80 * S, 140, 'brick'));
+            plats.push(createPlat(8600 * S, 430, 80 * S, 130, 'brick'));
+            plats.push(createPlat(12200 * S, 420, 80 * S, 140, 'brick'));
+            plats.push(createPlat(15800 * S, 430, 80 * S, 130, 'brick'));
+            plats.push(createPlat(21200 * S, 420, 80 * S, 140, 'brick'));
+
+            // Mid-height platforms for combat variety
+            plats.push(createPlat(2800 * S, 370, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(4000 * S, 380, 100 * S, 24, 'platform_hard'));
+            plats.push(createPlat(6800 * S, 370, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(10200 * S, 380, 100 * S, 24, 'platform_hard'));
+            plats.push(createPlat(13800 * S, 370, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(17800 * S, 380, 100 * S, 24, 'platform_hard'));
+            plats.push(createPlat(19500 * S, 370, 100 * S, 24, 'platform_medium'));
+            plats.push(createPlat(23000 * S, 380, 100 * S, 24, 'platform_hard'));
+
+            return plats;
         })(),
         coins: (() => {
-            const S = 0.4;
-            return [
-                createCoin(550 * S, 540), createCoin(650 * S, 540), createCoin(750 * S, 540), createCoin(850 * S, 540),
-                createCoin(1500 * S, 540), createCoin(1600 * S, 540), createCoin(1700 * S, 540),
-                createCoin(2200 * S, 540), createCoin(2300 * S, 540), createCoin(2400 * S, 540),
-                createCoin(4300 * S, 380), createCoin(4400 * S, 360), createCoin(4500 * S, 380),
-                createCoin(4700 * S, 540), createCoin(4800 * S, 540),
-                createCoin(5400 * S, 540), createCoin(5500 * S, 540), createCoin(5600 * S, 540),
-                createCoin(7500 * S, 540), createCoin(7600 * S, 540),
-                createCoin(7900 * S, 370), createCoin(8000 * S, 350),
-                createCoin(8500 * S, 300), createCoin(8600 * S, 300),
-                createCoin(9000 * S, 540), createCoin(9100 * S, 540), createCoin(9200 * S, 540),
-                createCoin(10600 * S, 540), createCoin(10700 * S, 540),
-                createCoin(11000 * S, 370), createCoin(11100 * S, 350),
-                createCoin(11550 * S, 300), createCoin(11650 * S, 300),
-                createCoin(12100 * S, 540), createCoin(12200 * S, 540), createCoin(12300 * S, 540),
-                createCoin(14300 * S, 540), createCoin(14400 * S, 540),
-                createCoin(14750 * S, 370), createCoin(14850 * S, 350),
-                createCoin(15350 * S, 300), createCoin(15450 * S, 300),
-                createCoin(17000 * S, 540), createCoin(17100 * S, 540), createCoin(17200 * S, 540),
-                createCoin(18500 * S, 540), createCoin(18600 * S, 540),
-                createCoin(19100 * S, 370), createCoin(19200 * S, 350),
-            ];
+            const S = 0.455;
+            const cs: any[] = [];
+            for (let x = 200; x < 1100; x += 200) cs.push(createCoin(x * S, 510));
+            cs.push(createCoin(2800 * S, 320));
+            cs.push(createCoin(2900 * S, 320));
+            for (let x = 2200; x < 3800; x += 250) cs.push(createCoin(x * S, 510));
+            cs.push(createCoin(4000 * S, 330));
+            cs.push(createCoin(4100 * S, 330));
+            for (let x = 4000; x < 7200; x += 250) cs.push(createCoin(x * S, 510));
+            cs.push(createCoin(6800 * S, 320));
+            for (let x = 7200; x < 8300; x += 250) cs.push(createCoin(x * S, 510));
+            for (let x = 9000; x < 10100; x += 250) cs.push(createCoin(x * S, 510));
+            cs.push(createCoin(10200 * S, 330));
+            cs.push(createCoin(10300 * S, 330));
+            for (let x = 10800; x < 11900; x += 250) cs.push(createCoin(x * S, 510));
+            for (let x = 12600; x < 13700; x += 250) cs.push(createCoin(x * S, 510));
+            cs.push(createCoin(13800 * S, 320));
+            for (let x = 14400; x < 15500; x += 250) cs.push(createCoin(x * S, 510));
+            for (let x = 16200; x < 17300; x += 250) cs.push(createCoin(x * S, 510));
+            cs.push(createCoin(17800 * S, 330));
+            for (let x = 18000; x < 19100; x += 250) cs.push(createCoin(x * S, 510));
+            cs.push(createCoin(19600 * S, 320));
+            for (let x = 19800; x < 20900; x += 250) cs.push(createCoin(x * S, 510));
+            for (let x = 21600; x < 22700; x += 250) cs.push(createCoin(x * S, 510));
+            cs.push(createCoin(23000 * S, 330));
+            for (let x = 23400; x < 24600; x += 250) cs.push(createCoin(x * S, 510));
+            return cs;
         })(),
         questionBlocks: (() => {
-            const S = 0.4;
+            const S = 0.455;
             return [
-                createQB(1800 * S, 370, 'mushroom'), createQB(4200 * S, 370, 'flower'), createQB(7250 * S, 440, 'star'),
-                createQB(10350 * S, 440, 'mushroom'), createQB(14050 * S, 440, 'coin'), createQB(16950 * S, 370, 'flower'),
-                createQB(20450 * S, 440, 'star'), createQB(23550 * S, 370, 'mushroom'), createQB(27250 * S, 440, 'coin'),
-                createQB(30150 * S, 370, 'flower'), createQB(33650 * S, 440, 'star'), createQB(36750 * S, 370, 'mushroom'),
+                createQB(600 * S, 490, 'mushroom'),
+                createQB(2900 * S, 310, 'flower'),
+                createQB(4100 * S, 320, 'star'),
+                createQB(6900 * S, 310, 'coin'),
+                createQB(10300 * S, 320, 'mushroom'),
+                createQB(13900 * S, 310, 'flower'),
+                createQB(17900 * S, 320, 'star'),
+                createQB(23100 * S, 320, 'coin'),
             ];
         })(),
         enemies: (() => {
-            const S = 0.4;
+            const S = 0.455;
             return [
-                createEnemy(1300 * S, 550, 'fireball'), createEnemy(2900 * S, 550, 'fireball'), createEnemy(5000 * S, 550, 'koopa'),
-                createEnemy(6100 * S, 550, 'fireball'), createEnemy(8200 * S, 550, 'koopa'), createEnemy(9800 * S, 550, 'fireball'),
-                createEnemy(11200 * S, 550, 'thwomp'), createEnemy(12800 * S, 550, 'fireball'), createEnemy(15000 * S, 550, 'koopa'),
-                createEnemy(17800 * S, 550, 'fireball'), createEnemy(3500 * S, 550, 'goomba'), createEnemy(6800 * S, 550, 'spiny'),
-                createEnemy(10600 * S, 550, 'crab'), createEnemy(14400 * S, 550, 'robot'),
+                // 20 enemies — horde of fireballs, goombas, crabs, etc.
+                createEnemy(400 * S, 520, 'goomba'),
+                createEnemy(1000 * S, 520, 'fireball'),
+                createEnemy(1600 * S, 520, 'goomba'),
+                createEnemy(2800 * S, 330, 'crab'),
+                createEnemy(3400 * S, 520, 'fireball'),
+                createEnemy(4100 * S, 340, 'koopa'),
+                createEnemy(4800 * S, 520, 'goomba'),
+                createEnemy(5400 * S, 520, 'fireball'),
+                createEnemy(6200 * S, 520, 'crab'),
+                createEnemy(7000 * S, 330, 'goomba'),
+                createEnemy(7600 * S, 520, 'robot'),
+                createEnemy(8200 * S, 520, 'fireball'),
+                createEnemy(9000 * S, 520, 'koopa'),
+                createEnemy(9800 * S, 520, 'goomba'),
+                createEnemy(10300 * S, 340, 'crab'),
+                createEnemy(11000 * S, 520, 'fireball'),
+                createEnemy(11800 * S, 520, 'goomba'),
+                createEnemy(12400 * S, 520, 'robot'),
+                createEnemy(13000 * S, 520, 'fireball'),
+                createEnemy(13900 * S, 330, 'spiny'),
+                createEnemy(14600 * S, 520, 'crab'),
+                createEnemy(15200 * S, 520, 'koopa'),
+                createEnemy(15800 * S, 520, 'fireball'),
+                createEnemy(16600 * S, 520, 'goomba'),
+                createEnemy(17400 * S, 520, 'fireball'),
+                createEnemy(18000 * S, 340, 'crab'),
+                createEnemy(18600 * S, 520, 'goomba'),
+                createEnemy(19600 * S, 330, 'robot'),
+                createEnemy(20400 * S, 520, 'fireball'),
+                createEnemy(21000 * S, 520, 'koopa'),
+                createEnemy(21800 * S, 520, 'goomba'),
+                createEnemy(22600 * S, 520, 'fireball'),
+                createEnemy(23100 * S, 340, 'crab'),
+                createEnemy(23600 * S, 520, 'goomba'),
             ];
         })(),
         decorations: (() => {
-            const S = 0.4;
+            const S = 0.455;
             return [
-                createDeco(450 * S, 520, 'fire'), createDeco(1100 * S, 520, 'ember'), createDeco(1900 * S, 520, 'rock'),
-                createDeco(2700 * S, 440, 'lava-rock'), createDeco(3500 * S, 520, 'ember'), createDeco(4400 * S, 440, 'fire'),
-                createDeco(5300 * S, 520, 'ember'), createDeco(6300 * S, 520, 'rock'), createDeco(7200 * S, 440, 'lava-rock'),
-                createDeco(8100 * S, 520, 'ember'), createDeco(9100 * S, 440, 'fire'), createDeco(10000 * S, 520, 'ember'),
-                createDeco(11000 * S, 520, 'rock'), createDeco(11900 * S, 440, 'lava-rock'), createDeco(12900 * S, 520, 'ember'),
+                createDeco(300 * S, 490, 'fire'),
+                createDeco(900 * S, 490, 'ember'),
+                createDeco(2000 * S, 490, 'lava-rock'),
+                createDeco(2600 * S, 490, 'rock'),
+                createDeco(3600 * S, 490, 'fire'),
+                createDeco(4600 * S, 490, 'ember'),
+                createDeco(5200 * S, 490, 'lava-rock'),
+                createDeco(6000 * S, 490, 'fire'),
+                createDeco(7200 * S, 490, 'rock'),
+                createDeco(8000 * S, 490, 'ember'),
+                createDeco(8800 * S, 490, 'lava-rock'),
+                createDeco(10000 * S, 490, 'fire'),
+                createDeco(10800 * S, 490, 'ember'),
+                createDeco(11600 * S, 490, 'rock'),
+                createDeco(12800 * S, 490, 'lava-rock'),
+                createDeco(13400 * S, 490, 'fire'),
+                createDeco(14400 * S, 490, 'ember'),
+                createDeco(15400 * S, 490, 'rock'),
+                createDeco(16400 * S, 490, 'lava-rock'),
+                createDeco(17000 * S, 490, 'fire'),
+                createDeco(18200 * S, 490, 'ember'),
+                createDeco(19000 * S, 490, 'lava-rock'),
+                createDeco(20000 * S, 490, 'rock'),
+                createDeco(21200 * S, 490, 'fire'),
+                createDeco(22000 * S, 490, 'ember'),
+                createDeco(23200 * S, 490, 'lava-rock'),
             ];
         })(),
-        playerStart: { x: 100, y: 540 },
-        goal: { x: 19400, y: 538 },
-        timeBonus: 200,
+        playerStart: { x: 100, y: 510 },
+        goal: { x: 10875, y: 508 },
+        timeBonus: 210,
         movingPlatforms: [
-            createMovingPlat(8000, 450, 130, 24, 'platform_medium', 'vertical', 180, 21),
-            createMovingPlat(25000, 380, 120, 22, 'platform_hard', 'horizontal', 280, 23),
-            createMovingPlat(2900, 410, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(5620, 410, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(10900, 410, 110, 22, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(14700, 410, 110, 22, 'platform_medium', 'horizontal', 300, 20),
+            createMovingPlat(2500, 320, 110, 24, 'platform_easy', 'horizontal', 200, 20),
+            createMovingPlat(6600, 310, 120, 24, 'platform_medium', 'vertical', 140, 18),
+            createMovingPlat(9800, 320, 110, 24, 'platform_easy', 'horizontal', 240, 22),
+            createMovingPlat(13600, 310, 120, 24, 'platform_medium', 'horizontal', 220, 20),
+            createMovingPlat(17000, 320, 110, 24, 'platform_easy', 'circular', 100, 18),
+            createMovingPlat(20600, 310, 120, 24, 'platform_medium', 'vertical', 160, 22),
+        ],
+    },
+
+    // ============================================================
+    // LEVEL 60: Eruption-Finale — ascending structure, lava below, player must climb
+    // S=0.435, width=28000, height=750
+    // ============================================================
+    {
+        id: 60,
+        name: "Krater-Finale",
+        width: 28000,
+        height: 750,
+        biome: 'volcano-lava',
+        platforms: (() => {
+            const S = 0.435;
+            const plats: any[] = [];
+
+            // Stage 1: Start at ground level
+            plats.push(createPlat(0 * S, 580, 1500 * S, 100, 'stone'));
+            plats.push(createPlat(1500 * S, 580, 200 * S, 100, 'lava'));
+
+            // Ascent 1: step up via platforms (ground → y=500 → y=420 → y=340)
+            plats.push(createPlat(1900 * S, 500, 120 * S, 28, 'platform_easy'));
+            plats.push(createPlat(2200 * S, 420, 120 * S, 28, 'platform_medium'));
+            plats.push(createPlat(2500 * S, 340, 120 * S, 28, 'platform_hard'));
+            plats.push(createPlat(2800 * S, 340, 1200 * S, 100, 'stone'));
+            plats.push(createPlat(4000 * S, 340, 200 * S, 100, 'lava'));
+
+            // Ascent 2: step higher (y=340 → y=260 → y=180)
+            plats.push(createPlat(4400 * S, 260, 120 * S, 28, 'platform_easy'));
+            plats.push(createPlat(4700 * S, 180, 120 * S, 28, 'platform_medium'));
+            plats.push(createPlat(5000 * S, 180, 1200 * S, 100, 'stone'));
+            plats.push(createPlat(6200 * S, 180, 200 * S, 100, 'lava'));
+
+            // Ascent 3: step higher (y=180 → y=100 → y=20)
+            plats.push(createPlat(6600 * S, 100, 120 * S, 28, 'platform_easy'));
+            plats.push(createPlat(6900 * S, 20, 120 * S, 28, 'platform_medium'));
+            plats.push(createPlat(7200 * S, 20, 1200 * S, 100, 'stone'));
+            plats.push(createPlat(8400 * S, 20, 200 * S, 100, 'lava'));
+
+            // Mid-level plateau
+            plats.push(createPlat(8800 * S, 20, 1500 * S, 100, 'stone'));
+            plats.push(createPlat(10300 * S, 20, 200 * S, 100, 'lava'));
+
+            // Descent phase: step down
+            plats.push(createPlat(10700 * S, 100, 120 * S, 28, 'platform_hard'));
+            plats.push(createPlat(11000 * S, 180, 120 * S, 28, 'platform_medium'));
+            plats.push(createPlat(11300 * S, 260, 1200 * S, 100, 'stone'));
+            plats.push(createPlat(12500 * S, 260, 200 * S, 100, 'lava'));
+
+            // Ascent 4: climb to final goal (y=260 → y=180 → y=100)
+            plats.push(createPlat(12900 * S, 180, 120 * S, 28, 'platform_easy'));
+            plats.push(createPlat(13200 * S, 100, 120 * S, 28, 'platform_medium'));
+            plats.push(createPlat(13500 * S, 100, 1500 * S, 100, 'stone'));
+            plats.push(createPlat(15000 * S, 100, 200 * S, 100, 'lava'));
+
+            // Final plateau to goal
+            plats.push(createPlat(15400 * S, 100, 1500 * S, 100, 'stone'));
+            plats.push(createPlat(16900 * S, 100, 200 * S, 100, 'lava'));
+
+            // Goal approach — long stone segment
+            plats.push(createPlat(17300 * S, 100, 2000 * S, 100, 'stone'));
+
+            // Lava at bottom (y=620) spanning the entire level
+            const lavaYs = [1500, 4000, 6200, 8400, 10300, 12500, 15000, 16900];
+            for (const lx of lavaYs) {
+                plats.push(createPlat(lx * S, 620, 200 * S, 100, 'lava'));
+            }
+
+            // Brick towers at various elevations
+            plats.push(createPlat(600 * S, 450, 80 * S, 130, 'brick'));
+            plats.push(createPlat(3200 * S, 210, 80 * S, 130, 'brick'));
+            plats.push(createPlat(5500 * S, 50, 80 * S, 130, 'brick'));
+            plats.push(createPlat(9200 * S, -110, 80 * S, 130, 'brick'));
+            plats.push(createPlat(11700 * S, 130, 80 * S, 130, 'brick'));
+            plats.push(createPlat(14000 * S, -30, 80 * S, 130, 'brick'));
+            plats.push(createPlat(15800 * S, -30, 80 * S, 130, 'brick'));
+            plats.push(createPlat(18200 * S, -30, 80 * S, 130, 'brick'));
+
+            // Additional helper platforms along the ascent
+            plats.push(createPlat(1800 * S, 440, 80 * S, 24, 'platform_easy'));
+            plats.push(createPlat(4300 * S, 200, 80 * S, 24, 'platform_medium'));
+            plats.push(createPlat(6500 * S, 50, 80 * S, 24, 'platform_hard'));
+            plats.push(createPlat(10800 * S, 50, 80 * S, 24, 'platform_easy'));
+            plats.push(createPlat(12800 * S, 120, 80 * S, 24, 'platform_medium'));
+            plats.push(createPlat(15200 * S, 50, 80 * S, 24, 'platform_hard'));
+            plats.push(createPlat(17800 * S, 50, 80 * S, 24, 'platform_easy'));
+
+            return plats;
+        })(),
+        coins: (() => {
+            const S = 0.435;
+            const cs: any[] = [];
+            for (let x = 200; x < 1400; x += 200) cs.push(createCoin(x * S, 530));
+            // Ascent 1
+            cs.push(createCoin(2000 * S, 450));
+            cs.push(createCoin(2100 * S, 370));
+            cs.push(createCoin(2300 * S, 370));
+            for (let x = 2800; x < 3800; x += 200) cs.push(createCoin(x * S, 290));
+            // Ascent 2
+            cs.push(createCoin(4500 * S, 210));
+            cs.push(createCoin(4600 * S, 130));
+            cs.push(createCoin(4800 * S, 130));
+            for (let x = 5000; x < 6000; x += 200) cs.push(createCoin(x * S, 130));
+            // Ascent 3
+            cs.push(createCoin(6700 * S, 50));
+            cs.push(createCoin(6800 * S, -30));
+            for (let x = 7200; x < 8200; x += 200) cs.push(createCoin(x * S, -30));
+            // Mid plateau
+            for (let x = 8800; x < 10100; x += 200) cs.push(createCoin(x * S, -30));
+            // Descent
+            cs.push(createCoin(10800 * S, 50));
+            cs.push(createCoin(10900 * S, 130));
+            for (let x = 11300; x < 12300; x += 200) cs.push(createCoin(x * S, 210));
+            // Ascent 4
+            cs.push(createCoin(13000 * S, 130));
+            cs.push(createCoin(13100 * S, 50));
+            for (let x = 13500; x < 14800; x += 200) cs.push(createCoin(x * S, 50));
+            // Final plateau
+            for (let x = 15400; x < 16700; x += 200) cs.push(createCoin(x * S, 50));
+            for (let x = 17400; x < 19000; x += 200) cs.push(createCoin(x * S, 50));
+            return cs;
+        })(),
+        questionBlocks: (() => {
+            const S = 0.435;
+            return [
+                createQB(400 * S, 510, 'mushroom'),
+                createQB(2100 * S, 360, 'flower'),
+                createQB(4600 * S, 120, 'star'),
+                createQB(6800 * S, -50, 'coin'),
+                createQB(9200 * S, -120, 'mushroom'),
+                createQB(10900 * S, 120, 'flower'),
+                createQB(13100 * S, 40, 'star'),
+                createQB(16000 * S, -100, 'coin'),
+                createQB(17800 * S, -50, 'mushroom'),
+                createQB(18500 * S, -50, 'flower'),
+            ];
+        })(),
+        enemies: (() => {
+            const S = 0.435;
+            return [
+                createEnemy(500 * S, 540, 'goomba'),
+                createEnemy(1200 * S, 540, 'fireball'),
+                createEnemy(3000 * S, 300, 'crab'),
+                createEnemy(3400 * S, 300, 'koopa'),
+                createEnemy(4500 * S, 220, 'goomba'),
+                createEnemy(5200 * S, 140, 'fireball'),
+                createEnemy(5800 * S, 140, 'crab'),
+                createEnemy(6800 * S, 60, 'spiny'),
+                createEnemy(7500 * S, -20, 'goomba'),
+                createEnemy(8000 * S, -20, 'fireball'),
+                createEnemy(9200 * S, -20, 'robot'),
+                createEnemy(9600 * S, -20, 'fireball'),
+                createEnemy(10900 * S, 140, 'goomba'),
+                createEnemy(11500 * S, 220, 'crab'),
+                createEnemy(12000 * S, 220, 'fireball'),
+                createEnemy(13000 * S, 140, 'koopa'),
+                createEnemy(13800 * S, 60, 'goomba'),
+                createEnemy(14400 * S, 60, 'fireball'),
+                createEnemy(15700 * S, 60, 'crab'),
+                createEnemy(16200 * S, 60, 'robot'),
+                createEnemy(17700 * S, 60, 'goomba'),
+                createEnemy(18300 * S, 60, 'fireball'),
+            ];
+        })(),
+        decorations: (() => {
+            const S = 0.435;
+            return [
+                createDeco(300 * S, 510, 'fire'),
+                createDeco(1000 * S, 510, 'ember'),
+                createDeco(2000 * S, 460, 'lava-rock'),
+                createDeco(2400 * S, 340, 'rock'),
+                createDeco(3300 * S, 290, 'fire'),
+                createDeco(4500 * S, 220, 'ember'),
+                createDeco(5400 * S, 130, 'lava-rock'),
+                createDeco(6000 * S, 130, 'rock'),
+                createDeco(7000 * S, 20, 'fire'),
+                createDeco(7800 * S, 20, 'ember'),
+                createDeco(8700 * S, -10, 'lava-rock'),
+                createDeco(9500 * S, -10, 'rock'),
+                createDeco(10000 * S, -10, 'fire'),
+                createDeco(11100 * S, 130, 'ember'),
+                createDeco(11800 * S, 210, 'lava-rock'),
+                createDeco(12600 * S, 210, 'rock'),
+                createDeco(13400 * S, 50, 'fire'),
+                createDeco(14200 * S, 50, 'ember'),
+                createDeco(14800 * S, 50, 'lava-rock'),
+                createDeco(15600 * S, 50, 'rock'),
+                createDeco(16600 * S, 50, 'fire'),
+                createDeco(17600 * S, 50, 'ember'),
+                createDeco(18400 * S, 50, 'lava-rock'),
+            ];
+        })(),
+        playerStart: { x: 100, y: 530 },
+        goal: { x: 7917, y: 48 },
+        timeBonus: 220,
+        movingPlatforms: [
+            createMovingPlat(2600, 280, 110, 24, 'platform_medium', 'vertical', 140, 20),
+            createMovingPlat(4800, 120, 120, 24, 'platform_hard', 'horizontal', 180, 22),
+            createMovingPlat(7000, -20, 110, 24, 'platform_medium', 'horizontal', 200, 20),
+            createMovingPlat(9000, -80, 120, 24, 'platform_hard', 'circular', 100, 18),
+            createMovingPlat(11200, 200, 110, 24, 'platform_medium', 'horizontal', 220, 22),
+            createMovingPlat(13400, 40, 120, 24, 'platform_hard', 'vertical', 120, 20),
+            createMovingPlat(15600, 20, 110, 24, 'platform_medium', 'horizontal', 240, 22),
+            createMovingPlat(17800, 30, 120, 24, 'platform_hard', 'horizontal', 200, 20),
         ],
     },
 ];

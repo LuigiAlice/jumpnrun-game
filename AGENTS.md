@@ -1,6 +1,7 @@
 # AGENTS.md - Jump & Run Game
 
 Beachte unbedingt auch die Datei [GAMEDESIGN.md](GAMEDESIGN.md)
+Beachte den [LEVEL_PLAN.md](LEVEL_PLAN.md) für zukünftige Level-Änderungen
 Aktualisiere selbständig dieses Dokument und alle anderen, falls sich Anforderungen ändern vom Programmierer.
 
 Teile deine Arbeit auf mehrere Subagenten auf.
