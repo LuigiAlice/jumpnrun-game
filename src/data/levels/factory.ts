@@ -103,6 +103,10 @@ export const FACTORY_LEVELS: LevelData[] = [
       // Ground A
       plats.push(createPlat(250 * S, 600, 800 * S, 40, 'metal'));
 
+      // Bridge platforms before gap 1
+      plats.push(createPlat(500, 600, 100, 24, 'platform_easy'));
+      plats.push(createPlat(620, 570, 100, 24, 'platform_medium'));
+
       // Gap 1: 3 stepping platforms
       plats.push(...gapWithPlatforms(S, 1100, 600, 500, 3));
 
@@ -594,6 +598,10 @@ export const FACTORY_LEVELS: LevelData[] = [
 
       // Section 1 — Start sprint
       plats.push(createPlat(250 * S, 650, 2000 * S, 40, 'metal'));
+
+      // Bridge platforms before gap
+      plats.push(createPlat(660, 650, 100, 24, 'platform_easy'));
+      plats.push(createPlat(810, 620, 100, 24, 'platform_medium'));
 
       // Brief gap with platforms
       plats.push(...gapWithPlatforms(S, 2500, 650, 250, 1));

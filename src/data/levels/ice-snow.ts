@@ -77,7 +77,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.625;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 650, 1000 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 1100, 600, 500, 4));
+      plats.push(...gapWithPlatforms(S, 1100, 600, 500, 6));
       plats.push(createPlat(2200 * S, 600, 1000 * S, 40, 'snow'));
       plats.push(...gapWithPlatforms(S, 3100, 600, 450, 4));
       plats.push(createPlat(4200 * S, 600, 1200 * S, 40, 'snow'));
@@ -149,7 +149,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.6;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 650, 1000 * S, 40, 'snow'));
-      plats.push(...gapWithPlatforms(S, 1250, 600, 350, 3));
+      plats.push(...gapWithPlatforms(S, 1100, 600, 350, 3));
       plats.push(...pipeSection(S, 1600, 650, 4));
       plats.push(...gapWithPlatforms(S, 3400, 600, 500, 4));
       plats.push(createPlat(3600 * S, 650, 800 * S, 40, 'snow'));
@@ -229,7 +229,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.556;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 650, 1200 * S, 40, 'snow'));
-      plats.push(...verticalClimb(S, 1350, 650));
+      plats.push(...verticalClimb(S, 1250, 650));
       
       // Bridging after climb 1
       plats.push(...gapWithPlatforms(S, 2200, 650, 1800, 10));
@@ -417,7 +417,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.45;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 750, 1200 * S, 40, 'snow'));
-      plats.push(createPlat(1550 * S, 700, 120, 28, 'platform_easy'));
+      plats.push(createPlat(1350 * S, 700, 120, 28, 'platform_easy'));
       plats.push(createPlat(2000 * S, 650, 120, 28, 'platform_medium'));
       plats.push(createPlat(2200 * S, 600, 400 * S, 40, 'snow'));
       plats.push(createPlat(2800 * S, 650, 120, 28, 'platform_medium'));

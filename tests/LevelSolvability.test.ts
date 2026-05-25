@@ -22,6 +22,69 @@ describe('Level Loading', () => {
             expect(level.goal).toBeDefined();
         }
     });
+
+    it('should have playerStart above platform (no body overlap)', () => {
+        const PLAYER_HEIGHT = 32;
+        for (let i = 0; i < getLevelCount(); i++) {
+            const level = getLevel(i);
+            const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
+            const platform = physics.findPlatformUnderPoint(level.playerStart.x, level.playerStart.y);
+            expect(platform, `Level ${i} (id=${level.id}) should have a platform under playerStart`).not.toBeNull();
+            if (platform) {
+                const platformTop = platform.y - platform.h / 2;
+                const bodyBottom = level.playerStart.y + PLAYER_HEIGHT / 2;
+                expect(bodyBottom, `Level ${i} (id=${level.id}): player body bottom (${bodyBottom}) should not exceed platform top (${platformTop})`)
+                    .toBeLessThanOrEqual(platformTop);
+            }
+        }
+    });
+});
+
+function getPhysicalMaxHorizontalJump(deltaY: number): number {
+    const GRAVITY = 2000;
+    const JUMP_VEL = 900;
+    const HORIZ_SPEED = 300;
+    const PLAYER_BUFFER = 24;
+    if (deltaY <= 0) {
+        const t = (2 * JUMP_VEL) / GRAVITY;
+        return HORIZ_SPEED * t - PLAYER_BUFFER;
+    }
+    const t = (JUMP_VEL + Math.sqrt(JUMP_VEL * JUMP_VEL + 2 * GRAVITY * deltaY)) / GRAVITY;
+    return HORIZ_SPEED * t - PLAYER_BUFFER;
+}
+
+describe('Physical Constraints', () => {
+    it('all levels should have at least one platform reachable from start within physical limits', () => {
+        const MAX_JUMP_UP = 350;
+        const MAX_FALL_DOWN = 1000;
+        for (let i = 0; i < getLevelCount(); i++) {
+            const level = getLevel(i);
+            const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
+            const startPlat = physics.findPlatformUnderPoint(level.playerStart.x, level.playerStart.y);
+            expect(startPlat, `Level ${i} (id=${level.id}) should have a platform under playerStart`).not.toBeNull();
+            if (!startPlat) continue;
+
+            const fromTop = startPlat.y - startPlat.h / 2;
+            const fromRight = startPlat.x + startPlat.w / 2;
+            const fromLeft = startPlat.x - startPlat.w / 2;
+
+            let hasReachable = false;
+            for (const to of level.platforms as any[]) {
+                if (to === startPlat) continue;
+                const toTop = to.y - to.h / 2;
+                const toRight = to.x + to.w / 2;
+                const toLeft = to.x - to.w / 2;
+                const horizontalGap = Math.max(toLeft - fromRight, fromLeft - toRight, 0);
+                const verticalDiff = toTop - fromTop;
+                if (verticalDiff > MAX_FALL_DOWN || verticalDiff < -MAX_JUMP_UP) continue;
+                const physicalMax = getPhysicalMaxHorizontalJump(Math.max(0, verticalDiff));
+                if (horizontalGap > 0 && horizontalGap <= physicalMax) { hasReachable = true; break; }
+                if (horizontalGap === 0) { hasReachable = true; break; }
+            }
+            expect(hasReachable, `Level ${i} (id=${level.id}): no physically reachable platform from start`)
+                .toBe(true);
+        }
+    });
 });
 
 describe('Biome Coverage', () => {

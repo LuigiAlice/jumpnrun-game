@@ -58,7 +58,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createDeco(5000 * S, 370, 'rainbow'),
             ];
         })(),
-        playerStart: { x: 150, y: 520 },
+        playerStart: { x: 150, y: 504 },
         goal: { x: 4800 * 0.65 + 250 * 0.65, y: 380 },
         timeBonus: 180,
     },
@@ -151,7 +151,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createDeco(12500 * S, 360, 'bird'),
             ];
         })(),
-        playerStart: { x: 150, y: 540 },
+        playerStart: { x: 150, y: 524 },
         goal: { x: 13600 * 0.625 + 300 * 0.625, y: 360 },
         timeBonus: 160,
     },
@@ -276,7 +276,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createDeco(21000 * S, 470, 'bird'),
             ];
         })(),
-        playerStart: { x: 150, y: 560 },
+        playerStart: { x: 150, y: 544 },
         goal: { x: 22600 * 0.6 + 300 * 0.6, y: 470 },
         timeBonus: 140,
     },
@@ -371,7 +371,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createDeco(15000 * S, 430, 'bird'),
             ];
         })(),
-        playerStart: { x: 150, y: 580 },
+        playerStart: { x: 150, y: 564 },
         goal: { x: 16600 * 0.556 + 300 * 0.556, y: 430 },
         timeBonus: 140,
     },
@@ -466,7 +466,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createDeco(15000 * S, 320, 'bird'),
             ];
         })(),
-        playerStart: { x: 150, y: 580 },
+        playerStart: { x: 150, y: 564 },
         goal: { x: 15900 * 0.5 + 300 * 0.5, y: 320 },
         timeBonus: 140,
     },
@@ -620,7 +620,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createDeco(21000 * S, 330, 'balloon'),
             ];
         })(),
-        playerStart: { x: 200, y: 600 },
+        playerStart: { x: 200, y: 584 },
         goal: { x: 22000 * 0.45 + 350 * 0.45, y: 330 },
         timeBonus: 120,
     },

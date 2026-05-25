@@ -22,6 +22,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       const S = S85;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 600, 1100 * S, 40, 'castle'));
+      plats.push(createPlat(950 * S, 570, 100, 24, 'platform_easy'));
       plats.push(...gapWithPlatforms(S, 1195, 600, 350, 1));
       plats.push(createPlat(2000 * S, 600, 600 * S, 40, 'castle'));
       plats.push(...pipeSection(S, 2800, 600, 2));
@@ -71,6 +72,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       const S = S86;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 600, 800 * S, 40, 'castle'));
+      plats.push(createPlat(850 * S, 570, 100, 24, 'platform_easy'));
       plats.push(...gapWithPlatforms(S, 1100, 600, 500, 3));
       plats.push(createPlat(2100 * S, 600, 600 * S, 40, 'castle'));
       plats.push(...gapWithPlatforms(S, 2800, 600, 500, 3));
@@ -139,6 +141,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Start ground
       plats.push(createPlat(250 * S, 600, 600 * S, 40, 'castle'));
+      plats.push(createPlat(850 * S, 560, 100, 24, 'platform_easy'));
       // Pipe section 1
       plats.push(...pipeSection(S, 935, 600, 3));
       // Ground after pipes
@@ -340,6 +343,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Arena 1: long combat zone
       plats.push(createPlat(250 * S, 620, 1600 * S, 40, 'castle'));
+      plats.push(createPlat(1550 * S, 580, 100, 24, 'platform_easy'));
       // Brief gap
       plats.push(...gapWithPlatforms(S, 2100, 620, 350, 2));
       // Arena 2
@@ -439,6 +443,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Grand entrance: long castle platform
       plats.push(createPlat(300 * S, 660, 1200 * S, 40, 'castle'));
+      plats.push(createPlat(1250 * S, 630, 100, 24, 'platform_easy'));
       // First challenge gap
       plats.push(...gapWithPlatforms(S, 1600, 660, 600, 4));
       // Arena 1: battle zone

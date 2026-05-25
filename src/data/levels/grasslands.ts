@@ -480,7 +480,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       plats.push(createPlat(250 * L5S, 550, 1600 * L5S, 40, 'grass'));
 
       // Short gap
-      plats.push(...gapWithPlatforms(L5S, 1500, 550, 300, 1));
+      plats.push(...gapWithPlatforms(L5S, 1500, 550, 300, 2));
 
       // Arena 2
       plats.push(createPlat(2900 * L5S, 550, 1800 * L5S, 40, 'grass'));
@@ -595,7 +595,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       plats.push(createPlat(250 * L6S, 550, 2000 * L6S, 40, 'grass'));
 
       // Brief gap
-      plats.push(...gapWithPlatforms(L6S, 1900, 550, 250, 1));
+      plats.push(...gapWithPlatforms(L6S, 1750, 550, 250, 1));
 
       // Section 2: Run
       plats.push(createPlat(3200 * L6S, 550, 2000 * L6S, 40, 'grass'));

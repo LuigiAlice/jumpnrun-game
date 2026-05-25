@@ -181,6 +181,8 @@ export const WATER_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Start ground
       plats.push(createPlat(100 * S, 500, 600 * S, 40, 'water'));
+      // Stepping stone to first pipe section
+      plats.push(createPlat(370, 440, 100, 24, 'platform_medium'));
       // Pipe section 1 (3 pipes)
       plats.push(...pipeSection(S, 600, 500, 3));
       // Bridge - reduced startX from 2200 to 1300
@@ -446,8 +448,8 @@ export const WATER_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Long ground section 1
       plats.push(createPlat(100 * S, 600, 3000 * S, 40, 'water'));
-      // Gap - MORE platforms (4 -> 8)
-      plats.push(...gapWithPlatforms(S, 2800, 600, 400, 8));
+      // Gap - 2 stepping stones bridging 275px
+      plats.push(...gapWithPlatforms(S, 1600, 600, 550, 2));
       // Long ground section 2
       plats.push(createPlat(3400 * S, 600, 2500 * S, 40, 'water'));
       // Pipe section - moved closer (5400 -> 4800)

@@ -88,7 +88,10 @@ export const RUINS_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Ruins start: left=-60, right=540, top=525
       plats.push(createPlat(400 * S, 550, 1000 * S, 50, 'ruins'));
-      // Gap 1(3): float0 left≈978 (gap from 540=438)
+      // Stepping stones bridging gap to first gapWithPlatforms (437px → sub-gaps ~100+117)
+      plats.push(createPlat(1140 * S, 550, 100, 24, 'ruins'));
+      plats.push(createPlat(1350 * S, 550, 100, 24, 'ruins'));
+      // Gap 1(3): float0 left≈978 (gap from stepping stones ≈118)
       plats.push(...gapWithPlatforms(S, 1600, 550, 450, 3));
       // Ruins 2: left=1380, right=1740 (gap from float2 right≈1213=167)
       plats.push(createPlat(2600 * S, 550, 600 * S, 50, 'ruins'));
@@ -181,7 +184,10 @@ export const RUINS_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Ruins start: left=-56, right=612 (top=575)
       plats.push(createPlat(500 * S, 600, 1200 * S, 50, 'ruins'));
-      // Pipes 1(2): pipe0 left≈1120 (gap from 612=508)
+      // Stepping stones bridging gap to first pipe section (516px → sub-gaps ~117+121)
+      plats.push(createPlat(1400 * S, 590, 100, 24, 'ruins'));
+      plats.push(createPlat(1720 * S, 590, 100, 24, 'ruins'));
+      // Pipes 1(2): pipe0 left≈1120 (gap from stepping stones ≈121)
       plats.push(...pipeSection(S, 1800, 600, 2));
       // Ruins bridge 1: left≈1307, right≈1807 (gap from pipe1 right≈1394 = -87 overlap)
       plats.push(createPlat(2800 * S, 600, 900 * S, 50, 'ruins'));
@@ -413,7 +419,10 @@ export const RUINS_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Ruins 1 (long): left=-341, right=1105 (top=625)
       plats.push(createPlat(840 * S, 650, 3200 * S, 50, 'ruins'));
-      // Gap(2): float0 left≈to calculate...
+      // Stepping stones bridging gap to first gapWithPlatforms (493px → sub-gaps ~114+120)
+      plats.push(createPlat(2800 * S, 640, 100, 24, 'ruins'));
+      plats.push(createPlat(3150 * S, 640, 100, 24, 'ruins'));
+      // Gap(2): float0 left≈1603 (gap from stepping stones ≈120)
       plats.push(...gapWithPlatforms(S, 3500, 650, 400, 2));
       // Ruins 2 (long): left≈2172.5, right≈2808.5 (gap from float1 right≈test)
       plats.push(createPlat(5500 * S, 650, 1400 * S, 50, 'ruins'));

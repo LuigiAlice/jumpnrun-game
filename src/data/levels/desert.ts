@@ -82,7 +82,7 @@ export const DESERT_LEVELS: LevelData[] = [
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 550, 700 * S, 40, 'sand'));
       // Gap 1
-      plats.push(...gapWithPlatforms(S, 1100, 550, 400, 3));
+      plats.push(...gapWithPlatforms(S, 900, 550, 400, 3));
       // Ground
       plats.push(createPlat(1700 * S, 550, 600 * S, 40, 'sand'));
       // Gap 2
@@ -302,7 +302,7 @@ export const DESERT_LEVELS: LevelData[] = [
       // Start ground
       plats.push(createPlat(200 * S, 600, 700 * S, 40, 'sand'));
       // Vertical Climb 1: up to peak then down
-      plats.push(...verticalClimb(S, 1100, 600, 'sand'));
+      plats.push(...verticalClimb(S, 1040, 600, 'sand'));
       
       // Bridging to ground at 3100
       plats.push(...gapWithPlatforms(S, 1800, 600, 1400, 8));
@@ -421,7 +421,7 @@ export const DESERT_LEVELS: LevelData[] = [
       // Long first ground stretch
       plats.push(createPlat(200 * S, 550, 1800 * S, 40, 'sand'));
       // Gap - increased platforms
-      plats.push(...gapWithPlatforms(S, 1700, 550, 1400, 8));
+      plats.push(...gapWithPlatforms(S, 1536, 550, 1400, 8));
       // Long second ground
       plats.push(createPlat(2800 * S, 550, 2000 * S, 40, 'sand'));
       // Gap - increased platforms

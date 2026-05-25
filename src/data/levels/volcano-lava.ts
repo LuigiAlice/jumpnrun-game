@@ -25,6 +25,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 plats.push(createPlat(baseX * S, 530, 1200 * S, 100, 'stone'));
                 if (n < segCount - 1) {
                     plats.push(createPlat((baseX + 1200) * S, 530, 200 * S, 100, 'lava'));
+                    plats.push(createPlat(Math.round((baseX + 1075) * S), 440, 100 * S, 24, 'platform_easy'));
                     plats.push(createPlat((baseX + 1500) * S, 440, 100 * S, 24, 'platform_easy'));
                 }
             }
@@ -105,7 +106,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createDeco(18000 * S, 460, 'fire'),
             ];
         })(),
-        playerStart: { x: 100, y: 480 },
+        playerStart: { x: 100, y: 464 },
         goal: { x: 11287, y: 478 },
         timeBonus: 180,
         movingPlatforms: [
@@ -228,7 +229,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createDeco(20000 * S, 480, 'fire'),
             ];
         })(),
-        playerStart: { x: 100, y: 500 },
+        playerStart: { x: 100, y: 484 },
         goal: { x: 11625, y: 498 },
         timeBonus: 180,
         movingPlatforms: [
@@ -414,7 +415,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createDeco(22400 * S, 490, 'rock'),
             ];
         })(),
-        playerStart: { x: 100, y: 510 },
+        playerStart: { x: 100, y: 494 },
         goal: { x: 11050, y: 508 },
         timeBonus: 200,
         movingPlatforms: [
@@ -588,7 +589,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createDeco(21000 * S, 510, 'lava-rock'),
             ];
         })(),
-        playerStart: { x: 100, y: 530 },
+        playerStart: { x: 100, y: 514 },
         goal: { x: 9853, y: 528 },
         timeBonus: 200,
         movingPlatforms: [
@@ -757,7 +758,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createDeco(23200 * S, 490, 'lava-rock'),
             ];
         })(),
-        playerStart: { x: 100, y: 510 },
+        playerStart: { x: 100, y: 494 },
         goal: { x: 10875, y: 508 },
         timeBonus: 210,
         movingPlatforms: [
@@ -960,7 +961,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createDeco(18400 * S, 50, 'lava-rock'),
             ];
         })(),
-        playerStart: { x: 100, y: 530 },
+        playerStart: { x: 100, y: 514 },
         goal: { x: 7917, y: 48 },
         timeBonus: 220,
         movingPlatforms: [

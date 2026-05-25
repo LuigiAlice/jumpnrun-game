@@ -21,6 +21,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.625;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 550, 1800 * S, 40, 'sand'));
+      plats.push(createPlat(801, 520, 80, 24, 'platform_easy'));
+      plats.push(createPlat(924, 530, 80, 24, 'platform_medium'));
       plats.push(...boardwalkSection(S, 1700, 550, 400));
       plats.push(...gapWithPlatforms(S, 2300, 550, 400, 1));
       plats.push(createPlat(3000 * S, 550, 800 * S, 40, 'sand'));
@@ -84,6 +86,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.6;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 550, 1000 * S, 40, 'sand'));
+      plats.push(createPlat(529, 520, 80, 24, 'platform_easy'));
+      plats.push(createPlat(648, 530, 80, 24, 'platform_medium'));
       plats.push(...boardwalkSection(S, 1300, 550, 300));
       plats.push(...gapWithPlatforms(S, 1700, 550, 450, 3));
       plats.push(createPlat(2700 * S, 550, 500 * S, 40, 'sand'));
@@ -166,6 +170,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.556;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 550, 800 * S, 40, 'sand'));
+      plats.push(createPlat(452, 510, 80, 24, 'platform_easy'));
+      plats.push(createPlat(583, 500, 80, 24, 'platform_medium'));
       // Bridge to pipes
       plats.push(...gapWithPlatforms(S, 1200, 550, 400, 3));
       plats.push(...pipeSection(S, 1800, 550, 3));
@@ -277,6 +283,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       const S = 0.5;
       const plats: any[] = [];
       plats.push(createPlat(250 * S, 550, 800 * S, 40, 'sand'));
+      plats.push(createPlat(403, 510, 80, 24, 'platform_easy'));
+      plats.push(createPlat(522, 500, 80, 24, 'platform_medium'));
       // Bridge to vertical climb 1
       plats.push(...gapWithPlatforms(S, 1200, 550, 400, 3));
       plats.push(...verticalClimb(S, 1200, 550, 'sand'));
