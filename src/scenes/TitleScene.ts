@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { getLevelCount } from '../data/levels/index';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config';
+import { startGameFromTitle } from '../sceneNav';
 
 interface BiomeButton {
     button: Phaser.GameObjects.Container;
@@ -276,10 +277,10 @@ export class TitleScene extends Phaser.Scene {
         
         this.startButton.on('pointerdown', () => {
             this.stopMusic();
-            this.scene.start('Game', {
+            startGameFromTitle(this.game, {
                 levelIndex: this.selectedBiome * 6 + this.selectedLevel,
                 lives: 3,
-                score: 0
+                score: 0,
             });
         });
     }
@@ -411,6 +412,5 @@ export class TitleScene extends Phaser.Scene {
 
     shutdown() {
         this.stopMusic();
-        (this as any).scene?.stop();
     }
 }

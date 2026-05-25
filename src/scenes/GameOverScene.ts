@@ -1,10 +1,12 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config';
+import { goToTitle } from '../sceneNav';
 
 export class GameOverScene extends Phaser.Scene {
   private score: number = 0;
   private coins: number = 0;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  private escapeKey!: Phaser.Input.Keyboard.Key;
   private canRestart: boolean = false;
 
   constructor() {
@@ -18,6 +20,7 @@ export class GameOverScene extends Phaser.Scene {
 
   create() {
     this.cursors = this.input.keyboard!.createCursorKeys();
+    this.escapeKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
     this.add.graphics()
       .fillGradientStyle(0x1a1a2e, 0x1a1a2e, 0x0f0f1a, 0x0f0f1a, 1)
@@ -59,6 +62,11 @@ export class GameOverScene extends Phaser.Scene {
       fontSize: '40px'
     }).setOrigin(0.5);
 
+    this.add.text(centerX, 560, 'ESC = HAUPTMENÜ', {
+      fontSize: '18px',
+      color: '#bdc3c7',
+    }).setOrigin(0.5);
+
     const restartText = this.add.text(centerX, 520, 'DRÜCKE LEERTASTE FÜR NEUSTART', {
       fontSize: '20px',
       color: '#ffffff',
@@ -80,10 +88,14 @@ export class GameOverScene extends Phaser.Scene {
   }
   
   update() {
+    if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
+      goToTitle(this.game, this);
+      return;
+    }
     if (!this.canRestart) return;
-    
-    if (this.cursors.space.isDown) {
-      this.scene.start('Game');
+
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
+      goToTitle(this.game, this);
     }
   }
 }

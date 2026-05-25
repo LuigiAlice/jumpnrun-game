@@ -461,6 +461,8 @@ export const WATER_LEVELS: LevelData[] = [
       plats.push(createPlat(9000 * S, 600, 2000 * S, 40, 'water'));
       // Vertical climb - moved closer (11700 -> 10500)
       plats.push(...verticalClimb(S, 10500, 600));
+      // Bridge from climb exit to next ground (BFS max ~600px horizontal)
+      plats.push(...gapWithPlatforms(S, 11800, 560, 550, 5));
       // Ground
       plats.push(createPlat(13300 * S, 600, 800 * S, 40, 'water'));
       // Pipe section - moved closer (15100 -> 13700)

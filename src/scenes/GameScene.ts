@@ -1,12 +1,17 @@
 import Phaser from 'phaser';
 import { loadLevel, getLevelName } from '../generator/LevelLoader';
-import type { LevelData } from '../data/levels';
-import type { Biome } from '../data/levels';
+import type { LevelData, Biome } from '../data/levels/index';
 import { GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { goToTitle } from '../sceneNav';
 
 const PLAYER_SPEED = 300;
 const JUMP_VELOCITY = -900;
 const GRAVITY = 2000;
+
+/** Enemies that cannot be stomped (see AGENTS.md). */
+const NON_STOMPABLE_ENEMIES = new Set([
+  'piranha', 'thwomp', 'boo', 'lakitu', 'bullet_bill', 'fireball', 'boss',
+]);
 
 const SOLID_TYPES = ['grass', 'stone', 'brick', 'cave', 'castle', 'metal', 'lava', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'bubble'];
 
@@ -41,6 +46,7 @@ export class GameScene extends Phaser.Scene {
   private isInvincible: boolean = false;
   private isDead: boolean = false;
   private isTransitioning: boolean = false;
+  private isQuitting: boolean = false;
   private lastFired: number = 0;
 
   private scoreText!: Phaser.GameObjects.Text;
@@ -71,6 +77,9 @@ export class GameScene extends Phaser.Scene {
     this.isPlayerBig = data.isPlayerBig || false;
     this.isPlayerFire = data.isPlayerFire || false;
     this.levelId = data.levelId || 0;
+    this.isQuitting = false;
+    this.isDead = false;
+    this.isTransitioning = false;
   }
 
   create() {
@@ -80,6 +89,7 @@ export class GameScene extends Phaser.Scene {
     
     this.isDead = false;
     this.isTransitioning = false;
+    this.isQuitting = false;
     this.timeLeft = 300 + (level.timeBonus || 0);
 
     this.setupWorld(level);
@@ -95,23 +105,17 @@ export class GameScene extends Phaser.Scene {
     this.escapeKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     this.restartKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.nextKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.N);
-    
-    // ESC to quit to title
-    this.input.keyboard!.on('keydown-ESC', () => {
-      this.isMusicPlaying = false;
-      if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
-      this.scene.start('Title');
-    });
-    
-    // R to restart level
-    this.restartKey.on('down', () => this.restartLevel());
-    
-    // N to go to next level
-    this.nextKey.on('down', () => this.nextLevel());
+    this.restartKey.on('down', this.onRestartKey, this);
+    this.nextKey.on('down', this.onNextKey, this);
     
     // Start music on first input (click or key)
     this.input.once('pointerdown', () => this.startBgm());
     this.input.keyboard!.once('keydown', () => this.startBgm());
+
+    if (this.game.canvas) {
+      this.game.canvas.setAttribute('tabindex', '0');
+      this.game.canvas.focus();
+    }
   }
 
   private setupWorld(level: LevelData) {
@@ -387,8 +391,8 @@ export class GameScene extends Phaser.Scene {
     // Enemy collision - use collider for proper physics response
     this.physics.add.collider(this.player, this.enemies, (p: any, e: any) => {
         if (this.isDead || this.isInvincible) return;
-        // Piranha plants cannot be stomped - always kill player
-        if (e.getData('type') === 'piranha' || e.texture?.key === 'piranha') {
+        const enemyType = e.getData('type') || e.texture?.key;
+        if (NON_STOMPABLE_ENEMIES.has(enemyType)) {
             this.playerHit();
             return;
         }
@@ -414,12 +418,6 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.fireballs, this.enemies, (f: any, e: any) => { this.killEnemy(e as any); f.destroy(); this.score += 500; });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.collider(this.fireballs, this.solidPlatforms, (f: any, _p: any) => { if (f.body?.blocked?.left || f.body?.blocked?.right) f.destroy(); });
-  }
-
-  private handleEnemyContact(enemy: Phaser.Physics.Arcade.Sprite) {
-    if (this.isDead || this.isInvincible) return;
-    if (this.player.body!.velocity.y > 0) { this.killEnemy(enemy); this.player.setVelocityY(-400); this.score += 500; }
-    else { this.playerHit(); }
   }
 
   private killEnemy(enemy: Phaser.GameObjects.Sprite) {
@@ -461,7 +459,7 @@ export class GameScene extends Phaser.Scene {
     block.setTexture('question_used');
     this.tweens.add({ targets: block, y: block.y - 10, duration: 100, yoyo: true });
     const content = block.contents;
-    if (content === 'coin') { this.coinCount += 200; this.score += 100; }
+    if (content === 'coin') { this.coinCount++; this.score += 100; }
     else { const pu = this.powerUps.create(block.x, block.y - 32, content); pu.setVelocityY(-200); (pu as any).type = content; this.score += 200; }
   }
 
@@ -492,8 +490,15 @@ export class GameScene extends Phaser.Scene {
     this.player.setTint(0xff0000).setVelocity(0, -500);
     this.time.delayedCall(2000, () => {
         this.lives--;
-        if (this.lives <= 0) this.scene.start('GameOver', { score: this.score });
-        else this.scene.restart({ levelIndex: this.levelIndex, lives: this.lives, score: this.score, coinCount: this.coinCount });
+        if (this.lives <= 0) this.scene.start('GameOver', { score: this.score, coins: this.coinCount });
+        else this.scene.restart({
+          levelIndex: this.levelIndex,
+          lives: this.lives,
+          score: this.score,
+          coinCount: this.coinCount,
+          isPlayerBig: this.isPlayerBig,
+          isPlayerFire: this.isPlayerFire,
+        });
     });
   }
 
@@ -551,6 +556,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time: number) {
+    if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
+      this.quitToTitle();
+      return;
+    }
     if (this.isDead || this.isTransitioning) return;
     this.updateUI();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
@@ -656,10 +665,46 @@ export class GameScene extends Phaser.Scene {
     if (this.player.y > levelHeight + 100) this.die();
   }
 
+  quitToTitle(): void {
+    if (this.isQuitting) return;
+    this.isQuitting = true;
+    this.isMusicPlaying = false;
+    if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
+    if (this.timerEvent) this.timerEvent.destroy();
+    if (this.physics?.world) {
+      this.physics.world.resume();
+    }
+    goToTitle(this.game, this);
+  }
+
+  private onRestartKey = (): void => {
+    if (this.isDead || this.isTransitioning || this.isQuitting) return;
+    this.restartLevel();
+  };
+
+  private onNextKey = (): void => {
+    if (this.isDead || this.isTransitioning || this.isQuitting) return;
+    this.nextLevel();
+  };
+
+  shutdown(): void {
+    this.isMusicPlaying = false;
+    if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
+    this.restartKey?.off('down', this.onRestartKey, this);
+    this.nextKey?.off('down', this.onNextKey, this);
+  }
+
   private restartLevel() {
     this.isMusicPlaying = false;
     if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
-    this.scene.restart({ levelIndex: this.levelIndex, lives: this.lives, score: this.score, coinCount: this.coinCount });
+    this.scene.restart({
+      levelIndex: this.levelIndex,
+      lives: this.lives,
+      score: this.score,
+      coinCount: this.coinCount,
+      isPlayerBig: this.isPlayerBig,
+      isPlayerFire: this.isPlayerFire,
+    });
   }
 
   private nextLevel() {

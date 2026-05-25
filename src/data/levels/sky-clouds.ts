@@ -87,15 +87,17 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createPlat(6600 * S, 460, 350 * S, 40, 'cloud'),
                 // Gap 3 - increasing platforms
                 ...gapWithPlatforms(S, 4400, 460, 900, 6),
+                // Bridge to upper cloud chain (~1000px gap)
+                createPlat(7200 * S, 435, 300 * S, 40, 'cloud'),
+                createPlat(8200 * S, 430, 300 * S, 40, 'cloud'),
                 // Cloud island
                 createPlat(8700 * S, 440, 500 * S, 40, 'cloud'),
-                // Gap 4 - increasing platforms
-                ...gapWithPlatforms(S, 5800, 440, 800, 5),
-                // Cloud island
+                // Bridge to upper clouds (startX must follow 8700 island in world space)
+                ...gapWithPlatforms(S, 9500, 420, 1100, 7),
                 createPlat(10800 * S, 420, 450 * S, 40, 'cloud'),
                 createPlat(11600 * S, 400, 300 * S, 40, 'cloud'),
-                // Gap 5 - increasing platforms
-                ...gapWithPlatforms(S, 7500, 400, 900, 6),
+                // Bridge to goal island
+                ...gapWithPlatforms(S, 12500, 390, 900, 6),
                 // Goal cloud island
                 createPlat(13600 * S, 380, 600 * S, 40, 'cloud'),
             ];
@@ -386,25 +388,17 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createPlat(200 * S, 600, 600 * S, 40, 'cloud'),
                 createPlat(1200 * S, 570, 450 * S, 40, 'cloud'),
                 createPlat(2200 * S, 540, 350 * S, 40, 'cloud'),
-                // Gap section - more platforms
-                ...gapWithPlatforms(S, 1400, 450, 600, 4),
-                ...gapWithPlatforms(S, 3000, 540, 800, 5),
+                ...gapWithPlatforms(S, 2800, 520, 600, 4),
                 createPlat(4300 * S, 520, 500 * S, 40, 'cloud'),
                 createPlat(5300 * S, 500, 350 * S, 40, 'cloud'),
                 createPlat(6300 * S, 480, 300 * S, 40, 'cloud'),
-                // Gap section - more platforms
-                ...gapWithPlatforms(S, 2900, 450, 700, 5),
-                ...gapWithPlatforms(S, 7100, 480, 900, 6),
+                ...gapWithPlatforms(S, 7000, 460, 700, 5),
                 createPlat(8600 * S, 460, 500 * S, 40, 'cloud'),
                 createPlat(9600 * S, 440, 400 * S, 40, 'cloud'),
-                // Gap section - more platforms
-                ...gapWithPlatforms(S, 5100, 390, 900, 6),
-                ...gapWithPlatforms(S, 11300, 420, 900, 6),
+                ...gapWithPlatforms(S, 10400, 420, 900, 6),
                 createPlat(12900 * S, 400, 500 * S, 40, 'cloud'),
                 createPlat(13900 * S, 380, 400 * S, 40, 'cloud'),
-                // Gap section - more platforms
-                ...gapWithPlatforms(S, 7200, 350, 900, 6),
-                createPlat(14900 * S, 360, 350 * S, 40, 'cloud'),
+                ...gapWithPlatforms(S, 14800, 360, 800, 5),
                 createPlat(15900 * S, 340, 600 * S, 40, 'cloud'),
             ];
         })(),
