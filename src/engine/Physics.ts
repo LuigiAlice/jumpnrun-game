@@ -1,7 +1,7 @@
 export const DEFAULT_PHYSICS = {
     TILE_SIZE: 32,
     MAX_JUMP_DISTANCE: 800,
-    MAX_PRACTICAL_JUMP: 600,
+    MAX_PRACTICAL_JUMP: 585,
     MAX_JUMP_UP: 350,
     MAX_FALL_DOWN: 1000,
     PLAYER_WIDTH: 48
@@ -60,6 +60,14 @@ export class Physics {
         return positions;
     }
 
+    private horizontalJumpCheck(gap: number, vDiff: number): boolean {
+        const maxGap = Math.max(
+            this.getMaxHorizontalJump(Math.max(0, vDiff)),
+            DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP
+        );
+        return gap <= maxGap;
+    }
+
     private canJumpToMovingPlatform(from: Platform, mp: MovingPlatformData): boolean {
         const positions = this.getMovingPlatformPositions(mp);
 
@@ -74,21 +82,11 @@ export class Physics {
 
             const horizontalGap = Math.max(mpLeft - fromRight, fromLeft - mpRight, 0);
 
-            if (horizontalGap > DEFAULT_PHYSICS.MAX_JUMP_DISTANCE) {
-                continue;
-            }
-
             const verticalDiff = mpTop - fromTop;
 
-            if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) {
-                continue;
-            }
-
-            if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) {
-                continue;
-            }
-
-            return true;
+            if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) continue;
+            if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) continue;
+            if (this.horizontalJumpCheck(horizontalGap, verticalDiff)) return true;
         }
 
         return false;
@@ -108,21 +106,11 @@ export class Physics {
 
             const horizontalGap = Math.max(toLeft - mpRight, mpLeft - toRight, 0);
 
-            if (horizontalGap > DEFAULT_PHYSICS.MAX_JUMP_DISTANCE) {
-                continue;
-            }
-
             const verticalDiff = toTop - mpTop;
 
-            if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) {
-                continue;
-            }
-
-            if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) {
-                continue;
-            }
-
-            return true;
+            if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) continue;
+            if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) continue;
+            if (this.horizontalJumpCheck(horizontalGap, verticalDiff)) return true;
         }
 
         return false;
@@ -147,19 +135,11 @@ export class Physics {
 
                 const horizontalGap = Math.max(toLeft - mpRight, mpLeft - toRight, 0);
 
-                if (horizontalGap > DEFAULT_PHYSICS.MAX_JUMP_DISTANCE) {
-                    continue;
-                }
-
                 const verticalDiff = toTop - mpTop;
 
-                if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) {
-                    continue;
-                }
-
-                if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) {
-                    continue;
-                }
+                if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) continue;
+                if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) continue;
+                if (!this.horizontalJumpCheck(horizontalGap, verticalDiff)) continue;
 
                 reachable.push(next);
                 visitedStatics.add(key);

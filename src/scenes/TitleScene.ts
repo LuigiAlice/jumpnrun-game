@@ -55,6 +55,13 @@ export class TitleScene extends Phaser.Scene {
     create() {
         const centerX = GAME_WIDTH / 2;
 
+        // Reset arrays — bei Scene-Restart (z.B. ESC→Titel) sind sonst alte,
+        // zerstörte Game-Objekte enthalten, was zu Fehlern führt.
+        this.biomeButtons = [];
+        this.levelButtons = [];
+        this.selectedBiome = 0;
+        this.selectedLevel = 0;
+
         this.backgroundImage = this.add.image(centerX, GAME_HEIGHT / 2, 'bg_grasslands_0');
 
         this.add.text(centerX, 60, 'SUPER JUMP WORLD', {

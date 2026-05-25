@@ -35,143 +35,207 @@ export class BootScene extends Phaser.Scene {
       const cx = w / 2;
       const SKIN = 0xffddbb;
       const SKIN_SHADOW = 0xf0c8a0;
+      const SKIN_DARK = 0xdba878;
       const CHEEK = 0xffaaaa;
       const HAIR = 0x4a2800;
+      const HAIR_LIGHT = 0x6b3f10;
 
-      // CHIBI PROPORTIONS: huge head (60% of height), tiny body
       const headCY = h * 0.22 + yOff;
-      const headRX = w * 0.52;
-      const headRY = h * 0.18;
+      const headRX = w * 0.50;
+      const headRY = h * 0.20;
 
-      // === GROUND SHADOW ===
-      g.fillStyle(0x000000, 0.08);
-      g.fillEllipse(cx, totalH - 1, w * 0.45, 3);
+      const shirtDark = Phaser.Display.Color.ValueToColor(shirtColor).darken(25).color;
+      const shirtLight = Phaser.Display.Color.ValueToColor(shirtColor).lighten(30).color;
+      const pantsDark = Phaser.Display.Color.ValueToColor(pantsColor).darken(25).color;
+      const pantsLight = Phaser.Display.Color.ValueToColor(pantsColor).lighten(30).color;
 
-      // === FEET (tiny round boots) ===
+      // SHADOW
+      g.fillStyle(0x000000, 0.12);
+      g.fillEllipse(cx, totalH - 1, w * 0.55, 4);
+
+      // BOOTS
       g.fillStyle(0x3d1f00, 1);
-      g.fillEllipse(cx - 6, h * 0.88 + yOff, 8, 5);
-      g.fillEllipse(cx + 6, h * 0.88 + yOff, 8, 5);
-      g.fillStyle(0x6b3a1f, 1);
-      g.fillEllipse(cx - 6, h * 0.87 + yOff, 7, 4);
-      g.fillEllipse(cx + 6, h * 0.87 + yOff, 7, 4);
+      g.fillEllipse(cx - 7, h * 0.88 + yOff, 10, 6);
+      g.fillEllipse(cx + 7, h * 0.88 + yOff, 10, 6);
+      g.fillStyle(0x5a2e0a, 1);
+      g.fillEllipse(cx - 7, h * 0.87 + yOff, 8, 4);
+      g.fillEllipse(cx + 7, h * 0.87 + yOff, 8, 4);
+      g.fillStyle(0x7a4a1a, 0.6);
+      g.fillEllipse(cx - 7, h * 0.85 + yOff, 5, 2);
+      g.fillEllipse(cx + 7, h * 0.85 + yOff, 5, 2);
 
-      // === LEGS (tiny, stubby) ===
+      // LEGS
       g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(cx - 7, h * 0.65 + yOff, 6, h * 0.22, 3);
-      g.fillRoundedRect(cx + 1, h * 0.65 + yOff, 6, h * 0.22, 3);
+      g.fillRoundedRect(cx - 8, h * 0.62 + yOff, 7, h * 0.24, 3);
+      g.fillRoundedRect(cx + 1, h * 0.62 + yOff, 7, h * 0.24, 3);
+      g.fillStyle(pantsDark, 0.5);
+      g.fillRect(cx - 1, h * 0.62 + yOff, 2, h * 0.24);
+      g.fillStyle(pantsLight, 0.4);
+      g.fillRoundedRect(cx - 7, h * 0.63 + yOff, 3, h * 0.2, 2);
+      g.fillRoundedRect(cx + 2, h * 0.63 + yOff, 3, h * 0.2, 2);
 
-      // === BODY/OVERALLS (tiny, round) ===
-      const bodyY = h * 0.48 + yOff;
-      const bodyH = h * 0.20;
+      // BODY (overalls)
+      const bodyY = h * 0.45 + yOff;
+      const bodyH = h * 0.22;
       g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(cx - 7, bodyY, 14, bodyH, {tl:2,tr:2,bl:4,br:4});
-      // Overalls highlight
+      g.fillRoundedRect(cx - 9, bodyY, 18, bodyH, {tl: 4, tr: 4, bl: 5, br: 5});
+      const bibY = bodyY - 2;
+      g.fillStyle(pantsColor, 1);
+      g.fillRoundedRect(cx - 6, bibY, 12, bodyH * 0.38, {tl: 2, tr: 2, bl: 0, br: 0});
+      g.fillStyle(pantsDark, 0.25);
+      g.fillRect(cx - 1, bodyY + 2, 2, bodyH - 4);
+      g.fillStyle(pantsLight, 0.25);
+      g.fillRoundedRect(cx - 8, bodyY + 2, 4, bodyH - 6, 2);
+
+      // SHIRT
+      g.fillStyle(shirtColor, 1);
+      g.fillRoundedRect(cx - 10, bodyY - 4, 20, bodyH * 0.55, {tl: 6, tr: 6, bl: 0, br: 0});
       g.fillStyle(0xffffff, 0.1);
-      g.fillRoundedRect(cx - 6, bodyY + 1, 5, bodyH - 2, 2);
+      g.fillRoundedRect(cx - 3, bodyY - 3, 6, bodyH * 0.15, 2);
+      g.fillStyle(shirtLight, 0.3);
+      g.fillRoundedRect(cx - 8, bodyY - 2, 6, bodyH * 0.3, 2);
+      g.fillStyle(shirtDark, 0.2);
+      g.fillRoundedRect(cx + 3, bodyY - 2, 5, bodyH * 0.3, 2);
 
-      // === SHIRT (tiny top of overalls) ===
-      g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 8, bodyY - 2, 16, bodyH * 0.45, {tl:4,tr:4,bl:0,br:0});
-      g.fillStyle(0xffffff, 0.12);
-      g.fillRoundedRect(cx - 6, bodyY - 1, 6, bodyH * 0.2, 2);
-
-      // === GOLD BUTTONS ===
+      // GOLD BUTTONS
       g.fillStyle(0xffdd00, 1);
-      g.fillCircle(cx - 3, bodyY + 1, 1.5);
-      g.fillCircle(cx + 3, bodyY + 1, 1.5);
+      g.fillCircle(cx - 3, bibY + 4, 2);
+      g.fillCircle(cx + 3, bibY + 4, 2);
+      g.fillStyle(0xffff88, 0.7);
+      g.fillCircle(cx - 3, bibY + 3.5, 0.8);
+      g.fillCircle(cx + 3, bibY + 3.5, 0.8);
 
-      // === TINY ARMS with white gloves ===
+      // ARMS
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 12, bodyY + 2, 5, bodyH * 0.4, 2);
-      g.fillRoundedRect(cx + 7, bodyY + 2, 5, bodyH * 0.4, 2);
+      g.fillRoundedRect(cx - 14, bodyY + 1, 6, bodyH * 0.5, 3);
+      g.fillRoundedRect(cx + 8, bodyY + 1, 6, bodyH * 0.5, 3);
+      g.fillStyle(shirtDark, 0.2);
+      g.fillRect(cx - 14, bodyY + 1, 2, bodyH * 0.4);
+      g.fillRect(cx + 12, bodyY + 1, 2, bodyH * 0.4);
       g.fillStyle(0xffffff, 1);
-      g.fillCircle(cx - 12, bodyY, 3.5);
-      g.fillCircle(cx + 12, bodyY, 3.5);
+      g.fillCircle(cx - 14, bodyY + bodyH * 0.3, 4.5);
+      g.fillCircle(cx + 14, bodyY + bodyH * 0.3, 4.5);
+      g.fillStyle(0xeeeeee, 1);
+      g.fillCircle(cx - 14, bodyY + bodyH * 0.3 + 1, 3.5);
+      g.fillCircle(cx + 14, bodyY + bodyH * 0.3 + 1, 3.5);
 
-      // === EARS ===
+      // EARS
       g.fillStyle(SKIN, 1);
-      g.fillCircle(cx - headRX * 0.9, headCY, 3.5);
-      g.fillCircle(cx + headRX * 0.9, headCY, 3.5);
-      g.fillStyle(0xddaa88, 0.3);
-      g.fillCircle(cx - headRX * 0.9 + 0.5, headCY + 1, 1.5);
-      g.fillCircle(cx + headRX * 0.9 - 0.5, headCY + 1, 1.5);
+      g.fillCircle(cx - headRX * 0.92, headCY, 4.5);
+      g.fillCircle(cx + headRX * 0.92, headCY, 4.5);
+      g.fillStyle(SKIN_SHADOW, 0.5);
+      g.fillCircle(cx - headRX * 0.92 + 0.5, headCY + 1, 2);
+      g.fillCircle(cx + headRX * 0.92 - 0.5, headCY + 1, 2);
 
-      // === HEAD (huge, round) ===
+      // HEAD
       g.fillStyle(SKIN, 1);
-      g.fillCircle(cx, headCY, headRX * 0.85);
-      // Cheek blush
+      g.fillCircle(cx, headCY, headRX * 0.88);
+      g.fillStyle(SKIN_SHADOW, 0.25);
+      g.fillEllipse(cx, headCY + headRY * 0.3, headRX * 1.2, headRY * 0.35);
       g.fillStyle(CHEEK, 0.35);
-      g.fillEllipse(cx - headRX * 0.45, headCY + headRY * 0.2, headRX * 0.25, headRY * 0.2);
-      g.fillEllipse(cx + headRX * 0.45, headCY + headRY * 0.2, headRX * 0.25, headRY * 0.2);
+      g.fillEllipse(cx - headRX * 0.45, headCY + headRY * 0.2, headRX * 0.26, headRY * 0.18);
+      g.fillEllipse(cx + headRX * 0.45, headCY + headRY * 0.2, headRX * 0.26, headRY * 0.18);
 
-      // === HAIR ===
+      // HAIR
       g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - headRX * 0.7, headCY - headRY * 0.95, headRX * 1.4, headRY * 0.45, {tl:4,tr:4,bl:0,br:0});
-      g.fillRect(cx - headRX * 0.8, headCY - headRY * 0.75, 3, headRY * 0.35);
-      g.fillRect(cx + headRX * 0.65, headCY - headRY * 0.75, 3, headRY * 0.35);
+      g.fillRoundedRect(cx - headRX * 0.75, headCY - headRY * 0.95, headRX * 1.5, headRY * 0.5, {tl: 5, tr: 5, bl: 0, br: 0});
+      g.fillRect(cx - headRX * 0.85, headCY - headRY * 0.7, 4, headRY * 0.4);
+      g.fillRect(cx + headRX * 0.7, headCY - headRY * 0.7, 4, headRY * 0.4);
+      g.fillStyle(HAIR_LIGHT, 0.35);
+      g.fillRoundedRect(cx - headRX * 0.5, headCY - headRY * 0.85, headRX * 0.4, headRY * 0.2, 2);
 
-      // === CAP (big, cute) ===
-      const capY = headCY - headRY * 0.9;
+      // CAP
+      const capY = headCY - headRY * 0.92;
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - headRX * 0.75, capY, headRX * 1.5, headRY * 0.6, {tl:5,tr:5,bl:1,br:1});
-      // Cap brim
+      g.fillRoundedRect(cx - headRX * 0.78, capY, headRX * 1.56, headRY * 0.65, {tl: 6, tr: 6, bl: 1, br: 1});
+      g.fillStyle(shirtDark, 0.2);
+      g.fillRoundedRect(cx - headRX * 0.7, capY + headRY * 0.2, headRX * 1.4, headRY * 0.3, 2);
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx + 1, capY + headRY * 0.3, headRX * 0.8, headRY * 0.2, {tl:0,tr:3,bl:0,br:3});
-      // Cap highlight
-      g.fillStyle(0xffffff, 0.2);
-      g.fillRoundedRect(cx - headRX * 0.5, capY + 1, headRX * 0.5, headRY * 0.2, 2);
+      g.fillRoundedRect(cx - 2, capY + headRY * 0.35, headRX * 0.9, headRY * 0.2, {tl: 0, tr: 3, bl: 0, br: 3});
+      g.fillStyle(shirtDark, 0.25);
+      g.fillRoundedRect(cx + headRX * 0.2, capY + headRY * 0.35, headRX * 0.5, headRY * 0.12, {tl: 0, tr: 2, bl: 0, br: 2});
+      g.fillStyle(shirtLight, 0.3);
+      g.fillRoundedRect(cx - headRX * 0.55, capY + 2, headRX * 0.5, headRY * 0.18, 3);
 
-      // === "M" BADGE ===
+      // "M" BADGE
       g.fillStyle(0xffffff, 1);
-      g.fillCircle(cx, capY + headRY * 0.2, headRY * 0.25);
+      g.fillCircle(cx, capY + headRY * 0.25, headRY * 0.28);
       g.fillStyle(shirtColor, 1);
-      g.fillRect(cx - 1.5, capY + headRY * 0.05, 0.8, headRY * 0.3);
-      g.fillRect(cx + 0.7, capY + headRY * 0.05, 0.8, headRY * 0.3);
+      g.fillRect(cx - 2, capY + headRY * 0.08, 0.8, headRY * 0.3);
+      g.fillRect(cx + 1.2, capY + headRY * 0.08, 0.8, headRY * 0.3);
+      g.fillRect(cx - 0.6, capY + headRY * 0.14, 1.2, 1.2);
+      g.fillStyle(0xffffff, 0.35);
+      g.fillCircle(cx, capY + headRY * 0.2, headRY * 0.12);
 
-      // === HUGE CUTE EYES ===
-      const eyeY = headCY - headRY * 0.05;
-      // Eye whites
+      // EYES
+      const eyeY = headCY - headRY * 0.04;
+      g.fillStyle(SKIN_SHADOW, 0.25);
+      g.fillEllipse(cx - headRX * 0.28, eyeY + 1, headRX * 0.32, headRY * 0.22);
+      g.fillEllipse(cx + headRX * 0.28, eyeY + 1, headRX * 0.32, headRY * 0.22);
       g.fillStyle(0xffffff, 1);
-      g.fillEllipse(cx - headRX * 0.28, eyeY, headRX * 0.32, headRY * 0.35);
-      g.fillEllipse(cx + headRX * 0.28, eyeY, headRX * 0.32, headRY * 0.35);
-      // Irises (big dark circles)
+      g.fillEllipse(cx - headRX * 0.28, eyeY, headRX * 0.36, headRY * 0.42);
+      g.fillEllipse(cx + headRX * 0.28, eyeY, headRX * 0.36, headRY * 0.42);
+      g.fillStyle(0x000000, 0.06);
+      g.fillEllipse(cx - headRX * 0.28, eyeY - headRY * 0.12, headRX * 0.36, headRY * 0.16);
+      g.fillEllipse(cx + headRX * 0.28, eyeY - headRY * 0.12, headRX * 0.36, headRY * 0.16);
+
       g.fillStyle(0x111122, 1);
-      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.18);
-      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.18);
-      // Iris color (bright blue)
-      g.fillStyle(0x4488dd, 1);
-      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.14);
-      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.14);
-      // BIG pupil
+      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.22);
+      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.22);
+      g.fillStyle(0x4499ee, 1);
+      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.17);
+      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.17);
+      g.fillStyle(0x3377bb, 0.5);
+      g.fillCircle(cx - headRX * 0.26, eyeY + headRY * 0.06, headRX * 0.13);
+      g.fillCircle(cx + headRX * 0.30, eyeY + headRY * 0.06, headRX * 0.13);
+
       g.fillStyle(0x000000, 1);
-      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.08);
-      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.08);
-      // ✨ BIG SHINE SPARKLE (two highlights per eye)
+      g.fillCircle(cx - headRX * 0.27, eyeY, headRX * 0.11);
+      g.fillCircle(cx + headRX * 0.29, eyeY, headRX * 0.11);
+      g.fillStyle(0x000000, 1);
+      g.fillCircle(cx - headRX * 0.28, eyeY, headRX * 0.08);
+      g.fillCircle(cx + headRX * 0.28, eyeY, headRX * 0.08);
+
       g.fillStyle(0xffffff, 1);
-      g.fillCircle(cx - headRX * 0.20, eyeY - headRY * 0.08, headRX * 0.08);
-      g.fillCircle(cx + headRX * 0.36, eyeY - headRY * 0.08, headRX * 0.08);
-      g.fillStyle(0xffffff, 0.5);
-      g.fillCircle(cx - headRX * 0.32, eyeY + headRY * 0.04, headRX * 0.04);
-      g.fillCircle(cx + headRX * 0.24, eyeY + headRY * 0.04, headRX * 0.04);
-
-      // === CUTE TINY EYEBROWS ===
-      g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - headRX * 0.38, eyeY - headRY * 0.18, headRX * 0.25, headRY * 0.08, 1);
-      g.fillRoundedRect(cx + headRX * 0.18, eyeY - headRY * 0.18, headRX * 0.25, headRY * 0.08, 1);
-
-      // === SMALL ROUND NOSE ===
-      g.fillStyle(0xf0a888, 1);
-      g.fillCircle(cx, eyeY + headRY * 0.15, headRY * 0.12);
+      g.fillCircle(cx - headRX * 0.19, eyeY - headRY * 0.12, headRX * 0.10);
+      g.fillCircle(cx + headRX * 0.37, eyeY - headRY * 0.12, headRX * 0.10);
+      g.fillStyle(0xffffff, 0.55);
+      g.fillCircle(cx - headRX * 0.33, eyeY + headRY * 0.06, headRX * 0.05);
+      g.fillCircle(cx + headRX * 0.23, eyeY + headRY * 0.06, headRX * 0.05);
       g.fillStyle(0xffffff, 0.3);
-      g.fillCircle(cx - 0.5, eyeY + headRY * 0.12, headRY * 0.04);
+      g.fillCircle(cx - headRX * 0.24, eyeY + headRY * 0.14, headRX * 0.04);
+      g.fillCircle(cx + headRX * 0.32, eyeY + headRY * 0.14, headRX * 0.04);
 
-      // === TINY MUSTACHE ===
+      // EYEBROWS
       g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - headRX * 0.3, eyeY + headRY * 0.25, headRX * 0.6, headRY * 0.12, 1);
+      g.fillRoundedRect(cx - headRX * 0.42, eyeY - headRY * 0.24, headRX * 0.30, headRY * 0.10, 2);
+      g.fillRoundedRect(cx + headRX * 0.16, eyeY - headRY * 0.24, headRX * 0.30, headRY * 0.10, 2);
+      g.fillStyle(HAIR_LIGHT, 0.25);
+      g.fillRoundedRect(cx - headRX * 0.38, eyeY - headRY * 0.22, headRX * 0.22, headRY * 0.04, 1);
+      g.fillRoundedRect(cx + headRX * 0.20, eyeY - headRY * 0.22, headRX * 0.22, headRY * 0.04, 1);
 
-      // === HAPPY SMILE ===
-      g.fillStyle(0x772200, 0.35);
-      g.fillRoundedRect(cx - headRX * 0.1, eyeY + headRY * 0.35, headRX * 0.2, headRY * 0.06, 1);
+      // NOSE
+      g.fillStyle(SKIN_DARK, 0.6);
+      g.fillCircle(cx, eyeY + headRY * 0.18, headRY * 0.14);
+      g.fillStyle(SKIN, 1);
+      g.fillCircle(cx, eyeY + headRY * 0.17, headRY * 0.11);
+      g.fillStyle(0xffffff, 0.35);
+      g.fillCircle(cx - 0.5, eyeY + headRY * 0.14, headRY * 0.04);
+
+      // MUSTACHE
+      g.fillStyle(HAIR, 1);
+      g.fillRoundedRect(cx - headRX * 0.36, eyeY + headRY * 0.30, headRX * 0.72, headRY * 0.14, 2);
+      g.fillStyle(HAIR, 0.8);
+      g.fillCircle(cx - headRX * 0.32, eyeY + headRY * 0.34, headRY * 0.07);
+      g.fillCircle(cx + headRX * 0.32, eyeY + headRY * 0.34, headRY * 0.07);
+      g.fillStyle(HAIR_LIGHT, 0.2);
+      g.fillRoundedRect(cx - headRX * 0.2, eyeY + headRY * 0.31, headRX * 0.4, headRY * 0.05, 1);
+
+      // SMILE
+      g.fillStyle(0x883300, 0.4);
+      g.fillRoundedRect(cx - headRX * 0.14, eyeY + headRY * 0.40, headRX * 0.28, headRY * 0.08, 2);
+      g.fillStyle(0x662200, 0.3);
+      g.fillRoundedRect(cx - headRX * 0.16, eyeY + headRY * 0.40, headRX * 0.32, 1, 1);
 
       g.generateTexture(key, w, totalH);
     };

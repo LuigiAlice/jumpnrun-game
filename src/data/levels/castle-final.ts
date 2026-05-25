@@ -344,6 +344,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 2100, 620, 350, 2));
       // Arena 2
       plats.push(createPlat(2900 * S, 620, 1600 * S, 40, 'castle'));
+      plats.push(createPlat(4400 * S, 610, 400 * S, 24, 'platform_easy'));
       // Gap with pipes (piranha threats)
       plats.push(...pipeSection(S, 4800, 620, 3));
       // Arena 3

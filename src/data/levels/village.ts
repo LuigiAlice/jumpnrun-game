@@ -102,25 +102,30 @@ export const VILLAGE_LEVELS: LevelData[] = [
       // Start ground
       plats.push(createPlat(150 * S, 650, 500 * S, 40, 'grass'));
       plats.push(createPlat(400 * S, 530, 120 * S, 24, 'brick'));
+      plats.push(createPlat(1080, 600, 350, 24, 'platform_easy'));
       // Gap 1: 2 helper platforms
       plats.push(...gapWithPlatforms(S, 750, 650, 300, 2));
       // Ground segment
       plats.push(createPlat(1100 * S, 650, 400 * S, 40, 'brick'));
       plats.push(createPlat(1200 * S, 520, 180 * S, 28, 'wood'));
+      plats.push(createPlat(2700, 600, 250, 24, 'platform_easy'));
       // Gap 2: 2 helper platforms
       plats.push(...gapWithPlatforms(S, 1600, 650, 350, 2));
       // Ground segment
       plats.push(createPlat(2000 * S, 650, 400 * S, 40, 'grass'));
       plats.push(createPlat(2150 * S, 520, 100 * S, 24, 'brick'));
+      plats.push(createPlat(4400, 600, 250, 24, 'platform_easy'));
       // Gap 3: 3 helper platforms
       plats.push(...gapWithPlatforms(S, 2500, 650, 400, 3));
       // Ground segment
       plats.push(createPlat(2950 * S, 650, 500 * S, 40, 'brick'));
       plats.push(createPlat(3100 * S, 530, 120 * S, 24, 'wood'));
+      plats.push(createPlat(6250, 600, 300, 24, 'platform_easy'));
       // Gap 4: 2 helper platforms
       plats.push(...gapWithPlatforms(S, 3500, 650, 350, 2));
       // Ground segment
       plats.push(createPlat(3900 * S, 650, 400 * S, 40, 'grass'));
+      plats.push(createPlat(7850, 600, 300, 24, 'platform_easy'));
       // Gap 5: 3 helper platforms
       plats.push(...gapWithPlatforms(S, 4350, 650, 400, 3));
       // Goal ground

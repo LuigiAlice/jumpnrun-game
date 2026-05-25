@@ -1,5 +1,3 @@
-import Phaser from 'phaser';
-
 function launchTitle(game: Phaser.Game): void {
   const sm = game.scene;
   if (sm.isActive('Game')) sm.stop('Game');
@@ -13,10 +11,11 @@ export function goToTitle(game: Phaser.Game, caller?: Phaser.Scene): void {
   const sm = game.scene;
   if (sm.isActive('GameOver')) sm.stop('GameOver');
 
-  // Stopping the current scene and starting another in the same frame is unreliable.
   if (caller && caller.scene.isActive()) {
     caller.scene.stop();
-    caller.time.delayedCall(0, () => launchTitle(game));
+    // Use setTimeout instead of scene.time.delayedCall because
+    // after scene.stop() the scene's clock no longer ticks.
+    setTimeout(() => launchTitle(game), 0);
     return;
   }
 

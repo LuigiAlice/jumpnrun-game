@@ -7,6 +7,7 @@ import { goToTitle } from '../sceneNav';
 const PLAYER_SPEED = 300;
 const JUMP_VELOCITY = -900;
 const GRAVITY = 2000;
+const MIN_ENEMY_SPAWN_DISTANCE = 500;
 
 /** Enemies that cannot be stomped (see AGENTS.md). */
 const NON_STOMPABLE_ENEMIES = new Set([
@@ -243,6 +244,9 @@ export class GameScene extends Phaser.Scene {
       (b as any).contents = q.contents;
     });
     level.enemies.forEach(e => {
+      // Skip enemies too close to player start (Bosse ausgenommen)
+      if (e.type !== 'boss' && e.x < level.playerStart.x + MIN_ENEMY_SPAWN_DISTANCE) return;
+
       // Check if there's solid ground below the enemy (within 60px vertical gap)
       let hasSolidBelow = false;
       for (const p of level.platforms) {

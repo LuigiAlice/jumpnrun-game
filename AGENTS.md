@@ -40,7 +40,9 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 ## Architecture
 - **Entry**: `src/main.ts` initializes Phaser.Game
 - **Scenes**: `src/scenes/` contains BootScene, TitleScene, GameScene, GameOverScene
-- **Physics**: Arcade physics with gravity (y: 1000)
+- **Physics**: Arcade physics with gravity (y: 2000), player jump velocity -900, horizontal speed 300
+- **Solver**: `src/engine/Physics.ts` – BFS path-finding with `MAX_PRACTICAL_JUMP: 585`, `MAX_JUMP_UP: 350`, `MAX_FALL_DOWN: 1000`
+- **Moving Platforms**: Jump-Check verwendet `horizontalJumpCheck()` mit gleicher Physik wie statische Plattformen (seit Fix: `getMaxHorizontalJump` + `MAX_PRACTICAL_JUMP` statt hartem `MAX_JUMP_DISTANCE=800`)
 - **Level Gen**: Seed-based deterministic algorithm (BFS path-finding)
 - **Level Data**: 90 levels across 15 biomes in `src/data/levels/`
 

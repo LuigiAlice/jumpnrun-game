@@ -338,6 +338,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.5;
       const plats: any[] = [];
       plats.push(createPlat(200 * S, 650, 2000 * S, 40, 'snow'));
+      plats.push(createPlat(1800 * S, 640, 500 * S, 24, 'platform_easy'));
       plats.push(...gapWithPlatforms(S, 2400, 650, 400, 3));
       plats.push(createPlat(3200 * S, 650, 1600 * S, 40, 'snow'));
       plats.push(createPlat(5000 * S, 600, 100, 20, 'platform_easy'));

@@ -588,8 +588,12 @@ export const WATER_LEVELS: LevelData[] = [
       // Step down level 3 via gap
       plats.push(...gapWithPlatforms(S, 3300, 560, 450, 3));
       plats.push(createPlat(4000 * S, 600, 800 * S, 40, 'water'));
+      // Stepping stone to pipe section
+      plats.push(createPlat(4750 * S, 590, 200 * S, 24, 'platform_easy'));
       // Pipe section at depth
       plats.push(...pipeSection(S, 4850, 600, 4));
+      // Stepping stone to bridge
+      plats.push(createPlat(6400 * S, 560, 200 * S, 24, 'platform_easy'));
       // Bridge
       plats.push(...gapWithPlatforms(S, 6600, 540, 600, 4));
       plats.push(createPlat(6900 * S, 600, 600 * S, 40, 'water'));
@@ -599,10 +603,16 @@ export const WATER_LEVELS: LevelData[] = [
       // Gap to step down further
       plats.push(...gapWithPlatforms(S, 8500, 640, 500, 4));
       plats.push(createPlat(9400 * S, 660, 600 * S, 40, 'water'));
+      // Stepping stone from water to vertical climb
+      plats.push(createPlat(9900 * S, 620, 200 * S, 24, 'platform_easy'));
       // Vertical climb
       plats.push(...verticalClimb(S, 10300, 660));
+      // Stepping stone from vertical climb to deepest water
+      plats.push(createPlat(11900 * S, 660, 200 * S, 24, 'platform_easy'));
       // Deepest section
       plats.push(createPlat(12700 * S, 700, 800 * S, 40, 'water'));
+      // Stepping stone to deepest pipes
+      plats.push(createPlat(13450 * S, 685, 200 * S, 24, 'platform_easy'));
       // Final challenge: pipes at deepest
       plats.push(...pipeSection(S, 13550, 700, 5));
       // Bridge
