@@ -1,6 +1,6 @@
 // Ruins World - 6 Levels (IDs 67-72) - Distinct Structure Designs
 // 67: Tutorial, 68: Gap-Strecke, 69: Röhren-Labyrinth, 70: Vertikal-Kletterer, 71: Gegner-Horde, 72: Fallende-Tempel Finale
-// Static-to-static: MAX_PRACTICAL_JUMP = 600; to/from moving platforms: MAX_JUMP_DISTANCE = 800
+// Static-to-static: MAX_PRACTICAL_JUMP = 585; to/from moving platforms: MAX_JUMP_DISTANCE = 800
 // MAX_JUMP_UP = 350, MAX_FALL_DOWN = 1000
 
 import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';

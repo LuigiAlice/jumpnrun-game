@@ -1,4 +1,5 @@
 import { PHYSICS } from '../config';
+export const DEFAULT_PHYSICS = { ...PHYSICS };
 
 interface Platform {
     x: number;

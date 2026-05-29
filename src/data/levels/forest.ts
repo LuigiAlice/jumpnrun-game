@@ -1,6 +1,6 @@
 // Forest World - 6 Levels (31-36) - Distinct Structure Designs
 // 31: Tutorial, 32: Gap-Strecke, 33: Röhren-Labyrinth, 34: Vertikal-Kletterer, 35: Gegner-Horde, 36: Baumkronen-Finale
-// MAX_PRACTICAL_JUMP = 600px (static-to-static), MAX_JUMP_DISTANCE = 800px (to/from moving platforms)
+// MAX_PRACTICAL_JUMP = 585px (static-to-static), MAX_JUMP_DISTANCE = 800px (to/from moving platforms)
 // MAX_JUMP_UP = 350px, MAX_FALL_DOWN = 1000px
 
 import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';

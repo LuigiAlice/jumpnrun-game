@@ -16,6 +16,7 @@ export const PHYSICS = {
   HORIZONTAL_SPEED: 300,
 
   // Solver-related constants (see AGENTS.md / Physics.ts)
+  MAX_JUMP_DISTANCE: 800,
   MAX_PRACTICAL_JUMP: 585,
   MAX_JUMP_UP: 350,
   MAX_FALL_DOWN: 1000,
