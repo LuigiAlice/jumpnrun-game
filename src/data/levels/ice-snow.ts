@@ -25,6 +25,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       plats.push(createPlat(5400 * S, 550, 1000 * S, 40, 'snow'));
       plats.push(...gapWithPlatforms(S, 6200, 550, 350, 2));
       plats.push(createPlat(7200 * S, 550, 800 * S, 40, 'snow'));
+      plats.push(createPlat(160, 400, 140, 24, 'snow'));
       return plats;
     })(),
     coins: (() => {
@@ -34,6 +35,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
         createCoin(2200 * S, 370), createCoin(3100 * S, 500), createCoin(4400 * S, 480),
         createCoin(5000 * S, 370), createCoin(5700 * S, 500), createCoin(6400 * S, 410),
         createCoin(7600 * S, 500),
+        createCoin(130, 360), createCoin(160, 360), createCoin(190, 360), createCoin(220, 360),
       ];
     })(),
     questionBlocks: (() => {
@@ -41,7 +43,8 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       return [
         createQB(800 * S, 480, 'mushroom'), createQB(1600 * S, 480, 'coin'),
         createQB(3100 * S, 480, 'mushroom'), createQB(4400 * S, 460, 'flower'),
-        createQB(5900 * S, 480, 'coin'), createQB(7600 * S, 480, 'star'),
+        createQB(5900 * S, 480, 'coin'),         createQB(7600 * S, 480, 'star'),
+        createQB(160, 340, 'star'),
       ];
     })(),
     enemies: (() => {
@@ -284,7 +287,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       const S = 0.556;
       return [
         createQB(1000 * S, 580, 'mushroom'), createQB(1800 * S, 300, 'star'),
-        createQB(2500 * S, 250, 'flower'), createQB(3400 * S, 520, 'mushroom'),
+        createQB(2500 * S, 250, 'flower'),         createQB(3400 * S, 565, 'mushroom'),
         createQB(4400 * S, 580, 'mushroom'), createQB(5000 * S, 380, 'star'),
         createQB(5600 * S, 520, 'flower'), createQB(6800 * S, 580, 'mushroom'),
         createQB(7800 * S, 560, 'star'), createQB(8600 * S, 480, 'flower'),
@@ -457,7 +460,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
         createQB(900 * S, 680, 'mushroom'), createQB(1800 * S, 620, 'flower'),
         createQB(2300 * S, 530, 'star'), createQB(3100 * S, 580, 'mushroom'),
         createQB(3800 * S, 680, 'flower'), createQB(5200 * S, 610, 'star'),
-        createQB(6000 * S, 680, 'mushroom'), createQB(7100 * S, 660, 'flower'),
+        createQB(6000 * S, 680, 'mushroom'),         createQB(7100 * S, 665, 'flower'),
         createQB(7800 * S, 580, 'star'), createQB(8600 * S, 490, 'mushroom'),
         createQB(9700 * S, 620, 'flower'), createQB(10200 * S, 560, 'star'),
         createQB(11200 * S, 680, 'mushroom'), createQB(12000 * S, 680, 'flower'),

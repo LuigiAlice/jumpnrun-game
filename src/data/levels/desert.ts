@@ -28,6 +28,8 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(4800 * S, 500, 100, 20, 'platform_easy'));
       // Final ground
       plats.push(createPlat(5000 * S, 550, 900 * S, 40, 'sand'));
+      // Secret room: underground cave below the long sand section
+      plats.push(createPlat(1600, 610, 160, 24, 'sand'));
       return plats;
     })(),
     movingPlatforms: [
@@ -40,6 +42,7 @@ export const DESERT_LEVELS: LevelData[] = [
       coins.push(createCoin(1200 * S, 500));
       coins.push(createCoin(1400 * S, 500));
       for (let x = 2400 * S; x < 3100 * S; x += 200) coins.push(createCoin(x, 500));
+      coins.push(createCoin(1570, 590), createCoin(1620, 590), createCoin(1670, 590));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -48,6 +51,7 @@ export const DESERT_LEVELS: LevelData[] = [
         createQB(500 * S, 480, 'mushroom'),
         createQB(1300 * S, 480, 'coin'),
         createQB(2700 * S, 480, 'flower'),
+        createQB(1620, 570, 'mushroom'),
       ];
     })(),
     enemies: (() => {
@@ -248,9 +252,9 @@ export const DESERT_LEVELS: LevelData[] = [
       return [
         createQB(500 * S, 480, 'mushroom'),
         createQB(2800 * S, 480, 'coin'),
-        createQB(5400 * S, 480, 'flower'),
+        createQB(5100 * S, 480, 'flower'),
         createQB(7900 * S, 480, 'star'),
-        createQB(10500 * S, 480, 'mushroom'),
+        createQB(10400 * S, 480, 'mushroom'),
       ];
     })(),
     enemies: (() => {

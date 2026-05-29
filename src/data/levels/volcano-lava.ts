@@ -41,6 +41,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             plats.push(createPlat(7000 * S, 350, 100 * S, 24, 'platform_hard'));
             plats.push(createPlat(11500 * S, 360, 100 * S, 24, 'platform_medium'));
             plats.push(createPlat(17500 * S, 350, 100 * S, 24, 'platform_hard'));
+            plats.push(createPlat(600, 300, 140, 24, 'brick'));
 
             return plats;
         })(),
@@ -64,6 +65,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             cs.push(createCoin(17600 * S, 300));
             for (let x = 16600; x < 17400; x += 200) cs.push(createCoin(x * S, 480));
             for (let x = 18400; x < 19200; x += 200) cs.push(createCoin(x * S, 480));
+            cs.push(createCoin(570, 270), createCoin(600, 270), createCoin(630, 270));
             return cs;
         })(),
         questionBlocks: (() => {
@@ -74,6 +76,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 createQB(7100 * S, 290, 'flower'),
                 createQB(11600 * S, 300, 'star'),
                 createQB(17600 * S, 290, 'mushroom'),
+                createQB(600, 250, 'mushroom'),
             ];
         })(),
         enemies: (() => {

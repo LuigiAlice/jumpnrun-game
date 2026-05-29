@@ -40,6 +40,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       plats.push(createPlat(2950 * S, 530, 100 * S, 24, 'platform_medium'));
       plats.push(createPlat(3150 * S, 450, 80 * S, 24, 'platform_hard'));
       plats.push(createPlat(3300 * S, 380, 300 * S, 40, 'brick'));
+      plats.push(createPlat(200, 420, 140, 24, 'brick'));
       return plats;
     })(),
     coins: (() => {
@@ -52,6 +53,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       c.push(createCoin(2200 * S, 480), createCoin(2250 * S, 480));
       c.push(createCoin(3000 * S, 490), createCoin(3050 * S, 490));
       c.push(createCoin(3350 * S, 340));
+      c.push(createCoin(170, 390), createCoin(200, 390), createCoin(230, 390));
       return c;
     })(),
     questionBlocks: (() => {
@@ -59,6 +61,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       return [
         createQB(380 * S, 440, 'mushroom'),
         createQB(1800 * S, 440, 'coin'),
+        createQB(200, 370, 'coin'),
       ];
     })(),
     enemies: (() => {

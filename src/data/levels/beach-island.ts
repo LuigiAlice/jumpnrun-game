@@ -30,6 +30,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       plats.push(createPlat(5400 * S, 550, 800 * S, 40, 'sand'));
       plats.push(...boardwalkSection(S, 6200, 550, 600));
       plats.push(createPlat(7200 * S, 550, 600 * S, 40, 'sand'));
+      plats.push(createPlat(500, 430, 140, 24, 'sand'));
       return plats;
     })(),
     coins: (() => {
@@ -40,6 +41,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       for (let x = 3000 * S; x < 3800 * S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 5400 * S; x < 6200 * S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 7200 * S; x < 7800 * S; x += 200) cs.push(createCoin(x, 500));
+      cs.push(createCoin(470, 400), createCoin(500, 400), createCoin(530, 400));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -48,6 +50,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
         createQB(600 * S, 480, 'mushroom'),
         createQB(1800 * S, 480, 'coin'),
         createQB(3200 * S, 480, 'flower'),
+        createQB(500, 370, 'coin'),
       ];
     })(),
     enemies: (() => {
@@ -335,8 +338,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
         createQB(600 * S, 480, 'mushroom'),
         createQB(3500 * S, 480, 'flower'),
         createQB(5900 * S, 480, 'coin'),
-        createQB(8900 * S, 480, 'star'),
-        createQB(11900 * S, 480, 'mushroom'),
+        createQB(8700 * S, 480, 'star'),
+        createQB(11700 * S, 480, 'mushroom'),
         createQB(15200 * S, 480, 'coin'),
       ];
     })(),

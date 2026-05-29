@@ -94,6 +94,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       plats.push(createPlat(17600 * S, 80, 800 * S, 40, 'stone'));
       plats.push(...canyonGroundSection(S, 18400, 80, 2000));
       plats.push(createPlat(20800 * S, 80, 1000 * S, 40, 'stone'));
+      plats.push(createPlat(250, 420, 140, 24, 'stone'));
       return plats;
     })(),
     movingPlatforms: (() => {
@@ -115,6 +116,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       for (let x = 16600 * S; x < 17600 * S; x += 100 * S) coins.push(createCoin(x, 160));
       for (let x = 18400 * S; x < 20800 * S; x += 150 * S) coins.push(createCoin(x, 30));
       for (let x = 20800 * S; x < 21800 * S; x += 150 * S) coins.push(createCoin(x, 30));
+      coins.push(createCoin(220, 380), createCoin(250, 380), createCoin(280, 380), createCoin(310, 380));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -125,6 +127,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
         createQB(6800 * S, 400, 'coin'),
         createQB(10300 * S, 320, 'flower'),
         createQB(16200 * S, 220, 'star'),
+        createQB(250, 360, 'mushroom'),
       ];
     })(),
     enemies: (() => {

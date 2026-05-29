@@ -28,6 +28,8 @@ export const RUINS_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 3400, 550, 350, 2));
       // Ruins goal: left=2312.5, right=3062.5 (top=525)
       plats.push(createPlat(4300 * S, 550, 1200 * S, 50, 'ruins'));
+      // Secret room: treasure chamber below ruins mid section
+      plats.push(createPlat(1650, 610, 160, 24, 'ruins'));
       return plats;
     })(),
     coins: (() => {
@@ -38,6 +40,7 @@ export const RUINS_LEVELS: LevelData[] = [
       for (let x = 2800; x < 3300; x += 120) coins.push(createCoin(x * S, 500));
       for (let x = 3500; x < 3800; x += 100) coins.push(createCoin(x * S, 480));
       for (let x = 4400; x < 5300; x += 120) coins.push(createCoin(x * S, 500));
+      coins.push(createCoin(1610, 590), createCoin(1650, 590), createCoin(1690, 590), createCoin(1730, 590));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -47,6 +50,7 @@ export const RUINS_LEVELS: LevelData[] = [
         createQB(1800 * S, 480, 'flower'),
         createQB(3000 * S, 480, 'star'),
         createQB(4600 * S, 480, 'mushroom'),
+        createQB(1650, 570, 'star'),
       ];
     })(),
     enemies: (() => {

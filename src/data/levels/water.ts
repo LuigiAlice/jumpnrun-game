@@ -28,6 +28,8 @@ export const WATER_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 5400, 500, 400, 2));
       // Final ground + goal
       plats.push(createPlat(6500 * S, 500, 1500 * S, 40, 'water'));
+      // Secret room: underwater cave alcove
+      plats.push(createPlat(3200, 570, 140, 24, 'water'));
       return plats;
     })(),
     coins: (() => {
@@ -37,6 +39,7 @@ export const WATER_LEVELS: LevelData[] = [
       for (let x = 2300; x < 3400; x += 200) coins.push(createCoin(x * S, 450));
       coins.push(createCoin(1400 * S, 380), createCoin(1700 * S, 310));
       for (let x = 4600; x < 5800; x += 200) coins.push(createCoin(x * S, 450));
+      coins.push(createCoin(3140, 555), createCoin(3200, 555), createCoin(3260, 555), createCoin(3320, 555));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -46,6 +49,7 @@ export const WATER_LEVELS: LevelData[] = [
         createQB(2500 * S, 430, 'flower'),
         createQB(4800 * S, 430, 'star'),
         createQB(7000 * S, 430, 'mushroom'),
+        createQB(3200, 530, 'flower'),
       ];
     })(),
     enemies: (() => {
@@ -502,9 +506,9 @@ export const WATER_LEVELS: LevelData[] = [
         createQB(4100 * S, 530, 'star'),
         createQB(5300 * S, 530, 'mushroom'),
         createQB(6200 * S, 530, 'flower'),
-        createQB(8000 * S, 530, 'star'),
+        createQB(8080 * S, 550, 'star'),
         createQB(11000 * S, 530, 'mushroom'),
-        createQB(12000 * S, 530, 'flower'),
+        createQB(11700 * S, 530, 'flower'),
         createQB(13400 * S, 170, 'star'),
         createQB(15200 * S, 530, 'mushroom'),
         createQB(16300 * S, 530, 'flower'),

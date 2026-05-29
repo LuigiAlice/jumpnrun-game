@@ -6,7 +6,6 @@ import { goToTitle } from '../sceneNav';
 
 const PLAYER_SPEED = 300;
 const JUMP_VELOCITY = -900;
-const GRAVITY = 2000;
 const MIN_ENEMY_SPAWN_DISTANCE = 500;
 
 /** Enemies that cannot be stomped (see AGENTS.md). */
@@ -14,7 +13,34 @@ const NON_STOMPABLE_ENEMIES = new Set([
   'piranha', 'thwomp', 'boo', 'lakitu', 'bullet_bill', 'fireball', 'boss',
 ]);
 
-const SOLID_TYPES = ['grass', 'stone', 'brick', 'cave', 'castle', 'metal', 'lava', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'bubble'];
+const SOLID_TYPES = ['grass', 'stone', 'brick', 'cave', 'castle', 'metal', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'bubble'];
+
+const BIOME_GRAVITY: Record<string, number> = {
+  'space-star': 1000,
+  'sky-clouds': 1500,
+  'water': 1200,
+  'beach-island': 1500,
+  'volcano-lava': 2200,
+};
+
+const BIOME_ENEMY_SPEED: Record<string, number> = {
+  'factory': 100,
+  'volcano-lava': 100,
+  'ruins': 110,
+  'canyon-base': 120,
+  'space-star': 100,
+  'castle-final': 130,
+};
+
+const DEFAULT_ENEMY_SPEED = 80;
+
+const BIOME_PARTICLE_CONFIG: Record<string, { key: string; color: number; frequency: number; lifespan: number } | null> = {
+  'volcano-lava': { key: 'particle', color: 0xff4400, frequency: 300, lifespan: 2000 },
+  'ice-snow': { key: 'particle', color: 0xffffff, frequency: 400, lifespan: 3000 },
+  'space-star': { key: 'particle', color: 0x88ccff, frequency: 500, lifespan: 2500 },
+  'sky-clouds': { key: 'particle', color: 0xeeeeff, frequency: 600, lifespan: 4000 },
+  'haunted-mansion': { key: 'particle', color: 0x9966cc, frequency: 500, lifespan: 2000 },
+};
 
 export class GameScene extends Phaser.Scene {
   private player!: Phaser.Physics.Arcade.Sprite;
@@ -66,7 +92,17 @@ export class GameScene extends Phaser.Scene {
   private musicLoopInterval?: any;
 
   private currentLevelData?: LevelData;
+  private bgTiles: Phaser.GameObjects.TileSprite[] = [];
+  private currentBiome: string = '';
   private movingPlatformData: Map<Phaser.GameObjects.Sprite, { startX: number; startY: number; moveType: string; range: number; speed: number; angle?: number }> = new Map();
+  
+  // Phase 3: Special mechanics
+  private bossProjectiles!: Phaser.Physics.Arcade.Group;
+  private bossHp: number = 0;
+  private bossHpBar?: Phaser.GameObjects.Graphics;
+  private lastBossShot: number = 0;
+  private fallingHazards!: Phaser.Physics.Arcade.Group;
+  private windTime: number = 0;
 
   constructor() { super({ key: 'Game' }); }
 
@@ -120,9 +156,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private setupWorld(level: LevelData) {
-    this.physics.world.gravity.y = GRAVITY;
+    this.physics.world.gravity.y = BIOME_GRAVITY[level.biome] ?? 2000;
     this.physics.world.setBounds(0, 0, level.width, GAME_HEIGHT);
     this.cameras.main.setBounds(0, 0, level.width, GAME_HEIGHT);
+    this.currentBiome = level.biome;
+    this.bgTiles = [];
     
     const biomePrefix: Record<string, string> = {
       'grasslands': 'bg_grasslands',
@@ -151,9 +189,10 @@ export class GameScene extends Phaser.Scene {
     const yPositions = [GAME_HEIGHT / 2, 320, 360, 400, 440, 480, 520];
 
     for (let i = 0; i < 7; i++) {
-      this.add.tileSprite(GAME_WIDTH / 2, yPositions[i], widths[i], heights[i], `${prefix}_${i}`)
+      const tile = this.add.tileSprite(GAME_WIDTH / 2, yPositions[i], widths[i], heights[i], `${prefix}_${i}`)
         .setScrollFactor(scrollFactors[i], 0)
         .setDepth(depths[i]);
+      this.bgTiles.push(tile);
     }
   }
 
@@ -166,6 +205,8 @@ export class GameScene extends Phaser.Scene {
     this.questionBlocks = this.physics.add.staticGroup();
     this.powerUps = this.physics.add.group();
     this.fireballs = this.physics.add.group();
+    this.bossProjectiles = this.physics.add.group();
+    this.fallingHazards = this.physics.add.group();
   }
 
   private spawnEntities(level: LevelData) {
@@ -174,7 +215,59 @@ export class GameScene extends Phaser.Scene {
       level.decorations.forEach(d => {
         const dec = this.add.image(d.x, d.y, d.type);
         dec.setScrollFactor(0.3, 0.3).setDepth(-85);
+        // Animate certain decoration types
+        if (d.type === 'fire' || d.type === 'ember') {
+          this.tweens.add({
+            targets: dec,
+            scaleX: { from: 1, to: 0.8 },
+            scaleY: { from: 1, to: 1.2 },
+            alpha: { from: 0.8, to: 1 },
+            duration: 400 + Math.random() * 300,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut',
+            delay: Math.random() * 500,
+          });
+        } else if (d.type === 'bubble' || d.type === 'seaweed') {
+          this.tweens.add({
+            targets: dec,
+            y: d.y - 6,
+            duration: 1500 + Math.random() * 1000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut',
+            delay: Math.random() * 1000,
+          });
+        } else if (d.type === 'ghost' || d.type === 'cobweb') {
+          this.tweens.add({
+            targets: dec,
+            alpha: { from: 0.5, to: 1 },
+            duration: 2000 + Math.random() * 1000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut',
+          });
+        }
       });
+    }
+
+    // Ambient particle effects per biome
+    const particleCfg = BIOME_PARTICLE_CONFIG[level.biome];
+    if (particleCfg) {
+      const particles = this.add.particles(0, 0, particleCfg.key, {
+        x: { min: 0, max: level.width },
+        y: -10,
+        speedY: { min: 20, max: 60 },
+        speedX: { min: -10, max: 10 },
+        angle: { min: 80, max: 100 },
+        scale: { start: 1, end: 0 },
+        lifespan: particleCfg.lifespan,
+        frequency: particleCfg.frequency,
+        quantity: 1,
+        tint: particleCfg.color,
+        alpha: { start: 0.6, end: 0 },
+      });
+      particles.setDepth(-60);
     }
     level.platforms.forEach(p => {
       let tex = 'ground_grass';
@@ -270,17 +363,36 @@ export class GameScene extends Phaser.Scene {
         (safePlat as any).platformType = 'grass';
       }
       
+      const biomeSpeed = BIOME_ENEMY_SPEED[level.biome] ?? DEFAULT_ENEMY_SPEED;
+
       const enemy = this.enemies.create(e.x, e.y, e.type);
       // Ground enemies - have edge detection (won't fall off platforms)
       if (e.type === 'goomba' || e.type === 'spiny' || e.type === 'koopa' || e.type === 'robot' || e.type === 'crab') {
-        enemy.setVelocityX(-80).setCollideWorldBounds(true).setBounce(0);
+        enemy.setVelocityX(-biomeSpeed).setCollideWorldBounds(true).setBounce(0);
         enemy.setDragX(0);
-      } else if (e.type === 'boo' || e.type === 'fireball' || e.type === 'ghost' || e.type === 'ufo') {
+      } else if (e.type === 'boo' || e.type === 'fireball') {
         // Floating enemies - no gravity, no edge detection
         enemy.body.setAllowGravity(false);
-        enemy.setVelocityX(-80).setCollideWorldBounds(true).setBounce(0);
+        enemy.setCollideWorldBounds(true).setBounce(0);
         enemy.setData('noEdgeDetection', true);
-} else if (e.type === 'piranha') {
+        if (e.type === 'boo') {
+          enemy.setData('speed', biomeSpeed + 60);
+        } else {
+          enemy.setVelocityX(-biomeSpeed - 20);
+        }
+      } else if (e.type === 'ghost') {
+        enemy.body.setAllowGravity(false);
+        enemy.setCollideWorldBounds(true).setBounce(0);
+        enemy.setData('noEdgeDetection', true);
+      } else if (e.type === 'ufo') {
+        enemy.body.setAllowGravity(false);
+        enemy.setCollideWorldBounds(true).setBounce(0);
+        enemy.setData('noEdgeDetection', true);
+      } else if (e.type === 'squid') {
+        enemy.body.setAllowGravity(false);
+        enemy.setCollideWorldBounds(true).setBounce(0);
+        enemy.setData('noEdgeDetection', true);
+      } else if (e.type === 'piranha') {
         enemy.body.setAllowGravity(false);
         enemy.setImmovable(true);
         enemy.setData('noEdgeDetection', true);
@@ -327,19 +439,81 @@ export class GameScene extends Phaser.Scene {
         enemy.body.setAllowGravity(false);
         enemy.setImmovable(true);
         enemy.setData('noEdgeDetection', true);
+        enemy.setData('origX', e.x);
+        enemy.setData('origY', e.y);
       } else if (e.type === 'lakitu') {
-        enemy.setVelocityX(-60).setCollideWorldBounds(true);
+        enemy.body.setAllowGravity(false);
+        enemy.setCollideWorldBounds(true).setBounce(0);
         enemy.setData('noEdgeDetection', true);
+        enemy.setData('lastEggTime', 0);
       } else if (e.type === 'bullet_bill') {
-        enemy.setVelocityX(-400).setCollideWorldBounds(true);
+        enemy.setVelocityX(-Math.round(biomeSpeed * 4)).setCollideWorldBounds(true);
         enemy.setData('noEdgeDetection', true);
       } else if (e.type === 'boss') {
-        enemy.setVelocityX(-50).setCollideWorldBounds(true).setBounce(0);
+        enemy.setVelocityX(-Math.round(biomeSpeed * 0.5)).setCollideWorldBounds(true).setBounce(0);
         enemy.setData('noEdgeDetection', true);
       } else {
-        enemy.setVelocityX(-50).setCollideWorldBounds(true);
+        enemy.setVelocityX(-biomeSpeed).setCollideWorldBounds(true);
       }
     });
+    
+    // Level 60: Rising lava mechanic
+    if (level.id === 60) {
+      const lava = this.platforms.create(level.width / 2, level.height + 150, 'ground_lava');
+      lava.setDisplaySize(level.width, 300).refreshBody();
+      (lava as any).platformType = 'lava';
+      lava.setData('risingLava', true);
+    }
+    
+    // L18, L48: Rising water/tide
+    if (level.id === 18 || level.id === 48) {
+      const water = this.platforms.create(level.width / 2, level.height + 200, 'ground_water');
+      water.setDisplaySize(level.width, 400).refreshBody();
+      (water as any).platformType = 'lava';
+      water.setData('risingLava', true);
+    }
+    
+    // Level 72: Tag stepping platforms as crumble
+    if (level.id === 72) {
+      this.platforms.getChildren().forEach((p: any) => {
+        const type = p.getData?.('type') || (p as any).platformType;
+        if (type === 'platform_easy' || type === 'platform_medium' || type === 'platform_hard') {
+          p.setData('crumble', true);
+        }
+      });
+    }
+    
+    // Biome finales: tag platforms as crumble for L30, L78, L84
+    if (level.id === 30 || level.id === 78 || level.id === 84) {
+      this.platforms.getChildren().forEach((p: any) => {
+        const type = p.getData?.('type') || (p as any).platformType;
+        if (type === 'platform_easy' || type === 'platform_medium' || type === 'platform_hard' || type === 'cloud') {
+          p.setData('crumble', true);
+        }
+      });
+    }
+    
+    // Level 90: Boss HP tracking + arena walls
+    if (level.id === 90) {
+      this.enemies.getChildren().forEach((e: any) => {
+        const eType = e.getData('type') || e.texture?.key;
+        if (eType === 'boss') e.setData('hp', 3);
+      });
+      // Arena walls (left, right, ceiling) to keep boss fight contained
+      const wallThick = 32;
+      const arenaH = 700;
+      const walls: { x: number; y: number; w: number; h: number }[] = [
+        { x: -wallThick / 2, y: arenaH / 2, w: wallThick, h: arenaH },
+        { x: level.width + wallThick / 2, y: arenaH / 2, w: wallThick, h: arenaH },
+        { x: level.width / 2, y: -wallThick / 2, w: level.width, h: wallThick },
+      ];
+      walls.forEach(w => {
+        const wall = this.solidPlatforms.create(w.x, w.y, 'ground_castle');
+        wall.setDisplaySize(w.w, w.h).refreshBody();
+        (wall.body as Phaser.Physics.Arcade.StaticBody).checkCollision.down = false;
+      });
+    }
+    
     // Correctly store and setup the goal
     this.goal = this.physics.add.sprite(level.goal.x, level.goal.y, 'flag').setImmovable(true);
     (this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false;
@@ -359,8 +533,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   private setupCollisions() {
-    // Player hits lava = die
-    this.physics.add.collider(this.player, this.solidPlatforms, (p, plat) => { if ((plat as any).platformType === 'lava') this.die(); });
+    // Solid platforms: player walks on them
+    this.physics.add.collider(this.player, this.solidPlatforms);
+    // Floating platforms: player can land on top (lava kills)
+    this.physics.add.collider(this.player, this.platforms, (p, plat) => { if ((plat as any).platformType === 'lava') this.die(); });
     
     // Enemies collide with ALL platforms and turn around
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -419,9 +595,31 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.powerUps, (_p, pu) => this.collectPowerUp(pu as any));
     this.physics.add.overlap(this.player, this.goal, () => this.reachGoal()); // Use the goal variable
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.physics.add.overlap(this.fireballs, this.enemies, (f: any, e: any) => { this.killEnemy(e as any); f.destroy(); this.score += 500; });
+    this.physics.add.overlap(this.fireballs, this.enemies, (f: any, e: any) => {
+      const eType = e.getData('type') || e.texture?.key;
+      if (eType === 'boss') {
+        const hp = (e.getData('hp') || 3) - 1;
+        e.setData('hp', hp);
+        f.destroy();
+        if (hp <= 0) this.killEnemy(e as any);
+        this.score += 200;
+      } else {
+        this.killEnemy(e as any); f.destroy(); this.score += 500;
+      }
+    });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.collider(this.fireballs, this.solidPlatforms, (f: any, _p: any) => { if (f.body?.blocked?.left || f.body?.blocked?.right) f.destroy(); });
+    // Boss projectiles hit player and platforms
+    this.physics.add.overlap(this.player, this.bossProjectiles, () => { if (!this.isDead && !this.isInvincible) this.playerHit(); });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.physics.add.collider(this.bossProjectiles, this.solidPlatforms, (f: any) => f.destroy());
+    this.physics.add.collider(this.bossProjectiles, this.platforms, (f: any) => f.destroy());
+    
+    // Falling hazards hit player
+    this.physics.add.overlap(this.player, this.fallingHazards, () => { if (!this.isDead && !this.isInvincible) this.playerHit(); });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.physics.add.collider(this.fallingHazards, this.solidPlatforms, (f: any) => f.destroy());
+    this.physics.add.collider(this.fallingHazards, this.platforms, (f: any) => f.destroy());
   }
 
   private killEnemy(enemy: Phaser.GameObjects.Sprite) {
@@ -569,9 +767,72 @@ export class GameScene extends Phaser.Scene {
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     if (this.cursors.left.isDown) { body.setVelocityX(-PLAYER_SPEED); this.player.setFlipX(true); }
     else if (this.cursors.right.isDown) { body.setVelocityX(PLAYER_SPEED); this.player.setFlipX(false); }
-    else body.setVelocityX(0);
+    else {
+      const onIce = body.blocked.down && this.currentLevelData?.biome === 'ice-snow';
+      body.setVelocityX(onIce ? body.velocity.x * 0.92 : 0);
+    }
     if (this.cursors.up.isDown && body.blocked.down) body.setVelocityY(JUMP_VELOCITY);
+    
+    // Swimming mechanic for water biome
+    if (this.currentBiome === 'water' && body.y > 500) {
+      body.setGravityY(-(this.physics.world.gravity.y - 600));
+      if (this.cursors.up.isDown) body.setVelocityY(-250);
+      if (Math.abs(body.velocity.x) > 0) body.setVelocityX(body.velocity.x * 0.95);
+    } else {
+      body.setGravityY(0);
+    }
     if ((this.shootKey.isDown || this.spaceShoot.isDown) && this.isPlayerFire && time > this.lastFired) { this.shootFireball(); this.lastFired = time + 250; }
+    
+    // Animate background for certain biomes
+    if (this.currentBiome === 'water' || this.currentBiome === 'beach-island') {
+      this.bgTiles.forEach((t, i) => t.tilePositionY += [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12][i] || 0);
+    } else if (this.currentBiome === 'sky-clouds' || this.currentBiome === 'space-star') {
+      this.bgTiles.forEach((t, i) => t.tilePositionX += [0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06][i] || 0);
+    }
+    
+    // Level 60: Rising lava
+    if (this.levelId === 60) {
+      this.platforms.getChildren().forEach((p: any) => {
+        if (p.getData?.('risingLava')) {
+          p.y -= 0.4;
+          p.body.updateFromGameObject();
+        }
+      });
+    }
+    
+    // Level 72: Crumble platforms
+    if (this.levelId === 72) {
+      this.platforms.getChildren().forEach((p: any) => {
+        if (!p.getData?.('crumble') || p.getData('crumbled')) return;
+        if (p.body?.touching?.up && this.player.body?.blocked?.down) {
+          const startTime = p.getData('crumbleStart') || 0;
+          if (startTime === 0) p.setData('crumbleStart', time);
+          if (time - startTime > 800) {
+            p.setData('crumbled', true);
+            this.tweens.add({ targets: p, alpha: 0, scaleY: 0, duration: 300, ease: 'Power2',
+              onComplete: () => { p.body.enable = false; this.time.delayedCall(3000, () => {
+                p.setAlpha(1); p.setScale(1); p.body.enable = true; p.setData('crumbleStart', 0); p.setData('crumbled', false);
+              }); }
+            });
+          }
+        } else {
+          p.setData('crumbleStart', 0);
+        }
+      });
+    }
+    
+    // L6, L42: Wind gusts
+    if (this.levelId === 6 || this.levelId === 42) {
+      this.windTime += 1;
+      if (this.windTime % 180 === 0 && this.windTime > 0) {
+        const windStr = Phaser.Math.Between(-150, 150);
+        if (windStr !== 0) {
+          (this.player.body as Phaser.Physics.Arcade.Body).setVelocityX(
+            (this.player.body as Phaser.Physics.Arcade.Body).velocity.x + windStr
+          );
+        }
+      }
+    }
     
     // Update moving platforms
     let playerCarried = false;
@@ -662,6 +923,136 @@ export class GameScene extends Phaser.Scene {
           enemy.setX(enemy.x + (vx > 0 ? -2 : 2));
         }
       });
+    }
+    
+    // Enemy AI behaviors (thwomp, boo, lakitu)
+    const aiBiomeSpeed = BIOME_ENEMY_SPEED[this.currentBiome] ?? DEFAULT_ENEMY_SPEED;
+    this.enemies.getChildren().forEach((enemy: any) => {
+      if (!enemy.body) return;
+      const eType = enemy.getData('type') || enemy.texture?.key;
+      
+      if (eType === 'thwomp') {
+        const isFalling = enemy.getData('isFalling');
+        if (!isFalling) {
+          const distX = Math.abs(this.player.x - enemy.x);
+          const distY = this.player.y - enemy.y;
+          if (distX < 80 && distY > 0 && distY < 600) {
+            enemy.body.setAllowGravity(true);
+            enemy.setImmovable(false);
+            enemy.setData('isFalling', true);
+          }
+        } else if (enemy.body.blocked?.down) {
+          const origY = enemy.getData('origY');
+          const origX = enemy.getData('origX');
+          enemy.body.setAllowGravity(false);
+          enemy.setImmovable(true);
+          enemy.body.velocity.y = 0;
+          this.tweens.add({
+            targets: enemy,
+            y: origY,
+            x: origX,
+            duration: 2000,
+            ease: 'Sine.easeIn',
+            onComplete: () => enemy.setData('isFalling', false),
+          });
+        }
+      } else if (eType === 'boo') {
+        const playerLeftOfBoo = this.player.x < enemy.x;
+        const facingTowardBoo = playerLeftOfBoo !== this.player.flipX;
+        const booSpeed = enemy.getData('speed') || 140;
+        if (facingTowardBoo) {
+          enemy.setVelocityX(0);
+          enemy.setVelocityY(0);
+        } else {
+          const dir = this.player.x > enemy.x ? 1 : -1;
+          enemy.setVelocityX(dir * booSpeed);
+          const targetY = this.player.y - 80;
+          enemy.setVelocityY(targetY > enemy.y ? 30 : -30);
+        }
+      } else if (eType === 'ghost') {
+        const ghostDir = this.player.x > enemy.x ? 1 : -1;
+        enemy.setVelocityX(ghostDir * (aiBiomeSpeed * 0.5));
+        enemy.setVelocityY(Math.sin(time * 0.003) * 40);
+      } else if (eType === 'ufo') {
+        const ufoDir = this.player.x > enemy.x ? 1 : -1;
+        enemy.setVelocityX(ufoDir * (aiBiomeSpeed * 0.3));
+        enemy.setVelocityY(Math.sin(time * 0.002 + enemy.x) * 25);
+      } else if (eType === 'squid') {
+        const sDir = this.player.x > enemy.x ? 1 : -1;
+        enemy.setVelocityX(sDir * (aiBiomeSpeed * 0.3));
+        enemy.setVelocityY(Math.sin(time * 0.004 + enemy.x) * 50);
+      } else if (eType === 'lakitu') {
+        const distX = this.player.x - enemy.x;
+        if (Math.abs(distX) > 120) {
+          enemy.setVelocityX(distX > 0 ? aiBiomeSpeed * 0.5 : -aiBiomeSpeed * 0.5);
+        } else {
+          enemy.setVelocityX(0);
+        }
+        const targetY = this.player.y - 280;
+        enemy.setVelocityY(targetY > enemy.y ? 30 : -30);
+        
+        const lastEgg = enemy.getData('lastEggTime') || 0;
+        if (time - lastEgg > 3000) {
+          enemy.setData('lastEggTime', time);
+          const egg = this.enemies.create(enemy.x, enemy.y + 20, 'spiny');
+          egg.setData('type', 'spiny');
+          egg.setData('noEdgeDetection', true);
+          egg.setVelocity(0, 280);
+          egg.setCollideWorldBounds(true).setBounce(0);
+        }
+      } else if (eType === 'boss') {
+        const hp: number = enemy.getData('hp') || 3;
+        if (hp <= 0) return;
+        const distX = this.player.x - enemy.x;
+        const distY = this.player.y - enemy.y;
+        enemy.setVelocityX(distX > 0 ? 50 : -50);
+        if (Math.abs(distX) < 500 && Math.abs(distY) < 300 && time - this.lastBossShot > 2000) {
+          this.lastBossShot = time;
+          const proj = this.bossProjectiles.create(enemy.x, enemy.y, 'fireball');
+          proj.setData('bossProj', true);
+          const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.player.x, this.player.y);
+          proj.setVelocity(Math.cos(angle) * 200, Math.sin(angle) * 200);
+          proj.setScale(1.5);
+        }
+      }
+    });
+    
+    // Move boss projectiles
+    this.bossProjectiles.getChildren().forEach((proj: any) => {
+      if (!proj.body) return;
+      if (proj.y > 800 || proj.x < -100 || proj.x > 15000) proj.destroy();
+    });
+    
+    // Biome finales: falling hazards (L12 desert, L24 ice-snow, L36 forest, L54 factory, L66 canyon-base)
+    if ([12, 24, 36, 54, 66].includes(this.levelId)) {
+      if (time - (this as any)._lastHazardSpawn > 2500) {
+        (this as any)._lastHazardSpawn = time;
+        const xPos = this.player.x + Phaser.Math.Between(-300, 300);
+        const hazard = this.fallingHazards.create(xPos, -50, 'fireball');
+        hazard.setVelocityY(300);
+        hazard.setScale(0.8);
+        hazard.setData('type', 'falling_hazard');
+      }
+    }
+    
+    // Level 90: Boss HP bar
+    if (this.levelId === 90) {
+      let totalHp = 0;
+      this.enemies.getChildren().forEach((e: any) => {
+        if ((e.getData('type') || e.texture?.key) === 'boss') totalHp += e.getData('hp') || 0;
+      });
+      if (!this.bossHpBar) {
+        this.bossHpBar = this.add.graphics().setScrollFactor(0).setDepth(1001);
+      }
+      this.bossHpBar.clear();
+      if (totalHp > 0) {
+        this.bossHpBar.fillStyle(0x000000, 0.7);
+        this.bossHpBar.fillRect(GAME_WIDTH / 2 - 110, 100, 220, 20);
+        this.bossHpBar.fillStyle(0xff0000, 1);
+        this.bossHpBar.fillRect(GAME_WIDTH / 2 - 108, 102, 216 * (totalHp / 12), 16);
+        this.bossHpBar.fillStyle(0xffffff, 0.3);
+        this.bossHpBar.fillRect(GAME_WIDTH / 2 - 108, 102, 216 * (totalHp / 12), 8);
+      }
     }
     
     // Safety Threshold for death - player dies when falling out of level bounds

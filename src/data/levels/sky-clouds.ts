@@ -20,6 +20,8 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createPlat(3100 * S, 460, 450 * S, 40, 'cloud'),
                 createPlat(3960 * S, 430, 350 * S, 40, 'cloud'),
                 createPlat(4800 * S, 400, 500 * S, 40, 'cloud'),
+                // Secret room: extra cloud platform above main path
+                createPlat(1100, 400, 140, 24, 'cloud'),
             ];
         })(),
         coins: (() => {
@@ -30,13 +32,17 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createCoin(2450 * S, 420),
                 createCoin(3800 * S, 410),
                 createCoin(5000 * S, 380),
+                createCoin(1070, 380),
+                createCoin(1100, 380),
+                createCoin(1130, 380),
             ];
         })(),
         questionBlocks: (() => {
             const S = 0.65;
             return [
                 createQB(950 * S, 470, 'mushroom'),
-                createQB(2300 * S, 440, 'coin'),
+                createQB(2300 * S, 530, 'coin'),
+                createQB(1100, 350, 'star'),
             ];
         })(),
         enemies: (() => {
@@ -231,8 +237,8 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         questionBlocks: (() => {
             const S = 0.6;
             return [
-                createQB(1000 * S, 520, 'mushroom'),
-                createQB(4800 * S, 500, 'flower'),
+                createQB(900 * S, 520, 'mushroom'),
+                createQB(4500 * S, 500, 'flower'),
                 createQB(9200 * S, 480, 'star'),
                 createQB(16500 * S, 470, 'mushroom'),
             ];
@@ -338,7 +344,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             const S = 0.556;
             return [
                 createQB(1000 * S, 540, 'mushroom'),
-                createQB(5200 * S, 500, 'flower'),
+                createQB(5000 * S, 500, 'flower'),
                 createQB(9400 * S, 470, 'star'),
                 createQB(13600 * S, 430, 'mushroom'),
             ];
@@ -578,9 +584,9 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             return [
                 createQB(1200 * S, 560, 'mushroom'),
                 createQB(4300 * S, 450, 'flower'),
-                createQB(7700 * S, 400, 'star'),
-                createQB(11300 * S, 400, 'mushroom'),
-                createQB(16600 * S, 350, 'flower'),
+                createQB(7733 * S, 400, 'star'),
+                createQB(11400 * S, 400, 'mushroom'),
+                createQB(16700 * S, 350, 'flower'),
             ];
         })(),
         enemies: (() => {

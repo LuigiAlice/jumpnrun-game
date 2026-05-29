@@ -33,6 +33,8 @@ export const FOREST_LEVELS: LevelData[] = [
       // Wood goal
       plats.push(...gapWithPlatforms(S, 3660, 440, 350, 3));
       plats.push(createPlat(6600 * S, 550, 1000 * S, 40, 'wood'));
+      // Secret room: treehouse platform above the wood mid section
+      plats.push(createPlat(2450, 430, 140, 24, 'wood'));
       return plats;
     })(),
     coins: (() => {
@@ -42,16 +44,18 @@ export const FOREST_LEVELS: LevelData[] = [
       for (let x = 4000; x < 4800; x += 120) coins.push(createCoin(x * S, 500));
       for (let x = 5200; x < 5500; x += 150) coins.push(createCoin(x * S, 490));
       for (let x = 6700; x < 7500; x += 120) coins.push(createCoin(x * S, 490));
+      coins.push(createCoin(2400, 410), createCoin(2450, 410), createCoin(2500, 410), createCoin(2550, 410));
       return coins;
     })(),
     questionBlocks: (() => {
       const S = 0.65;
       return [
-        createQB(1000 * S, 480, 'mushroom'),
-        createQB(2100 * S, 480, 'flower'),
+        createQB(1000 * S, 510, 'mushroom'),
+        createQB(2100 * S, 510, 'flower'),
         createQB(4400 * S, 480, 'mushroom'),
         createQB(5200 * S, 420, 'star'),
         createQB(7000 * S, 480, 'mushroom'),
+        createQB(2450, 380, 'flower'),
       ];
     })(),
     enemies: (() => {
@@ -257,7 +261,7 @@ export const FOREST_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.6;
       return [
-        createQB(1100 * S, 530, 'mushroom'),
+        createQB(1100 * S, 555, 'mushroom'),
         createQB(2100 * S, 530, 'flower'),
         createQB(4300 * S, 530, 'star'),
         createQB(5100 * S, 530, 'mushroom'),
@@ -502,10 +506,10 @@ export const FOREST_LEVELS: LevelData[] = [
     questionBlocks: (() => {
       const S = 0.5;
       return [
-        createQB(900 * S, 530, 'mushroom'),
+        createQB(800 * S, 530, 'mushroom'),
         createQB(2000 * S, 530, 'flower'),
         createQB(3100 * S, 530, 'star'),
-        createQB(4400 * S, 520, 'mushroom'),
+        createQB(4000 * S, 520, 'mushroom'),
         createQB(6400 * S, 530, 'flower'),
         createQB(7200 * S, 530, 'star'),
         createQB(7600 * S, 530, 'mushroom'),

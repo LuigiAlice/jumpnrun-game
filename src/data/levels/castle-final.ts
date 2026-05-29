@@ -27,6 +27,8 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       plats.push(createPlat(2000 * S, 600, 600 * S, 40, 'castle'));
       plats.push(...pipeSection(S, 2800, 600, 2));
       plats.push(createPlat(4000 * S, 600, 1000 * S, 40, 'castle'));
+      // Secret room: hidden power-up room below last castle section
+      plats.push(createPlat(2200, 660, 180, 24, 'castle'));
       return plats;
     })(),
     coins: (() => {
@@ -35,6 +37,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       for (let x = 300; x < 1500; x += 180) cs.push(createCoin(x * S, 550));
       for (let x = 2100; x < 2700; x += 160) cs.push(createCoin(x * S, 550));
       for (let x = 4100; x < 4900; x += 150) cs.push(createCoin(x * S, 540));
+      cs.push(createCoin(2160, 640), createCoin(2220, 640), createCoin(2280, 640));
       return cs;
     })(),
     questionBlocks: [
@@ -42,6 +45,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       createQB(1500 * S85, 530, 'coin'),
       createQB(2300 * S85, 530, 'flower'),
       createQB(4400 * S85, 530, 'mushroom'),
+      createQB(2220, 610, 'mushroom'),
     ],
     enemies: [
       createEnemy(800 * S85, 560, 'goomba'),

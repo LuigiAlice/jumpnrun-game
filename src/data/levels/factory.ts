@@ -43,6 +43,9 @@ export const FACTORY_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 7800, 600, 400, 3));
       plats.push(createPlat(7800 * S, 600, 800 * S, 40, 'metal'));
 
+      // Secret room: hidden pipe room below middle ground
+      plats.push(createPlat(3300, 660, 180, 24, 'metal'));
+
       return plats;
     })(),
     coins: (() => {
@@ -52,6 +55,7 @@ export const FACTORY_LEVELS: LevelData[] = [
       for (let x = 2800 * S; x < 3600 * S; x += 200) cs.push(createCoin(x, 550));
       for (let x = 5000 * S; x < 6000 * S; x += 200) cs.push(createCoin(x, 550));
       for (let x = 6300 * S; x < 7300 * S; x += 200) cs.push(createCoin(x, 550));
+      cs.push(createCoin(3250, 640), createCoin(3300, 640), createCoin(3350, 640), createCoin(3400, 640));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -62,6 +66,7 @@ export const FACTORY_LEVELS: LevelData[] = [
         createQB(3200 * S, 530, 'mushroom'),
         createQB(5400 * S, 530, 'flower'),
         createQB(6700 * S, 530, 'coin'),
+        createQB(3300, 610, 'mushroom'),
       ];
     })(),
     enemies: (() => {

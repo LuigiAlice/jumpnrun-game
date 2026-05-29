@@ -41,6 +41,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       plats.push(createPlat(5335 * S, 550, 1000 * S, 40, 'grass'));
       plats.push(createPlat(6389 * S, 550, 800 * S, 40, 'grass'));
 
+      // Secret room: platform above first ground section
+      plats.push(createPlat(520, 400, 140, 24, 'platform_easy'));
+
       return plats;
     })(),
     coins: (() => {
@@ -49,6 +52,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       for (let x = 2700; x < 3100; x += 200) cs.push(createCoin(x * S, 500));
       for (let x = 4400; x < 5200; x += 200) cs.push(createCoin(x * S, 500));
       for (let x = 5400; x < 6300; x += 200) cs.push(createCoin(x * S, 500));
+      cs.push(createCoin(465, 360), createCoin(520, 360), createCoin(575, 360));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -58,6 +62,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
         createQB(2700 * S, 480, 'mushroom'),
         createQB(4500 * S, 480, 'flower'),
         createQB(5600 * S, 480, 'coin'),
+        createQB(520, 330, 'star'),
       ];
     })(),
     enemies: (() => {
@@ -152,7 +157,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       return [
         createQB(500 * L2S, 480, 'mushroom'),
         createQB(2300 * L2S, 480, 'coin'),
-        createQB(5000 * L2S, 480, 'flower'),
+        createQB(4900 * L2S, 480, 'flower'),
         createQB(6500 * L2S, 480, 'mushroom'),
         createQB(9500 * L2S, 480, 'coin'),
       ];

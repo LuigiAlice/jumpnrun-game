@@ -50,6 +50,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       plats.push(...bridgeSection(S, 9200, baseY, 35));          // 5115 → 7949
       plats.push(...ghostPlatforms(S, 14800, baseY, 8));         // 8229 → 8929
       plats.push(...bridgeSection(S, 16800, baseY, 35));         // 9341 → 12176
+      plats.push(createPlat(2000, 460, 140, 24, 'brick'));
       return plats;
     })(),
     coins: (() => {
@@ -61,6 +62,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createCoin(6000 * S, 500), createCoin(7500 * S, 500),
         createCoin(8800 * S, 400), // ghost platform area
         createCoin(10000 * S, 500), createCoin(11500 * S, 490),
+        createCoin(1970, 430), createCoin(2000, 430), createCoin(2030, 430), createCoin(2060, 430), createCoin(2090, 430),
       ];
     })(),
     questionBlocks: (() => {
@@ -71,6 +73,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createQB(5000 * S, 420, 'star'),
         createQB(7000 * S, 440, 'mushroom'),
         createQB(10000 * S, 440, 'coin'),
+        createQB(2000, 410, 'coin'),
       ];
     })(),
     enemies: (() => {

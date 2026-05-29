@@ -31,6 +31,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             plats.push(createPlat(5000 * S, 500, 150, 28, 'metal'));
             plats.push(createPlat(5300 * S, 420, 120, 28, 'platform_medium'));
             plats.push(createPlat(5600 * S, 340, 100, 28, 'platform_hard'));
+            plats.push(createPlat(600, 480, 140, 24, 'metal'));
             return plats;
         })(),
         coins: (() => {
@@ -43,6 +44,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             coins.push(createCoin(1850 * S, 440), createCoin(2150 * S, 360));
             coins.push(createCoin(5050 * S, 440), createCoin(5350 * S, 360));
             coins.push(createCoin(5650 * S, 280));
+            coins.push(createCoin(570, 440), createCoin(600, 440), createCoin(630, 440));
             return coins;
         })(),
         questionBlocks: (() => {
@@ -51,6 +53,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
                 createQB(2150 * S, 350, 'mushroom'),
                 createQB(5350 * S, 350, 'star'),
                 createQB(5650 * S, 270, 'flower'),
+                createQB(600, 420, 'star'),
             ];
         })(),
         enemies: (() => {
