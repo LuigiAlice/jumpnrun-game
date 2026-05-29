@@ -23,10 +23,31 @@ export interface MovingPlatformData {
 export class Physics {
     private platforms: Platform[];
     private movingPlatforms: MovingPlatformData[];
+    private gravity: number;
 
-    constructor(platforms: Platform[], _width: number, _height: number, movingPlatforms: MovingPlatformData[] = []) {
+    constructor(platforms: Platform[], _width: number, _height: number, movingPlatforms: MovingPlatformData[] = [], gravity: number = PHYSICS.GRAVITY) {
         this.platforms = platforms;
         this.movingPlatforms = movingPlatforms;
+        this.gravity = gravity;
+    }
+
+    private getMaxHorizontalJump(deltaY: number): number {
+        const JUMP_VEL = PHYSICS.JUMP_SPEED;
+        const HORIZ_SPEED = PHYSICS.HORIZONTAL_SPEED;
+        const PLAYER_BUFFER = PHYSICS.PLAYER_BUFFER;
+        const GRAVITY = this.gravity;
+
+        if (deltaY <= 0) {
+            const t = (2 * JUMP_VEL) / GRAVITY;
+            return HORIZ_SPEED * t - PLAYER_BUFFER;
+        }
+
+        const t = (JUMP_VEL + Math.sqrt(JUMP_VEL * JUMP_VEL + 2 * GRAVITY * deltaY)) / GRAVITY;
+        return HORIZ_SPEED * t - PLAYER_BUFFER;
+    }
+
+    private horizontalJumpCheck(gap: number, vDiff: number): boolean {
+        return gap <= this.getMaxHorizontalJump(Math.max(0, vDiff));
     }
 
     private getMovingPlatformPositions(mp: MovingPlatformData): { x: number; y: number }[] {
@@ -51,14 +72,6 @@ export class Physics {
         }
 
         return positions;
-    }
-
-    private horizontalJumpCheck(gap: number, vDiff: number): boolean {
-        const maxGap = Math.max(
-            this.getMaxHorizontalJump(Math.max(0, vDiff)),
-            PHYSICS.MAX_PRACTICAL_JUMP
-        );
-        return gap <= maxGap;
     }
 
     private canJumpToMovingPlatform(from: Platform, mp: MovingPlatformData): boolean {
@@ -142,21 +155,6 @@ export class Physics {
         return reachable;
     }
 
-    private getMaxHorizontalJump(deltaY: number): number {
-        const GRAVITY = PHYSICS.GRAVITY;
-        const JUMP_VEL = PHYSICS.JUMP_SPEED;
-        const HORIZ_SPEED = PHYSICS.HORIZONTAL_SPEED;
-        const PLAYER_BUFFER = PHYSICS.PLAYER_BUFFER;
-
-        if (deltaY <= 0) {
-            const t = (2 * JUMP_VEL) / GRAVITY;
-            return HORIZ_SPEED * t - PLAYER_BUFFER;
-        }
-
-        const t = (JUMP_VEL + Math.sqrt(JUMP_VEL * JUMP_VEL + 2 * GRAVITY * deltaY)) / GRAVITY;
-        return HORIZ_SPEED * t - PLAYER_BUFFER;
-    }
-
     private canJumpTo(from: Platform, to: Platform): boolean {
         const fromLeft = from.x - from.w / 2;
         const fromRight = from.x + from.w / 2;
@@ -177,10 +175,7 @@ export class Physics {
             return false;
         }
 
-        const maxGap = Math.max(
-            this.getMaxHorizontalJump(Math.max(0, verticalDiff)),
-            PHYSICS.MAX_PRACTICAL_JUMP
-        );
+        const maxGap = this.getMaxHorizontalJump(Math.max(0, verticalDiff));
 
         if (horizontalGap > maxGap) {
             return false;
@@ -205,10 +200,7 @@ export class Physics {
             return false;
         }
 
-        const maxGap = Math.max(
-            this.getMaxHorizontalJump(Math.max(0, verticalDiff)),
-            PHYSICS.MAX_PRACTICAL_JUMP
-        );
+        const maxGap = this.getMaxHorizontalJump(Math.max(0, verticalDiff));
 
         if (horizontalGap > maxGap) {
             return false;
@@ -411,7 +403,7 @@ export class Physics {
         const reachableKeys = new Set(reachable.map(p => `${p.x},${p.y}`));
 
         const unreachable = this.platforms.filter(p => {
-            if (p.x > goalX) return false;
+            if (p.x > goalX && p.x - goalX > p.w / 2) return false;
             return !reachableKeys.has(`${p.x},${p.y}`);
         });
 

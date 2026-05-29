@@ -25,15 +25,17 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 - Tests run from `tests/**/*.test.ts`
 - Run single test: `npm test -- LevelSolvability.test.ts`
 - TypeScript Fehler müssen vor test/build behoben werden
-- 125 Tests in 5 Dateien (Physics, LevelSolvability, GameLogic, AssetCoverage, debug-solvability)
+- 127 Tests in 8 Dateien (Physics, LevelSolvability, GameLogic, AssetCoverage, debug-solvability, 3 weitere)
 - E2E: 6 Playwright-Tests in `e2e/**/*.test.ts`
 
 ## Architecture
 - **Entry**: `src/main.ts` initializes Phaser.Game
 - **Scenes**: `src/scenes/` contains BootScene, TitleScene, GameScene, GameOverScene
 - **Physics**: Arcade physics, biome-abhängige Gravity (s. `BIOME_GRAVITY`), `JUMP_VELOCITY: -900`, `PLAYER_SPEED: 300`
-- **Solver**: `src/engine/Physics.ts` – BFS path-finding with `MAX_PRACTICAL_JUMP: 585`, `MAX_JUMP_UP: 350`, `MAX_FALL_DOWN: 1000`
-- **Konstanten**: `src/config.ts` – `PHYSICS.GRAVITY: 2000`, `JUMP_SPEED: -900`, `HORIZONTAL_SPEED: 300`, `MAX_PRACTICAL_JUMP: 585`, `MAX_JUMP_DISTANCE: 800`
+- **Solver**: `src/engine/Physics.ts` – BFS path-finding mit biome-bewusster Gravitation. `Physics(platforms, w, h, movingPlatforms, gravity)` akzeptiert optionalen gravity-Parameter. Max-Sprungweite wird rein physikalisch berechnet (kein MAX_PRACTICAL_JUMP mehr). `MAX_JUMP_UP: 350`, `MAX_FALL_DOWN: 1000`
+- **Konstanten**: `src/config.ts` – `PHYSICS.GRAVITY: 2000`, `JUMP_SPEED: 900`, `HORIZONTAL_SPEED: 300`, `MAX_JUMP_DISTANCE: 800`
+- **Biome Gravity**: `BIOME_GRAVITY` in `config.ts` (space-star: 1000, water: 1200, sky-clouds/beach-island: 1500, volcano-lava: 2200)
+- **Level Auto-Fixer**: `src/data/levels/index.ts` → `ensureSolvable()` fügt bei `getLevel()` automatisch Trittplattformen hinzu, falls biome-bewusste Max-Sprungweite überschritten wird. Typ: 'platform_easy'.
 - **Level Data**: 90 levels across 15 biomes in `src/data/levels/`
 
 ## Key Config

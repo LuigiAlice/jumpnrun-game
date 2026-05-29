@@ -99,6 +99,8 @@ import { RUINS_LEVELS } from './ruins';
 import { CANYON_BASE_LEVELS } from './canyon-base';
 import { SPACE_STAR_LEVELS } from './space-star';
 import { CASTLE_FINAL_LEVELS } from './castle-final';
+import { Physics } from '../../engine/Physics';
+import { getBiomeGravity } from '../../config';
 
 const ALL_LEVELS = [
     ...GRASSLANDS_LEVELS,
@@ -118,9 +120,79 @@ const ALL_LEVELS = [
     ...CASTLE_FINAL_LEVELS,
 ];
 
+const NON_SOLID = new Set(['lava', 'pipe']);
+
+function ensureSolvable(level: LevelData): LevelData {
+    const gravity = getBiomeGravity(level.biome);
+
+    let iteration = 0;
+    const maxIterations = 500;
+    let platforms = [...level.platforms];
+
+    while (iteration < maxIterations) {
+        iteration++;
+        const physics = new Physics(platforms, level.width, level.height, level.movingPlatforms || [], gravity);
+        const result = physics.isFullyTraversableToGoal(level.playerStart.x, level.playerStart.y, level.goal.x);
+        if (result.traversable) break;
+
+        const target = result.unreachablePlatforms.find(p => !NON_SOLID.has(p.type));
+        if (!target) break;
+
+        const reachable = physics.getReachablePlatforms(level.playerStart.x, level.playerStart.y);
+        let bestFrom: typeof target | null = null;
+        let bestGap = Infinity;
+
+        for (const from of reachable) {
+            const fromRight = from.x + from.w / 2;
+            const toLeft = target.x - target.w / 2;
+            const gap = toLeft - fromRight;
+            if (gap > 0 && gap < bestGap) {
+                const vDiff = (target.y - target.h / 2) - (from.y - from.h / 2);
+                if (vDiff <= 1000 && vDiff >= -350) {
+                    bestGap = gap;
+                    bestFrom = from;
+                }
+            }
+        }
+
+        if (!bestFrom || bestGap >= 2000) break;
+
+        const fromRight = bestFrom.x + bestFrom.w / 2;
+        const fromTop = bestFrom.y - bestFrom.h / 2;
+        const toTop = target.y - target.h / 2;
+
+        const maxForward = (ph: any) => {
+            const horiz = ph.getMaxHorizontalJump(Math.max(0, (target.y - target.h / 2) - (bestFrom!.y - bestFrom!.h / 2)));
+            const vDiff = (target.y - target.h / 2) - (bestFrom!.y - bestFrom!.h / 2);
+            if (vDiff <= 0) return horiz * 0.95;
+            return horiz - 10;
+        };
+
+        const testPh = new Physics(platforms, level.width, level.height, level.movingPlatforms || [], gravity);
+        const maxJump = (testPh as any).getMaxHorizontalJump(Math.max(0, 0));
+
+        const gapFromReach = Math.min(maxJump * 0.85, bestGap * 0.45);
+        const platX = fromRight + gapFromReach;
+        const platY = Math.min(fromTop, toTop) - 30;
+        const platW = Math.max(50, Math.min(70, bestGap * 0.25));
+
+        const overlapping = platforms.some(p =>
+            Math.abs(p.x - platX) < 35 && Math.abs(p.y - platY) < 25
+        );
+        if (overlapping) break;
+
+        platforms.push({
+            x: platX, y: platY, w: platW, h: 24,
+            type: 'platform_easy' as PlatformType
+        });
+    }
+
+    return { ...level, platforms };
+}
+
 export function getLevel(index: number): LevelData {
     const safeIndex = Math.max(0, Math.min(index, ALL_LEVELS.length - 1));
-    return ALL_LEVELS[safeIndex];
+    return ensureSolvable(ALL_LEVELS[safeIndex]);
 }
 
 export function getLevelCount(): number {

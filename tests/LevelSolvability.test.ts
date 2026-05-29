@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { getLevel, getLevelCount, LevelData } from '../src/data/levels/index';
 import { Physics } from '../src/engine/Physics';
+import { getBiomeGravity } from '../src/config';
 
 describe('Level Loading', () => {
     it('should load level 1 (grasslands)', () => {
@@ -40,16 +41,15 @@ describe('Level Loading', () => {
     });
 });
 
-function getPhysicalMaxHorizontalJump(deltaY: number): number {
-    const GRAVITY = 2000;
+function getPhysicalMaxHorizontalJump(deltaY: number, gravity: number = 2000): number {
     const JUMP_VEL = 900;
     const HORIZ_SPEED = 300;
     const PLAYER_BUFFER = 24;
     if (deltaY <= 0) {
-        const t = (2 * JUMP_VEL) / GRAVITY;
+        const t = (2 * JUMP_VEL) / gravity;
         return HORIZ_SPEED * t - PLAYER_BUFFER;
     }
-    const t = (JUMP_VEL + Math.sqrt(JUMP_VEL * JUMP_VEL + 2 * GRAVITY * deltaY)) / GRAVITY;
+    const t = (JUMP_VEL + Math.sqrt(JUMP_VEL * JUMP_VEL + 2 * gravity * deltaY)) / gravity;
     return HORIZ_SPEED * t - PLAYER_BUFFER;
 }
 
@@ -59,7 +59,7 @@ describe('Physical Constraints', () => {
         const MAX_FALL_DOWN = 1000;
         for (let i = 0; i < getLevelCount(); i++) {
             const level = getLevel(i);
-            const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
+            const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || [], getBiomeGravity(level.biome));
             const startPlat = physics.findPlatformUnderPoint(level.playerStart.x, level.playerStart.y);
             expect(startPlat, `Level ${i} (id=${level.id}) should have a platform under playerStart`).not.toBeNull();
             if (!startPlat) continue;
@@ -77,7 +77,7 @@ describe('Physical Constraints', () => {
                 const horizontalGap = Math.max(toLeft - fromRight, fromLeft - toRight, 0);
                 const verticalDiff = toTop - fromTop;
                 if (verticalDiff > MAX_FALL_DOWN || verticalDiff < -MAX_JUMP_UP) continue;
-                const physicalMax = getPhysicalMaxHorizontalJump(Math.max(0, verticalDiff));
+                const physicalMax = getPhysicalMaxHorizontalJump(Math.max(0, verticalDiff), getBiomeGravity(level.biome));
                 if (horizontalGap > 0 && horizontalGap <= physicalMax) { hasReachable = true; break; }
                 if (horizontalGap === 0) { hasReachable = true; break; }
             }
@@ -124,7 +124,7 @@ describe('Level Solvability - All 90 Levels', () => {
         it(`${biome.name} (levels ${biome.start}-${biome.end}): all levels should be solvable`, () => {
             for (let i = biome.start; i <= biome.end; i++) {
                 const level = getLevel(i);
-                const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
+                const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || [], getBiomeGravity(level.biome));
                 const result = physics.isSolvable(
                     level.playerStart.x,
                     level.playerStart.y,
@@ -135,32 +135,12 @@ describe('Level Solvability - All 90 Levels', () => {
             }
         });
     });
-});
-
-describe('Level Path Finding', () => {
-    const biomes = [
-        { name: 'grasslands', start: 0, end: 5 },
-        { name: 'desert', start: 6, end: 11 },
-        { name: 'water', start: 12, end: 17 },
-        { name: 'ice-snow', start: 18, end: 23 },
-        { name: 'sky-clouds', start: 24, end: 29 },
-        { name: 'forest', start: 30, end: 35 },
-        { name: 'village', start: 36, end: 41 },
-        { name: 'beach-island', start: 42, end: 47 },
-        { name: 'factory', start: 48, end: 53 },
-        { name: 'volcano-lava', start: 54, end: 59 },
-        { name: 'haunted-mansion', start: 60, end: 65 },
-        { name: 'ruins', start: 66, end: 71 },
-        { name: 'canyon-base', start: 72, end: 77 },
-        { name: 'space-star', start: 78, end: 83 },
-        { name: 'castle-final', start: 84, end: 89 },
-    ];
 
     biomes.forEach(biome => {
         it(`${biome.name}: all levels should have a valid path to goal`, () => {
             for (let i = biome.start; i <= biome.end; i++) {
                 const level = getLevel(i);
-                const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
+                const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || [], getBiomeGravity(level.biome));
                 const path = physics.findPath(
                     level.playerStart.x,
                     level.playerStart.y,
@@ -230,7 +210,7 @@ describe('Full Level Traversability', () => {
 
         for (let i = 0; i < getLevelCount(); i++) {
             const level = getLevel(i);
-            const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
+            const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || [], getBiomeGravity(level.biome));
 
             const result = physics.isFullyTraversableToGoal(level.playerStart.x, level.playerStart.y, level.goal.x);
 
@@ -261,7 +241,7 @@ describe('Full Level Traversability', () => {
 describe('Individual Level Tests', () => {
     it('level 1 (grasslands-1.1) should be solvable with path', () => {
         const level = getLevel(0);
-        const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
+        const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || [], getBiomeGravity(level.biome));
         expect(physics.isSolvable(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y)).toBe(true);
         const path = physics.findPath(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y);
         expect(path).not.toBeNull();
@@ -270,7 +250,7 @@ describe('Individual Level Tests', () => {
 
     it('level 90 (castle-final) should be solvable with path', () => {
         const level = getLevel(89);
-        const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || []);
+        const physics = new Physics(level.platforms as any[], level.width, level.height, level.movingPlatforms as any[] || [], getBiomeGravity(level.biome));
         expect(physics.isSolvable(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y)).toBe(true);
         const path = physics.findPath(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y);
         expect(path).not.toBeNull();

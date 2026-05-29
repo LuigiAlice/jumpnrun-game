@@ -54,14 +54,14 @@ describe('Physics - horizontalJumpCheck', () => {
     expect((ph as any).horizontalJumpCheck(200, 0)).toBe(true);
   });
 
-  it('gap within MAX_PRACTICAL_JUMP but beyond physics should return true', () => {
+  it('gap beyond physics max should return false', () => {
     const ph = new Physics([], 800, 600);
-    expect((ph as any).horizontalJumpCheck(500, 0)).toBe(true);
+    expect((ph as any).horizontalJumpCheck(500, 0)).toBe(false);
   });
 
-  it('gap beyond MAX_PRACTICAL_JUMP should return false', () => {
+  it('gap far beyond physics max should return false', () => {
     const ph = new Physics([], 800, 600);
-    expect((ph as any).horizontalJumpCheck(DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP + 10, 0)).toBe(false);
+    expect((ph as any).horizontalJumpCheck(600, 0)).toBe(false);
   });
 });
 
@@ -73,7 +73,7 @@ describe('Physics - canJumpTo', () => {
     expect((ph as any).canJumpTo(a, b)).toBe(true);
   });
 
-  it('distant platforms at same height should NOT be reachable beyond MAX_PRACTICAL_JUMP', () => {
+  it('distant platforms at same height should NOT be reachable', () => {
     const a = makePlat(100, 500, 200, 40);
     const b = makePlat(1500, 500, 200, 40);
     const ph = new Physics([a, b], 800, 600);
@@ -110,7 +110,7 @@ describe('Physics - canJumpToMovingPlatform', () => {
     expect((ph as any).canJumpToMovingPlatform(a, mp)).toBe(true);
   });
 
-  it('distant moving platform should NOT be reachable beyond MAX_PRACTICAL_JUMP', () => {
+  it('distant moving platform should NOT be reachable', () => {
     const a = makePlat(100, 500, 200, 40);
     const mp = makeMP(1500, 500, 'horizontal', 50);
     const ph = new Physics([a], 800, 600, [mp]);
@@ -321,15 +321,7 @@ describe('Physics - moving platform integration', () => {
 });
 
 describe('Physics constants', () => {
-  it('MAX_PRACTICAL_JUMP should be >= getMaxHorizontalJump for any vDiff up to MAX_FALL_DOWN', () => {
-    const ph = new Physics([], 800, 600);
-    for (let vDiff = 0; vDiff <= DEFAULT_PHYSICS.MAX_FALL_DOWN; vDiff += 50) {
-      const physMax = (ph as any).getMaxHorizontalJump(vDiff);
-      expect(DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP).toBeGreaterThanOrEqual(physMax);
-    }
-  });
-
-  it('MAX_JUMP_DISTANCE should be >= MAX_PRACTICAL_JUMP', () => {
-    expect(DEFAULT_PHYSICS.MAX_JUMP_DISTANCE).toBeGreaterThanOrEqual(DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP);
+  it('MAX_JUMP_DISTANCE should be 800', () => {
+    expect(DEFAULT_PHYSICS.MAX_JUMP_DISTANCE).toBe(800);
   });
 });

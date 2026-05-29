@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { loadLevel, getLevelName } from '../generator/LevelLoader';
 import type { LevelData, Biome } from '../data/levels/index';
-import { GAME_HEIGHT, GAME_WIDTH } from '../config';
+import { GAME_HEIGHT, GAME_WIDTH, BIOME_GRAVITY } from '../config';
 import { goToTitle } from '../sceneNav';
 
 const PLAYER_SPEED = 300;
@@ -14,14 +14,6 @@ const NON_STOMPABLE_ENEMIES = new Set([
 ]);
 
 const SOLID_TYPES = ['grass', 'stone', 'brick', 'cave', 'castle', 'metal', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'bubble'];
-
-const BIOME_GRAVITY: Record<string, number> = {
-  'space-star': 1000,
-  'sky-clouds': 1500,
-  'water': 1200,
-  'beach-island': 1500,
-  'volcano-lava': 2200,
-};
 
 const BIOME_ENEMY_SPEED: Record<string, number> = {
   'factory': 100,
