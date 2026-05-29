@@ -1,17 +1,17 @@
 # Level Design Plan: Vielfalt statt Gleichförmigkeit
 
-## Phase 1: DRY - Helfer zentralisieren
+## ✅ Phase 1: DRY - Helfer zentralisieren (ABGESCHLOSSEN)
 
-`helpers.ts` erweitern um gemeinsame Funktionen:
+`helpers.ts` erweitert um:
 - `gapWithPlatforms(S, startX, baseY, gapWidth, count)` - gestaffelte Plattformen über eine Lücke
 - `pipeSection(S, startX, y, count)` - Pipe + PipeTop an regelmässigem Abstand
 - `verticalClimb(S, startX, baseY)` - symmetrischer 7-Schritt-Bogen
 
-Aus allen 7 Biome-Dateien entfernen (grasslands, desert, ice-snow, forest, beach-island, ruins).
+Alle Biome-Dateien nutzen diese Helfer.
 
 ---
 
-## Phase 2: 6 Level-Typen pro Biome
+## ✅ Phase 2: 6 Level-Typen pro Biome (ABGESCHLOSSEN)
 
 | Level | Typ | Struktur |
 |-------|-----|----------|
@@ -24,41 +24,50 @@ Aus allen 7 Biome-Dateien entfernen (grasslands, desert, ice-snow, forest, beach
 
 ---
 
-## Phase 3: Finale-Level pro Biome
+## ✅ Phase 3: Finale-Level pro Biome (ABGESCHLOSSEN)
 
-| Biome | Level 6 Name | Struktur-Beschreibung |
-|-------|-------------|----------------------|
-| **grasslands** | Flaggen-Run | Langes gerades Level mit Checkpoints, viele Coins, Zeitdruck |
-| **desert** | Pyramiden-Aufstieg | Spiralförmiger Aufstieg aussen an einer Pyramide |
-| **water** | Tiefsee-Abstieg | Von oben nach unten durch Wasser-Korridore |
-| **ice-snow** | Eis-Höhle | Tunnel-System mit Eisdecke, Stalaktiten als Hindernisse |
-| **sky-clouds** | Wolken-Inseln | Verstreute Wolken-Plattformen, Wind-Zonen |
-| **forest** | Baumkronen-Pfad | Von Ast zu Ast springen, mehrere Höhen-Ebenen |
-| **village** | Dach-Rennen | Von Dach zu Dach springen, Schornsteine als Hindernisse |
-| **beach-island** | Flut-Rennen | Steigendes Wasser zwingt Spieler nach oben |
-| **factory** | Förderband-Wahnsinn | Förderbänder mit Richtungswechsel, Stampfer |
-| **volcano-lava** | Eruption-Flucht | Lava steigt von unten, Spieler muss schnell hoch |
-| **haunted-mansion** | Geister-Verfolgung | Boo-Geister verfolgen Spieler durch Gänge |
-| **ruins** | Fallende-Tempel | Plattformen brechen nach Betreten zusammen |
-| **canyon-base** | Adler-Nest | Von Felsvorsprung zu Felsvorsprung klettern |
-| **space-star** | Asteroiden-Feld | Schwebende Asteroiden, Low-Gravity |
-| **castle-final** | Boss-Arena | Thwomp/Boss-Kampf in grosser Halle |
+| Biome | Level 6 Name | Mechanik |
+|-------|-------------|----------|
+| **grasslands** | Grasslands Dash | Windböen (seitlicher Schub alle 3s) |
+| **desert** | Desert Finale | Fallende Hindernisse (Feuerbälle von oben) |
+| **water** | Water Finale | Steigendes Wasser von unten |
+| **ice-snow** | Frozen Finale | Fallende Eiszapfen |
+| **sky-clouds** | Cloud Islands Finale | Bröckel-Plattformen |
+| **forest** | Forest Finale | Fallende Äste |
+| **village** | Village Finale | Windböen |
+| **beach-island** | Beach Finale | Steigende Flut |
+| **factory** | Factory Finale | Fallende Hindernisse |
+| **volcano-lava** | Krater-Finale | Steigende Lava (0.4px/Frame) |
+| **haunted-mansion** | Haunted Finale | Bröckel-Plattformen |
+| **ruins** | Fallender Tempel | Bröckel-Plattformen (800ms, 3s Respawn) |
+| **canyon-base** | Canyon Finale | Fallende Felsen |
+| **space-star** | Space Finale | Bröckel-Plattformen |
+| **castle-final** | Final Boss Arena | Bosskampf (HP-Bar, Projektile, Arena-Wände) |
 
 ---
 
-## Phase 4: Biome-Mechaniken
+## ✅ Phase 4: Biome-Mechaniken (ABGESCHLOSSEN)
 
 | Biome | Mechanik | Implementierung |
 |-------|----------|----------------|
-| **ice-snow** | Rutschige Plattformen | `ice` Typ: Spieler behält Velocity, kein sofortiger Stop bei Loslassen |
-| **water** | Schwimmen | Reduzierte Gravity (500), langsamere Bewegung, anderer Sprung-Jump |
-| **space-star** | Low-Gravity | Gravity (1000), höhere Sprünge (JUMP_VELOCITY -600) |
-| **sky-clouds** | Wind-Zonen | Unsichtbare Trigger setzen player.body.velocity.x |
-| **volcano-lava** | Lava-Schaden | Bereits implementiert (lava = die()) |
+| **ice-snow** | Rutschige Plattformen | `body.velocity.x * 0.92` bei Loslassen |
+| **water** | Schwimmen | Gravity 600, `vY = -250` per up, Drift `vX * 0.95` |
+| **space-star** | Low-Gravity | world gravity = 1000 |
+| **sky-clouds** | Wind + Bröckel | Wind in Finale, Background-Animation |
+| **volcano-lava** | Lava-Schaden | `lava` nicht in SOLID_TYPES, Kollision → `die()` |
+| **Alle Finals** | s. Phase 3 | Individuelle Mechanik pro L6/L12/L18/.../L90 |
 
 ---
 
-## Phase 5: Level-End-Varianten
+## ✅ Phase 5: Secret Rooms (ABGESCHLOSSEN)
+
+- **15 Secret Rooms** (eines pro Biome, im 1. Level)
+- Bestehend aus 1 Plattform + 3–5 Coins + optionalem QB
+- Erreichbar per Sprung innerhalb MAX_PRACTICAL_JUMP (585px)
+
+---
+
+## 🔜 Phase 6 (geplant): Level-End-Varianten
 
 | Typ | Beschreibung |
 |-----|-------------|
@@ -70,12 +79,31 @@ Aus allen 7 Biome-Dateien entfernen (grasslands, desert, ice-snow, forest, beach
 
 ---
 
-## Aufwand-Schätzung
+## 🔜 Phase 7 (geplant): Difficulty Scaling
 
-| Phase | Level | Code | Sessions |
-|-------|-------|------|----------|
-| **1: DRY** | 0 (cleanup) | helpers.ts + 7 Dateien | 1 |
-| **2: 6 Typen** | 90 umstrukturieren | 14 Dateien | 3-4 |
-| **3: Finale-Level** | 15 (Level 6) | 15 Dateien | 2 |
-| **4: Mechaniken** | 0 | GameScene.ts | 1 |
-| **5: End-Varianten** | 5-10 Level | GameScene.ts | 1 |
+- Enemy-Dichte erhöht sich pro Biome (je weiter, desto mehr Gegner)
+- Moving-Platform-Geschwindigkeit steigt
+- Zeitbonus sinkt (~200 → ~100)
+
+---
+
+## 🔜 Phase 8 (geplant): Power-Up-Balance
+
+- Fire-Mario in späteren Biomen häufiger
+- Stern-Spawn-Rate anpassen
+- Big-Mario-Pflichtpassagen (enge Röhren)
+
+---
+
+## Aufwand-Schätzung (Ist-Stand)
+
+| Phase | Level | Code | Status |
+|-------|-------|------|--------|
+| **1: DRY** | 0 (cleanup) | helpers.ts + 7 Dateien | ✅ |
+| **2: 6 Typen** | 90 | 14 Dateien | ✅ |
+| **3: Finale-Level** | 15 | GameScene.ts | ✅ |
+| **4: Mechaniken** | 0 | GameScene.ts | ✅ |
+| **5: Secret Rooms** | 15 | 15 Level-Dateien | ✅ |
+| **6: End-Varianten** | 5-10 Level | GameScene.ts | 🔜 |
+| **7: Difficulty** | 0 | GameScene.ts | 🔜 |
+| **8: Balance** | 0 | GameScene.ts | 🔜 |
