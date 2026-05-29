@@ -22,7 +22,9 @@ export interface LevelData {
     timeBonus: number;
 }
 
-const TILE = 32;
+import { PHYSICS } from '../config';
+
+const TILE = PHYSICS.TILE_SIZE;
 const MAX_JUMP_X = 5 * TILE;
 const MAX_JUMP_Y = 3 * TILE;
 

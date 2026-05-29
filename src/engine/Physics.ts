@@ -1,11 +1,4 @@
-export const DEFAULT_PHYSICS = {
-    TILE_SIZE: 32,
-    MAX_JUMP_DISTANCE: 800,
-    MAX_PRACTICAL_JUMP: 585,
-    MAX_JUMP_UP: 350,
-    MAX_FALL_DOWN: 1000,
-    PLAYER_WIDTH: 48
-};
+import { PHYSICS } from '../config';
 
 interface Platform {
     x: number;
@@ -38,7 +31,6 @@ export class Physics {
     private getMovingPlatformPositions(mp: MovingPlatformData): { x: number; y: number }[] {
         const positions: { x: number; y: number }[] = [];
         const steps = 32;
-        const timeScale = mp.moveType === 'circular' ? 0.0002 : 0.00002;
 
         for (let i = 0; i < steps; i++) {
             const t = (Math.PI * 2 * i) / steps;
@@ -63,7 +55,7 @@ export class Physics {
     private horizontalJumpCheck(gap: number, vDiff: number): boolean {
         const maxGap = Math.max(
             this.getMaxHorizontalJump(Math.max(0, vDiff)),
-            DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP
+            PHYSICS.MAX_PRACTICAL_JUMP
         );
         return gap <= maxGap;
     }
@@ -84,8 +76,8 @@ export class Physics {
 
             const verticalDiff = mpTop - fromTop;
 
-            if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) continue;
-            if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) continue;
+            if (verticalDiff > PHYSICS.MAX_FALL_DOWN) continue;
+            if (verticalDiff < -PHYSICS.MAX_JUMP_UP) continue;
             if (this.horizontalJumpCheck(horizontalGap, verticalDiff)) return true;
         }
 
@@ -108,8 +100,8 @@ export class Physics {
 
             const verticalDiff = toTop - mpTop;
 
-            if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) continue;
-            if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) continue;
+            if (verticalDiff > PHYSICS.MAX_FALL_DOWN) continue;
+            if (verticalDiff < -PHYSICS.MAX_JUMP_UP) continue;
             if (this.horizontalJumpCheck(horizontalGap, verticalDiff)) return true;
         }
 
@@ -137,8 +129,8 @@ export class Physics {
 
                 const verticalDiff = toTop - mpTop;
 
-                if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) continue;
-                if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) continue;
+                if (verticalDiff > PHYSICS.MAX_FALL_DOWN) continue;
+                if (verticalDiff < -PHYSICS.MAX_JUMP_UP) continue;
                 if (!this.horizontalJumpCheck(horizontalGap, verticalDiff)) continue;
 
                 reachable.push(next);
@@ -150,10 +142,10 @@ export class Physics {
     }
 
     private getMaxHorizontalJump(deltaY: number): number {
-        const GRAVITY = 2000;
-        const JUMP_VEL = 900;
-        const HORIZ_SPEED = 300;
-        const PLAYER_BUFFER = 24;
+        const GRAVITY = PHYSICS.GRAVITY;
+        const JUMP_VEL = PHYSICS.JUMP_SPEED;
+        const HORIZ_SPEED = PHYSICS.HORIZONTAL_SPEED;
+        const PLAYER_BUFFER = PHYSICS.PLAYER_BUFFER;
 
         if (deltaY <= 0) {
             const t = (2 * JUMP_VEL) / GRAVITY;
@@ -176,17 +168,17 @@ export class Physics {
         const horizontalGap = Math.max(toLeft - fromRight, fromLeft - toRight, 0);
         const verticalDiff = toTop - fromTop;
 
-        if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) {
+        if (verticalDiff > PHYSICS.MAX_FALL_DOWN) {
             return false;
         }
 
-        if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) {
+        if (verticalDiff < -PHYSICS.MAX_JUMP_UP) {
             return false;
         }
 
         const maxGap = Math.max(
             this.getMaxHorizontalJump(Math.max(0, verticalDiff)),
-            DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP
+            PHYSICS.MAX_PRACTICAL_JUMP
         );
 
         if (horizontalGap > maxGap) {
@@ -204,17 +196,17 @@ export class Physics {
         const horizontalGap = Math.max(toX - fromRight, fromLeft - toX, 0);
         const verticalDiff = toY - fromTop;
 
-        if (verticalDiff > DEFAULT_PHYSICS.MAX_FALL_DOWN) {
+        if (verticalDiff > PHYSICS.MAX_FALL_DOWN) {
             return false;
         }
 
-        if (verticalDiff < -DEFAULT_PHYSICS.MAX_JUMP_UP) {
+        if (verticalDiff < -PHYSICS.MAX_JUMP_UP) {
             return false;
         }
 
         const maxGap = Math.max(
             this.getMaxHorizontalJump(Math.max(0, verticalDiff)),
-            DEFAULT_PHYSICS.MAX_PRACTICAL_JUMP
+            PHYSICS.MAX_PRACTICAL_JUMP
         );
 
         if (horizontalGap > maxGap) {
@@ -294,7 +286,7 @@ export class Physics {
                         queue.push(reachable);
                     }
 
-                    if (this.canJumpFromMovingPlatform(mp, { x: goalX, y: goalY, w: DEFAULT_PHYSICS.PLAYER_WIDTH, h: 64, type: 'goal' } as Platform)) {
+                        if (this.canJumpFromMovingPlatform(mp, { x: goalX, y: goalY, w: PHYSICS.PLAYER_WIDTH, h: 64, type: 'goal' } as Platform)) {
                         return true;
                     }
                 }
