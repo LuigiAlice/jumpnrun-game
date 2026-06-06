@@ -89,9 +89,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       const S = 0.556;
       return [
         createDeco(300 * S, 480, 'cobweb'),   createDeco(1200 * S, 480, 'tombstone'),
-        createDeco(2600 * S, 470, 'web'),       createDeco(5600 * S, 480, 'ghost'),
+        createDeco(2600 * S, 470, 'web'),       createDeco(5600 * S, 480, 'ghost_decor'),
         createDeco(6400 * S, 470, 'cobweb'),    createDeco(8300 * S, 400, 'tombstone'),
-        createDeco(9800 * S, 480, 'web'),       createDeco(11000 * S, 480, 'ghost'),
+        createDeco(9800 * S, 480, 'web'),       createDeco(11000 * S, 480, 'ghost_decor'),
       ];
     })(),
     playerStart: { x: 83, y: 510 },
@@ -160,9 +160,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       const S = 0.526;
       return [
         createDeco(200 * S, 480, 'cobweb'),    createDeco(1200 * S, 480, 'tombstone'),
-        createDeco(3000 * S, 430, 'ghost'),     createDeco(5000 * S, 480, 'web'),
+        createDeco(3000 * S, 430, 'ghost_decor'),     createDeco(5000 * S, 480, 'web'),
         createDeco(6500 * S, 410, 'cobweb'),    createDeco(8200 * S, 480, 'tombstone'),
-        createDeco(9800 * S, 390, 'web'),       createDeco(11500 * S, 480, 'ghost'),
+        createDeco(9800 * S, 390, 'web'),       createDeco(11500 * S, 480, 'ghost_decor'),
         createDeco(13200 * S, 450, 'tombstone'), createDeco(15500 * S, 480, 'cobweb'),
       ];
     })(),
@@ -253,11 +253,11 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       const S = 0.5;
       return [
         createDeco(150 * S, 500, 'cobweb'),     createDeco(1000 * S, 500, 'tombstone'),
-        createDeco(2000 * S, 480, 'web'),        createDeco(3500 * S, 500, 'ghost'),
+        createDeco(2000 * S, 480, 'web'),        createDeco(3500 * S, 500, 'ghost_decor'),
         createDeco(4600 * S, 440, 'cobweb'),     createDeco(6000 * S, 500, 'tombstone'),
-        createDeco(7200 * S, 480, 'web'),        createDeco(9000 * S, 500, 'ghost'),
+        createDeco(7200 * S, 480, 'web'),        createDeco(9000 * S, 500, 'ghost_decor'),
         createDeco(9800 * S, 480, 'cobweb'),     createDeco(11500 * S, 500, 'tombstone'),
-        createDeco(12800 * S, 480, 'web'),       createDeco(15000 * S, 500, 'ghost'),
+        createDeco(12800 * S, 480, 'web'),       createDeco(15000 * S, 500, 'ghost_decor'),
         createDeco(17000 * S, 500, 'tombstone'), createDeco(19000 * S, 500, 'cobweb'),
       ];
     })(),
@@ -337,11 +337,11 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       const S = 0.476;
       return [
         createDeco(200 * S, 560, 'cobweb'),     createDeco(800 * S, 560, 'tombstone'),
-        createDeco(1600 * S, 520, 'web'),        createDeco(2000 * S, 440, 'ghost'),
+        createDeco(1600 * S, 520, 'web'),        createDeco(2000 * S, 440, 'ghost_decor'),
         createDeco(2800 * S, 560, 'cobweb'),     createDeco(3800 * S, 520, 'tombstone'),
-        createDeco(4400 * S, 420, 'web'),        createDeco(5000 * S, 560, 'ghost'),
+        createDeco(4400 * S, 420, 'web'),        createDeco(5000 * S, 560, 'ghost_decor'),
         createDeco(6200 * S, 520, 'cobweb'),     createDeco(6800 * S, 420, 'tombstone'),
-        createDeco(7800 * S, 560, 'web'),        createDeco(8600 * S, 520, 'ghost'),
+        createDeco(7800 * S, 560, 'web'),        createDeco(8600 * S, 520, 'ghost_decor'),
         createDeco(10000 * S, 560, 'cobweb'),
       ];
     })(),
@@ -432,13 +432,13 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       const S = 0.455;
       return [
         createDeco(200 * S, 520, 'cobweb'),     createDeco(1000 * S, 520, 'tombstone'),
-        createDeco(1800 * S, 520, 'web'),        createDeco(2400 * S, 520, 'ghost'),
+        createDeco(1800 * S, 520, 'web'),        createDeco(2400 * S, 520, 'ghost_decor'),
         createDeco(2900 * S, 240, 'cobweb'),     createDeco(4200 * S, 520, 'tombstone'),
-        createDeco(5500 * S, 520, 'web'),        createDeco(6100 * S, 440, 'ghost'),
+        createDeco(5500 * S, 520, 'web'),        createDeco(6100 * S, 440, 'ghost_decor'),
         createDeco(7200 * S, 520, 'cobweb'),     createDeco(8200 * S, 520, 'tombstone'),
-        createDeco(9500 * S, 520, 'web'),        createDeco(10100 * S, 240, 'ghost'),
+        createDeco(9500 * S, 520, 'web'),        createDeco(10100 * S, 240, 'ghost_decor'),
         createDeco(11500 * S, 520, 'cobweb'),    createDeco(12800 * S, 440, 'tombstone'),
-        createDeco(14000 * S, 520, 'web'),       createDeco(14800 * S, 520, 'ghost'),
+        createDeco(14000 * S, 520, 'web'),       createDeco(14800 * S, 520, 'ghost_decor'),
       ];
     })(),
     playerStart: { x: 68, y: 550 },
@@ -530,13 +530,13 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       const S = 0.435;
       return [
         createDeco(200 * S, 560, 'cobweb'),      createDeco(1000 * S, 560, 'tombstone'),
-        createDeco(1800 * S, 480, 'web'),         createDeco(2400 * S, 440, 'ghost'),
+        createDeco(1800 * S, 480, 'web'),         createDeco(2400 * S, 440, 'ghost_decor'),
         createDeco(3000 * S, 260, 'cobweb'),      createDeco(4200 * S, 560, 'tombstone'),
-        createDeco(5400 * S, 480, 'web'),         createDeco(6200 * S, 440, 'ghost'),
+        createDeco(5400 * S, 480, 'web'),         createDeco(6200 * S, 440, 'ghost_decor'),
         createDeco(7800 * S, 260, 'cobweb'),      createDeco(8600 * S, 440, 'tombstone'),
-        createDeco(9800 * S, 480, 'web'),         createDeco(10500 * S, 560, 'ghost'),
+        createDeco(9800 * S, 480, 'web'),         createDeco(10500 * S, 560, 'ghost_decor'),
         createDeco(11400 * S, 260, 'cobweb'),     createDeco(12600 * S, 560, 'tombstone'),
-        createDeco(13800 * S, 480, 'web'),        createDeco(14800 * S, 560, 'ghost'),
+        createDeco(13800 * S, 480, 'web'),        createDeco(14800 * S, 560, 'ghost_decor'),
         createDeco(15600 * S, 560, 'cobweb'),
       ];
     })(),

@@ -1916,7 +1916,7 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xFF0000, 1); g.fillCircle(12, 14, 8);
     g.fillStyle(0xFFFFFF, 1); g.fillCircle(10, 12, 2); g.fillCircle(14, 12, 2);
     g.fillStyle(0x8B4513, 1); g.fillRect(10, 20, 4, 8);
-    g.generateTexture('mushroom_decor', 24, 28);
+    g.generateTexture('mushroom', 24, 28);
     
     // Bat (cave world)
     g.clear();
@@ -1953,7 +1953,7 @@ export class BootScene extends Phaser.Scene {
     g.fillRoundedRect(2, 12, 20, 14, { tl: 0, tr: 0, bl: 6, br: 6 });
     g.fillStyle(0x000000, 1);
     g.fillCircle(8, 10, 3); g.fillCircle(16, 10, 3);
-    g.generateTexture('ghost', 24, 26);
+    g.generateTexture('ghost_decor', 24, 26);
     
     // Chain for castle
     g.clear();

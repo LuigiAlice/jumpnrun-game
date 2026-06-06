@@ -16,7 +16,7 @@ const NON_STOMPABLE_ENEMIES = new Set([
   'piranha', 'thwomp', 'boo', 'lakitu', 'bullet_bill', 'fireball', 'boss',
 ]);
 
-const SOLID_TYPES = ['grass', 'stone', 'brick', 'brick_secret', 'brick_multi', 'cave', 'castle', 'metal', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'bubble', 'hidden'];
+const SOLID_TYPES = ['grass', 'stone', 'brick', 'brick_secret', 'brick_multi', 'cave', 'castle', 'metal', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'hidden'];
 
 const BIOME_ENEMY_SPEED: Record<string, number> = {
   'factory': 100,
@@ -327,6 +327,9 @@ export class GameScene extends Phaser.Scene {
       }
       if (platType === 'pipe' || platType === 'pipe_top') {
         platform.setDepth(5);
+      }
+      if (platType === 'hidden') {
+        platform.setVisible(false);
       }
     });
     
@@ -650,9 +653,10 @@ export class GameScene extends Phaser.Scene {
 
         if (this.isDead) return;
         if (this.isInvincible && eState === 'walking') {
-            this.killEnemy(e);
             this.starKillChain++;
-            this.score += 200 * Math.pow(2, Math.min(this.starKillChain, 4));
+            const starScore = 200 * Math.pow(2, Math.min(this.starKillChain, 4));
+            this.score += starScore;
+            this.killEnemy(e, starScore);
             return;
         }
 
@@ -676,16 +680,15 @@ export class GameScene extends Phaser.Scene {
             this.playerHit();
             return;
         }
-        // Player must be falling OR player bottom near enemy top AND player is above enemy
+        // Player stomps enemy when landing from above
         const playerFeet = p.body.bottom;
         const enemyTop = e.body.y - e.body.height / 2;
-        const enemyMid = e.body.y + e.body.height / 2;
-        const isAbove = p.body.y < e.body.y;
         const isFalling = p.body.velocity.y >= 0;
-        const isStomping = isAbove && playerFeet < enemyMid && (isFalling || playerFeet < enemyTop + 30);
+        const isStomping = isFalling && playerFeet <= enemyTop + 15 && Math.abs(p.x - e.x) < e.displayWidth / 2 + 15;
         if (isStomping) {
             if (enemyType === 'koopa') {
               e.setData('state', 'shell_idle');
+              e.setData('shellDir', e.body.velocity.x > 0 ? 1 : -1);
               e.setVelocity(0, 0);
               e.setBounce(0);
               e.setScale(0.8, 0.5);
@@ -711,7 +714,7 @@ export class GameScene extends Phaser.Scene {
         const hp = (e.getData('hp') || 3) - 1;
         e.setData('hp', hp);
         f.destroy();
-        if (hp <= 0) this.killEnemy(e as any);
+        if (hp <= 0) this.killEnemy(e as any, 200);
         this.score += 200;
       } else {
         this.killEnemy(e as any); f.destroy(); this.score += 500;
@@ -721,8 +724,8 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.enemies, this.enemies, (a: any, b: any) => {
       const sA = a.getData('state') || 'walking';
       const sB = b.getData('state') || 'walking';
-      if (sA === 'shell_moving' && sB !== 'shell_moving') { this.killEnemy(b); a.setVelocityX(a.body.velocity.x); }
-      else if (sB === 'shell_moving' && sA !== 'shell_moving') { this.killEnemy(a); b.setVelocityX(b.body.velocity.x); }
+      if (sA === 'shell_moving' && sB !== 'shell_moving') { this.killEnemy(b); this.score += 500; a.setVelocityX(a.body.velocity.x); }
+      else if (sB === 'shell_moving' && sA !== 'shell_moving') { this.killEnemy(a); this.score += 500; b.setVelocityX(b.body.velocity.x); }
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.collider(this.fireballs, this.solidPlatforms, (f: any, _p: any) => { if (f.body?.blocked?.left || f.body?.blocked?.right) f.destroy(); });
@@ -739,7 +742,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.fallingHazards, this.platforms, (f: any) => f.destroy());
   }
 
-  private killEnemy(enemy: Phaser.GameObjects.Sprite) {
+  private killEnemy(enemy: Phaser.GameObjects.Sprite, scoreAmount: number = 500) {
     const x = enemy.x;
     const y = enemy.y;
     
@@ -754,7 +757,7 @@ export class GameScene extends Phaser.Scene {
       onComplete: () => { enemy.destroy(); }
     });
     
-    const popup = this.add.text(x, y - 20, '+500', {
+    const popup = this.add.text(x, y - 20, `+${scoreAmount}`, {
       fontSize: '20px',
       fontFamily: 'Arial',
       color: '#FFD700',
@@ -833,14 +836,21 @@ export class GameScene extends Phaser.Scene {
     if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
     this.playDeathSound();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
-    body.setAllowGravity(true);
-    body.setVelocity(0, -500);
+    body.setVelocity(0, 0);
+    body.setAllowGravity(false);
     this.player.setTint(0xff0000);
     this.player.setScale(1, 0.8);
     this.player.setFlipY(true);
     this.cameras.main.stopFollow();
     body.checkCollision.none = true;
-    this.time.delayedCall(1800, () => {
+    this.physics.world.pause();
+    this.tweens.add({
+      targets: this.player,
+      y: this.player.y - 150,
+      alpha: 0,
+      duration: 1200,
+      ease: 'Power1',
+      onComplete: () => {
         this.lives--;
         if (this.lives <= 0) this.scene.start('GameOver', { score: this.score, coins: this.coinCount });
         else this.scene.restart({
@@ -851,6 +861,7 @@ export class GameScene extends Phaser.Scene {
           isPlayerBig: this.isPlayerBig,
           isPlayerFire: this.isPlayerFire,
         });
+      },
     });
   }
 
@@ -1023,7 +1034,13 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    if (this.cursors.up.isDown && body.blocked.down) {
+    // Pipe entry: DOWN + JUMP while on pipe_top (check BEFORE jump to avoid phantom sound)
+    const enteringPipe = body.blocked.down && this.cursors.down.isDown && Phaser.Input.Keyboard.JustDown(this.cursors.up);
+    if (enteringPipe) {
+      this.handlePipeEntry();
+    }
+
+    if (this.cursors.up.isDown && body.blocked.down && !enteringPipe) {
       body.setVelocityY(JUMP_VELOCITY);
       this.isJumping = true;
       this.playJumpSound();
@@ -1042,11 +1059,6 @@ export class GameScene extends Phaser.Scene {
       this.cameras.main.scrollX = this.lastCameraX;
     }
     this.lastCameraX = this.cameras.main.scrollX;
-
-    // Pipe entry: DOWN + JUMP while on pipe_top
-    if (body.blocked.down && this.cursors.down.isDown && Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
-      this.handlePipeEntry();
-    }
 
     const playerSpeed = Math.abs(body.velocity.x);
     const prefix = this.isPlayerFire ? 'player_fire' : this.isPlayerBig ? 'player_big' : 'player';
@@ -1152,11 +1164,12 @@ export class GameScene extends Phaser.Scene {
 
       if (playerCarried || !this.player.body) return;
 
-      const body = mplat.body as any;
-      const platformTop = body.y - body.halfHeight;
-      const playerBottom = this.player.y + (body.halfHeight || 16);
+      const mBody = mplat.body as any;
+      const pBody = this.player.body as any;
+      const platformTop = mBody.y - mBody.halfHeight;
+      const playerBottom = this.player.y + (pBody.halfHeight || 16);
       const isAbovePlatform = Math.abs(playerBottom - platformTop) < 15;
-      const isHorizontallyAligned = Math.abs(this.player.x - mplat.x) < (body.halfWidth || 40) + 20;
+      const isHorizontallyAligned = Math.abs(this.player.x - mplat.x) < (mBody.halfWidth || 40) + 20;
       const isOnPlatform = isAbovePlatform && isHorizontallyAligned;
 
       if (isOnPlatform && (Math.abs(dx) > 0 || Math.abs(dy) > 0)) {
@@ -1317,7 +1330,8 @@ export class GameScene extends Phaser.Scene {
           enemy.setData('state', 'walking');
           enemy.setScale(1, 1);
           enemy.body.setSize(28, 34);
-          enemy.setVelocityX(-aiBiomeSpeed);
+          const shellDir = enemy.getData('shellDir') || -1;
+          enemy.setVelocityX(shellDir * aiBiomeSpeed);
           enemy.setBounce(0);
         }
       }
@@ -1436,7 +1450,6 @@ export class GameScene extends Phaser.Scene {
 
       // Score based on flagpole height
       const flagTop = this.goal.y - 25;
-      const flagBottom = this.goal.y + 25;
       const playerHeight = this.player.y;
       let poleScore = 100;
       if (playerHeight < flagTop + 16) poleScore = 5000;

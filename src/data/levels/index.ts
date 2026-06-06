@@ -11,9 +11,9 @@ export type Biome =
 
 export type PlatformType = 
   | 'grass' | 'dirt' | 'sandstone' | 'sand' | 'ice' | 'snow'
-  | 'stone' | 'brick' | 'cave' | 'castle' | 'metal'
+  | 'stone' | 'brick' | 'brick_secret' | 'brick_multi' | 'cave' | 'castle' | 'metal'
   | 'pipe' | 'pipe_top' | 'cloud' | 'platform_easy' | 'platform_medium' | 'platform_hard'
-  | 'lava' | 'wood' | 'ruins' | 'space' | 'water' | 'bubble';
+  | 'lava' | 'wood' | 'ruins' | 'space' | 'water' | 'bubble' | 'hidden';
 
 export type EnemyType = 
   | 'goomba' | 'koopa' | 'piranha' | 'spiny' | 'boo' | 'thwomp'
@@ -33,7 +33,7 @@ export type DecorationType =
   | 'shell' | 'palm' | 'seagull' | 'crab' | 'sea'
   | 'gear' | 'crane' | 'smoke' | 'pipe' | 'conveyor'
   | 'fire' | 'ember' | 'rock' | 'lava-rock'
-  | 'ghost' | 'coffin' | 'cobweb' | 'tombstone' | 'web'
+  | 'ghost' | 'ghost_decor' | 'coffin' | 'cobweb' | 'tombstone' | 'web'
   | 'pillar' | 'statue' | 'vine' | 'moss'
   | 'canyon-rock' | 'formation' | 'eagle'
   | 'planet' | 'rocket' | 'asteroid' | 'satellite'

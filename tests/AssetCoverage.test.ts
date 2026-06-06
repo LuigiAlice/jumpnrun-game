@@ -14,8 +14,8 @@ const REQUIRED_PLATFORM_TEXTURES = [
 ];
 
 const REQUIRED_DECORATION_TEXTURES = [
-  'tree', 'bush', 'cloud', 'decoration_pipe', 'flag', 'flower', 'mushroom_decor',
-  'bat', 'spider', 'torch', 'ghost', 'chain', 'fence', 'balloon', 'bird', 'sun',
+  'tree', 'bush', 'cloud', 'decoration_pipe', 'flag', 'flower', 'mushroom',
+  'bat', 'spider', 'torch', 'ghost_decor', 'chain', 'fence', 'balloon', 'bird', 'sun',
   'rainbow', 'house', 'barrel', 'planet', 'rocket', 'asteroid', 'satellite',
   'canyon-rock', 'formation', 'eagle', 'banner', 'boss-flag', 'cactus', 'rock',
   'skull', 'pyramid', 'bubble', 'cobweb', 'conveyor', 'coral', 'crane', 'ember',
