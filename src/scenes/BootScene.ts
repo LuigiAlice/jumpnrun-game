@@ -26,13 +26,42 @@ export class BootScene extends Phaser.Scene {
   private createPlayerTextures() {
     const g = this.add.graphics();
 
-    const drawMario = (key: string, shirtColor: number, pantsColor: number, isBig: boolean) => {
+    const drawMario = (key: string, shirtColor: number, pantsColor: number, isBig: boolean, pose: 'idle' | 'walk1' | 'walk2' | 'jump' = 'idle') => {
       g.clear();
       const w = isBig ? 36 : 30;
       const h = isBig ? 52 : 44;
       const yOff = isBig ? 0 : 8;
       const totalH = h + yOff;
       const cx = w / 2;
+
+      let leftBootX = cx - 7;
+      let rightBootX = cx + 7;
+      let leftLegX = cx - 8;
+      let rightLegX = cx + 1;
+      let leftArmX = cx - 14;
+      let rightArmX = cx + 8;
+      let leftHandX = cx - 14;
+      let rightHandX = cx + 14;
+      let armY = 0;
+      let handY = 0;
+
+      if (pose === 'walk1') {
+        leftBootX = cx - 10; rightBootX = cx + 10;
+        leftLegX = cx - 11; rightLegX = cx + 4;
+        leftArmX = cx - 16; rightArmX = cx + 10;
+        leftHandX = cx - 16; rightHandX = cx + 10;
+      } else if (pose === 'walk2') {
+        leftBootX = cx - 4; rightBootX = cx + 4;
+        leftLegX = cx - 5; rightLegX = cx + 7;
+        leftArmX = cx - 12; rightArmX = cx + 16;
+        leftHandX = cx - 12; rightHandX = cx + 16;
+      } else if (pose === 'jump') {
+        leftBootX = cx - 3; rightBootX = cx + 3;
+        leftLegX = cx - 5; rightLegX = cx + 5;
+        leftArmX = cx - 16; rightArmX = cx + 16;
+        leftHandX = cx - 16; rightHandX = cx + 16;
+      }
+
       const SKIN = 0xffddbb;
       const SKIN_SHADOW = 0xf0c8a0;
       const SKIN_DARK = 0xdba878;
@@ -55,28 +84,34 @@ export class BootScene extends Phaser.Scene {
 
       // BOOTS
       g.fillStyle(0x3d1f00, 1);
-      g.fillEllipse(cx - 7, h * 0.88 + yOff, 10, 6);
-      g.fillEllipse(cx + 7, h * 0.88 + yOff, 10, 6);
+      g.fillEllipse(leftBootX, h * 0.88 + yOff, 10, 6);
+      g.fillEllipse(rightBootX, h * 0.88 + yOff, 10, 6);
       g.fillStyle(0x5a2e0a, 1);
-      g.fillEllipse(cx - 7, h * 0.87 + yOff, 8, 4);
-      g.fillEllipse(cx + 7, h * 0.87 + yOff, 8, 4);
+      g.fillEllipse(leftBootX, h * 0.87 + yOff, 8, 4);
+      g.fillEllipse(rightBootX, h * 0.87 + yOff, 8, 4);
       g.fillStyle(0x7a4a1a, 0.6);
-      g.fillEllipse(cx - 7, h * 0.85 + yOff, 5, 2);
-      g.fillEllipse(cx + 7, h * 0.85 + yOff, 5, 2);
+      g.fillEllipse(leftBootX, h * 0.85 + yOff, 5, 2);
+      g.fillEllipse(rightBootX, h * 0.85 + yOff, 5, 2);
 
       // LEGS
       g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(cx - 8, h * 0.62 + yOff, 7, h * 0.24, 3);
-      g.fillRoundedRect(cx + 1, h * 0.62 + yOff, 7, h * 0.24, 3);
+      g.fillRoundedRect(leftLegX, h * 0.62 + yOff, 7, h * 0.24, 3);
+      g.fillRoundedRect(rightLegX, h * 0.62 + yOff, 7, h * 0.24, 3);
       g.fillStyle(pantsDark, 0.5);
       g.fillRect(cx - 1, h * 0.62 + yOff, 2, h * 0.24);
       g.fillStyle(pantsLight, 0.4);
-      g.fillRoundedRect(cx - 7, h * 0.63 + yOff, 3, h * 0.2, 2);
-      g.fillRoundedRect(cx + 2, h * 0.63 + yOff, 3, h * 0.2, 2);
+      g.fillRoundedRect(leftLegX + 1, h * 0.63 + yOff, 3, h * 0.2, 2);
+      g.fillRoundedRect(rightLegX + 1, h * 0.63 + yOff, 3, h * 0.2, 2);
 
       // BODY (overalls)
       const bodyY = h * 0.45 + yOff;
       const bodyH = h * 0.22;
+      armY = bodyY + 1;
+      handY = bodyY + bodyH * 0.3;
+      if (pose === 'jump') {
+        armY = bodyY - 6;
+        handY = bodyY - 8;
+      }
       g.fillStyle(pantsColor, 1);
       g.fillRoundedRect(cx - 9, bodyY, 18, bodyH, {tl: 4, tr: 4, bl: 5, br: 5});
       const bibY = bodyY - 2;
@@ -107,17 +142,17 @@ export class BootScene extends Phaser.Scene {
 
       // ARMS
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 14, bodyY + 1, 6, bodyH * 0.5, 3);
-      g.fillRoundedRect(cx + 8, bodyY + 1, 6, bodyH * 0.5, 3);
+      g.fillRoundedRect(leftArmX, armY, 6, bodyH * 0.5, 3);
+      g.fillRoundedRect(rightArmX, armY, 6, bodyH * 0.5, 3);
       g.fillStyle(shirtDark, 0.2);
-      g.fillRect(cx - 14, bodyY + 1, 2, bodyH * 0.4);
-      g.fillRect(cx + 12, bodyY + 1, 2, bodyH * 0.4);
+      g.fillRect(leftArmX, armY, 2, bodyH * 0.4);
+      g.fillRect(rightArmX + 4, armY, 2, bodyH * 0.4);
       g.fillStyle(0xffffff, 1);
-      g.fillCircle(cx - 14, bodyY + bodyH * 0.3, 4.5);
-      g.fillCircle(cx + 14, bodyY + bodyH * 0.3, 4.5);
+      g.fillCircle(leftHandX, handY, 4.5);
+      g.fillCircle(rightHandX, handY, 4.5);
       g.fillStyle(0xeeeeee, 1);
-      g.fillCircle(cx - 14, bodyY + bodyH * 0.3 + 1, 3.5);
-      g.fillCircle(cx + 14, bodyY + bodyH * 0.3 + 1, 3.5);
+      g.fillCircle(leftHandX, handY + 1, 3.5);
+      g.fillCircle(rightHandX, handY + 1, 3.5);
 
       // EARS
       g.fillStyle(SKIN, 1);
@@ -241,8 +276,17 @@ export class BootScene extends Phaser.Scene {
     };
 
     drawMario('player_idle', 0xee3333, 0x2266dd, false);
-    drawMario('player_big', 0xee3333, 0x2266dd, true);
-    drawMario('player_fire', 0xffffff, 0xee4444, true);
+    drawMario('player_walk1', 0xee3333, 0x2266dd, false, 'walk1');
+    drawMario('player_walk2', 0xee3333, 0x2266dd, false, 'walk2');
+    drawMario('player_jump', 0xee3333, 0x2266dd, false, 'jump');
+    drawMario('player_big_idle', 0xee3333, 0x2266dd, true);
+    drawMario('player_big_walk1', 0xee3333, 0x2266dd, true, 'walk1');
+    drawMario('player_big_walk2', 0xee3333, 0x2266dd, true, 'walk2');
+    drawMario('player_big_jump', 0xee3333, 0x2266dd, true, 'jump');
+    drawMario('player_fire_idle', 0xffffff, 0xee4444, true);
+    drawMario('player_fire_walk1', 0xffffff, 0xee4444, true, 'walk1');
+    drawMario('player_fire_walk2', 0xffffff, 0xee4444, true, 'walk2');
+    drawMario('player_fire_jump', 0xffffff, 0xee4444, true, 'jump');
 
     // Fireball
     g.clear();

@@ -65,6 +65,12 @@ export interface Goal {
     difficulty: 'easy' | 'medium' | 'hard';
 }
 
+export interface PipeWarp {
+    pipeX: number;
+    pipeY: number;
+    targetLevelIndex: number;
+}
+
 export interface LevelData {
     id: number;
     name: string;
@@ -80,6 +86,7 @@ export interface LevelData {
     playerStart: { x: number; y: number };
     goal: { x: number; y: number; points?: number; difficulty?: Goal['difficulty'] };
     goals?: Goal[];
+    pipeWarps?: PipeWarp[];
     timeBonus: number;
 }
 

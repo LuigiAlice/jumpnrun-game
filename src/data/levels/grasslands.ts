@@ -81,6 +81,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 500 },
     goal: { x: 6389 * S, y: 528 },
+    pipeWarps: [
+      { pipeX: 3426 * S, pipeY: 506, targetLevelIndex: 2 },
+      { pipeX: 3678 * S, pipeY: 506, targetLevelIndex: 5 },
+    ],
     timeBonus: 120,
     movingPlatforms: [
       createMovingPlat(4808 * S, 490, 130, 24, 'platform_easy', 'horizontal', 280, 20),

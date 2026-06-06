@@ -6,6 +6,9 @@ import { goToTitle } from '../sceneNav';
 
 const PLAYER_SPEED = 300;
 const JUMP_VELOCITY = -900;
+const ACCEL = 1400;
+const DECEL = 900;
+const TURN_DECEL = 1600;
 const MIN_ENEMY_SPAWN_DISTANCE = 500;
 
 /** Enemies that cannot be stomped (see AGENTS.md). */
@@ -13,7 +16,7 @@ const NON_STOMPABLE_ENEMIES = new Set([
   'piranha', 'thwomp', 'boo', 'lakitu', 'bullet_bill', 'fireball', 'boss',
 ]);
 
-const SOLID_TYPES = ['grass', 'stone', 'brick', 'cave', 'castle', 'metal', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'bubble'];
+const SOLID_TYPES = ['grass', 'stone', 'brick', 'brick_secret', 'brick_multi', 'cave', 'castle', 'metal', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'bubble', 'hidden'];
 
 const BIOME_ENEMY_SPEED: Record<string, number> = {
   'factory': 100,
@@ -54,6 +57,7 @@ export class GameScene extends Phaser.Scene {
   
   private score: number = 0;
   private coinCount: number = 0;
+  private displayedCoinCount: number = 0;
   private lives: number = 3;
   private levelIndex: number = 0;
   private levelId: number = 0;
@@ -66,7 +70,16 @@ export class GameScene extends Phaser.Scene {
   private isDead: boolean = false;
   private isTransitioning: boolean = false;
   private isQuitting: boolean = false;
+  private isJumping: boolean = false;
+  private lastCameraX: number = 0;
+  private animFrame: number = 0;
+  private animTime: number = 0;
+  private readonly ANIM_SPEED: number = 120;
+  private storedItemType: string | null = null;
+  private storedItemIcon: Phaser.GameObjects.Rectangle | null = null;
   private lastFired: number = 0;
+  private starKillChain: number = 0;
+  private lastCoinMilestone: number = 0;
 
   private scoreText!: Phaser.GameObjects.Text;
   private coinText!: Phaser.GameObjects.Text;
@@ -80,6 +93,9 @@ export class GameScene extends Phaser.Scene {
   private worldValText!: Phaser.GameObjects.Text;
 
   private audioContext?: AudioContext;
+  private audioMaster?: GainNode;
+  private audioDelay?: DelayNode;
+  private audioDelayFeedback?: GainNode;
   private isMusicPlaying: boolean = false;
   private musicLoopInterval?: any;
 
@@ -109,6 +125,18 @@ export class GameScene extends Phaser.Scene {
     this.isQuitting = false;
     this.isDead = false;
     this.isTransitioning = false;
+    this.isInvincible = false;
+    this.isJumping = false;
+    this.lastCameraX = 0;
+    this.animFrame = 0;
+    this.animTime = 0;
+    this.starKillChain = 0;
+    this.lastCoinMilestone = 0;
+    this.isMusicPlaying = false;
+    if (this.musicLoopInterval) { clearInterval(this.musicLoopInterval); this.musicLoopInterval = undefined; }
+    this.storedItemType = null;
+    if (this.storedItemIcon) { this.storedItemIcon.destroy(); this.storedItemIcon = null; }
+    this.lastFired = 0;
   }
 
   create() {
@@ -264,7 +292,7 @@ export class GameScene extends Phaser.Scene {
     level.platforms.forEach(p => {
       let tex = 'ground_grass';
       const platType = p.type as string;
-      if (platType === 'brick') tex = 'brick';
+      if (platType === 'brick' || platType === 'brick_secret' || platType === 'brick_multi') tex = 'brick';
       else if (platType === 'cave') tex = 'ground_cave';
       else if (platType === 'castle') tex = 'ground_castle';
       else if (platType === 'pipe') tex = 'pipe';
@@ -513,8 +541,8 @@ export class GameScene extends Phaser.Scene {
 
   private setupPlayer(level: LevelData) {
     let tex = 'player_idle';
-    if (this.isPlayerFire) tex = 'player_fire';
-    else if (this.isPlayerBig) tex = 'player_big';
+    if (this.isPlayerFire) tex = 'player_fire_idle';
+    else if (this.isPlayerBig) tex = 'player_big_idle';
     this.player = this.physics.add.sprite(level.playerStart.x, level.playerStart.y, tex);
     this.player.setCollideWorldBounds(false);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
@@ -525,8 +553,60 @@ export class GameScene extends Phaser.Scene {
   }
 
   private setupCollisions() {
-    // Solid platforms: player walks on them
-    this.physics.add.collider(this.player, this.solidPlatforms);
+    // Solid platforms: player walks on them + bricks break + hidden blocks reveal
+    this.physics.add.collider(this.player, this.solidPlatforms, (p: any, b: any) => {
+      const platType = b.getData?.('platformType') || b.texture?.key;
+      if (b.body?.touching?.down && p.body?.touching?.up) {
+        if (platType === 'hidden') {
+          b.setTexture('question');
+          b.setData('platformType', 'question');
+          this.tweens.add({ targets: b, y: b.y - 10, duration: 100, yoyo: true });
+          this.playBlockSound();
+          this.coinCount++;
+          this.score += 100;
+          b.setVisible(true);
+        }
+        if ((platType === 'brick_secret' || platType === 'brick_multi') && b.body.blocked?.up === false) {
+          if (platType === 'brick_secret') {
+            b.setData('platformType', 'brick');
+            this.addCoin();
+            this.tweens.add({ targets: b, y: b.y - 10, duration: 100, yoyo: true });
+            this.playBlockSound();
+          } else {
+            const lastHit = b.getData('brickLastHit') || -Infinity;
+            if (this.game.loop.time - lastHit > 300) {
+              b.setData('brickLastHit', this.game.loop.time);
+              this.addCoin();
+              this.tweens.add({ targets: b, y: b.y - 10, duration: 100, yoyo: true });
+              this.playBlockSound();
+            }
+          }
+        }
+        if (platType === 'brick' && b.body.blocked?.up === false) {
+          if (this.isPlayerBig || this.isPlayerFire) {
+            b.destroy();
+            for (let i = 0; i < 6; i++) {
+              const debris = this.add.rectangle(b.x + Phaser.Math.Between(-10, 10), b.y, 4, 4, 0x8B4513);
+              debris.setDepth(50);
+              this.tweens.add({
+                targets: debris,
+                x: debris.x + Phaser.Math.Between(-60, 60),
+                y: debris.y + Phaser.Math.Between(-80, -20),
+                alpha: 0,
+                angle: Phaser.Math.Between(-180, 180),
+                duration: 500,
+                onComplete: () => debris.destroy()
+              });
+            }
+            this.score += 50;
+            this.playBlockSound();
+          } else {
+            this.tweens.add({ targets: b, y: b.y - 10, duration: 100, yoyo: true });
+            this.playBlockSound();
+          }
+        }
+      }
+    });
     // Floating platforms: player can land on top (lava kills)
     this.physics.add.collider(this.player, this.platforms, (p, plat) => { if ((plat as any).platformType === 'lava') this.die(); });
     
@@ -555,15 +635,43 @@ export class GameScene extends Phaser.Scene {
     
     // Moving platforms: player can land on top
     this.physics.add.collider(this.player, this.movingPlatforms);
+    this.physics.add.collider(this.powerUps, this.solidPlatforms);
+    this.physics.add.collider(this.powerUps, this.platforms);
+    this.physics.add.collider(this.powerUps, this.movingPlatforms);
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.collider(this.player, this.questionBlocks, (p: any, b: any) => { if (p.body?.touching?.up && b.body?.touching?.down) this.hitQuestionBlock(b); });
-    this.physics.add.overlap(this.player, this.coins, (_p, c) => { c.destroy(); this.coinCount++; this.score += 100; });
+    this.physics.add.overlap(this.player, this.coins, (_p, c) => { c.destroy(); this.addCoin(); });
     
     // Enemy collision - use collider for proper physics response
     this.physics.add.collider(this.player, this.enemies, (p: any, e: any) => {
-        if (this.isDead || this.isInvincible) return;
         const enemyType = e.getData('type') || e.texture?.key;
+        const eState = e.getData('state') || 'walking';
+
+        if (this.isDead) return;
+        if (this.isInvincible && eState === 'walking') {
+            this.killEnemy(e);
+            this.starKillChain++;
+            this.score += 200 * Math.pow(2, Math.min(this.starKillChain, 4));
+            return;
+        }
+
+        // Kicking a koopa shell
+        if (eState === 'shell_idle') {
+          const kickDir = p.x < e.x ? 1 : -1;
+          e.setVelocityX(kickDir * 400);
+          e.setData('state', 'shell_moving');
+          e.setBounce(1, 0);
+          this.playStompSound();
+          this.score += 500;
+          return;
+        }
+        // Shell hits player from the side
+        if (eState === 'shell_moving') {
+          this.playerHit();
+          return;
+        }
+
         if (NON_STOMPABLE_ENEMIES.has(enemyType)) {
             this.playerHit();
             return;
@@ -576,7 +684,17 @@ export class GameScene extends Phaser.Scene {
         const isFalling = p.body.velocity.y >= 0;
         const isStomping = isAbove && playerFeet < enemyMid && (isFalling || playerFeet < enemyTop + 30);
         if (isStomping) {
-            this.killEnemy(e);
+            if (enemyType === 'koopa') {
+              e.setData('state', 'shell_idle');
+              e.setVelocity(0, 0);
+              e.setBounce(0);
+              e.setScale(0.8, 0.5);
+              e.body.setSize(28, 16);
+              e.setData('shellTimer', 4000);
+            } else {
+              this.killEnemy(e);
+            }
+            this.playStompSound();
             p.setVelocityY(-400);
             this.score += 500;
         } else {
@@ -598,6 +716,13 @@ export class GameScene extends Phaser.Scene {
       } else {
         this.killEnemy(e as any); f.destroy(); this.score += 500;
       }
+    });
+    // Shell kills enemies on contact
+    this.physics.add.collider(this.enemies, this.enemies, (a: any, b: any) => {
+      const sA = a.getData('state') || 'walking';
+      const sB = b.getData('state') || 'walking';
+      if (sA === 'shell_moving' && sB !== 'shell_moving') { this.killEnemy(b); a.setVelocityX(a.body.velocity.x); }
+      else if (sB === 'shell_moving' && sA !== 'shell_moving') { this.killEnemy(a); b.setVelocityX(b.body.velocity.x); }
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.collider(this.fireballs, this.solidPlatforms, (f: any, _p: any) => { if (f.body?.blocked?.left || f.body?.blocked?.right) f.destroy(); });
@@ -652,25 +777,51 @@ export class GameScene extends Phaser.Scene {
     block.isEmpty = true;
     block.setTexture('question_used');
     this.tweens.add({ targets: block, y: block.y - 10, duration: 100, yoyo: true });
+    this.playBlockSound();
     const content = block.contents;
-    if (content === 'coin') { this.coinCount++; this.score += 100; }
-    else { const pu = this.powerUps.create(block.x, block.y - 32, content); pu.setVelocityY(-200); (pu as any).type = content; this.score += 200; }
+    if (content === 'coin') { this.addCoin(); }
+    else { const pu = this.powerUps.create(block.x, block.y - 32, content); pu.setVelocity(-60, -200); pu.setBounce(0.3); (pu as any).type = content; this.score += 200; }
   }
 
   private collectPowerUp(pu: any) {
     const type = pu.type;
     pu.destroy();
+    this.playPowerUpSound();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
-    if (type === 'mushroom') { if (!this.isPlayerBig) { this.isPlayerBig = true; this.player.y -= 16; this.player.setTexture('player_big'); body.setSize(24, 48); } }
-    else if (type === 'flower') { if (!this.isPlayerBig) this.player.y -= 16; this.isPlayerBig = true; this.isPlayerFire = true; this.player.setTexture('player_fire'); body.setSize(24, 48); }
-    else if (type === 'star') { this.makeInvincible(5000); }
+    if (type === 'mushroom') {
+      if (!this.isPlayerBig) { this.isPlayerBig = true; this.player.y -= 16; this.player.setTexture('player_big_idle'); body.setSize(24, 48); }
+      else if (!this.storedItemType) { this.storedItemType = 'mushroom'; this.updateStoredItemHUD(); }
+    } else if (type === 'flower') {
+      if (!this.isPlayerBig) this.player.y -= 16; this.isPlayerBig = true; this.isPlayerFire = true; this.player.setTexture('player_fire_idle'); body.setSize(24, 48);
+      if (this.isPlayerFire && !this.storedItemType) { this.storedItemType = 'flower'; this.updateStoredItemHUD(); }
+    } else if (type === 'star') { this.makeInvincible(5000); }
   }
 
-  private makeInvincible(duration: number) { this.isInvincible = true; this.player.setAlpha(0.5); this.time.delayedCall(duration, () => { this.isInvincible = false; this.player.setAlpha(1); }); }
+  private updateStoredItemHUD() {
+    if (this.storedItemIcon) this.storedItemIcon.destroy();
+    if (this.storedItemType) {
+      const colors: Record<string, number> = { 'mushroom': 0xff4444, 'flower': 0x44ff44, 'star': 0xffff44 };
+      this.storedItemIcon = this.add.rectangle(200, 30, 12, 12, colors[this.storedItemType] || 0xffffff)
+        .setScrollFactor(0).setDepth(1000).setStrokeStyle(1, 0xffffff);
+    }
+  }
+
+  private makeInvincible(duration: number) { this.isInvincible = true; this.player.setAlpha(0.5); this.starKillChain = 0; this.time.delayedCall(duration, () => { this.isInvincible = false; this.player.setAlpha(1); }); }
 
   private playerHit() {
     if (this.isInvincible) return;
-    if (this.isPlayerFire) { this.isPlayerFire = false; this.player.setTexture('player_big'); this.makeInvincible(2000); }
+    this.playHitSound();
+    if (this.storedItemType) {
+      const restoreType = this.storedItemType;
+      this.storedItemType = null;
+      if (this.storedItemIcon) { this.storedItemIcon.destroy(); this.storedItemIcon = null; }
+      if (restoreType === 'mushroom' && !this.isPlayerBig) {
+        this.isPlayerBig = true; this.player.y -= 16; this.player.setTexture('player_big_idle');
+        (this.player.body as Phaser.Physics.Arcade.Body).setSize(24, 48);
+        this.makeInvincible(2000); return;
+      }
+    }
+    if (this.isPlayerFire) { this.isPlayerFire = false; this.player.setTexture('player_big_idle'); this.makeInvincible(2000); }
     else if (this.isPlayerBig) { this.isPlayerBig = false; this.player.setTexture('player_idle'); (this.player.body as Phaser.Physics.Arcade.Body).setSize(22, 32); this.makeInvincible(2000); }
     else this.die();
   }
@@ -680,9 +831,16 @@ export class GameScene extends Phaser.Scene {
     this.isDead = true;
     this.isMusicPlaying = false;
     if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
-    this.physics.world.pause();
-    this.player.setTint(0xff0000).setVelocity(0, -500);
-    this.time.delayedCall(2000, () => {
+    this.playDeathSound();
+    const body = this.player.body as Phaser.Physics.Arcade.Body;
+    body.setAllowGravity(true);
+    body.setVelocity(0, -500);
+    this.player.setTint(0xff0000);
+    this.player.setScale(1, 0.8);
+    this.player.setFlipY(true);
+    this.cameras.main.stopFollow();
+    body.checkCollision.none = true;
+    this.time.delayedCall(1800, () => {
         this.lives--;
         if (this.lives <= 0) this.scene.start('GameOver', { score: this.score, coins: this.coinCount });
         else this.scene.restart({
@@ -741,12 +899,88 @@ export class GameScene extends Phaser.Scene {
 
   private updateUI() {
     this.scoreValText.setText(this.score.toString().padStart(6, '0'));
-    this.coinValText.setText('x' + this.coinCount.toString().padStart(2, '0'));
+    if (this.displayedCoinCount < this.coinCount) {
+      this.displayedCoinCount++;
+      this.coinValText.setText('x' + this.displayedCoinCount.toString().padStart(2, '0'));
+    } else if (this.displayedCoinCount > this.coinCount) {
+      this.displayedCoinCount = this.coinCount;
+    }
     const biomeIdx = Math.floor(this.levelIndex / 6);
     const levelInBiome = this.levelIndex % 6;
     this.worldValText.setText(`${biomeIdx + 1}-${levelInBiome + 1}`);
-    this.timerValText.setText(Math.max(0, this.timeLeft).toString().padStart(3, '0'));
+    const time = Math.max(0, this.timeLeft);
+    this.timerValText.setText(time.toString().padStart(3, '0'));
+    this.timerValText.setColor(time < 50 ? '#ff4444' : time < 100 ? '#ffaa00' : '#ffffff');
     this.livesValText.setText(String(this.lives));
+  }
+
+  private showScorePopup(text: string, x: number, y: number) {
+    const popup = this.add.text(x, y, text, {
+      fontSize: '16px', fontFamily: 'Arial', color: '#ffffff',
+      stroke: '#000', strokeThickness: 3
+    }).setOrigin(0.5).setDepth(1001);
+    this.tweens.add({
+      targets: popup,
+      y: y - 40,
+      alpha: 0,
+      duration: 800,
+      onComplete: () => popup.destroy(),
+    });
+  }
+
+  private addCoin() {
+    this.coinCount++;
+    this.score += 100;
+    this.playCoinSound();
+    if (this.coinCount - this.lastCoinMilestone >= 100) {
+      this.lastCoinMilestone += 100;
+      const text = this.add.text(GAME_WIDTH / 2, 200, '1-UP', {
+        fontSize: '36px', fontFamily: 'Arial', color: '#4CAF50',
+        stroke: '#000', strokeThickness: 5
+      }).setOrigin(0.5).setScrollFactor(0).setDepth(1001);
+      this.tweens.add({ targets: text, y: 120, alpha: 0, duration: 1500, onComplete: () => text.destroy() });
+    }
+  }
+
+  private handlePipeEntry() {
+    const body = this.player.body as Phaser.Physics.Arcade.Body;
+    const level = this.currentLevelData;
+    if (!level) return;
+
+    const entryPipe = level.pipeWarps?.find(w => {
+      const dx = Math.abs(this.player.x - w.pipeX);
+      const dy = Math.abs(this.player.y - w.pipeY);
+      return dx < 32 && dy < 16;
+    });
+
+    if (!entryPipe) return;
+
+    this.isTransitioning = true;
+    body.setVelocity(0, 0);
+    body.setAllowGravity(false);
+
+    this.tweens.add({
+      targets: this.player,
+      y: this.player.y + 40,
+      alpha: 0,
+      duration: 400,
+      ease: 'Power2',
+      onComplete: () => {
+        body.setAllowGravity(true);
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.restart({
+            levelIndex: entryPipe.targetLevelIndex,
+            score: this.score,
+            lives: this.lives,
+            coinCount: this.coinCount,
+            isPlayerBig: this.isPlayerBig,
+            isPlayerFire: this.isPlayerFire,
+            levelId: 0,
+          });
+        });
+      },
+    });
   }
 
   update(time: number) {
@@ -757,14 +991,80 @@ export class GameScene extends Phaser.Scene {
     if (this.isDead || this.isTransitioning) return;
     this.updateUI();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
-    if (this.cursors.left.isDown) { body.setVelocityX(-PLAYER_SPEED); this.player.setFlipX(true); }
-    else if (this.cursors.right.isDown) { body.setVelocityX(PLAYER_SPEED); this.player.setFlipX(false); }
-    else {
+    const dt = this.game.loop.delta / 1000;
+
+    if (this.cursors.left.isDown) {
+      this.player.setFlipX(true);
+      if (body.velocity.x > 0) {
+        body.velocity.x -= TURN_DECEL * dt;
+        if (body.velocity.x <= 0) body.velocity.x = -PLAYER_SPEED;
+      } else {
+        body.velocity.x = Math.max(body.velocity.x - ACCEL * dt, -PLAYER_SPEED);
+      }
+    } else if (this.cursors.right.isDown) {
+      this.player.setFlipX(false);
+      if (body.velocity.x < 0) {
+        body.velocity.x += TURN_DECEL * dt;
+        if (body.velocity.x >= 0) body.velocity.x = PLAYER_SPEED;
+      } else {
+        body.velocity.x = Math.min(body.velocity.x + ACCEL * dt, PLAYER_SPEED);
+      }
+    } else {
       const onIce = body.blocked.down && this.currentLevelData?.biome === 'ice-snow';
-      body.setVelocityX(onIce ? body.velocity.x * 0.92 : 0);
+      if (onIce) {
+        if (Math.abs(body.velocity.x) < 5) body.velocity.x = 0;
+        else body.velocity.x *= 0.92;
+      } else if (Math.abs(body.velocity.x) < 5) {
+        body.velocity.x = 0;
+      } else if (body.velocity.x > 0) {
+        body.velocity.x = Math.max(0, body.velocity.x - DECEL * dt);
+      } else {
+        body.velocity.x = Math.min(0, body.velocity.x + DECEL * dt);
+      }
     }
-    if (this.cursors.up.isDown && body.blocked.down) body.setVelocityY(JUMP_VELOCITY);
-    
+
+    if (this.cursors.up.isDown && body.blocked.down) {
+      body.setVelocityY(JUMP_VELOCITY);
+      this.isJumping = true;
+      this.playJumpSound();
+    }
+    if (this.isJumping && body.velocity.y < 0) {
+      if (!this.cursors.up.isDown) {
+        body.velocity.y *= 0.5;
+        this.isJumping = false;
+      }
+    }
+    if (body.blocked.down) {
+      this.isJumping = false;
+    }
+
+    if (this.cameras.main.scrollX < this.lastCameraX) {
+      this.cameras.main.scrollX = this.lastCameraX;
+    }
+    this.lastCameraX = this.cameras.main.scrollX;
+
+    // Pipe entry: DOWN + JUMP while on pipe_top
+    if (body.blocked.down && this.cursors.down.isDown && Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
+      this.handlePipeEntry();
+    }
+
+    const playerSpeed = Math.abs(body.velocity.x);
+    const prefix = this.isPlayerFire ? 'player_fire' : this.isPlayerBig ? 'player_big' : 'player';
+    if (!body.blocked.down) {
+      this.player.setTexture(`${prefix}_jump`);
+    } else if (playerSpeed > 20) {
+      this.animTime += this.game.loop.delta;
+      if (this.animTime >= this.ANIM_SPEED) {
+        this.animTime = 0;
+        this.animFrame = (this.animFrame + 1) % 2;
+      }
+      this.player.setTexture(`${prefix}_walk${this.animFrame + 1}`);
+    } else {
+      this.animFrame = 0;
+      this.animTime = 0;
+      this.player.setTexture(`${prefix}_idle`);
+    }
+
     // Swimming mechanic for water biome
     if (this.currentBiome === 'water' && body.y > 500) {
       body.setGravityY(-(this.physics.world.gravity.y - 600));
@@ -1007,6 +1307,20 @@ export class GameScene extends Phaser.Scene {
           proj.setScale(1.5);
         }
       }
+      // Koopa shell timer: re-awaken after 4s
+      const eState = enemy.getData('state') || 'walking';
+      if (eType === 'koopa' && eState === 'shell_idle') {
+        const timer = enemy.getData('shellTimer') || 0;
+        if (timer > 0) {
+          enemy.setData('shellTimer', timer - this.game.loop.delta);
+        } else {
+          enemy.setData('state', 'walking');
+          enemy.setScale(1, 1);
+          enemy.body.setSize(28, 34);
+          enemy.setVelocityX(-aiBiomeSpeed);
+          enemy.setBounce(0);
+        }
+      }
     });
     
     // Move boss projectiles
@@ -1110,11 +1424,118 @@ export class GameScene extends Phaser.Scene {
   private reachGoal() {
       if (this.isTransitioning) return;
       this.isTransitioning = true;
-      this.cameras.main.fadeOut(500);
-      const timeBonus = Math.max(0, this.timeLeft);
-      this.time.delayedCall(500, () => {
-          this.scene.restart({ levelIndex: this.levelIndex + 1, lives: this.lives, score: this.score + 1000 + timeBonus, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
+      this.playGoalSound();
+      this.isMusicPlaying = false;
+      if (this.musicLoopInterval) clearInterval(this.musicLoopInterval);
+
+      const body = this.player.body as Phaser.Physics.Arcade.Body;
+      body.setVelocity(0, 0);
+      body.setAllowGravity(false);
+      this.player.setFlipX(true);
+      this.player.setScale(1, 1);
+
+      // Score based on flagpole height
+      const flagTop = this.goal.y - 25;
+      const flagBottom = this.goal.y + 25;
+      const playerHeight = this.player.y;
+      let poleScore = 100;
+      if (playerHeight < flagTop + 16) poleScore = 5000;
+      else if (playerHeight < flagTop + 32) poleScore = 2000;
+      this.score += poleScore;
+      this.showScorePopup('+' + poleScore, this.player.x, this.player.y - 40);
+
+      this.tweens.add({
+        targets: this.player,
+        y: this.goal.y + 40,
+        duration: 600,
+        ease: 'Power1',
+        onComplete: () => {
+          body.setAllowGravity(true);
+          body.setVelocityX(80);
+          this.tweens.add({
+            targets: this.player,
+            x: this.player.x + 60,
+            duration: 400,
+          });
+          const clearText = this.add.text(this.player.x, this.player.y - 60, 'COURSE CLEAR!', {
+            fontSize: '24px', fontFamily: 'Arial', color: '#FFD700',
+            stroke: '#000', strokeThickness: 4
+          }).setOrigin(0.5).setDepth(1001);
+          this.tweens.add({ targets: clearText, y: clearText.y - 30, alpha: 0, duration: 1500, delay: 500 });
+        }
       });
+
+      this.time.delayedCall(2000, () => {
+        const timeBonus = Math.max(0, this.timeLeft);
+        this.scene.restart({ levelIndex: this.levelIndex + 1, lives: this.lives, score: this.score + 1000 + timeBonus, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
+      });
+  }
+
+  private readonly MELODY_MOTIFS: number[][] = [
+    [0, 2, 4, 5, 4, 2, 0, 2],
+    [4, 2, 0, 2, 4, 5, 7, 4],
+    [0, 0, 4, 4, 5, 5, 4, 0],
+    [7, 5, 4, 2, 0, 2, 4, 5],
+    [0, 4, 8, 4, 4, 2, 0, 2],
+    [5, 4, 2, 0, 2, 4, 5, 7],
+    [2, 4, 5, 4, 2, 0, 2, 0],
+    [8, 7, 5, 4, 2, 0, 2, 4],
+  ];
+
+  private readonly MELODY_RHYTHMS: number[][] = [
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 0, 1, 1, 1, 0],
+    [1, 0, 1, 0, 1, 1, 1, 1],
+    [1, 1, 1, 1, 0, 1, 0, 1],
+    [1, 0, 1, 1, 1, 0, 1, 1],
+    [1, 1, 0, 1, 1, 1, 0, 1],
+  ];
+
+  private readonly SCALE_SEMITONES: Record<string, number[]> = {
+    'major': [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23],
+    'minor': [0, 2, 3, 5, 7, 8, 10, 12, 14, 15, 17, 19, 20, 22],
+  };
+
+  private generateMelody(chordProgression: { root: number; type: string }[], totalMeasures: number): number[] {
+    if (chordProgression.length === 0) return [];
+    const result: number[] = [];
+    for (let m = 0; m < totalMeasures; m++) {
+      const ch = chordProgression[m % chordProgression.length];
+      const motif = this.MELODY_MOTIFS[m % this.MELODY_MOTIFS.length];
+      const rhythm = this.MELODY_RHYTHMS[(m + Math.floor(m / 2)) % this.MELODY_RHYTHMS.length];
+      const shift = [0, 0, 2, 0, 4, -2, 2, 0][m % 8];
+      const scale = this.SCALE_SEMITONES[ch.type] || this.SCALE_SEMITONES['major'];
+      for (let h = 0; h < 2; h++) {
+        for (let s = 0; s < 8; s++) {
+          if (rhythm[s] === 0) { result.push(0); continue; }
+          let degree = motif[s] + shift;
+          while (degree < 0) { degree += 7; }
+          while (degree >= scale.length) { degree -= 7; }
+          const semitones = scale[degree];
+          result.push(ch.root * Math.pow(2, semitones / 12));
+        }
+      }
+    }
+    return result;
+  }
+
+  private generateBassline(chordProgression: { root: number; type: string }[], totalMeasures: number): number[] {
+    if (chordProgression.length === 0) return [];
+    const result: number[] = [];
+    for (let m = 0; m < totalMeasures; m++) {
+      const ch = chordProgression[m % chordProgression.length];
+      const root = ch.root * 0.5;
+      const fifth = root * Math.pow(2, 7 / 12);
+      const octave = ch.root;
+      for (let s = 0; s < 16; s++) {
+        const beat = Math.floor(s / 2) % 4;
+        if (beat === 0) result.push(root);
+        else if (beat === 2) result.push(s % 4 < 2 ? fifth : root);
+        else if (s % 4 === 1) result.push(0);
+        else result.push(root);
+      }
+    }
+    return result;
   }
 
   private startBgm() {
@@ -3653,7 +4074,10 @@ export class GameScene extends Phaser.Scene {
     };
 
     const musicData = BIOME_MUSIC[biome] || BIOME_MUSIC['grasslands'];
-    const { melody, bassline, drums, chordProgression, padRoots } = musicData;
+    const { melody: rawMelody, bassline: rawBassline, drums, chordProgression, padRoots } = musicData;
+    const measures = Math.max(4, Math.min(64, Math.round(rawMelody.length / 16)));
+    const melody = chordProgression.length > 0 ? this.generateMelody(chordProgression, measures) : rawMelody;
+    const bassline = chordProgression.length > 0 ? this.generateBassline(chordProgression, measures) : rawBassline;
 
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -3663,32 +4087,61 @@ export class GameScene extends Phaser.Scene {
         this.audioContext.resume();
       }
 
+      const ctx = this.audioContext;
+      this.audioMaster = ctx.createGain();
+      this.audioMaster.gain.setValueAtTime(0.6, ctx.currentTime);
+      this.audioMaster.connect(ctx.destination);
+
+      this.audioDelay = ctx.createDelay(0.5);
+      this.audioDelay.delayTime.setValueAtTime(0.18, ctx.currentTime);
+      this.audioDelayFeedback = ctx.createGain();
+      this.audioDelayFeedback.gain.setValueAtTime(0.25, ctx.currentTime);
+      this.audioDelay.connect(this.audioDelayFeedback);
+      this.audioDelayFeedback.connect(this.audioDelay);
+      this.audioDelay.connect(this.audioMaster);
+
+      const noiseBufSize = ctx.sampleRate * 0.1;
+      const noiseBuffer = ctx.createBuffer(1, noiseBufSize, ctx.sampleRate);
+      const noiseData = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < noiseBufSize; i++) {
+        noiseData[i] = Math.random() * 2 - 1;
+      }
+
       let step = 0;
       this.musicLoopInterval = setInterval(() => {
         if (!this.isMusicPlaying || !this.audioContext || this.isDead) return;
 
+        const now = this.audioContext.currentTime;
+
         if (melody[step] > 0) {
-          this.playNote(melody[step], 'triangle', 0.08, 0.15);
+          this.playNote(melody[step], 'triangle', 0.07, 0.15, 0.3);
         }
 
         if (bassline[step] > 0) {
-          this.playNote(bassline[step], 'square', 0.04, 0.12);
+          this.playNote(bassline[step], 'sawtooth', 0.035, 0.14, -0.4);
         }
 
         if (drums[step] === 1) {
-          this.playDrum(0.03);
+          this.playKick(0.06);
         } else if (drums[step] === 2) {
-          this.playHihat(0.02);
+          this.playNoiseHihat(0.025, noiseBuffer);
         }
 
-        if (step % 16 === 0 && chordProgression.length > 0) {
-          const chordIndex = Math.floor(step / 16) % chordProgression.length;
+        if (drums[step] === 1 && step % 2 === 0) {
+          this.playNote(98.00, 'sine', 0.015, 0.12, -0.6, 150);
+        }
+
+        if (step % 4 === 0 && chordProgression.length > 0) {
+          const chordIndex = Math.floor(step / 4) % chordProgression.length;
           const chordDef = chordProgression[chordIndex];
           if (chordDef) {
             const root = chordDef.root;
-            const third = root * (chordDef.type === 'minor' ? Math.pow(2, 3 / 12) : Math.pow(2, 4 / 12));
+            const m3 = root * Math.pow(2, 3 / 12);
+            const M3 = root * Math.pow(2, 4 / 12);
             const fifth = root * Math.pow(2, 7 / 12);
-            this.playChord([root, third, fifth], 'sine', 0.025, 0.8);
+            const seventh = root * Math.pow(2, 10 / 12);
+            const third = chordDef.type === 'minor' ? m3 : M3;
+            this.playChord([root, third, fifth, seventh], 'sine', 0.02, 0.9, 0.2);
           }
         }
 
@@ -3696,14 +4149,29 @@ export class GameScene extends Phaser.Scene {
           const padIndex = Math.floor(step / 16) % padRoots.length;
           const root = padRoots[padIndex];
           if (root > 0) {
+            const third = root * Math.pow(2, 4 / 12);
             const fifth = root * Math.pow(2, 7 / 12);
-            this.playChord([root, fifth], 'sine', 0.012, 2.0);
+            const octave = root * 2;
+            this.playChord([root, third, fifth, octave], 'sine', 0.01, 2.4, 0.5);
           }
         } else if (step % 16 === 8 && padRoots.length > 0) {
           const padIndex = Math.floor(step / 16) % padRoots.length;
           const root = padRoots[padIndex] * 0.5;
           if (root > 0) {
-            this.playChord([root], 'sine', 0.006, 1.5);
+            this.playChord([root], 'sine', 0.005, 1.6, 0.5);
+          }
+        }
+
+        if (step % 2 === 0 && chordProgression.length > 0) {
+          const chordIndex = Math.floor(step / 4) % chordProgression.length;
+          const chordDef = chordProgression[chordIndex];
+          if (chordDef) {
+            const root = chordDef.root;
+            const fifth = root * Math.pow(2, 7 / 12);
+            const octave = root * 2;
+            const arpNotes = [root, fifth, octave, fifth, root, fifth, octave, fifth];
+            const arpIdx = Math.floor(step / 2) % arpNotes.length;
+            this.playNote(arpNotes[arpIdx] * 0.5, 'square', 0.015, 0.08, -0.1);
           }
         }
 
@@ -3711,91 +4179,286 @@ export class GameScene extends Phaser.Scene {
       }, 140);
     } catch (e) {}
   }
-  
-  private playDrum(volume: number) {
+
+  private playKick(volume: number) {
     if (!this.audioContext) return;
     const now = this.audioContext.currentTime;
     const osc = this.audioContext.createOscillator();
     const gain = this.audioContext.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(150, now);
-    osc.frequency.exponentialRampToValueAtTime(50, now + 0.05);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(200, now);
+    osc.frequency.exponentialRampToValueAtTime(40, now + 0.08);
     gain.gain.setValueAtTime(volume, now);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(100, now + 0.08);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.audioMaster!);
     osc.start(now);
-    osc.stop(now + 0.05);
+    osc.stop(now + 0.08);
   }
 
-  private playHihat(volume: number) {
+  private playNoiseHihat(volume: number, noiseBuffer: AudioBuffer) {
     if (!this.audioContext) return;
     const now = this.audioContext.currentTime;
-    const osc = this.audioContext.createOscillator();
+    const source = this.audioContext.createBufferSource();
+    source.buffer = noiseBuffer;
     const gain = this.audioContext.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(1200, now);
     gain.gain.setValueAtTime(volume, now);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
-    osc.connect(gain);
-    gain.connect(this.audioContext.destination);
-    osc.start(now);
-    osc.stop(now + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.setValueAtTime(5000, now);
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.audioMaster!);
+    source.start(now);
+    source.stop(now + 0.04);
   }
 
-  private playNote(freq: number, type: OscillatorType, volume: number, duration: number) {
-    if (!this.audioContext) return;
+  private playNote(freq: number, type: OscillatorType, volume: number, duration: number, pan: number = 0, filterFreq: number = 0) {
+    if (!this.audioContext || !this.audioMaster || !this.audioDelay) return;
     const now = this.audioContext.currentTime;
 
     const osc1 = this.audioContext.createOscillator();
     const gain1 = this.audioContext.createGain();
     osc1.type = type;
     osc1.frequency.setValueAtTime(freq, now);
-    gain1.gain.setValueAtTime(volume, now);
+
+    const lfo = this.audioContext.createOscillator();
+    const lfoGain = this.audioContext.createGain();
+    lfo.frequency.setValueAtTime(5, now);
+    lfoGain.gain.setValueAtTime(freq * 0.002, now);
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc1.frequency);
+    lfo.start(now);
+
+    gain1.gain.setValueAtTime(0.0001, now);
+    gain1.gain.linearRampToValueAtTime(volume, now + 0.005);
+    gain1.gain.exponentialRampToValueAtTime(volume * 0.3, now + duration * 0.3);
     gain1.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-    osc1.connect(gain1);
-    gain1.connect(this.audioContext.destination);
-    osc1.start(now);
-    osc1.stop(now + duration);
+
+    const filter = this.audioContext.createBiquadFilter();
+    filter.type = 'lowpass';
+    if (filterFreq > 0) {
+      filter.frequency.setValueAtTime(filterFreq, now);
+    } else {
+      filter.frequency.setValueAtTime(freq * 4, now);
+      filter.frequency.exponentialRampToValueAtTime(freq * 2, now + duration * 0.5);
+    }
+
+    const panner = this.audioContext.createStereoPanner();
+    panner.pan.setValueAtTime(pan, now);
+
+    osc1.connect(filter);
+    filter.connect(gain1);
+    gain1.connect(panner);
+    panner.connect(this.audioMaster);
+    if (duration > 0.1) {
+      const wetGain = this.audioContext.createGain();
+      wetGain.gain.setValueAtTime(0.08, now);
+      wetGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      gain1.connect(wetGain);
+      wetGain.connect(this.audioDelay);
+    }
 
     const detuneFreq = freq * Math.pow(2, 7 / 1200);
     const osc2 = this.audioContext.createOscillator();
     const gain2 = this.audioContext.createGain();
     osc2.type = type;
     osc2.frequency.setValueAtTime(detuneFreq, now);
-    gain2.gain.setValueAtTime(volume * 0.5, now);
+    gain2.gain.setValueAtTime(0.0001, now);
+    gain2.gain.linearRampToValueAtTime(volume * 0.5, now + 0.005);
     gain2.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    const panner2 = this.audioContext.createStereoPanner();
+    panner2.pan.setValueAtTime(pan - 0.1, now);
     osc2.connect(gain2);
-    gain2.connect(this.audioContext.destination);
-    osc2.start(now);
-    osc2.stop(now + duration);
+    gain2.connect(panner2);
+    panner2.connect(this.audioMaster);
+    if (duration > 0.1) {
+      const wetGain2 = this.audioContext.createGain();
+      wetGain2.gain.setValueAtTime(0.06, now);
+      wetGain2.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      gain2.connect(wetGain2);
+      wetGain2.connect(this.audioDelay);
+    }
 
     const osc3 = this.audioContext.createOscillator();
     const gain3 = this.audioContext.createGain();
     osc3.type = type;
     osc3.frequency.setValueAtTime(freq * 2, now);
-    gain3.gain.setValueAtTime(volume * 0.3, now);
+    gain3.gain.setValueAtTime(0.0001, now);
+    gain3.gain.linearRampToValueAtTime(volume * 0.35, now + 0.005);
     gain3.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    const panner3 = this.audioContext.createStereoPanner();
+    panner3.pan.setValueAtTime(pan + 0.1, now);
     osc3.connect(gain3);
-    gain3.connect(this.audioContext.destination);
+    gain3.connect(panner3);
+    panner3.connect(this.audioMaster);
+
+    osc1.start(now);
+    osc1.stop(now + duration);
+    osc2.start(now);
+    osc2.stop(now + duration);
     osc3.start(now);
     osc3.stop(now + duration);
+    lfo.stop(now + duration);
   }
 
-  private playChord(freqs: number[], type: OscillatorType, volume: number, duration: number) {
-    if (!this.audioContext) return;
+  private playChord(freqs: number[], type: OscillatorType, volume: number, duration: number, pan: number = 0) {
+    if (!this.audioContext || !this.audioMaster) return;
     const now = this.audioContext.currentTime;
-    for (const freq of freqs) {
+    const spread = 2 / Math.max(freqs.length - 1, 1);
+    for (let i = 0; i < freqs.length; i++) {
       const osc = this.audioContext.createOscillator();
       const gain = this.audioContext.createGain();
       osc.type = type;
-      osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(volume, now);
+      osc.frequency.setValueAtTime(freqs[i], now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(volume, now + 0.04);
+      gain.gain.setValueAtTime(volume, now + duration * 0.6);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      const panner = this.audioContext.createStereoPanner();
+      panner.pan.setValueAtTime(pan + (i * spread - 1), now);
       osc.connect(gain);
-      gain.connect(this.audioContext.destination);
+      gain.connect(panner);
+      panner.connect(this.audioMaster);
       osc.start(now);
       osc.stop(now + duration);
     }
+  }
+
+  private playJumpSound() {
+    if (!this.audioContext || !this.audioMaster) return;
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, now);
+    osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+    gain.gain.setValueAtTime(0.07, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    osc.connect(gain);
+    gain.connect(this.audioMaster);
+    osc.start(now);
+    osc.stop(now + 0.12);
+  }
+
+  private playCoinSound() {
+    if (!this.audioContext || !this.audioMaster) return;
+    const now = this.audioContext.currentTime;
+    [988, 1319].forEach((freq, i) => {
+      const osc = this.audioContext!.createOscillator();
+      const gain = this.audioContext!.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.06);
+      gain.gain.setValueAtTime(0.07, now + i * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.12);
+      osc.connect(gain);
+      gain.connect(this.audioMaster!);
+      osc.start(now + i * 0.06);
+      osc.stop(now + i * 0.06 + 0.15);
+    });
+  }
+
+  private playStompSound() {
+    if (!this.audioContext || !this.audioMaster) return;
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(250, now);
+    osc.frequency.exponentialRampToValueAtTime(60, now + 0.08);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+    osc.connect(gain);
+    gain.connect(this.audioMaster);
+    osc.start(now);
+    osc.stop(now + 0.1);
+  }
+
+  private playHitSound() {
+    if (!this.audioContext || !this.audioMaster) return;
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, now);
+    gain.gain.setValueAtTime(0.05, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+    osc.connect(gain);
+    gain.connect(this.audioMaster);
+    osc.start(now);
+    osc.stop(now + 0.1);
+  }
+
+  private playBlockSound() {
+    if (!this.audioContext || !this.audioMaster) return;
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.setValueAtTime(350, now + 0.03);
+    gain.gain.setValueAtTime(0.05, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+    osc.connect(gain);
+    gain.connect(this.audioMaster);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
+
+  private playPowerUpSound() {
+    if (!this.audioContext || !this.audioMaster) return;
+    const now = this.audioContext.currentTime;
+    [523, 659, 784, 1047].forEach((freq, i) => {
+      const osc = this.audioContext!.createOscillator();
+      const gain = this.audioContext!.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, now + i * 0.08);
+      gain.gain.setValueAtTime(0.06, now + i * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.16);
+      osc.connect(gain);
+      gain.connect(this.audioMaster!);
+      osc.start(now + i * 0.08);
+      osc.stop(now + i * 0.08 + 0.16);
+    });
+  }
+
+  private playDeathSound() {
+    if (!this.audioContext || !this.audioMaster) return;
+    const now = this.audioContext.currentTime;
+    [600, 500, 400, 300, 200, 150].forEach((freq, i) => {
+      const osc = this.audioContext!.createOscillator();
+      const gain = this.audioContext!.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + i * 0.12);
+      gain.gain.setValueAtTime(0.06, now + i * 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.12 + 0.14);
+      osc.connect(gain);
+      gain.connect(this.audioMaster!);
+      osc.start(now + i * 0.12);
+      osc.stop(now + i * 0.12 + 0.15);
+    });
+  }
+
+  private playGoalSound() {
+    if (!this.audioContext || !this.audioMaster) return;
+    const now = this.audioContext.currentTime;
+    [523, 659, 784, 1047, 784, 1047, 1319].forEach((freq, i) => {
+      const osc = this.audioContext!.createOscillator();
+      const gain = this.audioContext!.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + i * 0.1);
+      gain.gain.setValueAtTime(0.07, now + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.1 + 0.2);
+      osc.connect(gain);
+      gain.connect(this.audioMaster!);
+      osc.start(now + i * 0.1);
+      osc.stop(now + i * 0.1 + 0.22);
+    });
   }
 }
