@@ -309,9 +309,14 @@ PLAYER_MOVE_SPEED:   300
 
 ## Audio
 
-- **Jedes Biom** hat eigene Musik (Web Audio API, prozedural generiert)
-- **Instrumente**: Melody (triangle), Bassline (square), Drums (triangle)
-- **Loop-Dauer**: ca. 100 Sekunden
+- **15 handkomponierte Biome-Songs** (`src/audio/biomeMusic.ts`, MIDI-Noten in kompakter Autor-Domain, deterministisch, 0× Math.random)
+- **Struktur**: 16 Takte × 16 Steps, Form A-A'-B-A' mit Hook (Takte 1-2) und Hook-Reprise in Takt 9; Call-and-Response-Phrasen
+- **Drums**: Kick 1&3, Snare 2&4, Offbeat-HiHats, Fill vor jeder Hook-Reprise
+- **Scheduler**: `src/audio/musicPlayer.ts` — Lookahead-Scheduling (25ms-Poll, 0.12s Ahead, exakte `ctx.currentTime`-Timeline, kein Drift)
+- **Instrumente**: Lead (Biome-Wellenform: square/triangle/sine/sawtooth + Detune-Zweitosc + Vibrato), Bass (triangle + Sub-Sine), Arpeggio (square, root-5th-oct), Kick (pitch-drop), Snare (Noise + Körper), HiHat (Noise highpass)
+- **BPM pro Biome**: 118 (space-star) bis 176 (castle-final); Tonart/Mode passt sich dem Biom an (phrygisch-dominant desert, lydisch water/space, moll haunted/volcano/castle)
+- **SFX** separat via GameScene playNote/playChord (Coin, Gate-Arpeggio, QB)
+- Start bei erstem User-Input (AudioContext-Resume), Stop bei Tod/Pause/Levelwechsel
 
 ## Level Solver (Physics.ts BFS)
 
