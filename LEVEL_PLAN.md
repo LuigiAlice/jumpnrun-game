@@ -67,15 +67,30 @@ Alle Biome-Dateien nutzen diese Helfer.
 
 ---
 
-## 🔜 Phase 6 (geplant): Level-End-Varianten
+## 🟡 Phase 6: Level-End-Varianten (TEILWEISE UMGESETZT)
 
-| Typ | Beschreibung |
-|-----|-------------|
-| **Flaggen-Ziel** | Standard: Flagge am Ende des Levels (aktuell) |
-| **Boss-Ziel** | Boss besiegen → Flagge erscheint |
-| **Münzen-Tor** | X Münzen gesammelt → Tor öffnet sich |
-| **Zeit-Tor** | Ziel innerhalb Zeitlimit erreichen |
-| **Multi-Goal** | Mehrere Ziele mit unterschiedlichen Punktwerten |
+| Typ | Beschreibung | Status |
+|-----|-------------|--------|
+| **Flaggen-Ziel** | Standard: Flagge am Ende des Levels (aktuell) | ✅ |
+| **Boss-Ziel** | Boss besiegen → Flagge erscheint | ✅ (L90) |
+| **Münzen-Tor** | X Münzen gesammelt → Tor öffnet sich (`coinGoal` in LevelData) | ✅ (Pilot: L5 grasslands, L10 desert) |
+| **Zeit-Tor** | Ziel innerhalb Zeitlimit erreichen | 🔜 |
+| **Multi-Goal** | Mehrere Ziele mit unterschiedlichen Punktwerten | 🔜 |
+
+---
+
+## 🟡 Phase 6b: Neue Level-Elemente (Pilot in grasslands + desert)
+
+Implementiert (Engine: GameScene/helpers/config, Tests: NewElements + PilotElements):
+
+| Element | Daten | Mechanik |
+|---------|-------|----------|
+| **Sprungfeder** | `springs: {x,y}[]`, y = Plattform-Oberkante | Launch `SPRING_VELOCITY -1350` (~455px), Bonus-Element (Solver-agnostisch) |
+| **Stachel-Falle** | `spikes: {x,y}[]`, y = Oberkante − 8 | Overlap → Tod; Design-Regeln: ≥96px zu QBs/Goal, ≥150px zu playerStart, max 24px breit |
+| **Zerstörbare Bricks** | 'brick'-Plattform | Big Mario zerbricht von unten (+50); load-bearing Bricks wobble statt brechen (`isBrickLoadBearing`) |
+| **Münz-Tor** | `coinGoal: number` | Goal gesperrt bis X Coins, HUD-Hint |
+
+Pilot-Biome: grasslands (L1-6), desert (L7-12) — jedes Level mit Element-Mix (≥3 Plattform-Typen, variierte Moving-Plats, Coin-Muster, Gegner-Mix, 0-3 Spikes, 1-2 Springs, 2 coinGoal-Level). Ausrollen auf restliche 13 Biome folgt.
 
 ---
 

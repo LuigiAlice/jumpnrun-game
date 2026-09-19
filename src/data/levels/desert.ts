@@ -2,7 +2,7 @@
 // Level 7: Tutorial, 8: Gap-Strecke, 9: Röhren-Labyrinth
 // Level 10: Vertikal-Kletterer, 11: Gegner-Horde, 12: Finale-Pyramide
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const DESERT_LEVELS: LevelData[] = [
   // ============================================================
@@ -43,6 +43,8 @@ export const DESERT_LEVELS: LevelData[] = [
       coins.push(createCoin(1400 * S, 500));
       for (let x = 2400 * S; x < 3100 * S; x += 200) coins.push(createCoin(x, 500));
       coins.push(createCoin(1570, 590), createCoin(1620, 590), createCoin(1670, 590));
+      // Coin arc above the tutorial spring
+      coins.push(createCoin(580, 420), createCoin(620, 380), createCoin(660, 420));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -68,11 +70,17 @@ export const DESERT_LEVELS: LevelData[] = [
         createDeco(400 * S, 510, 'cactus'),
         createDeco(1100 * S, 510, 'rock'),
         createDeco(2600 * S, 510, 'skull'),
+        // Cactus clusters framing the spring meadow
+        createDeco(300 * S, 510, 'cactus'),
+        createDeco(360 * S, 510, 'cactus'),
+        createDeco(1450 * S, 510, 'cactus'),
+        createDeco(1520 * S, 510, 'cactus'),
       ];
     })(),
     playerStart: { x: 150, y: 500 },
     goal: { x: 5200 * 0.65, y: 528 },
     timeBonus: 120,
+    springs: [createSpring(620, 530)],
   },
 
   // ============================================================
@@ -89,6 +97,8 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 900, 550, 400, 3));
       // Ground
       plats.push(createPlat(1700 * S, 550, 600 * S, 40, 'sand'));
+      // Sandstone pillar cluster — climbable side obstacle (not on the main path)
+      plats.push(createPlat(1180, 470, 48, 120, 'sandstone'));
       // Gap 2
       plats.push(...gapWithPlatforms(S, 2600, 550, 400, 3));
       // Ground
@@ -101,6 +111,8 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 5600, 550, 400, 3));
       // Ground
       plats.push(createPlat(6200 * S, 550, 600 * S, 40, 'sand'));
+      // Sandstone pillar near the goal plateau
+      plats.push(createPlat(5020, 470, 48, 120, 'sandstone'));
       // Gap 5
       plats.push(...gapWithPlatforms(S, 7100, 550, 400, 3));
       // Final ground
@@ -120,6 +132,8 @@ export const DESERT_LEVELS: LevelData[] = [
       for (let x = 3300 * S; x < 3800 * S; x += 200) coins.push(createCoin(x, 500));
       for (let x = 4800 * S; x < 5500 * S; x += 200) coins.push(createCoin(x, 500));
       for (let x = 6200 * S; x < 6800 * S; x += 200) coins.push(createCoin(x, 500));
+      // Coin arc above the spring on ground D
+      coins.push(createCoin(2860, 420), createCoin(2900, 380), createCoin(2940, 420));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -151,11 +165,15 @@ export const DESERT_LEVELS: LevelData[] = [
         createDeco(1500 * S, 510, 'rock'),
         createDeco(3500 * S, 510, 'skull'),
         createDeco(5500 * S, 510, 'pyramid'),
+        // Landmark pyramid in the middle of the gap run
+        createDeco(3200 * S, 510, 'pyramid'),
       ];
     })(),
     playerStart: { x: 150, y: 500 },
     goal: { x: 7900 * 0.625, y: 528 },
     timeBonus: 140,
+    springs: [createSpring(2900, 530)],
+    spikes: [createSpike(900, 522), createSpike(3720, 522)],
   },
 
   // ============================================================
@@ -245,6 +263,8 @@ export const DESERT_LEVELS: LevelData[] = [
       for (let x = 10200 * S; x < 10800 * S; x += 200) coins.push(createCoin(x, 500));
       coins.push(createCoin(12000 * S, 500));
       coins.push(createCoin(12200 * S, 500));
+      // Coin arc above the spring on the middle ground connector
+      coins.push(createCoin(2900, 420), createCoin(2940, 380), createCoin(2980, 420));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -291,6 +311,9 @@ export const DESERT_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 12700 * 0.6, y: 528 },
     timeBonus: 160,
+    springs: [createSpring(2940, 530)],
+    // Spikes on the pipe-base ground connectors (well clear of QBs)
+    spikes: [createSpike(1400, 522), createSpike(4480, 522), createSpike(6000, 522)],
   },
 
   // ============================================================
@@ -315,6 +338,9 @@ export const DESERT_LEVELS: LevelData[] = [
       plats.push(createPlat(3100 * S, 600, 700 * S, 40, 'sand'));
       // Vertical Climb 2
       plats.push(...verticalClimb(S, 4000, 600, 'sand'));
+      // Sandstone climb wall — shortcut ledge beside the standard climb
+      plats.push(createPlat(2260, 470, 48, 140, 'sandstone'));
+      plats.push(createPlat(2380, 430, 48, 180, 'sandstone'));
       
       // Bridging to ground at 6100
       plats.push(...gapWithPlatforms(S, 4800, 600, 1400, 8));
@@ -366,6 +392,17 @@ export const DESERT_LEVELS: LevelData[] = [
       coins.push(createCoin(8400 * S, 410));
       coins.push(createCoin(8800 * S, 490));
       for (let x = 9200 * S; x < 9800 * S; x += 200) coins.push(createCoin(x, 550));
+      // Coin arc above the spring shortcut
+      coins.push(createCoin(1760, 470), createCoin(1800, 430), createCoin(1840, 470));
+      // Coin zigzag on the second ground connector
+      coins.push(createCoin(3250, 500), createCoin(3350, 450), createCoin(3450, 500));
+      // Coin zigzag on the third ground connector
+      coins.push(createCoin(4950, 500), createCoin(5050, 450), createCoin(5150, 500));
+      // Coin wave on the final ground
+      coins.push(createCoin(6500, 550), createCoin(6600, 500), createCoin(6700, 550), createCoin(6800, 500));
+      coins.push(createCoin(6450, 550), createCoin(6850, 550));
+      // Coin wave on the first ground connector
+      coins.push(createCoin(1600, 550), createCoin(1700, 500));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -411,6 +448,8 @@ export const DESERT_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 12300 * 0.556, y: 578 },
     timeBonus: 180,
+    coinGoal: 30,
+    springs: [createSpring(1800, 580)],
   },
 
   // ============================================================
@@ -443,6 +482,7 @@ export const DESERT_LEVELS: LevelData[] = [
     movingPlatforms: [
       createMovingPlat(2000 * 0.5, 480, 120, 24, 'platform_medium', 'horizontal', 200, 22),
       createMovingPlat(7000 * 0.5, 460, 120, 24, 'platform_medium', 'vertical', 180, 20),
+      createMovingPlat(8200 * 0.5, 480, 120, 24, 'platform_easy', 'circular', 130, 20),
     ],
     coins: (() => {
       const S = 0.5;
@@ -450,6 +490,8 @@ export const DESERT_LEVELS: LevelData[] = [
       for (let x = 300; x < 2000; x += 200) coins.push(createCoin(x * S, 500));
       for (let x = 2800 * S; x < 4800 * S; x += 200) coins.push(createCoin(x, 500));
       for (let x = 5700 * S; x < 7600 * S; x += 200) coins.push(createCoin(x, 500));
+      // Coin arc above the spring in the canyon middle
+      coins.push(createCoin(1160, 420), createCoin(1200, 380), createCoin(1240, 420));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -472,19 +514,20 @@ export const DESERT_LEVELS: LevelData[] = [
         createEnemy(1000 * S, 510, 'spiny'),
         createEnemy(1200 * S, 510, 'koopa'),
         createEnemy(1600 * S, 510, 'crab'),
-        createEnemy(1800 * S, 510, 'goomba'),
+        createEnemy(1800 * S, 510, 'robot'),
         createEnemy(3000 * S, 510, 'spiny'),
-        createEnemy(3300 * S, 510, 'goomba'),
         createEnemy(3600 * S, 510, 'koopa'),
         createEnemy(4000 * S, 510, 'crab'),
-        createEnemy(4300 * S, 510, 'goomba'),
+        createEnemy(4300 * S, 510, 'robot'),
         createEnemy(4600 * S, 510, 'spiny'),
-        createEnemy(5800 * S, 510, 'goomba'),
+        createEnemy(5800 * S, 510, 'robot'),
         createEnemy(6200 * S, 510, 'crab'),
         createEnemy(6600 * S, 510, 'koopa'),
-        createEnemy(7000 * S, 510, 'goomba'),
         createEnemy(7250 * S, 510, 'piranha'),
         createEnemy(7600 * S, 510, 'piranha'),
+        // Spiny royal passage guarding the goal plateau
+        createEnemy(9100 * S, 510, 'spiny'),
+        createEnemy(9300 * S, 510, 'spiny'),
         createEnemy(9400 * S, 510, 'goomba'),
       ];
     })(),
@@ -501,6 +544,7 @@ export const DESERT_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 9400 * 0.5, y: 528 },
     timeBonus: 200,
+    springs: [createSpring(1200, 530)],
   },
 
   // ============================================================
@@ -572,6 +616,8 @@ export const DESERT_LEVELS: LevelData[] = [
       coins.push(createCoin(9000 * S, 130));
       coins.push(createCoin(9400 * S, 130));
       coins.push(createCoin(9800 * S, 130));
+      // High bonus coins above the staircase spring (spring launch reaches them)
+      coins.push(createCoin(2200 * S, 110), createCoin(2200 * S, 50));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -622,5 +668,9 @@ export const DESERT_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 9850 * 0.45, y: 158 },
     timeBonus: 220,
+    // Springs as rescue/dodge elements against the falling-obstacle finale
+    springs: [createSpring(990, 340), createSpring(4200, 160)],
+    // Flat spikes sprinkled into the final ascent (well clear of QBs and goal)
+    spikes: [createSpike(3975, 152), createSpike(4320, 152)],
   },
 ];

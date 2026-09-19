@@ -1,7 +1,7 @@
 // 100 Levels - 15 Biome (Super Mario inspired)
 
 // Re-export helpers from separate file to avoid circular imports
-export { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat } from './helpers';
+export { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, canBreakBrick, isBrickLoadBearing } from './helpers';
 
 export type Biome = 
   | 'grasslands' | 'desert' | 'water' | 'ice-snow'
@@ -87,6 +87,9 @@ export interface LevelData {
     goal: { x: number; y: number; points?: number; difficulty?: Goal['difficulty'] };
     goals?: Goal[];
     pipeWarps?: PipeWarp[];
+    springs?: { x: number; y: number }[];
+    spikes?: { x: number; y: number }[];
+    coinGoal?: number;
     timeBonus: number;
 }
 

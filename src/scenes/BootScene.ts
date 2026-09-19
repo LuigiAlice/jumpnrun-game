@@ -23,6 +23,46 @@ export class BootScene extends Phaser.Scene {
     this.createParticleTextures();
   }
 
+  private lerpColor(from: number, to: number, t: number): number {
+    const fr = (from >> 16) & 0xff, fg = (from >> 8) & 0xff, fb = from & 0xff;
+    const tr = (to >> 16) & 0xff, tg = (to >> 8) & 0xff, tb = to & 0xff;
+    const r = Math.round(fr + (tr - fr) * t);
+    const gg = Math.round(fg + (tg - fg) * t);
+    const b = Math.round(fb + (tb - fb) * t);
+    return (r << 16) | (gg << 8) | b;
+  }
+
+  private fillVGradient(g: Phaser.GameObjects.Graphics, x: number, y: number, w: number, h: number, top: number, bottom: number, steps = 32) {
+    const stepH = h / steps;
+    for (let i = 0; i < steps; i++) {
+      g.fillStyle(this.lerpColor(top, bottom, i / (steps - 1)), 1);
+      g.fillRect(x, y + stepH * i, w, stepH + 0.5);
+    }
+  }
+
+  private fillHGradient(g: Phaser.GameObjects.Graphics, x: number, y: number, w: number, h: number, left: number, right: number, steps = 24) {
+    const stepW = w / steps;
+    for (let i = 0; i < steps; i++) {
+      g.fillStyle(this.lerpColor(left, right, i / (steps - 1)), 1);
+      g.fillRect(x + stepW * i, y, stepW + 0.5, h);
+    }
+  }
+
+  private rivet(g: Phaser.GameObjects.Graphics, x: number, y: number, r: number) {
+    g.fillStyle(0x2a1800, 1);
+    g.fillCircle(x, y, r);
+    g.fillStyle(0x7a5410, 1);
+    g.fillCircle(x - r * 0.2, y - r * 0.2, r * 0.65);
+    g.fillStyle(0xd8b060, 0.85);
+    g.fillCircle(x - r * 0.3, y - r * 0.35, r * 0.3);
+  }
+
+  private strokeOutline(g: Phaser.GameObjects.Graphics, x: number, y: number, w: number, h: number, color: number, radius = 0) {
+    g.lineStyle(2, color, 1);
+    if (radius > 0) g.strokeRoundedRect(x, y, w, h, radius);
+    else g.strokeRect(x, y, w, h);
+  }
+
   private createPlayerTextures() {
     const g = this.add.graphics();
 
@@ -106,6 +146,11 @@ export class BootScene extends Phaser.Scene {
 
       // ════ BOOTS ═══════════════════════════════════════════════════════
       const drawBoot = (bx: number, by: number) => {
+        // Sock cuff peeking above boot
+        g.fillStyle(0xf2ead8, 1);
+        g.fillRoundedRect(bx - 3, by - 4.5, 9, 3, 1.2);
+        g.fillStyle(0xd8c8b0, 0.55);
+        g.fillRect(bx - 3, by - 3.2, 9, 0.8);
         // Dark sole
         g.fillStyle(0x1a0a00, 1);
         g.fillEllipse(bx + 1, by + 2, 13, 4.5);
@@ -188,6 +233,28 @@ export class BootScene extends Phaser.Scene {
       g.fillStyle(0xffee88, 0.9);
       g.fillCircle(strapX1 + 1.5, btnY - 0.8, 1.2);
       g.fillCircle(strapX2 + 1.5, btnY - 0.8, 1.2);
+      // Subtle fabric crease lines
+      g.lineStyle(1, pantsDark, 0.20);
+      g.lineBetween(cx - bibW * 0.30, bodyY + bodyH * 0.52, cx - bibW * 0.26, bodyY + bodyH - 3);
+      g.lineBetween(cx + bibW * 0.26, bodyY + bodyH * 0.52, cx + bibW * 0.30, bodyY + bodyH - 3);
+      g.lineStyle(1, shirtDark, 0.25);
+      g.lineBetween(cx - bibW * 0.44, bodyY - 1, cx - bibW * 0.32, bodyY + 2);
+      g.lineBetween(cx + bibW * 0.32, bodyY - 1, cx + bibW * 0.44, bodyY + 2);
+      g.lineStyle(0, 0x000000, 0);
+      // Fire emblem flames on fire variant
+      if (shirtColor === 0xf8f8f8) {
+        const flame = (fx: number, fy: number, fs: number) => {
+          g.fillStyle(0xff7a00, 0.95);
+          g.fillTriangle(fx, fy - fs, fx - fs * 0.8, fy + fs, fx + fs * 0.8, fy + fs);
+          g.fillStyle(0xffc800, 1);
+          g.fillTriangle(fx, fy - fs * 0.25, fx - fs * 0.45, fy + fs * 0.9, fx + fs * 0.8, fy + fs * 0.8);
+          g.fillStyle(0xfff0a0, 0.8);
+          g.fillCircle(fx, fy + fs * 0.35, fs * 0.22);
+        };
+        flame(cx - bibW * 0.36, bodyY - 2.5, 2.2);
+        flame(cx + bibW * 0.36, bodyY - 2.5, 2.2);
+        flame(cx, bodyY + bodyH * 0.74, 3.2);
+      }
 
       // ════ ARMS & GLOVES ═══════════════════════════════════════════════
       const drawArm = (ax: number, ay: number, ah: number, hx: number, hy: number, isLeft: boolean) => {
@@ -289,6 +356,9 @@ export class BootScene extends Phaser.Scene {
       g.fillEllipse(cx - headRX * 0.22, capY + headRY * 0.07, headRX * 0.68, headRY * 0.38);
       g.fillStyle(WHITE, 0.22);
       g.fillCircle(cx - headRX * 0.30, capY + headRY * 0.13, headRY * 0.17);
+      // Cap bevel edge along dome top
+      g.fillStyle(shirtLight, 0.45);
+      g.fillEllipse(cx - headRX * 0.02, capY + headRY * 0.28, headRX * 1.26, headRY * 0.10);
       // Cap band
       g.fillStyle(shirtDark, 0.75);
       g.fillRoundedRect(cx - headRX * 0.85, capY + headRY * 0.48, headRX * 1.70, headRY * 0.20, 2);
@@ -546,6 +616,10 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xffffff, 0.4);
     g.fillCircle(10, 29, 2);
     g.fillCircle(20, 31, 1.5);
+    // Dark 2px outline on main shapes
+    g.lineStyle(2, 0x2a0a00, 0.9);
+    g.strokeEllipse(14, 14, 26, 20);
+    g.strokeRoundedRect(5, 24, 18, 14, 4);
     g.generateTexture('goomba', 28, 42);
 
     // KOOPA - detailed turtle with hexagonal shell pattern
@@ -589,6 +663,14 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(18, 19, 2);
     g.fillCircle(13, 16, 2);
     g.fillCircle(23, 16, 2);
+    // Yellow belly rim under shell
+    g.fillStyle(0xE8B830, 1);
+    g.fillEllipse(18, 22.5, 16, 5);
+    g.fillStyle(0xFFD860, 0.7);
+    g.fillEllipse(18, 22, 13, 3);
+    // Shell outline
+    g.lineStyle(2, 0x0a3a0a, 0.9);
+    g.strokeEllipse(18, 18, 20, 16);
     // Head
     g.fillStyle(0x228B22, 1);
     g.fillCircle(8, 9, 8);
@@ -620,6 +702,9 @@ export class BootScene extends Phaser.Scene {
     // Shadow under head
     g.fillStyle(0x000000, 0.15);
     g.fillCircle(8, 18, 6);
+    // Head outline
+    g.lineStyle(2, 0x0a3a0a, 0.9);
+    g.strokeCircle(8, 9, 8);
     g.generateTexture('koopa', 32, 34);
 
     // PIRANHA PLANT - intimidating plant with glowing eyes
@@ -654,6 +739,9 @@ export class BootScene extends Phaser.Scene {
     // Bright highlight spot
     g.fillStyle(0xCC4040, 0.6);
     g.fillCircle(9, 12, 3);
+    // Head outline
+    g.lineStyle(2, 0x2a0000, 0.9);
+    g.strokeEllipse(14, 18, 22, 18);
     // White spots
     g.fillStyle(0xffffff, 1);
     g.fillCircle(5, 14, 3);
@@ -679,6 +767,9 @@ export class BootScene extends Phaser.Scene {
     g.fillTriangle(10, 25, 8, 27, 12, 25);
     g.fillTriangle(14, 25, 12, 27, 16, 25);
     g.fillTriangle(18, 25, 16, 27, 20, 25);
+    // Red lips framing the mouth
+    g.lineStyle(2, 0xE84040, 0.9);
+    g.strokeEllipse(14, 22, 13.5, 7.5);
     // Eyes - glowing
     g.fillStyle(0xffff00, 1);
     g.fillCircle(8, 11, 4);
@@ -695,6 +786,10 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xffffff, 0.9);
     g.fillCircle(8, 10, 0.8);
     g.fillCircle(20, 10, 0.8);
+    // Angry eyebrows
+    g.fillStyle(0x0a2a0a, 1);
+    g.fillTriangle(3, 7, 11, 4, 12, 7);
+    g.fillTriangle(25, 7, 17, 4, 16, 7);
     // Petals
     g.fillStyle(0xff6600, 1);
     g.fillCircle(1, 7, 5);
@@ -713,29 +808,29 @@ export class BootScene extends Phaser.Scene {
     // Shadow
     g.fillStyle(0x000000, 0.25);
     g.fillEllipse(14, 30, 18, 3);
-    // Spikes - sharp, multifaceted
-    g.fillStyle(0x4a4a4a, 1);
+    // Spikes - sharp, white with soft shading
+    g.fillStyle(0xC8C8C8, 1);
     g.fillTriangle(14, 0, 10, 7, 18, 7);
     g.fillTriangle(5, 8, 9, 13, 8, 16);
     g.fillTriangle(23, 8, 19, 13, 20, 16);
     g.fillTriangle(8, 26, 12, 19, 17, 20);
     g.fillTriangle(20, 26, 16, 19, 19, 20);
     // Spike highlights
-    g.fillStyle(0x6a6a6a, 1);
+    g.fillStyle(0xF5F5F5, 1);
     g.fillTriangle(14, 1, 12, 5, 16, 5);
     g.fillTriangle(6, 9, 9, 12, 7, 14);
     g.fillTriangle(22, 9, 20, 12, 21, 14);
-    // Body - dark base
-    g.fillStyle(0x2038A0, 1);
+    // Body - dark orange base
+    g.fillStyle(0xA03A00, 1);
     g.fillCircle(14, 16, 10);
-    // Body - main color
-    g.fillStyle(0x3050D0, 1);
+    // Body - main orange
+    g.fillStyle(0xD85510, 1);
     g.fillCircle(14, 15, 9);
     // Body - highlight (top-left)
-    g.fillStyle(0x5A7AFF, 1);
+    g.fillStyle(0xFF8030, 1);
     g.fillCircle(11, 12, 5);
     // Body - bright spot
-    g.fillStyle(0x8A9AFF, 0.5);
+    g.fillStyle(0xFFB070, 0.5);
     g.fillCircle(10, 10, 2.5);
     // Eyes - whites
     g.fillStyle(0xffffff, 1);
@@ -764,6 +859,9 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xffffff, 0.3);
     g.fillCircle(9, 19, 1.5);
     g.fillCircle(21, 17, 1.5);
+    // Body outline
+    g.lineStyle(2, 0x5a2400, 0.9);
+    g.strokeCircle(14, 16, 10);
     g.generateTexture('spiny', 28, 32);
 
     // LAKITU - cloud-riding turtle with detailed shell and goggles
@@ -792,6 +890,11 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(6, 29, 2);
     g.fillCircle(18, 27, 2.5);
     g.fillCircle(30, 29, 2);
+    // Soft shadow under cloud
+    g.fillStyle(0x9a9ac0, 0.3);
+    g.fillEllipse(20, 36.5, 28, 5);
+    g.fillStyle(0xE0E0E8, 0.25);
+    g.fillEllipse(20, 37.5, 31, 4);
     // Shell - dark base
     g.fillStyle(0x0a5a0a, 1);
     g.fillEllipse(20, 17, 18, 13);
@@ -813,6 +916,9 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(20, 13, 1.5);
     g.fillCircle(16, 16, 1.5);
     g.fillCircle(24, 16, 1.5);
+    // Shell outline
+    g.lineStyle(2, 0x0a4a0a, 0.9);
+    g.strokeEllipse(20, 17, 18, 13);
     // Head
     g.fillStyle(0x1a7a1a, 1);
     g.fillCircle(20, 7, 7);
@@ -847,9 +953,9 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0x1a7a1a, 1);
     g.fillCircle(33, 12, 4);
     // Spiny in hand
-    g.fillStyle(0x3050D0, 1);
+    g.fillStyle(0xD85510, 1);
     g.fillCircle(34, 8, 4.5);
-    g.fillStyle(0x5A7AFF, 0.6);
+    g.fillStyle(0xFF8030, 0.6);
     g.fillCircle(33, 7, 2);
     g.fillStyle(0x4a4a4a, 1);
     g.fillTriangle(34, 3, 31, 6, 37, 6);
@@ -895,6 +1001,19 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xFF4060, 0.6);
     g.fillTriangle(3, 10, 1, 13, 3, 16);
     g.fillTriangle(25, 10, 28, 13, 25, 16);
+    // Body outline
+    g.lineStyle(2, 0x0f0f0f, 0.9);
+    g.strokeRoundedRect(3, 7, 22, 14, 7);
+    // Corner rivets
+    g.fillStyle(0x151515, 1);
+    g.fillCircle(8, 18, 1.6);
+    g.fillCircle(21, 18, 1.6);
+    g.fillStyle(0x8a8a8a, 1);
+    g.fillCircle(7.6, 17.6, 1);
+    g.fillCircle(20.6, 17.6, 1);
+    g.fillStyle(0xc8c8c8, 0.7);
+    g.fillCircle(7.3, 17.3, 0.45);
+    g.fillCircle(20.3, 17.3, 0.45);
     // Eye - menacing
     g.fillStyle(0xFFFF00, 1);
     g.fillCircle(16, 13, 4);
@@ -948,6 +1067,16 @@ export class BootScene extends Phaser.Scene {
     // Body - bright metallic top
     g.fillStyle(0x6a6a6a, 0.6);
     g.fillRoundedRect(8, 9, 10, 4, 2);
+    // Body outline
+    g.lineStyle(2, 0x1a1a1a, 0.9);
+    g.strokeRoundedRect(4, 8, 20, 18, 4);
+    // Side panel screws
+    g.fillStyle(0x1f1f1f, 1);
+    g.fillCircle(6, 16, 1.2);
+    g.fillCircle(22, 16, 1.2);
+    g.fillStyle(0x8a8a8a, 1);
+    g.fillCircle(5.7, 15.7, 0.7);
+    g.fillCircle(21.7, 15.7, 0.7);
     // Rivets - top row
     g.fillStyle(0x777777, 1);
     g.fillCircle(8, 11, 1.2);
@@ -1079,6 +1208,12 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(14, 19, 2.5);
     g.fillCircle(11, 12, 2);
     g.fillCircle(17, 12, 2);
+    // Shell outline
+    g.lineStyle(2, 0x8a2500, 0.9);
+    g.strokeEllipse(14, 16, 22, 14);
+    // Claw outlines
+    g.strokeEllipse(0, 18, 9, 7);
+    g.strokeEllipse(28, 18, 9, 7);
     // Eye stalks
     g.fillStyle(0xFF5520, 1);
     g.fillRect(6, 5, 4, 8);
@@ -1148,6 +1283,19 @@ export class BootScene extends Phaser.Scene {
     g.lineStyle(1, 0x505050, 0.4);
     g.lineBetween(5, 15, 9, 20);
     g.lineBetween(23, 16, 27, 22);
+    // Corner rivets
+    const thwompRivet = (rx: number, ry: number) => {
+      g.fillStyle(0x2c2c2c, 1);
+      g.fillCircle(rx, ry, 2);
+      g.fillStyle(0x8a8a8a, 1);
+      g.fillCircle(rx - 0.5, ry - 0.5, 1.3);
+      g.fillStyle(0xb8b8b8, 0.9);
+      g.fillCircle(rx - 0.7, ry - 0.7, 0.6);
+    };
+    thwompRivet(6, 6);
+    thwompRivet(26, 6);
+    thwompRivet(6, 28);
+    thwompRivet(26, 28);
     // Eye sockets (dark)
     g.fillStyle(0x202020, 1);
     g.fillRoundedRect(7, 13, 7, 9, 2);
@@ -1182,8 +1330,6 @@ export class BootScene extends Phaser.Scene {
     g.fillRect(17, 25.5, 2.5, 2.5);
     // Highlight dots
     g.fillStyle(0x999999, 0.4);
-    g.fillCircle(8, 7, 2);
-    g.fillCircle(24, 7, 2);
     g.fillCircle(14, 29, 1.5);
     g.generateTexture('thwomp', 32, 34);
 
@@ -1254,6 +1400,13 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0x000000, 0.08);
     g.fillEllipse(3, 22, 5, 2);
     g.fillEllipse(29, 22, 5, 2);
+    // Soft fading shadow at the bottom
+    g.fillStyle(0x9a9ad8, 0.28);
+    g.fillEllipse(10, 32.5, 11, 4);
+    g.fillEllipse(18, 33, 10, 3.5);
+    g.fillEllipse(25, 32.5, 9, 3);
+    g.fillStyle(0x9a9ad8, 0.12);
+    g.fillEllipse(16, 33, 24, 4);
     g.generateTexture('boo', 32, 34);
 
     // FIRE BAR - rotating fire balls with glow and bright cores
@@ -1380,6 +1533,13 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xffffff, 0.4);
     g.fillCircle(12, 5, 2);
     g.fillCircle(22, 6, 1.5);
+    // Alpha fade at the hem
+    g.fillStyle(0x8080FF, 0.28);
+    g.fillEllipse(8, 30, 8, 4);
+    g.fillEllipse(16, 31, 8, 4);
+    g.fillEllipse(24, 30, 8, 4);
+    g.fillStyle(0x8080FF, 0.12);
+    g.fillEllipse(16, 31.5, 24, 4);
     g.generateTexture('ghost', 32, 32);
 
     // SQUID - purple cephalopod with suction cups and expressive eyes
@@ -1462,6 +1622,15 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xD060D0, 0.5);
     g.fillCircle(9, 14, 1.5);
     g.fillCircle(23, 14, 1.5);
+    // Tentacle light gradients
+    g.fillStyle(0xB060B0, 0.45);
+    g.fillRect(6, 21.5, 1, 8.5);
+    g.fillRect(24, 21.5, 1, 8.5);
+    g.fillRect(11, 23.5, 1, 6.5);
+    g.fillRect(19, 23.5, 1, 6.5);
+    // Soft fade at the bottom
+    g.fillStyle(0x600060, 0.22);
+    g.fillEllipse(16, 32.5, 26, 4);
     g.generateTexture('squid', 32, 32);
 
     // UFO - metallic flying saucer with glowing lights and tractor beam
@@ -1520,17 +1689,22 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(5, 19, 0.8);
     g.fillCircle(15, 21, 0.8);
     g.fillCircle(25, 19, 0.8);
-    // Dome - metallic base
-    g.fillStyle(0x6a6a7a, 1);
+    // Small rim lights between the main ones
+    g.fillStyle(0x00FF88, 0.9);
+    g.fillCircle(11, 21.5, 1.2);
+    g.fillStyle(0xFF88FF, 0.9);
+    g.fillCircle(21, 21.5, 1.2);
+    // Dome - glassy light blue base
+    g.fillStyle(0x7ab8d8, 1);
     g.fillEllipse(16, 12, 16, 12);
-    // Dome - lighter metal
-    g.fillStyle(0x9090A0, 1);
+    // Dome - lighter blue
+    g.fillStyle(0x9fd4ec, 1);
     g.fillEllipse(16, 11, 12, 8);
     // Dome - bright highlight
-    g.fillStyle(0xB0B0C0, 1);
+    g.fillStyle(0xc4e8f8, 1);
     g.fillEllipse(14, 8, 8, 5);
     // Dome shine spot
-    g.fillStyle(0xD0D0E0, 0.7);
+    g.fillStyle(0xeafaff, 0.8);
     g.fillEllipse(13, 7, 4, 2.5);
     // Dome window
     g.fillStyle(0x3a3a5a, 0.4);
@@ -1636,6 +1810,20 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xCC4040, 0.6);
     g.fillCircle(4, 20, 1.5);
     g.fillCircle(28, 20, 1.5);
+    // Small gold crown between the horns
+    g.fillStyle(0xD8A800, 1);
+    g.fillTriangle(13.5, 7, 14.3, 3.5, 15.1, 7);
+    g.fillTriangle(15.1, 7, 16, 3, 16.9, 7);
+    g.fillTriangle(16.9, 7, 17.7, 3.5, 18.5, 7);
+    g.fillRect(13.5, 6.6, 5, 1.6);
+    g.fillStyle(0xFFE870, 0.85);
+    g.fillCircle(14.3, 4.2, 0.6);
+    g.fillCircle(16, 3.7, 0.6);
+    g.fillCircle(17.7, 4.2, 0.6);
+    // Battle scars on the shoulder plates
+    g.lineStyle(1.2, 0xD86868, 0.55);
+    g.lineBetween(3, 18, 5.5, 22);
+    g.lineBetween(26.5, 18, 29, 22);
     g.generateTexture('boss', 32, 36);
 
     g.destroy();
@@ -1646,30 +1834,31 @@ export class BootScene extends Phaser.Scene {
     // Shadow under coin
     g.fillStyle(0x000000, 0.3);
     g.fillEllipse(12, 30, 14, 4);
-    // Dark gold base / border
-    g.fillStyle(0xc8960c, 1);
+    g.fillStyle(0x7a5408, 1);
     g.fillEllipse(12, 14, 20, 28);
-    // Main gold body with gradient layers
+    g.fillStyle(0xc8960c, 1);
+    g.fillEllipse(12, 13.6, 18, 26);
+    // Main gold body
     g.fillStyle(0xf8c830, 1);
-    g.fillEllipse(12, 13, 18, 26);
+    g.fillEllipse(12, 13.4, 15, 23.5);
     // Lighter gold highlight (upper-left)
     g.fillStyle(0xfce070, 1);
-    g.fillEllipse(10, 10, 14, 20);
-    // Brightest center shine
-    g.fillStyle(0xfef8a0, 0.8);
-    g.fillEllipse(9, 8, 8, 12);
-    // Horizontal stripe pattern (rotating coin illusion)
-    g.fillStyle(0xd4a020, 0.55);
-    g.fillRect(3, 9, 18, 2);
-    g.fillRect(3, 13, 18, 2);
-    g.fillRect(3, 17, 18, 2);
-    g.fillRect(3, 21, 18, 1.5);
-    // Inner dark ellipse for depth
-    g.lineStyle(1, 0x9e7a08, 0.6);
-    g.strokeEllipse(12, 14, 14, 22);
-    // Small bright highlight dot
-    g.fillStyle(0xffffff, 0.9);
-    g.fillCircle(8, 8, 1.8);
+    g.fillEllipse(10, 10, 11, 17);
+    g.lineStyle(1.6, 0x9e6c04, 0.9);
+    g.strokeEllipse(12, 13.5, 10.5, 17);
+    g.lineStyle(1, 0xffe890, 0.8);
+    g.strokeEllipse(12, 13, 9, 20);
+    g.fillStyle(0xd4a020, 0.5);
+    g.fillRect(5, 11, 14, 1.5);
+    g.fillRect(5, 16, 14, 1.5);
+    g.fillStyle(0xfef8a0, 0.75);
+    g.fillEllipse(9.5, 8.5, 7, 10);
+    g.fillStyle(0xffffff, 0.95);
+    g.fillCircle(8, 7.5, 1.9);
+    g.fillStyle(0xffffff, 0.5);
+    g.fillCircle(10.4, 5.6, 1);
+    g.fillStyle(0xfff4b0, 0.5);
+    g.fillEllipse(12, 24, 9, 2.5);
     g.generateTexture('coin', 24, 32);
     g.destroy();
   }
@@ -1678,319 +1867,489 @@ export class BootScene extends Phaser.Scene {
     const g = this.add.graphics();
     
     // Grass ground with grass top, moss/grass blade detail
-    g.fillStyle(0x6e3c08, 1); g.fillRect(0, 12, 32, 20);
-    g.fillStyle(0x7a4210, 1); g.fillRect(0, 14, 32, 16);
-    // Dirt texture dots
-    g.fillStyle(0x5a2a00, 1); g.fillCircle(5, 22, 1.5); g.fillCircle(16, 26, 1.2);
-    g.fillCircle(25, 20, 1.5); g.fillCircle(10, 28, 1);
-    // Grass top with gradient
-    g.fillStyle(0x1e7818, 1); g.fillRoundedRect(0, 0, 32, 14, { tl: 4, tr: 4, bl: 0, br: 0 });
-    g.fillStyle(0x289828, 1); g.fillRoundedRect(0, 0, 32, 10, { tl: 4, tr: 4, bl: 0, br: 0 });
-    g.fillStyle(0x3cb838, 1); g.fillRoundedRect(0, 0, 32, 6, { tl: 4, tr: 4, bl: 0, br: 0 });
-    // Grass blade tufts
+    this.fillVGradient(g, 0, 12, 32, 20, 0x8a4c10, 0x5a2e04, 10);
+    g.fillStyle(0x4a2602, 0.55);
+    g.fillCircle(5, 22, 1.6); g.fillCircle(16, 26, 1.3);
+    g.fillCircle(25, 20, 1.6); g.fillCircle(10, 28, 1.1);
+    g.fillCircle(28, 27, 1.2); g.fillCircle(2, 25, 1);
+    g.fillStyle(0x9a5c1c, 0.5);
+    g.fillCircle(12, 20, 1.4); g.fillCircle(21, 24, 1.3);
+    g.fillStyle(0x3a1c00, 0.4);
+    g.fillRoundedRect(18, 16, 7, 4, 2);
+    g.fillRoundedRect(3, 27, 6, 3, 1.5);
+    this.fillVGradient(g, 0, 0, 32, 14, 0x3cb838, 0x1e7818, 6);
+    g.fillStyle(0x54d84c, 0.8);
+    g.fillRoundedRect(0, 0, 32, 5, { tl: 4, tr: 4, bl: 0, br: 0 });
     g.fillStyle(0x289828, 1);
     g.fillTriangle(4, 12, 7, 4, 10, 12);
     g.fillTriangle(12, 12, 16, 2, 20, 12);
     g.fillTriangle(22, 12, 26, 4, 30, 12);
-    g.fillStyle(0x3cb838, 1);
+    g.fillStyle(0x54d84c, 0.9);
     g.fillTriangle(7, 12, 9, 4, 11, 12);
     g.fillTriangle(16, 12, 19, 3, 22, 12);
     g.fillTriangle(25, 12, 28, 5, 31, 12);
-    // Moss detail
+    g.fillStyle(0x0a3c08, 1);
+    g.fillTriangle(5, 12, 6, 5, 7, 12);
+    g.fillTriangle(15, 12, 16, 3, 17, 12);
+    g.fillTriangle(27, 12, 28, 5, 29, 12);
     g.fillStyle(0x1e7818, 0.4); g.fillCircle(6, 8, 2.5);
     g.fillCircle(17, 9, 2); g.fillCircle(26, 7, 2.5);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x271500);
     g.generateTexture('ground_grass', 32, 32);
 
     // Cave ground
     g.clear();
-    g.fillStyle(0x4a4a5a, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0x3a3a4a, 1); g.fillRect(0, 0, 32, 8);
-    g.fillStyle(0x5a5a6a, 1); g.fillRect(8, 8, 4, 4); g.fillRect(20, 16, 6, 6);
+    this.fillVGradient(g, 0, 0, 32, 32, 0x5a5a70, 0x3a3a4c, 12);
+    g.fillStyle(0x6e6e86, 0.6);
+    g.fillRoundedRect(6, 6, 7, 5, 1); g.fillRoundedRect(19, 15, 8, 6, 1);
+    g.fillRoundedRect(9, 24, 5, 4, 1);
+    g.fillStyle(0x2c2c3c, 0.8);
+    g.fillRoundedRect(23, 4, 6, 4, 1); g.fillRoundedRect(3, 15, 5, 4, 1);
+    g.lineStyle(1, 0x2a2a3a, 0.9);
+    g.lineBetween(8, 2, 12, 12); g.lineBetween(12, 12, 10, 20);
+    g.lineBetween(22, 18, 26, 28);
+    g.fillStyle(0x8a8aa0, 0.35);
+    g.fillCircle(9, 7, 1.2); g.fillCircle(24, 17, 1.2);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x1e1e2c);
     g.generateTexture('ground_cave', 32, 32);
 
     // Castle ground - improved brick pattern with variation
     g.clear();
-    // Mortar base
-    g.fillStyle(0x303030, 1); g.fillRect(0, 0, 32, 32);
-    // Varied brick colors
-    g.fillStyle(0x555555, 1); g.fillRect(1, 1, 14, 14);
-    g.fillStyle(0x484848, 1); g.fillRect(17, 1, 14, 14);
-    g.fillStyle(0x505050, 1); g.fillRect(1, 17, 14, 14);
-    g.fillStyle(0x585858, 1); g.fillRect(17, 17, 14, 14);
-    // Brick highlights
-    g.fillStyle(0x666666, 0.5); g.fillRect(1, 1, 14, 3);
-    g.fillStyle(0x5c5c5c, 0.5); g.fillRect(17, 1, 14, 2);
-    g.fillStyle(0x606060, 0.4); g.fillRect(1, 17, 14, 2);
-    g.fillStyle(0x6a6a6a, 0.4); g.fillRect(17, 17, 14, 2);
-    // Crack/weathering detail
-    g.fillStyle(0x2a2a2a, 0.6); g.fillRect(6, 6, 3, 1);
-    g.fillStyle(0x3a3a3a, 0.5); g.fillRect(22, 20, 2, 2);
+    g.fillStyle(0x282828, 1); g.fillRect(0, 0, 32, 32);
+    const castleBricks: [number, number, number, number, number][] = [
+      [1, 1, 14, 14, 0x565656], [17, 1, 14, 14, 0x4a4a4a],
+      [1, 17, 14, 14, 0x505050], [17, 17, 14, 14, 0x5a5a5a]
+    ];
+    for (const [bx, by, bw, bh, col] of castleBricks) {
+      g.fillStyle(col, 1);
+      g.fillRect(bx, by, bw, bh);
+      g.fillStyle(0x727272, 0.5);
+      g.fillRect(bx + 1, by + 1, bw - 2, 3);
+      g.fillStyle(0x3a3a3a, 0.6);
+      g.fillRect(bx + 1, by + bh - 4, bw - 2, 3);
+      g.fillStyle(0x3a3a3a, 0.4);
+      g.fillRect(bx + bw - 3, by + 1, 2, bh - 2);
+    }
+    g.fillStyle(0x8a8a8a, 0.45);
+    g.fillRect(2, 2, 4, 1.5); g.fillRect(19, 2, 3, 1.5);
+    g.fillStyle(0x1e1e1e, 0.7);
+    g.fillRect(6, 6, 3, 1); g.fillRect(22, 20, 2, 2);
+    g.lineStyle(1, 0x1e1e1e, 0.7);
+    g.lineBetween(9, 8, 11, 12);
+    g.fillStyle(0x8a8a8a, 0.35);
+    g.fillCircle(24, 8, 1); g.fillCircle(6, 24, 1);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x181818);
     g.generateTexture('ground_castle', 32, 32);
 
     // Question block - 3D with beveled edges, brighter gold, animated-looking ?
     g.clear();
-    // Dark bottom-right bevel (3D shadow)
-    g.fillStyle(0x805000, 1);
-    g.fillRoundedRect(2, 2, 30, 30, 5);
-    // Bright top-left bevel
-    g.fillStyle(0xf8b800, 1);
-    g.fillRoundedRect(0, 0, 30, 30, 5);
-    // Main gold fill with gradient
-    g.fillStyle(0xf8c830, 1);
-    g.fillRoundedRect(2, 2, 28, 28, 4);
-    // Inner bright area
-    g.fillStyle(0xfcd850, 1);
-    g.fillRoundedRect(4, 4, 20, 24, 2);
-    // Highlight corner spots
-    g.fillStyle(0xfef0a0, 0.7);
-    g.fillCircle(6, 6, 4);
-    g.fillCircle(26, 6, 3);
-    // Dark shadow edge bottom-right
-    g.fillStyle(0x906000, 0.5);
-    g.fillRoundedRect(28, 2, 4, 28, 3);
-    g.fillRoundedRect(2, 28, 28, 4, 3);
-    // "?" mark - dark outline for animated look
-    g.fillStyle(0x3a2000, 1);
+    g.fillStyle(0x5a3a00, 1);
+    g.fillRoundedRect(0, 0, 32, 32, 5);
+    this.fillVGradient(g, 1, 1, 30, 30, 0xfcd44c, 0xc07810, 10);
+    g.fillStyle(0xffe890, 0.55);
+    g.fillRoundedRect(2, 2, 28, 6, 3);
+    g.fillStyle(0x8a5410, 0.45);
+    g.fillRoundedRect(2, 26, 28, 5, 3);
+    g.fillStyle(0xfff4b8, 0.35);
+    g.fillEllipse(8, 8, 10, 6);
+    this.rivet(g, 4.5, 4.5, 2.2);
+    this.rivet(g, 27.5, 4.5, 2.2);
+    this.rivet(g, 4.5, 27.5, 2.2);
+    this.rivet(g, 27.5, 27.5, 2.2);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x5a3a00, 5);
+    g.fillStyle(0x2a1400, 0.55);
+    g.fillRect(12, 9, 10, 5);
+    g.fillRect(14, 14, 6, 10);
+    g.fillRect(14, 26, 6, 4);
+    g.fillStyle(0xf8f8f8, 1);
     g.fillRect(11, 7, 10, 5);
     g.fillRect(13, 12, 6, 10);
     g.fillRect(13, 24, 6, 4);
+    g.fillStyle(0xffffff, 0.85);
     g.fillRect(12, 8, 2, 3);
     g.fillRect(17, 8, 2, 3);
-    // "?" white interior
-    g.fillStyle(0xffffff, 1);
-    g.fillRect(12, 8, 8, 3);
-    g.fillRect(14, 13, 4, 8);
-    g.fillRect(14, 25, 4, 2);
-    // "?" highlight on top stroke
-    g.fillStyle(0xffffff, 0.3);
-    g.fillRect(12, 8, 8, 1);
+    g.fillStyle(0xffffff, 0.35);
+    g.fillRect(12, 8, 8, 1.2);
+    g.fillRect(13, 12, 1.5, 8);
+    g.fillStyle(0x8a5410, 0.35);
+    g.fillRect(12, 11, 9, 1);
     g.generateTexture('question', 32, 32);
 
     // Used question block
     g.clear();
-    // Darker, flat used block
-    g.fillStyle(0x907020, 1);
-    g.fillRoundedRect(0, 0, 32, 32, 4);
-    g.fillStyle(0x806010, 1);
-    g.fillRoundedRect(1, 1, 30, 30, 4);
-    g.fillStyle(0xa08030, 1);
-    g.fillRoundedRect(2, 2, 28, 28, 3);
-    // Subtle crack lines
-    g.lineStyle(1, 0x6a4a08, 0.5);
+    g.fillStyle(0x4a3a20, 1);
+    g.fillRoundedRect(0, 0, 32, 32, 5);
+    this.fillVGradient(g, 1, 1, 30, 30, 0x9c8450, 0x6e5428, 8);
+    g.fillStyle(0xb09a64, 0.5);
+    g.fillRoundedRect(2, 2, 28, 6, 3);
+    g.fillStyle(0x54401c, 0.55);
+    g.fillRoundedRect(2, 26, 28, 5, 3);
+    this.rivet(g, 4.5, 4.5, 2.2);
+    this.rivet(g, 27.5, 4.5, 2.2);
+    this.rivet(g, 4.5, 27.5, 2.2);
+    this.rivet(g, 27.5, 27.5, 2.2);
+    g.lineStyle(1, 0x4a3410, 0.8);
     g.lineBetween(8, 6, 24, 18);
     g.lineBetween(22, 8, 18, 24);
-    // Dull highlight
-    g.fillStyle(0xb09040, 0.4);
-    g.fillCircle(6, 6, 3);
+    g.lineBetween(10, 20, 14, 27);
+    g.fillStyle(0x2c2008, 1);
+    g.fillRect(11, 8, 10, 4);
+    g.fillRect(13, 13, 6, 8);
+    g.fillRect(13, 24, 6, 4);
+    g.fillStyle(0x8a7440, 0.4);
+    g.fillCircle(7, 7, 3);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x3c2c10, 5);
     g.generateTexture('question_used', 32, 32);
 
     // Pipe - 3D with highlights
     g.clear();
-    // Pipe body
-    g.fillStyle(0x1a7a1a, 1); g.fillRoundedRect(4, 0, 56, 64, 4);
-    // Dark right edge
-    g.fillStyle(0x0a5a0a, 1); g.fillRoundedRect(44, 2, 16, 60, 3);
-    // Light left highlight
-    g.fillStyle(0x2ac82a, 1); g.fillRoundedRect(6, 2, 14, 60, 3);
-    // Center gradient
-    g.fillStyle(0x1a9a1a, 1); g.fillRoundedRect(18, 2, 28, 60, 3);
-    // Subtle horizontal banding effect
-    g.fillStyle(0x1a8a1a, 0.4);
-    g.fillRect(8, 12, 48, 2);
-    g.fillRect(8, 28, 48, 2);
-    g.fillRect(8, 44, 48, 2);
-    // Main outline
+    g.fillStyle(0x004a00, 1); g.fillRoundedRect(4, 0, 56, 64, 4);
+    const pipeCols = [0x0f6a0f, 0x1a8a1a, 0x2ab42a, 0x3cd83c, 0x4ce84c, 0x3cd83c, 0x2ab42a, 0x1a8a1a, 0x0f6a0f, 0x0a520a];
+    const pipeBandW = 48 / pipeCols.length;
+    for (let i = 0; i < pipeCols.length; i++) {
+      g.fillStyle(pipeCols[i], 1);
+      g.fillRect(8 + pipeBandW * i, 2, pipeBandW + 0.5, 60);
+    }
+    g.fillStyle(0xffffff, 0.22);
+    g.fillRect(24, 2, 8, 60);
+    g.fillStyle(0x0a4a0a, 0.45);
+    g.fillRect(8, 14, 48, 2);
+    g.fillRect(8, 30, 48, 2);
+    g.fillRect(8, 46, 48, 2);
+    g.fillStyle(0x54f054, 0.5);
+    g.fillRect(8, 3, 48, 2);
+    g.fillStyle(0x002800, 0.5);
+    g.fillRect(8, 60, 48, 2);
     g.lineStyle(2, 0x005000, 1);
     g.strokeRoundedRect(4, 0, 56, 64, 4);
     g.generateTexture('pipe', 64, 64);
 
     // Pipe top (lip) - better rim detail
     g.clear();
-    // Rim dark base
-    g.fillStyle(0x1a7a1a, 1); g.fillRoundedRect(0, 0, 80, 24, 5);
-    // Rim left highlight
-    g.fillStyle(0x2ac82a, 1); g.fillRoundedRect(2, 0, 16, 24, 4);
-    // Rim right shadow
-    g.fillStyle(0x0a5a0a, 1); g.fillRoundedRect(60, 2, 18, 20, 3);
-    // Rim center/body
-    g.fillStyle(0x1a9a1a, 1); g.fillRoundedRect(16, 0, 46, 24, 4);
-    // Inner hole (where pipe connects)
-    g.fillStyle(0x0a3a0a, 1); g.fillRoundedRect(6, 8, 68, 8, 3);
-    g.fillStyle(0x002000, 0.6); g.fillRoundedRect(8, 9, 64, 6, 2);
-    // Rim top highlight stripe
-    g.fillStyle(0x3cd83c, 0.6); g.fillRect(4, 2, 72, 3);
-    // Rim outline
+    g.fillStyle(0x004a00, 1); g.fillRoundedRect(0, 0, 80, 24, 5);
+    for (let i = 0; i < pipeCols.length; i++) {
+      g.fillStyle(pipeCols[i], 1);
+      g.fillRect(4 + (72 / pipeCols.length) * i, 2, 72 / pipeCols.length + 0.5, 20);
+    }
+    g.fillStyle(0xffffff, 0.25);
+    g.fillRect(28, 2, 10, 20);
+    g.fillStyle(0x0a3a0a, 1); g.fillRoundedRect(6, 8, 68, 9, 3);
+    g.fillStyle(0x001800, 0.85); g.fillRoundedRect(9, 9, 62, 7, 2);
+    g.fillStyle(0x1a6a1a, 0.6);
+    g.fillRect(9, 15, 62, 1.5);
+    g.fillStyle(0x54f054, 0.55); g.fillRect(4, 2, 72, 2.5);
+    g.fillStyle(0x002800, 0.5); g.fillRect(4, 20, 72, 2);
     g.lineStyle(2, 0x005000, 1);
     g.strokeRoundedRect(0, 0, 80, 24, 5);
     g.generateTexture('pipe_top', 80, 24);
 
     // Brick - more texture detail, mortar lines between bricks, highlight
     g.clear();
-    // Mortar background
-    g.fillStyle(0x5a3000, 1); g.fillRect(0, 0, 32, 32);
-    // Top-left two bricks
-    g.fillStyle(0xb8440a, 1); g.fillRect(1, 1, 14, 14);
-    g.fillStyle(0xc84c0c, 1); g.fillRect(2, 2, 12, 12);
-    // Bottom-right two bricks
-    g.fillStyle(0xa83c08, 1); g.fillRect(17, 17, 14, 14);
-    g.fillStyle(0xb8440a, 1); g.fillRect(18, 18, 12, 12);
-    // Right brick (top)
-    g.fillStyle(0xc04a0a, 1); g.fillRect(17, 1, 14, 14);
-    g.fillStyle(0xcc500e, 1); g.fillRect(18, 2, 12, 12);
-    // Left brick (bottom)
-    g.fillStyle(0xac3e08, 1); g.fillRect(1, 17, 14, 14);
-    g.fillStyle(0xbc460c, 1); g.fillRect(2, 18, 12, 12);
-    // Brick highlights (top edges)
-    g.fillStyle(0xe86830, 0.4);
-    g.fillRect(2, 2, 12, 2);
-    g.fillRect(18, 2, 12, 2);
-    g.fillRect(2, 18, 12, 2);
-    g.fillRect(18, 18, 12, 1.5);
-    // Mortar grain dots
-    g.fillStyle(0x6a3800, 0.5); g.fillCircle(8, 16, 1);
-    g.fillCircle(24, 16, 1); g.fillCircle(16, 8, 1);
+    g.fillStyle(0xd8b090, 1); g.fillRect(0, 0, 32, 32);
+    const brickDefs: [number, number, number, number][] = [
+      [1, 1, 14, 14], [17, 1, 14, 14], [1, 17, 14, 14], [17, 17, 14, 14]
+    ];
+    const brickTones = [0xb8440a, 0xc84c0c, 0xa83c08, 0xc04a0a];
+    for (let bi = 0; bi < brickDefs.length; bi++) {
+      const [bx, by, bw, bh] = brickDefs[bi];
+      g.fillStyle(brickTones[bi], 1);
+      g.fillRect(bx, by, bw, bh);
+      g.fillStyle(0xd85818, 0.75);
+      g.fillRect(bx + 1, by + 1, bw - 2, 3);
+      g.fillStyle(0x782a04, 0.65);
+      g.fillRect(bx + 1, by + bh - 4, bw - 2, 3);
+      g.fillStyle(0x782a04, 0.4);
+      g.fillRect(bx + bw - 3, by + 1, 2, bh - 2);
+      g.fillStyle(0xe87838, 0.4);
+      g.fillRect(bx + 2, by + 2, 4, 2);
+    }
+    g.fillStyle(0x9a3400, 0.35); g.fillCircle(6, 8, 1.5);
+    g.fillStyle(0xd05820, 0.35); g.fillCircle(22, 22, 1.5);
+    g.fillStyle(0x9a3400, 0.3); g.fillCircle(20, 6, 1.5);
+    g.fillStyle(0xf0e8d8, 0.4);
+    g.fillCircle(8, 16, 1); g.fillCircle(24, 16, 1); g.fillCircle(16, 8, 1);
     g.fillCircle(16, 24, 1);
-    // Brick texture noise
-    g.fillStyle(0x9a3400, 0.3); g.fillCircle(6, 8, 1.5);
-    g.fillStyle(0xd05820, 0.3); g.fillCircle(22, 22, 1.5);
-    g.fillStyle(0x9a3400, 0.25); g.fillCircle(20, 6, 1.5);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x4a1800);
     g.generateTexture('brick', 32, 32);
 
-    // Easy platform - green, pill-shaped, with shadow
     g.clear();
-    // Shadow under platform
     g.fillStyle(0x000000, 0.25);
     g.fillRoundedRect(2, 17, 60, 6, 8);
-    // Base dark edge
-    g.fillStyle(0x1a5a1a, 1); g.fillRoundedRect(0, 0, 64, 20, 10);
-    // Main body gradient
-    g.fillStyle(0x2E8B2E, 1); g.fillRoundedRect(2, 1, 60, 18, 9);
-    // Bright top highlight
-    g.fillStyle(0x3CB371, 1); g.fillRoundedRect(2, 1, 60, 9, { tl: 9, tr: 9, bl: 0, br: 0 });
-    // Top shine stripe
-    g.fillStyle(0x60d870, 0.5); g.fillRoundedRect(4, 2, 56, 4, 3);
-    // Slight border
-    g.lineStyle(1, 0x1a5a1a, 0.4); g.strokeRoundedRect(2, 1, 60, 18, 9);
+    g.fillStyle(0x123a10, 1); g.fillRoundedRect(0, 0, 64, 20, 10);
+    this.fillVGradient(g, 2, 1, 60, 18, 0x4cc458, 0x22872e, 8);
+    g.fillStyle(0x6ce478, 0.6); g.fillRoundedRect(4, 2, 56, 4, 3);
+    g.fillStyle(0x1a5a1a, 0.5);
+    g.fillRect(12, 4, 1.5, 14); g.fillRect(30, 3, 1.5, 15); g.fillRect(48, 4, 1.5, 14);
+    g.fillStyle(0x9a7440, 0.7);
+    g.fillCircle(22, 12, 1.8); g.fillCircle(41, 9, 1.5);
+    g.lineStyle(1, 0x123a10, 0.55); g.strokeRoundedRect(2, 1, 60, 18, 9);
     g.generateTexture('platform_easy', 64, 24);
 
-    // Medium platform - yellow/gold, pill-shaped, with shadow
     g.clear();
     g.fillStyle(0x000000, 0.25);
     g.fillRoundedRect(2, 17, 60, 6, 8);
-    g.fillStyle(0x8B6A10, 1); g.fillRoundedRect(0, 0, 64, 20, 10);
-    g.fillStyle(0xDAA520, 1); g.fillRoundedRect(2, 1, 60, 18, 9);
-    g.fillStyle(0xFFD700, 1); g.fillRoundedRect(2, 1, 60, 9, { tl: 9, tr: 9, bl: 0, br: 0 });
-    g.fillStyle(0xffe870, 0.5); g.fillRoundedRect(4, 2, 56, 4, 3);
-    g.lineStyle(1, 0xB8860B, 0.5); g.strokeRoundedRect(2, 1, 60, 18, 9);
+    g.fillStyle(0x6e520a, 1); g.fillRoundedRect(0, 0, 64, 20, 10);
+    this.fillVGradient(g, 2, 1, 60, 18, 0xffd85c, 0xb8860b, 8);
+    g.fillStyle(0xffe890, 0.6); g.fillRoundedRect(4, 2, 56, 4, 3);
+    g.fillStyle(0x8a6410, 0.45);
+    g.fillRect(4, 11, 56, 1.5);
+    g.fillStyle(0xfff4c0, 0.5);
+    g.fillRect(10, 4, 10, 2);
+    g.fillStyle(0x5a3e08, 1);
+    g.fillCircle(8, 15, 1.6); g.fillCircle(32, 15, 1.6); g.fillCircle(56, 15, 1.6);
+    g.lineStyle(1, 0x6e520a, 0.6); g.strokeRoundedRect(2, 1, 60, 18, 9);
     g.generateTexture('platform_medium', 64, 24);
 
-    // Hard platform - red, pill-shaped, with shadow
     g.clear();
     g.fillStyle(0x000000, 0.25);
     g.fillRoundedRect(2, 17, 60, 6, 8);
-    g.fillStyle(0x5a0000, 1); g.fillRoundedRect(0, 0, 64, 20, 10);
-    g.fillStyle(0xB22222, 1); g.fillRoundedRect(2, 1, 60, 18, 9);
-    g.fillStyle(0xDC143C, 1); g.fillRoundedRect(2, 1, 60, 9, { tl: 9, tr: 9, bl: 0, br: 0 });
-    g.fillStyle(0xf06050, 0.5); g.fillRoundedRect(4, 2, 56, 4, 3);
-    g.lineStyle(1, 0x8B0000, 0.5); g.strokeRoundedRect(2, 1, 60, 18, 9);
+    g.fillStyle(0x2a0004, 1); g.fillRoundedRect(0, 0, 64, 20, 10);
+    this.fillVGradient(g, 2, 1, 60, 18, 0xd8404e, 0x7a1018, 8);
+    g.fillStyle(0xff5c68, 0.65); g.fillRoundedRect(4, 2, 56, 4, 3);
+    g.fillStyle(0xff8890, 0.5); g.fillRect(8, 3, 20, 1.5);
+    g.fillStyle(0x4a0008, 0.6);
+    g.fillRect(4, 14, 56, 2);
+    g.lineStyle(2, 0xffc448, 0.35); g.strokeRoundedRect(3, 2, 58, 16, 8);
+    g.lineStyle(1, 0x4a0008, 0.6); g.strokeRoundedRect(2, 1, 60, 18, 9);
     g.generateTexture('platform_hard', 64, 24);
 
-    // Cloud block (platform) - with shadow/border to distinguish from background
     g.clear();
-    g.fillStyle(0xD2691E, 1);
-    g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0xF4A460, 1);
-    g.fillRect(2, 2, 28, 4);
-    g.fillStyle(0xFFF8DC, 1);
-    g.fillCircle(10, 18, 8);
-    g.fillCircle(22, 16, 7);
-    g.fillCircle(16, 22, 6);
+    g.fillStyle(0x9ab4d8, 1); g.fillRect(0, 14, 32, 18);
+    g.fillStyle(0xffffff, 1);
+    g.fillCircle(9, 15, 8); g.fillCircle(20, 13, 9); g.fillCircle(28, 16, 6);
+    g.fillCircle(4, 17, 5); g.fillCircle(15, 18, 7);
+    g.fillRect(3, 15, 27, 8);
+    g.fillStyle(0xd8ecff, 0.9);
+    g.fillCircle(8, 12, 5); g.fillCircle(19, 10, 6);
+    g.fillStyle(0x7c98c0, 0.7);
+    g.fillEllipse(16, 22, 24, 7);
+    g.fillStyle(0x5a74a0, 0.5);
+    g.fillEllipse(16, 26, 18, 6);
+    g.fillStyle(0xffffff, 0.9);
+    g.fillCircle(17, 9, 1.6); g.fillCircle(6, 13, 1.2);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x4a6494, 6);
     g.generateTexture('cloud_block', 32, 32);
 
-    // Ruins ground - ancient stone blocks
     g.clear();
-    g.fillStyle(0x8B7355, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0xA0522D, 1); g.fillRect(1, 1, 14, 14);
-    g.fillStyle(0x6B5344, 1); g.fillRect(17, 17, 14, 14);
-    g.fillStyle(0x9B8365, 1); g.fillRect(3, 3, 10, 10);
-    g.fillStyle(0x7B6354, 1); g.fillRect(19, 19, 10, 10);
+    g.fillStyle(0x5a4428, 1); g.fillRect(0, 0, 32, 32);
+    const ruinBricks: [number, number, number, number, number][] = [
+      [1, 1, 14, 14, 0x9b8365], [17, 1, 14, 14, 0x8a7355],
+      [1, 17, 14, 14, 0x7b6354], [17, 17, 14, 14, 0x9b8365]
+    ];
+    for (const [bx, by, bw, bh, col] of ruinBricks) {
+      g.fillStyle(col, 1);
+      g.fillRect(bx, by, bw, bh);
+      g.fillStyle(0xc0a880, 0.55);
+      g.fillRect(bx + 1, by + 1, bw - 2, 3);
+      g.fillStyle(0x5a442c, 0.6);
+      g.fillRect(bx + 1, by + bh - 4, bw - 2, 3);
+    }
+    g.lineStyle(1, 0x4a3820, 0.8);
+    g.lineBetween(6, 5, 9, 12); g.lineBetween(9, 12, 7, 15);
+    g.lineBetween(24, 20, 26, 27);
+    g.fillStyle(0x3a6e2a, 0.5);
+    g.fillEllipse(5, 26, 7, 5); g.fillEllipse(27, 5, 6, 4);
+    g.fillStyle(0x8a9070, 0.35);
+    g.fillCircle(20, 10, 1.5); g.fillCircle(10, 21, 1.5);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x3c2c14);
     g.generateTexture('ground_ruins', 32, 32);
 
-    // Sand ground - desert floor
     g.clear();
-    g.fillStyle(0xF4A460, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0xDEB887, 1); g.fillRect(4, 4, 8, 8);
-    g.fillRect(20, 12, 6, 6);
-    g.fillRect(12, 22, 10, 6);
-    g.fillStyle(0xE8C090, 0.6); g.fillCircle(8, 16, 4);
-    g.fillCircle(24, 8, 3);
+    this.fillVGradient(g, 0, 0, 32, 32, 0xf0c078, 0xd4965a, 10);
+    g.fillStyle(0xe8d0a0, 0.55);
+    g.fillEllipse(9, 9, 14, 6); g.fillEllipse(24, 16, 12, 5);
+    g.fillEllipse(10, 24, 12, 5);
+    g.fillStyle(0xc08848, 0.55);
+    g.fillEllipse(22, 10, 12, 5); g.fillEllipse(8, 18, 10, 4);
+    g.fillEllipse(26, 26, 10, 4);
+    g.fillStyle(0xa87038, 0.5);
+    g.fillCircle(6, 14, 1.4); g.fillCircle(18, 6, 1.2);
+    g.fillCircle(28, 20, 1.3); g.fillCircle(13, 29, 1.2);
+    g.fillStyle(0xf4dca8, 0.6);
+    g.fillCircle(14, 12, 1.2); g.fillCircle(5, 27, 1); g.fillCircle(25, 7, 1);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x9a6a34);
     g.generateTexture('ground_sand', 32, 32);
 
-    // Water ground - underwater floor
     g.clear();
-    g.fillStyle(0x006994, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0x0088AA, 1); g.fillRect(0, 0, 32, 8);
-    g.fillStyle(0x00A0CC, 0.6); g.fillCircle(8, 20, 6);
-    g.fillCircle(20, 14, 5);
-    g.fillCircle(26, 24, 4);
+    this.fillVGradient(g, 0, 0, 32, 32, 0x0a88b8, 0x004d78, 10);
+    g.fillStyle(0x18a8d4, 0.7);
+    g.fillEllipse(9, 10, 14, 7); g.fillEllipse(23, 18, 12, 6);
+    g.fillEllipse(12, 26, 12, 6);
+    g.fillStyle(0x66d8f0, 0.4);
+    g.fillEllipse(20, 8, 10, 4); g.fillEllipse(6, 20, 9, 5);
+    g.fillStyle(0xd8c090, 0.55);
+    g.fillCircle(7, 27, 1.8); g.fillCircle(26, 26, 1.5);
+    g.fillCircle(17, 30, 1.4); g.fillCircle(29, 12, 1.3);
+    g.fillStyle(0xffe89c, 0.5);
+    g.fillCircle(4, 6, 1.2); g.fillCircle(21, 22, 1);
+    g.fillStyle(0x043a5c, 0.6);
+    g.fillEllipse(16, 14, 8, 4);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x02324e);
     g.generateTexture('ground_water', 32, 32);
 
-    // Snow ground - icy surface
     g.clear();
-    g.fillStyle(0xFFFAFA, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0xE0FFFF, 1); g.fillRect(0, 0, 32, 16);
-    g.fillStyle(0xADD8E6, 0.5); g.fillCircle(6, 8, 4);
-    g.fillCircle(18, 12, 3);
-    g.fillCircle(26, 6, 5);
-    g.fillStyle(0xFFFFFF, 0.8); g.fillRect(4, 20, 6, 3);
-    g.fillRect(16, 24, 8, 3);
+    this.fillVGradient(g, 0, 0, 32, 32, 0xffffff, 0xcfe8f4, 10);
+    g.fillStyle(0xa8d0e4, 0.5);
+    g.fillEllipse(9, 10, 14, 6); g.fillEllipse(24, 17, 12, 5);
+    g.fillEllipse(11, 25, 13, 5);
+    g.fillStyle(0x9cc4dc, 0.4);
+    g.fillRoundedRect(18, 22, 9, 5, 2.5);
+    g.fillRoundedRect(3, 27, 8, 4, 2);
+    g.fillStyle(0x86c8e8, 0.55);
+    g.fillCircle(6, 8, 1.6); g.fillCircle(19, 13, 1.3);
+    g.fillCircle(27, 7, 1.5); g.fillCircle(15, 20, 1.2);
+    g.fillStyle(0xffffff, 0.95);
+    g.fillCircle(9, 6, 1.2); g.fillCircle(22, 11, 1.1);
+    g.fillCircle(25, 24, 1.2); g.fillCircle(5, 22, 1);
+    g.fillStyle(0xffffff, 0.7);
+    g.fillRect(15, 5, 1.5, 4); g.fillRect(13.7, 6.2, 4, 1.5);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x8ab4cc);
     g.generateTexture('ground_snow', 32, 32);
 
-    // Lava ground - molten rock
     g.clear();
-    g.fillStyle(0x8B0000, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0xFF4500, 1); g.fillRect(2, 2, 12, 12);
-    g.fillStyle(0xFF6347, 1); g.fillRect(18, 8, 10, 10);
-    g.fillStyle(0xFFD700, 0.7); g.fillCircle(8, 20, 4);
-    g.fillCircle(22, 18, 3);
-    g.fillStyle(0xFF0000, 1); g.fillRect(6, 6, 4, 4);
+    this.fillVGradient(g, 0, 0, 32, 32, 0xff7830, 0xd42c08, 10);
+    g.fillStyle(0xffb020, 0.8);
+    g.fillEllipse(9, 12, 12, 7); g.fillEllipse(23, 20, 11, 6);
+    g.fillStyle(0xffe060, 0.75);
+    g.fillEllipse(9, 11, 7, 4); g.fillEllipse(23, 19, 6, 3.5);
+    g.fillStyle(0x3a0e04, 1);
+    g.fillRoundedRect(2, 3, 9, 5, 2); g.fillRoundedRect(22, 2, 8, 5, 2);
+    g.fillRoundedRect(12, 22, 10, 6, 2.5); g.fillRoundedRect(3, 25, 8, 5, 2);
+    g.fillRoundedRect(24, 26, 6, 4, 1.5);
+    g.lineStyle(1.5, 0x3a0e04, 0.85);
+    g.lineBetween(10, 8, 14, 12); g.lineBetween(14, 8, 16, 14);
+    g.lineBetween(20, 20, 26, 16); g.lineBetween(26, 16, 30, 18);
+    g.lineBetween(6, 20, 12, 24); g.lineBetween(18, 4, 21, 8);
+    g.fillStyle(0x8a1a02, 0.6);
+    g.fillCircle(17, 20, 2); g.fillCircle(5, 15, 1.6);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x2a0802);
     g.generateTexture('ground_lava', 32, 32);
 
-    // Metal ground - industrial floor
     g.clear();
-    g.fillStyle(0x708090, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0xA9A9A9, 1); g.fillRect(1, 1, 30, 8);
-    g.lineStyle(1, 0x505050, 1);
-    g.strokeRect(1, 1, 30, 8);
-    g.strokeRect(1, 12, 15, 10);
-    g.strokeRect(17, 12, 14, 10);
-    g.fillStyle(0x808080, 1);
-    g.fillRect(2, 2, 4, 4);
-    g.fillRect(14, 2, 4, 4);
-    g.fillRect(26, 2, 4, 4);
+    this.fillVGradient(g, 0, 0, 32, 32, 0xb0bcc4, 0x6e7a84, 10);
+    for (let i = 0; i < 9; i++) {
+      g.fillStyle(0x8a96a0, 0.35);
+      g.fillRect(2, 3 + i * 3.2, 28, 1);
+      g.fillStyle(0xd4dee4, 0.3);
+      g.fillRect(1, 2.4 + i * 3.2, 30, 1);
+    }
+    g.fillStyle(0xa8e4f0, 0.4);
+    g.fillRect(0, 2, 32, 3);
+    g.fillStyle(0x50585e, 0.55);
+    g.fillRect(0, 29, 32, 3);
+    g.lineStyle(1, 0x3e464c, 0.8);
+    g.strokeRect(2, 12, 12, 8); g.strokeRect(18, 12, 12, 8);
+    const metalRivets: [number, number][] = [
+      [4, 4], [28, 4], [4, 28], [28, 28]
+    ];
+    for (const [rx, ry] of metalRivets) {
+      g.fillStyle(0x3a4248, 1); g.fillCircle(rx, ry, 2.2);
+      g.fillStyle(0xb8c4cc, 1); g.fillCircle(rx - 0.4, ry - 0.4, 1.4);
+      g.fillStyle(0xeef4f8, 0.8); g.fillCircle(rx - 0.7, ry - 0.7, 0.7);
+    }
+    this.strokeOutline(g, 1, 1, 30, 30, 0x32383c);
     g.generateTexture('ground_metal', 32, 32);
 
-    // Space ground - floating platforms
     g.clear();
-    g.fillStyle(0x2F2F2F, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0x4A4A6A, 1); g.fillRect(4, 4, 24, 24);
-    g.fillStyle(0x696969, 1); g.fillRect(8, 8, 8, 8);
-    g.fillRect(18, 16, 8, 8);
-    g.fillStyle(0x808080, 0.5); g.fillCircle(12, 20, 2);
-    g.fillCircle(24, 12, 2);
+    this.fillVGradient(g, 0, 0, 32, 32, 0x3a3a5c, 0x1c1c30, 10);
+    g.fillStyle(0x4c4c74, 0.8);
+    g.fillRoundedRect(4, 4, 10, 8, 1.5); g.fillRoundedRect(18, 4, 10, 8, 1.5);
+    g.fillRoundedRect(6, 18, 9, 8, 1.5); g.fillRoundedRect(20, 17, 9, 9, 1.5);
+    g.fillStyle(0x5e5e8a, 0.5);
+    g.fillRect(4, 4, 10, 2); g.fillRect(18, 4, 10, 2);
+    g.fillStyle(0x14142a, 0.6);
+    g.fillRect(4, 11, 24, 1.5); g.fillRect(4, 16, 24, 1);
+    g.fillStyle(0xffffff, 0.9);
+    g.fillCircle(9, 7, 1); g.fillCircle(25, 6, 0.9); g.fillCircle(14, 22, 0.9);
+    g.fillCircle(28, 21, 0.8); g.fillCircle(3, 14, 0.7);
+    g.fillStyle(0x9db8ff, 0.7);
+    g.fillCircle(21, 25, 0.9);
+    g.fillStyle(0xaab8d8, 0.35);
+    g.fillCircle(12, 15, 1.2); g.fillCircle(24, 14, 1.2);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x101022);
     g.generateTexture('ground_space', 32, 32);
 
-    // Stone ground - cave/dungeon floor
     g.clear();
-    g.fillStyle(0x4a4a5a, 1); g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0x3a3a4a, 1); g.fillRect(0, 0, 32, 16);
-    g.fillStyle(0x5a5a6a, 1); g.fillRect(4, 4, 6, 6);
-    g.fillRect(18, 10, 8, 8);
-    g.fillRect(8, 20, 10, 6);
-    g.lineStyle(1, 0x2a2a3a, 1);
-    g.strokeRect(0, 0, 16, 16);
-    g.strokeRect(16, 16, 16, 16);
+    this.fillVGradient(g, 0, 0, 32, 32, 0x5c5c70, 0x3a3a4c, 10);
+    g.fillStyle(0x6e6e84, 0.55);
+    g.fillRoundedRect(4, 5, 7, 5, 1); g.fillRoundedRect(19, 11, 8, 6, 1);
+    g.fillRoundedRect(8, 21, 9, 5, 1);
+    g.fillStyle(0x323244, 0.7);
+    g.fillRoundedRect(22, 5, 6, 4, 1); g.fillRoundedRect(3, 15, 5, 4, 1);
+    g.lineStyle(1, 0x2a2a3c, 0.9);
+    g.strokeRect(0.5, 15.5, 16, 16); g.strokeRect(15.5, 15.5, 16, 16);
+    g.lineBetween(10, 3, 13, 11); g.lineBetween(13, 11, 11, 14);
+    g.lineBetween(24, 22, 28, 30);
+    g.fillStyle(0x2a2a3c, 0.7);
+    g.fillCircle(18, 19, 1.4); g.fillCircle(28, 12, 1.2);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x20202e);
     g.generateTexture('ground_stone', 32, 32);
+
+    g.clear();
+    g.fillStyle(0x000000, 0.28);
+    g.fillEllipse(16, 19, 26, 3.5);
+    g.fillStyle(0x4a1c10, 1);
+    g.fillRoundedRect(4, 13, 24, 6, 3);
+    g.fillStyle(0x6e2c1a, 1);
+    g.fillRoundedRect(5, 13, 22, 4, 2);
+    g.fillStyle(0x8a4a30, 0.8);
+    g.fillRoundedRect(6, 13.5, 20, 1.5, 1);
+    g.fillStyle(0x321208, 0.8);
+    g.fillRoundedRect(5, 17, 22, 1.5, 1);
+    g.lineStyle(2.2, 0xb8bcc4, 1);
+    g.beginPath();
+    g.arc(16, 12, 7, Phaser.Math.DegToRad(190), Phaser.Math.DegToRad(350), false);
+    g.strokePath();
+    g.beginPath();
+    g.arc(16, 9, 7, Phaser.Math.DegToRad(190), Phaser.Math.DegToRad(350), false);
+    g.strokePath();
+    g.lineStyle(1, 0xe8ecf2, 0.85);
+    g.beginPath();
+    g.arc(16, 12, 7, Phaser.Math.DegToRad(195), Phaser.Math.DegToRad(280), false);
+    g.strokePath();
+    g.lineStyle(1.6, 0x888c94, 1);
+    g.beginPath();
+    g.arc(16, 12, 4.8, Phaser.Math.DegToRad(200), Phaser.Math.DegToRad(340), false);
+    g.strokePath();
+    g.fillStyle(0x5a0e14, 1);
+    g.fillRoundedRect(2, 2, 28, 7, 3.5);
+    g.fillStyle(0xd82838, 1);
+    g.fillRoundedRect(3, 3, 26, 5, 3);
+    g.fillStyle(0xf4586a, 1);
+    g.fillRoundedRect(4, 3.6, 24, 2.2, 1.5);
+    g.fillStyle(0xffffff, 0.65);
+    g.fillEllipse(10, 4.6, 7, 1.8);
+    g.fillStyle(0x7a1018, 0.85);
+    g.fillRoundedRect(3, 6.4, 26, 1.6, 1);
+    this.strokeOutline(g, 2, 2, 28, 7, 0x2a060a, 3.5);
+    g.generateTexture('spring', 32, 20);
+
+    g.clear();
+    g.fillStyle(0x000000, 0.3);
+    g.fillEllipse(12, 14.6, 24, 3);
+    g.fillStyle(0x23262e, 1);
+    g.fillRoundedRect(1, 10, 22, 5, 2);
+    g.fillStyle(0x3c414c, 0.9);
+    g.fillRoundedRect(2, 10, 20, 2.5, 1.5);
+    g.fillStyle(0x15171c, 0.8);
+    g.fillRoundedRect(2, 13.4, 20, 1.4, 1);
+    const spikes: [number, number][] = [
+      [4, 3.8], [12, 1.6], [20, 3.8]
+    ];
+    for (const [sx, tipY] of spikes) {
+      g.fillStyle(0x3a3f4a, 1);
+      g.fillTriangle(sx - 3.5, 10.5, sx + 3.5, 10.5, sx, tipY);
+      g.fillStyle(0x8a919e, 1);
+      g.fillTriangle(sx - 3.5, 10.5, sx, 10.5, sx, tipY + 0.6);
+      g.fillStyle(0x565c68, 1);
+      g.fillTriangle(sx, 10.5, sx + 3.5, 10.5, sx, tipY);
+      g.lineStyle(1, 0xb8bec8, 0.8);
+      g.lineBetween(sx - 2, 9.4, sx - 0.5, tipY + 2.4);
+      g.fillStyle(0xf0f4f8, 0.9);
+      g.fillCircle(sx - 0.6, tipY + 1.6, 0.8);
+    }
+    this.strokeOutline(g, 1, 1, 22, 13, 0x101218);
+    g.generateTexture('spike', 24, 16);
 
     g.destroy();
   }
@@ -1999,31 +2358,80 @@ export class BootScene extends Phaser.Scene {
     const g = this.add.graphics();
     
     // TREE - detailed tree
-    g.fillStyle(0x8B4513, 1); g.fillRect(18, 30, 8, 25);
-    g.fillStyle(0x228B22, 1); g.fillCircle(22, 22, 18);
-    g.fillStyle(0x32CD32, 0.7); g.fillCircle(16, 18, 10); g.fillCircle(28, 20, 10);
-    g.fillStyle(0xFFA500, 0.6); g.fillCircle(22, 26, 4);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(22, 58, 30, 5);
+    g.fillStyle(0x4a2408, 1);
+    g.fillRoundedRect(17, 28, 10, 30, 3);
+    g.fillStyle(0x8B4513, 1);
+    g.fillRoundedRect(18, 28, 8, 30, 3);
+    g.fillStyle(0x5d3010, 0.7);
+    g.fillRect(24, 30, 2.5, 26);
+    g.fillStyle(0xa05c24, 0.6);
+    g.fillRect(19, 30, 2, 24);
+    g.fillStyle(0x6a3410, 0.8);
+    g.fillCircle(20, 42, 1.5); g.fillCircle(24, 50, 1.3);
+    g.fillStyle(0x123c0c, 1);
+    g.fillCircle(22, 22, 19);
+    g.fillStyle(0x228B22, 1);
+    g.fillCircle(22, 21, 17);
+    g.fillStyle(0x2fa42c, 1);
+    g.fillCircle(15, 17, 10); g.fillCircle(28, 19, 10);
+    g.fillCircle(22, 14, 9);
+    g.fillStyle(0x4ccc44, 0.75);
+    g.fillCircle(13, 14, 7); g.fillCircle(27, 15, 7); g.fillCircle(21, 10, 6);
+    g.fillStyle(0xffa500, 0.65);
+    g.fillCircle(18, 27, 3.5); g.fillCircle(28, 24, 3);
+    g.fillCircle(12, 22, 2.6);
+    g.fillStyle(0xffd966, 0.7);
+    g.fillCircle(17.5, 26.2, 1.4); g.fillCircle(27.6, 23.4, 1.2);
+    g.fillStyle(0xffffff, 0.4);
+    g.fillCircle(12, 11, 2.2);
     g.generateTexture('tree', 44, 60);
-    
+
     // BUSH
     g.clear();
-    g.fillStyle(0x228B22, 1); 
-    g.fillEllipse(20, 25, 40, 25);
-    g.fillEllipse(8, 28, 15, 12);
+    g.fillStyle(0x000000, 0.18);
+    g.fillEllipse(20, 32, 36, 5);
+    g.fillStyle(0x123c0c, 1);
+    g.fillEllipse(20, 24, 40, 25);
+    g.fillEllipse(8, 27, 15, 12);
     g.fillEllipse(32, 28, 15, 12);
-    g.fillStyle(0xFFA500, 0.7); g.fillCircle(15, 25, 3); g.fillCircle(28, 22, 3);
+    g.fillStyle(0x228B22, 1);
+    g.fillEllipse(20, 23, 36, 21);
+    g.fillEllipse(8, 26, 12, 10);
+    g.fillEllipse(32, 27, 12, 10);
+    g.fillStyle(0x32cd32, 0.7);
+    g.fillEllipse(15, 19, 18, 11);
+    g.fillEllipse(27, 20, 12, 9);
+    g.fillStyle(0xffa500, 0.75);
+    g.fillCircle(15, 25, 3); g.fillCircle(28, 22, 3);
+    g.fillStyle(0xffd966, 0.7);
+    g.fillCircle(14.2, 24.2, 1.3); g.fillCircle(27.2, 21.2, 1.3);
+    g.fillStyle(0xffffff, 0.35);
+    g.fillCircle(13, 17, 2);
     g.generateTexture('bush', 40, 35);
     
     // CLOUD - fluffy cloud
     g.clear();
+    g.fillStyle(0xc8d8ec, 1);
+    g.fillCircle(30, 22, 18);
+    g.fillCircle(15, 24, 12);
+    g.fillCircle(45, 24, 14);
+    g.fillCircle(25, 30, 10);
+    g.fillCircle(35, 28, 10);
     g.fillStyle(0xFFFFFF, 1);
-    g.fillCircle(30, 20, 18);
-    g.fillCircle(15, 22, 12);
-    g.fillCircle(45, 22, 14);
-    g.fillCircle(25, 28, 10);
-    g.fillCircle(35, 26, 10);
-    g.fillStyle(0xE8E8E8, 0.8);
-    g.fillCircle(25, 18, 8);
+    g.fillCircle(30, 19, 17);
+    g.fillCircle(15, 21, 11);
+    g.fillCircle(45, 21, 13);
+    g.fillCircle(25, 26, 9);
+    g.fillCircle(35, 24, 9);
+    g.fillStyle(0xE8F4FF, 0.9);
+    g.fillCircle(24, 15, 8);
+    g.fillCircle(40, 16, 7);
+    g.fillStyle(0xb4c8e0, 0.8);
+    g.fillEllipse(30, 30, 34, 8);
+    g.fillStyle(0xFFFFFF, 0.85);
+    g.fillCircle(20, 12, 3);
     g.generateTexture('cloud', 60, 40);
     
     // PIPE decoration (for decoration list)
@@ -2071,17 +2479,48 @@ export class BootScene extends Phaser.Scene {
     
     // Flower (grass world)
     g.clear();
-    g.fillStyle(0x228B22, 1); g.fillRect(10, 20, 4, 12);
-    g.fillStyle(0xFF69B4, 1); g.fillCircle(12, 16, 6);
-    g.fillStyle(0xFFFF00, 1); g.fillCircle(12, 16, 2);
+    g.fillStyle(0x123c0c, 1);
+    g.fillRoundedRect(9, 19, 6, 13, 2.5);
+    g.fillStyle(0x228B22, 1);
+    g.fillRoundedRect(10, 19, 4, 13, 2);
+    g.fillEllipse(6, 26, 6, 3);
+    g.fillStyle(0x54b830, 0.7);
+    g.fillRect(11, 20, 1.5, 10);
+    g.fillStyle(0xb03c78, 1);
+    for (let p = 0; p < 5; p++) {
+      const pa = (p / 5) * Math.PI * 2;
+      g.fillEllipse(12 + Math.cos(pa) * 4.4, 15 + Math.sin(pa) * 4.4, 5, 5);
+    }
+    g.fillStyle(0xFF69B4, 1);
+    g.fillCircle(12, 15, 5.4);
+    g.fillStyle(0xff9ec8, 0.7);
+    g.fillEllipse(10.4, 13.4, 4.5, 3.5);
+    g.fillStyle(0xFFFF00, 1);
+    g.fillCircle(12, 15, 2.4);
+    g.fillStyle(0xfff4a0, 0.9);
+    g.fillCircle(11.3, 14.3, 1);
     g.generateTexture('flower', 24, 32);
-    
+
     // Mushroom (grass world)
     g.clear();
-    g.fillStyle(0xFFFFFF, 1); g.fillCircle(12, 18, 10);
-    g.fillStyle(0xFF0000, 1); g.fillCircle(12, 14, 8);
-    g.fillStyle(0xFFFFFF, 1); g.fillCircle(10, 12, 2); g.fillCircle(14, 12, 2);
-    g.fillStyle(0x8B4513, 1); g.fillRect(10, 20, 4, 8);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(12, 26.5, 14, 3);
+    g.fillStyle(0xd8c8a8, 1);
+    g.fillRoundedRect(9, 17, 6, 10, 2.5);
+    g.fillStyle(0x8B4513, 0.5);
+    g.fillRoundedRect(12, 18, 2.5, 8, 1);
+    g.fillStyle(0x7a1010, 1);
+    g.fillEllipse(12, 12, 22, 15);
+    g.fillStyle(0xFF0000, 1);
+    g.fillEllipse(12, 11.5, 20, 13);
+    g.fillStyle(0xff6a5a, 0.7);
+    g.fillEllipse(9, 8.5, 8, 5);
+    g.fillStyle(0xFFFFFF, 1);
+    g.fillCircle(8, 10, 2.4); g.fillCircle(15, 8, 2);
+    g.fillCircle(14, 13, 1.6);
+    g.fillStyle(0xf0e8e0, 0.8);
+    g.fillCircle(8, 9.4, 1);
+    this.strokeOutline(g, 2, 4, 20, 13, 0x5a0808);
     g.generateTexture('mushroom', 24, 28);
     
     // Bat (cave world)
@@ -2107,9 +2546,26 @@ export class BootScene extends Phaser.Scene {
     
     // Torch (castle world)
     g.clear();
-    g.fillStyle(0x8B4513, 1); g.fillRect(10, 16, 4, 16);
-    g.fillStyle(0xFF4500, 0.9); g.fillTriangle(12, 0, 6, 14, 18, 14);
-    g.fillStyle(0xFFFF00, 1); g.fillTriangle(12, 6, 8, 14, 16, 14);
+    g.fillStyle(0x3a1c08, 1);
+    g.fillRoundedRect(9, 15, 6, 17, 2);
+    g.fillStyle(0x8B4513, 1);
+    g.fillRoundedRect(10, 15, 4, 17, 2);
+    g.fillStyle(0x5d3010, 0.7);
+    g.fillRect(12.5, 15, 1.5, 17);
+    g.fillStyle(0x4a4a4a, 1);
+    g.fillRoundedRect(8, 13, 8, 3, 1.5);
+    g.fillStyle(0x707070, 0.9);
+    g.fillRoundedRect(9, 13.5, 6, 1.5, 1);
+    g.fillStyle(0xd8340a, 0.35);
+    g.fillCircle(12, 8, 9);
+    g.fillStyle(0xFF4500, 1);
+    g.fillTriangle(12, 0, 6, 14, 18, 14);
+    g.fillStyle(0xFFFF00, 1);
+    g.fillTriangle(12, 5, 8, 14, 16, 14);
+    g.fillStyle(0xfff4a0, 1);
+    g.fillTriangle(12, 10, 10, 14, 14, 14);
+    g.fillStyle(0xffffff, 0.7);
+    g.fillCircle(12, 6, 1.6);
     g.generateTexture('torch', 24, 32);
     
     // Ghost (castle world)
@@ -2147,257 +2603,688 @@ export class BootScene extends Phaser.Scene {
 
     // Fence (village decoration)
     g.clear();
-    g.fillStyle(0x8B4513, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 39.5, 30, 4);
+    g.fillStyle(0x5a2c10, 1);
     g.fillRect(2, 16, 4, 24);
     g.fillRect(26, 16, 4, 24);
+    g.fillStyle(0x8B4513, 1);
+    g.fillRect(2.7, 17, 2.6, 22);
+    g.fillRect(26.7, 17, 2.6, 22);
+    g.fillStyle(0xa05c28, 0.6);
+    g.fillRect(3.3, 18, 1.2, 9);
+    g.fillRect(27.3, 18, 1.2, 9);
+    g.fillStyle(0x3a1c08, 1);
     g.fillRect(0, 12, 32, 6);
     g.fillRect(0, 26, 32, 4);
+    g.fillStyle(0x6b3a10, 1);
+    g.fillRect(0.8, 12.8, 30.4, 3);
+    g.fillRect(0.8, 26.6, 30.4, 2);
+    g.fillStyle(0xb07040, 0.45);
+    g.fillRect(0.8, 13.2, 30.4, 1);
+    g.fillStyle(0x5a2c10, 1);
     g.fillTriangle(4, 12, 4, 4, 2, 12);
     g.fillTriangle(28, 12, 28, 4, 30, 12);
+    g.fillStyle(0xa05c28, 0.8);
+    g.fillTriangle(3.4, 11, 3.4, 6.5, 2.7, 11);
+    g.lineStyle(2, 0x3a1c08, 0.9);
+    g.strokeRect(2, 16, 4, 24);
+    g.strokeRect(26, 16, 4, 24);
+    g.strokeRect(0, 12, 32, 6);
+    g.strokeRect(0, 26, 32, 4);
     g.generateTexture('fence', 32, 40);
 
     // Balloon (sky decoration)
     g.clear();
-    g.fillStyle(0xFF6347, 1);
+    g.fillStyle(0x000000, 0.15);
+    g.fillEllipse(16, 35, 26, 5);
+    g.fillStyle(0xB83820, 1);
     g.fillEllipse(16, 20, 24, 28);
-    g.fillStyle(0xFFD700, 1);
-    g.fillRect(14, 44, 4, 12);
-    g.fillStyle(0x8B4513, 1);
-    g.fillRect(10, 52, 12, 2);
+    g.fillStyle(0xFF6347, 1);
+    g.fillEllipse(16, 19.4, 21, 25);
+    g.fillStyle(0xFF9A80, 0.55);
+    g.fillEllipse(10, 12, 10, 9);
+    g.fillStyle(0xFFD8CC, 0.55);
+    g.fillEllipse(9, 11, 4.5, 3.5);
+    g.lineStyle(2, 0x7a1f10, 0.9);
+    g.strokeEllipse(16, 20, 24, 28);
+    g.fillStyle(0xB83820, 1);
+    g.fillTriangle(13, 33, 19, 33, 16, 37.5);
+    g.fillStyle(0xD8A800, 1);
+    g.fillRect(14, 37, 4, 11);
+    g.fillStyle(0xFFE870, 0.55);
+    g.fillRect(14.7, 37.5, 1, 10);
+    g.lineStyle(1.5, 0x8a6a10, 0.9);
+    g.strokeRect(14, 37, 4, 11);
+    g.fillStyle(0x6b3a10, 1);
+    g.fillRoundedRect(9, 51.5, 14, 3.5, 1.5);
+    g.fillStyle(0xa05c28, 0.7);
+    g.fillRect(10, 52.2, 12, 1.2);
+    g.lineStyle(1.5, 0x3a1c08, 0.9);
+    g.strokeRoundedRect(9, 51.5, 14, 3.5, 1.5);
     g.generateTexture('balloon', 32, 56);
 
     // Bird (sky decoration)
     g.clear();
-    g.fillStyle(0x2F2F2F, 1);
+    g.fillStyle(0x101010, 0.9);
     g.fillEllipse(16, 16, 20, 12);
     g.fillTriangle(4, 14, 0, 10, 4, 18);
     g.fillTriangle(28, 14, 32, 10, 28, 18);
+    g.fillStyle(0x3a3a3a, 1);
+    g.fillEllipse(16, 15.2, 18, 10);
+    g.fillStyle(0x525252, 0.55);
+    g.fillEllipse(13, 12.5, 9, 5);
+    g.fillStyle(0x2F2F2F, 1);
+    g.fillTriangle(5, 13.5, 1.5, 11, 4, 16.5);
+    g.fillTriangle(27, 13.5, 30.5, 11, 28, 16.5);
+    g.fillStyle(0x585858, 0.6);
+    g.fillTriangle(6, 13, 3.5, 11.5, 5, 15);
+    g.lineStyle(2, 0x101010, 0.9);
+    g.strokeEllipse(16, 16, 20, 12);
     g.fillStyle(0xFFD700, 1);
     g.fillCircle(22, 14, 3);
+    g.fillStyle(0xFFE880, 0.7);
+    g.fillCircle(21.2, 13.2, 1.6);
+    g.lineStyle(2, 0x101010, 0.9);
+    g.strokeCircle(22, 14, 3);
+    g.fillStyle(0x000000, 1);
+    g.fillCircle(23.3, 13.2, 1.1);
+    g.fillStyle(0xffffff, 0.9);
+    g.fillCircle(23, 12.8, 0.5);
+    g.lineStyle(1.5, 0xFFA500, 0.9);
+    g.lineBetween(25, 14.5, 27.5, 15.5);
     g.generateTexture('bird', 32, 32);
 
     // Sun (sky decoration)
     g.clear();
-    g.fillStyle(0xFFD700, 1);
-    g.fillCircle(20, 20, 14);
-    g.fillStyle(0xFFA500, 1);
     for (let i = 0; i < 8; i++) {
       const angle = (i / 8) * Math.PI * 2;
-      g.fillRect(18 + Math.cos(angle) * 16, 18 + Math.sin(angle) * 16, 4, 8);
+      g.fillStyle(0xE89600, 0.5);
+      g.fillTriangle(
+        20 + Math.cos(angle) * 11, 20 + Math.sin(angle) * 11,
+        20 + Math.cos(angle - 0.2) * 19, 20 + Math.sin(angle - 0.2) * 19,
+        20 + Math.cos(angle + 0.2) * 19, 20 + Math.sin(angle + 0.2) * 19
+      );
+      g.fillStyle(0xFFA500, 1);
+      g.fillTriangle(
+        20 + Math.cos(angle) * 12, 20 + Math.sin(angle) * 12,
+        20 + Math.cos(angle - 0.14) * 17.5, 20 + Math.sin(angle - 0.14) * 17.5,
+        20 + Math.cos(angle + 0.14) * 17.5, 20 + Math.sin(angle + 0.14) * 17.5
+      );
     }
+    g.fillStyle(0xE89600, 1);
+    g.fillCircle(20, 20, 14);
+    g.fillStyle(0xFFC830, 1);
+    g.fillCircle(20, 19.5, 12.5);
+    g.fillStyle(0xFFE070, 0.65);
+    g.fillCircle(15.5, 15, 5.5);
+    g.fillStyle(0xFFF4B0, 0.75);
+    g.fillCircle(14.5, 14, 2.8);
+    g.lineStyle(2, 0xB86A00, 0.9);
+    g.strokeCircle(20, 20, 13.5);
     g.generateTexture('sun', 40, 40);
 
     // Rainbow (sky decoration)
     g.clear();
-    const rainbowColors = [0xFF0000, 0xFF7F00, 0xFFFF00, 0x00FF00, 0x0000FF, 0x4B0082, 0x9400D3];
+    const rainbowColors = [0xFF4040, 0xFF9A40, 0xFFE050, 0x50D850, 0x4090FF, 0x7050D8, 0xB050D0];
+    const rainbowDark = [0xB01A1A, 0xC05A10, 0xB89210, 0x1A8A1A, 0x1A50A8, 0x3A2890, 0x702090];
+    const rainbowLight = [0xFF8A8A, 0xFFC890, 0xFFF8B0, 0x90F890, 0x80C0FF, 0xA088F0, 0xD088F8];
     for (let i = 0; i < rainbowColors.length; i++) {
-      g.fillStyle(rainbowColors[i], 0.8);
+      g.fillStyle(rainbowColors[i], 1);
       g.fillRect(i * 6, 0, 6, 40);
+      g.fillStyle(rainbowLight[i], 0.45);
+      g.fillRect(i * 6, 0, 2.2, 40);
+      g.fillStyle(rainbowDark[i], 0.35);
+      g.fillRect(i * 6 + 4, 0, 2, 40);
     }
+    g.fillStyle(0xffffff, 0.14);
+    g.fillRect(0, 6, 42, 8);
+    g.fillStyle(0xffffff, 0.08);
+    g.fillRect(0, 26, 42, 5);
     g.generateTexture('rainbow', 42, 40);
 
     // House (village decoration)
     g.clear();
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(32, 55, 56, 5);
+    g.fillStyle(0x5a2c10, 1);
+    g.fillTriangle(2, 26, 62, 26, 32, 2);
     g.fillStyle(0x8B4513, 1);
-    g.fillRect(8, 24, 48, 32);
-    g.fillStyle(0xA52A2A, 1);
-    g.fillTriangle(4, 24, 32, 4, 60, 24);
-    g.fillStyle(0x87CEEB, 1);
-    g.fillRect(16, 32, 12, 12);
+    g.fillTriangle(4, 25, 60, 25, 32, 4);
+    g.fillStyle(0xa0522d, 0.8);
+    g.fillTriangle(32, 4, 46, 25, 60, 25);
+    g.fillStyle(0x5a3a20, 0.5);
+    g.fillTriangle(32, 4, 24, 25, 40, 25);
+    g.fillStyle(0x6a4420, 1);
+    g.fillRect(7, 26, 50, 30);
+    g.fillStyle(0x8B4513, 1);
+    g.fillRect(8, 27, 48, 29);
+    g.fillStyle(0x9a5c28, 0.5);
+    g.fillRect(9, 28, 46, 3);
+    g.fillStyle(0xb8860b, 0.9);
+    g.fillRect(15, 32, 12, 12);
     g.fillRect(36, 32, 12, 12);
-    g.fillStyle(0x8B4513, 1);
+    g.fillStyle(0x87CEEB, 1);
+    g.fillRect(16, 33, 10, 11);
+    g.fillRect(37, 33, 10, 11);
+    g.fillStyle(0xffffff, 0.6);
+    g.fillTriangle(16, 33, 21, 33, 21, 39);
+    g.fillStyle(0x5a3a20, 1);
     g.fillRect(26, 40, 12, 16);
+    g.fillStyle(0x8B5A2B, 1);
+    g.fillRect(27, 41, 10, 15);
+    g.fillStyle(0xd8b060, 0.9);
+    g.fillCircle(34, 48, 1.4);
+    g.lineStyle(2, 0x3a1c08, 1);
+    g.strokeRect(16, 33, 10, 11); g.strokeRect(37, 33, 10, 11);
+    g.strokeRect(26, 40, 12, 16);
     g.generateTexture('house', 64, 56);
 
     // Barrel (village decoration)
     g.clear();
-    g.fillStyle(0x8B4513, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 38.5, 26, 4);
+    g.fillStyle(0x5a3410, 1);
     g.fillEllipse(16, 20, 24, 28);
-    g.fillStyle(0x6B3E0F, 1);
-    g.fillRect(4, 8, 24, 4);
-    g.fillRect(4, 28, 24, 4);
+    g.fillStyle(0x8B4513, 1);
+    g.fillEllipse(16, 19.5, 22, 26);
+    g.fillStyle(0xA05C28, 0.7);
+    g.fillEllipse(12, 15, 9, 14);
+    g.fillStyle(0xC08040, 0.45);
+    g.fillEllipse(11, 14, 4, 8);
+    g.fillStyle(0x4a4a4a, 1);
+    g.fillRect(3.5, 8, 25, 4);
+    g.fillRect(3.5, 28, 25, 4);
+    g.fillStyle(0x6a6a6a, 1);
+    g.fillRect(3.5, 8.6, 25, 1.2);
+    g.fillRect(3.5, 28.6, 25, 1.2);
+    g.fillStyle(0x2a2a2a, 0.8);
+    g.fillRect(3.5, 11, 25, 1);
+    g.fillRect(3.5, 31, 25, 1);
+    g.fillStyle(0x9a9a9a, 0.9);
+    g.fillCircle(6, 10, 1);
+    g.fillCircle(26, 10, 1);
+    g.fillCircle(6, 30, 1);
+    g.fillCircle(26, 30, 1);
+    g.lineStyle(2, 0x3a1c08, 0.9);
+    g.strokeEllipse(16, 20, 24, 28);
     g.generateTexture('barrel', 32, 40);
 
     // Planet (space decoration)
     g.clear();
+    g.fillStyle(0x3a2810, 0.6);
+    g.fillCircle(20, 21, 16.5);
     g.fillStyle(0xCD853F, 1);
-    g.fillCircle(20, 20, 16);
+    g.fillCircle(20, 20, 15);
     g.fillStyle(0xDEB887, 1);
-    g.fillEllipse(20, 20, 28, 6);
+    g.fillCircle(18.5, 18.5, 13);
+    g.fillStyle(0xB87A3A, 0.55);
+    g.fillEllipse(14, 24, 8, 4);
+    g.fillEllipse(25, 14, 5, 3);
+    g.fillCircle(26, 25, 3);
+    g.fillStyle(0xF0D8B0, 0.9);
+    g.fillEllipse(20, 20, 26, 5.5);
+    g.fillStyle(0xFFF0D8, 0.5);
+    g.fillEllipse(20, 19.4, 22, 3);
+    g.fillStyle(0x8a5a2a, 0.45);
+    g.fillEllipse(20, 23, 24, 3.5);
+    g.lineStyle(2, 0x6a4416, 0.9);
+    g.strokeCircle(20, 20, 15);
     g.generateTexture('planet', 40, 40);
 
     // Rocket (space decoration)
     g.clear();
-    g.fillStyle(0xC0C0C0, 1);
-    g.fillRect(12, 8, 16, 40);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(20, 54.5, 24, 4);
+    g.fillStyle(0x8a8a8a, 1);
     g.fillTriangle(12, 8, 20, 0, 28, 8);
-    g.fillStyle(0xFF0000, 1);
+    g.fillStyle(0xC0C0C0, 1);
+    g.fillTriangle(12.5, 7.5, 20, 2, 27.5, 7.5);
+    g.fillStyle(0x9a9a9a, 1);
+    g.fillRect(12, 8, 16, 40);
+    g.fillStyle(0xC8C8C8, 1);
+    g.fillRect(13.5, 8, 13, 40);
+    g.fillStyle(0xF0F0F0, 0.7);
+    g.fillRect(15, 8, 5, 40);
+    g.fillStyle(0x7a7a7a, 0.6);
+    g.fillRect(25, 8, 3, 40);
+    g.fillStyle(0xCC1010, 1);
     g.fillRect(12, 40, 16, 8);
+    g.fillStyle(0xFF3030, 0.7);
+    g.fillRect(12.8, 40.8, 14, 3);
+    g.fillStyle(0x8a0808, 0.6);
+    g.fillRect(12, 46, 16, 2);
     g.fillStyle(0x00BFFF, 1);
     g.fillCircle(20, 28, 6);
+    g.fillStyle(0x40D8FF, 1);
+    g.fillCircle(20, 27.5, 4.8);
+    g.fillStyle(0x90EAFF, 0.7);
+    g.fillCircle(18, 26, 2.2);
+    g.lineStyle(2, 0x5a5a5a, 1);
+    g.strokeRoundedRect(12, 8, 16, 40, 2);
+    g.strokeCircle(20, 28, 6);
+    g.lineStyle(2, 0x6a0808, 0.9);
+    g.strokeRect(12, 40, 16, 8);
     g.generateTexture('rocket', 40, 56);
 
     // Asteroid (space decoration)
     g.clear();
-    g.fillStyle(0x696969, 1);
+    g.fillStyle(0x4a4a4a, 1);
     g.fillEllipse(16, 16, 28, 24);
+    g.fillStyle(0x696969, 1);
+    g.fillEllipse(15.5, 15.5, 25, 21);
+    g.fillStyle(0x7d7d7d, 0.7);
+    g.fillEllipse(12, 11, 11, 7);
     g.fillStyle(0x505050, 1);
     g.fillCircle(10, 12, 4);
+    g.fillStyle(0x3a3a3a, 0.9);
+    g.fillCircle(10.3, 12.3, 3.2);
+    g.fillStyle(0x5a5a5a, 0.6);
+    g.fillCircle(9.3, 11.3, 1.6);
     g.fillCircle(22, 18, 3);
+    g.fillStyle(0x3f3f3f, 0.9);
+    g.fillCircle(22.3, 18.3, 2.3);
     g.fillCircle(14, 22, 2);
+    g.fillStyle(0x333333, 0.9);
+    g.fillCircle(14.3, 22.3, 1.4);
+    g.lineStyle(2, 0x2a2a2a, 0.9);
+    g.strokeEllipse(16, 16, 28, 24);
     g.generateTexture('asteroid', 32, 32);
 
     // Satellite (space decoration)
     g.clear();
-    g.fillStyle(0xC0C0C0, 1);
+    g.fillStyle(0x6a6a6a, 1);
     g.fillRect(8, 18, 24, 8);
     g.fillRect(4, 14, 8, 16);
     g.fillRect(28, 14, 8, 16);
+    g.fillStyle(0xC0C0C0, 1);
+    g.fillRect(8.8, 18.8, 22.4, 6.4);
+    g.fillStyle(0xE0E0E0, 0.6);
+    g.fillRect(9.5, 19.5, 18, 2);
+    g.fillStyle(0xA8B8C8, 1);
+    g.fillRect(4.8, 14.8, 6.4, 14.4);
+    g.fillRect(28.8, 14.8, 6.4, 14.4);
+    g.fillStyle(0x8899AA, 0.7);
+    g.fillRect(5.6, 16, 4.8, 2);
+    g.fillRect(29.6, 16, 4.8, 2);
+    g.lineStyle(2, 0x4a4a4a, 0.9);
+    g.strokeRect(8, 18, 24, 8);
+    g.strokeRect(4, 14, 8, 16);
+    g.strokeRect(28, 14, 8, 16);
+    g.fillStyle(0x00FF00, 0.35);
+    g.fillCircle(8, 22, 4);
     g.fillStyle(0x00FF00, 1);
-    g.fillCircle(8, 22, 3);
+    g.fillCircle(8, 22, 2.4);
+    g.fillStyle(0xAAFFAA, 0.9);
+    g.fillCircle(7.4, 21.4, 0.9);
+    g.fillStyle(0xFF0000, 0.35);
+    g.fillCircle(32, 22, 4);
     g.fillStyle(0xFF0000, 1);
-    g.fillCircle(32, 22, 3);
+    g.fillCircle(32, 22, 2.4);
+    g.fillStyle(0xFFAAAA, 0.9);
+    g.fillCircle(31.4, 21.4, 0.9);
+    g.fillStyle(0xD8D8D8, 1);
+    g.fillCircle(20, 22, 2);
+    g.fillStyle(0x8a8a8a, 1);
+    g.fillCircle(20, 22, 0.9);
     g.generateTexture('satellite', 40, 44);
 
     // Canyon rock (canyon decoration)
     g.clear();
-    g.fillStyle(0x8B4513, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(20, 45, 32, 4);
+    g.fillStyle(0x6a3a18, 1);
     g.fillEllipse(20, 24, 32, 28);
+    g.fillStyle(0x8B4513, 1);
+    g.fillEllipse(19.5, 23, 29, 25);
+    g.fillStyle(0xA0522D, 0.8);
+    g.fillEllipse(15, 17, 14, 10);
+    g.fillStyle(0xBC7A4A, 0.6);
+    g.fillEllipse(13, 15, 6, 4.5);
+    g.fillStyle(0x5a2e12, 0.5);
+    g.fillEllipse(26, 32, 10, 5);
+    g.lineStyle(2, 0x4a2410, 0.9);
+    g.strokeEllipse(20, 24, 32, 28);
     g.fillStyle(0xA0522D, 1);
     g.fillEllipse(16, 20, 8, 6);
+    g.fillStyle(0xB87350, 0.8);
+    g.fillEllipse(15.7, 19.7, 6, 4.5);
+    g.fillStyle(0x8B4513, 1);
     g.fillEllipse(26, 28, 6, 4);
+    g.fillStyle(0x6a3a18, 0.7);
+    g.fillEllipse(26.3, 28.3, 4, 2.8);
     g.generateTexture('canyon-rock', 40, 48);
 
     // Formation (canyon decoration)
     g.clear();
-    g.fillStyle(0xCD853F, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(20, 45.5, 34, 4);
+    g.fillStyle(0x8a5a28, 1);
     g.fillTriangle(20, 4, 4, 44, 36, 44);
+    g.fillStyle(0xCD853F, 1);
+    g.fillTriangle(20, 6, 20, 43.5, 34, 43.5);
+    g.fillStyle(0x9a6a34, 0.5);
+    g.fillTriangle(20, 10, 20, 40, 10, 40);
     g.fillStyle(0xDEB887, 1);
     g.fillRect(8, 24, 6, 16);
     g.fillRect(18, 16, 6, 24);
+    g.fillStyle(0xE0C898, 0.6);
+    g.fillRect(19, 17.5, 2, 22);
+    g.fillRect(9, 25.5, 2, 13.5);
+    g.lineStyle(2, 0x6a4416, 0.9);
+    g.lineBetween(20, 4, 4, 44);
+    g.lineBetween(20, 4, 36, 44);
+    g.lineStyle(1, 0x8a6410, 0.5);
+    g.lineBetween(9.5, 34, 12.5, 34);
+    g.lineBetween(19.5, 26, 22.5, 26);
     g.generateTexture('formation', 40, 48);
 
     // Eagle (canyon decoration)
     g.clear();
-    g.fillStyle(0x2F2F2F, 1);
+    g.fillStyle(0x000000, 0.15);
+    g.fillEllipse(24, 29.5, 34, 4);
+    g.fillStyle(0x141414, 1);
     g.fillEllipse(24, 16, 32, 16);
     g.fillTriangle(4, 14, 0, 10, 4, 18);
     g.fillTriangle(44, 14, 48, 10, 44, 18);
+    g.fillStyle(0x2F2F2F, 1);
+    g.fillEllipse(24, 15.2, 29, 14);
+    g.fillStyle(0x4a4a4a, 0.7);
+    g.fillEllipse(20, 12, 12, 6);
+    g.fillStyle(0x2F2F2F, 1);
+    g.fillTriangle(5, 13.5, 1, 11, 4.5, 16.5);
+    g.fillTriangle(43, 13.5, 47, 11, 43.5, 16.5);
+    g.lineStyle(2, 0x0a0a0a, 0.9);
+    g.strokeEllipse(24, 16, 32, 16);
     g.fillStyle(0xFFD700, 1);
     g.fillCircle(32, 14, 4);
+    g.fillStyle(0xFFE880, 0.7);
+    g.fillCircle(31, 13, 2.2);
+    g.lineStyle(2, 0x0a0a0a, 0.9);
+    g.strokeCircle(32, 14, 4);
+    g.fillStyle(0x000000, 1);
+    g.fillCircle(33.5, 13.3, 1.4);
+    g.fillStyle(0xffffff, 0.9);
+    g.fillCircle(33.2, 12.9, 0.55);
+    g.lineStyle(1.5, 0xFFA500, 0.9);
+    g.lineBetween(35.5, 14.5, 38.5, 15.5);
     g.generateTexture('eagle', 48, 32);
 
     // Banner (castle decoration)
     g.clear();
+    g.fillStyle(0x4a0808, 1);
+    g.beginPath();
+    g.moveTo(7, 3); g.lineTo(29, 3); g.lineTo(29, 34); g.lineTo(18, 41); g.lineTo(7, 34);
+    g.closePath();
+    g.fillPath();
     g.fillStyle(0x8B0000, 1);
-    g.fillRect(8, 4, 20, 32);
-    g.fillStyle(0xFFD700, 1);
-    g.fillCircle(18, 20, 6);
-    g.fillRect(6, 36, 24, 4);
+    g.beginPath();
+    g.moveTo(9, 5); g.lineTo(27, 5); g.lineTo(27, 33); g.lineTo(18, 39); g.lineTo(9, 33);
+    g.closePath();
+    g.fillPath();
+    g.fillStyle(0xa81c1c, 0.6);
+    g.fillRect(10, 6, 8, 26);
+    g.fillStyle(0xffd700, 1);
+    g.fillCircle(18, 20, 6.5);
+    g.fillStyle(0xfff0a0, 0.7);
+    g.fillCircle(16, 18, 2.4);
+    g.fillStyle(0xc89800, 0.6);
+    g.fillEllipse(18, 23, 9, 3);
+    g.fillStyle(0x5a0808, 1);
+    g.fillRect(5, 36, 26, 3.5);
+    g.fillStyle(0x8a5410, 0.7);
+    g.fillRect(6, 36.8, 24, 1.4);
+    g.lineStyle(2, 0x3a0404, 1);
+    g.beginPath();
+    g.moveTo(7, 3); g.lineTo(29, 3); g.lineTo(29, 34); g.lineTo(18, 41); g.lineTo(7, 34);
+    g.closePath();
+    g.strokePath();
     g.generateTexture('banner', 36, 44);
 
     // Boss flag (castle decoration)
     g.clear();
-    g.fillStyle(0x8B4513, 1);
+    g.fillStyle(0x000000, 0.25);
+    g.fillEllipse(8, 55, 12, 3);
+    g.fillStyle(0x3a1c08, 1);
     g.fillRect(6, 4, 4, 52);
-    g.fillStyle(0x8B0000, 1);
+    g.fillStyle(0x8B4513, 1);
+    g.fillRect(6.8, 4, 2.4, 52);
+    g.fillStyle(0x5a2c10, 0.6);
+    g.fillRect(6.8, 4, 0.8, 52);
+    g.fillStyle(0xD8A800, 1);
+    g.fillCircle(8, 4, 3);
+    g.fillStyle(0xFFE870, 0.8);
+    g.fillCircle(7, 3, 1.4);
+    g.fillStyle(0x4a0808, 1);
     g.fillRect(10, 8, 28, 20);
+    g.fillStyle(0x8B0000, 1);
+    g.fillRect(11, 9, 26, 18);
+    g.fillStyle(0xB01A1A, 0.5);
+    g.fillRect(12, 10, 10, 16);
     g.fillStyle(0xFFD700, 1);
     g.fillCircle(24, 18, 6);
+    g.fillStyle(0xFFE880, 0.75);
+    g.fillCircle(22, 16, 3);
+    g.fillStyle(0xB89000, 0.7);
+    g.fillEllipse(25, 20.5, 8, 2.5);
+    g.lineStyle(2, 0x3a0404, 0.9);
+    g.strokeRect(10, 8, 28, 20);
+    g.strokeCircle(24, 18, 6);
+    g.fillStyle(0xB89000, 1);
     g.fillRect(10, 28, 28, 4);
     g.fillRect(10, 32, 28, 4);
+    g.fillStyle(0xFFE870, 0.6);
+    g.fillRect(10, 28.6, 28, 1.2);
+    g.fillRect(10, 32.6, 28, 1.2);
+    g.fillStyle(0x6a5210, 0.6);
+    g.fillRect(10, 30.8, 28, 1);
+    g.fillRect(10, 34.8, 28, 1);
     g.generateTexture('boss-flag', 40, 56);
 
     // Cactus (desert decoration)
     g.clear();
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 48, 24, 4);
+    g.fillStyle(0x0f3a10, 1);
+    g.fillRoundedRect(11, 18, 10, 31, 4);
+    g.fillRoundedRect(3, 26, 7, 18, 3);
+    g.fillRoundedRect(21, 22, 7, 22, 3);
     g.fillStyle(0x228B22, 1);
-    g.fillRect(12, 20, 8, 30);
-    g.fillRect(4, 28, 6, 16);
-    g.fillRect(22, 24, 6, 20);
-    g.fillStyle(0x32CD32, 0.8);
-    g.fillCircle(6, 26, 4);
-    g.fillCircle(24, 22, 4);
+    g.fillRoundedRect(12, 18, 8, 31, 4);
+    g.fillRoundedRect(4, 27, 5, 17, 2.5);
+    g.fillRoundedRect(22, 23, 5, 21, 2.5);
+    g.fillStyle(0x32cd32, 0.8);
+    g.fillRoundedRect(13, 20, 3, 26, 1.5);
+    g.fillRoundedRect(23, 25, 2, 16, 1);
+    g.fillRoundedRect(5, 29, 2, 12, 1);
+    g.lineStyle(1, 0x123c0c, 0.7);
+    g.lineBetween(15, 22, 15, 44); g.lineBetween(24, 26, 24, 40);
+    g.lineBetween(6.5, 30, 6.5, 42);
+    g.fillStyle(0xff69b4, 0.95);
+    g.fillCircle(16, 17, 3.5);
+    g.fillStyle(0xffd700, 0.9);
+    g.fillCircle(16, 17, 1.4);
+    this.strokeOutline(g, 12, 18, 8, 31, 0x0f3a10);
     g.generateTexture('cactus', 32, 50);
 
     // Rock (desert decoration)
     g.clear();
-    g.fillStyle(0x8B7355, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 38.5, 26, 4);
+    g.fillStyle(0x6B5232, 1);
     g.fillEllipse(16, 20, 28, 22);
-    g.fillStyle(0xA0522D, 1);
+    g.fillStyle(0x8B7355, 1);
+    g.fillEllipse(15.5, 19, 25, 20);
+    g.fillStyle(0xA0815F, 0.7);
+    g.fillEllipse(12, 15, 12, 8);
+    g.fillStyle(0xB89468, 0.5);
+    g.fillEllipse(11, 14, 5, 3.5);
+    g.fillStyle(0x5a4328, 0.5);
+    g.fillEllipse(21, 26, 9, 5);
+    g.lineStyle(2, 0x4a3a22, 0.9);
+    g.strokeEllipse(16, 20, 28, 22);
+    g.fillStyle(0x8B7355, 1);
     g.fillEllipse(12, 16, 8, 6);
+    g.fillStyle(0x9a7d58, 0.8);
+    g.fillEllipse(11.7, 15.7, 6, 4.5);
+    g.fillStyle(0xA0522D, 1);
     g.fillEllipse(22, 22, 5, 4);
+    g.fillStyle(0x8a4520, 0.8);
+    g.fillEllipse(22.3, 22.3, 3.5, 2.8);
     g.generateTexture('rock', 32, 40);
 
     // Skull (desert decoration)
     g.clear();
+    g.fillStyle(0x000000, 0.25);
+    g.fillEllipse(16, 34, 22, 3.5);
+    g.fillStyle(0xC8BC96, 1);
+    g.fillCircle(16, 16, 12.5);
     g.fillStyle(0xF5F5DC, 1);
-    g.fillCircle(16, 16, 12);
+    g.fillCircle(15.5, 15.5, 11);
+    g.fillStyle(0xFFFCF0, 0.7);
+    g.fillCircle(12, 12, 5);
+    g.fillStyle(0xC8BC96, 0.55);
+    g.fillEllipse(19, 20, 9, 6);
+    g.lineStyle(2, 0x8a8060, 0.9);
+    g.strokeCircle(16, 16, 12);
+    g.fillStyle(0x2a2620, 1);
+    g.fillEllipse(12, 14, 9, 8);
+    g.fillEllipse(20, 14, 9, 8);
     g.fillStyle(0x363636, 1);
     g.fillCircle(12, 14, 4);
     g.fillCircle(20, 14, 4);
-    g.fillRect(14, 20, 4, 6);
+    g.fillStyle(0x5a5a5a, 0.8);
+    g.fillCircle(11.2, 13.2, 1.5);
+    g.fillCircle(19.2, 13.2, 1.5);
+    g.fillStyle(0x2a2620, 1);
+    g.fillTriangle(14, 20, 18, 20, 16, 23.5);
     g.fillStyle(0xF5F5DC, 1);
     g.fillEllipse(16, 30, 8, 6);
+    g.fillStyle(0xE8E0C0, 0.9);
+    g.fillEllipse(15.7, 29.5, 6.5, 5);
+    g.lineStyle(1.5, 0x8a8060, 0.7);
+    g.strokeEllipse(16, 30, 8, 6);
+    g.fillStyle(0x2a2620, 0.8);
+    g.fillRect(12.5, 27.5, 1.2, 2.5);
+    g.fillRect(15.4, 27, 1.2, 3);
+    g.fillRect(18.3, 27.5, 1.2, 2.5);
     g.generateTexture('skull', 32, 36);
 
     // Pyramid (desert decoration)
     g.clear();
-    g.fillStyle(0xDAA520, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(20, 45.5, 36, 4);
+    g.fillStyle(0xB8860B, 1);
     g.fillTriangle(20, 4, 4, 44, 36, 44);
-    g.fillStyle(0xF4A460, 1);
-    g.fillTriangle(20, 12, 10, 36, 30, 36);
-    g.fillStyle(0xFFE4B5, 0.5);
-    g.fillTriangle(20, 18, 14, 30, 26, 30);
+    g.fillStyle(0xDAA520, 1);
+    g.fillTriangle(20, 6, 20, 44, 34, 44);
+    g.fillStyle(0x8a6410, 0.55);
+    g.fillTriangle(20, 8, 20, 40, 9, 40);
+    g.fillStyle(0xF4C060, 0.6);
+    g.fillTriangle(20, 8, 20, 40, 31, 40);
+    g.lineStyle(2, 0x6a4a08, 0.9);
+    g.lineBetween(20, 4, 4, 44);
+    g.lineBetween(20, 4, 36, 44);
+    g.lineStyle(1, 0x8a6410, 0.45);
+    g.lineBetween(12, 30, 26.5, 30);
+    g.lineBetween(15, 20, 23.5, 20);
     g.generateTexture('pyramid', 40, 48);
 
     // Bubble (water decoration)
     g.clear();
-    g.fillStyle(0x87CEEB, 0.6);
-    g.fillCircle(12, 12, 10);
-    g.fillStyle(0xFFFFFF, 0.4);
-    g.fillCircle(8, 8, 4);
+    g.fillStyle(0x87CEEB, 0.35);
+    g.fillCircle(12, 12, 10.5);
+    g.fillStyle(0x9ADAF0, 0.5);
+    g.fillCircle(12, 12, 9);
+    g.fillStyle(0xBDE8F8, 0.3);
+    g.fillCircle(10.5, 10.5, 6);
+    g.lineStyle(1.5, 0xd8f4fc, 0.85);
+    g.strokeCircle(12, 12, 9.5);
+    g.fillStyle(0xffffff, 0.7);
+    g.fillCircle(8.5, 8.5, 2);
+    g.fillStyle(0xffffff, 0.4);
+    g.fillCircle(15.5, 15, 1.2);
     g.generateTexture('bubble', 24, 24);
 
     // Seaweed (water decoration)
     g.clear();
+    g.fillStyle(0x0a3a0a, 1);
+    g.fillRoundedRect(14, 6, 6, 30, 3);
+    g.fillEllipse(8, 12, 10, 18);
+    g.fillEllipse(25, 16, 10, 16);
     g.fillStyle(0x228B22, 1);
-    g.fillRect(14, 8, 4, 28);
-    g.fillEllipse(8, 12, 8, 16);
-    g.fillEllipse(24, 16, 8, 14);
-    g.fillStyle(0x32CD32, 0.7);
-    g.fillEllipse(8, 10, 5, 12);
-    g.fillEllipse(24, 14, 5, 10);
+    g.fillRoundedRect(14.5, 7, 4.5, 29, 2.5);
+    g.fillEllipse(8, 12, 8, 15);
+    g.fillEllipse(24.5, 16, 8, 13);
+    g.fillStyle(0x32CD32, 0.75);
+    g.fillEllipse(8, 10, 5, 11);
+    g.fillEllipse(25, 14, 5, 9);
+    g.fillRoundedRect(15, 8, 2, 26, 1);
+    g.fillStyle(0x54e054, 0.5);
+    g.fillEllipse(6.5, 7, 2.5, 5);
+    g.fillStyle(0x0a3a0a, 0.6);
+    g.fillCircle(10, 19, 1); g.fillCircle(17, 24, 1.2);
     g.generateTexture('seaweed', 32, 36);
 
     // Cobweb (haunted decoration)
     g.clear();
-    g.lineStyle(1, 0xD3D3D3, 0.8);
+    g.lineStyle(1.8, 0xA8A8B8, 0.6);
     g.lineBetween(16, 4, 4, 28);
     g.lineBetween(16, 4, 28, 28);
     g.lineBetween(16, 4, 16, 32);
     g.lineBetween(4, 28, 28, 28);
     g.lineBetween(8, 16, 24, 16);
     g.lineBetween(8, 16, 24, 24);
+    g.lineStyle(1, 0xD3D3D3, 0.9);
+    g.lineBetween(16, 4, 4, 28);
+    g.lineBetween(16, 4, 28, 28);
+    g.lineBetween(16, 4, 16, 32);
+    g.lineBetween(4, 28, 28, 28);
+    g.lineBetween(8, 16, 24, 16);
+    g.lineBetween(8, 16, 24, 24);
+    g.fillStyle(0xffffff, 0.5);
+    g.fillCircle(8, 16, 1);
+    g.fillCircle(24, 24, 1);
     g.generateTexture('cobweb', 32, 32);
 
     // Conveyor (factory decoration)
     g.clear();
-    g.fillStyle(0x505050, 1);
+    g.fillStyle(0x2a2a2a, 1);
     g.fillRect(0, 8, 40, 8);
-    g.fillStyle(0x303030, 1);
-    g.fillRect(4, 10, 6, 4);
-    g.fillRect(14, 10, 6, 4);
-    g.fillRect(24, 10, 6, 4);
-    g.fillRect(34, 10, 4, 4);
+    g.fillStyle(0x505050, 1);
+    g.fillRect(0, 8.6, 40, 6);
+    g.fillStyle(0x5e5e5e, 0.7);
+    g.fillRect(0, 9.2, 40, 1.2);
+    g.lineStyle(2, 0x1a1a1a, 1);
+    g.strokeRect(0, 8, 40, 8);
+    g.fillStyle(0x2c2c2c, 1);
+    g.fillRoundedRect(4, 10, 6, 4, 1.5);
+    g.fillRoundedRect(14, 10, 6, 4, 1.5);
+    g.fillRoundedRect(24, 10, 6, 4, 1.5);
+    g.fillRoundedRect(34, 10, 6, 4, 1.5);
+    g.fillStyle(0x4a4a4a, 0.9);
+    g.fillRect(4.8, 10.7, 4.4, 1.2);
+    g.fillRect(14.8, 10.7, 4.4, 1.2);
+    g.fillRect(24.8, 10.7, 4.4, 1.2);
+    g.fillRect(34.8, 10.7, 4.4, 1.2);
     g.generateTexture('conveyor', 40, 24);
 
     // Coral (water decoration)
     g.clear();
+    g.fillStyle(0x8a2c10, 1);
+    g.fillTriangle(16, 3, 7, 29, 25, 29);
+    g.fillTriangle(10, 15, 5, 29, 15, 29);
+    g.fillTriangle(22, 11, 17, 29, 27, 29);
     g.fillStyle(0xFF7F50, 1);
-    g.fillTriangle(16, 4, 8, 28, 24, 28);
-    g.fillStyle(0xFF6347, 1);
-    g.fillTriangle(10, 16, 6, 28, 14, 28);
-    g.fillTriangle(22, 12, 18, 28, 26, 28);
+    g.fillTriangle(16, 5, 9, 28, 23, 28);
+    g.fillTriangle(10, 17, 6, 28, 14, 28);
+    g.fillTriangle(22, 13, 18, 28, 26, 28);
+    g.fillStyle(0xffa07a, 0.8);
+    g.fillTriangle(15, 8, 12, 24, 18, 24);
+    g.fillStyle(0xffd0a8, 0.6);
+    g.fillCircle(14, 12, 2);
+    g.fillStyle(0xffffff, 0.5);
+    g.fillCircle(12, 8, 1.4);
     g.generateTexture('coral', 32, 32);
 
     // Crane (factory decoration)
@@ -2416,106 +3303,228 @@ export class BootScene extends Phaser.Scene {
 
     // Ember (volcano decoration)
     g.clear();
+    g.fillStyle(0xFF4500, 0.35);
+    g.fillCircle(8, 12, 7.5);
     g.fillStyle(0xFF4500, 1);
     g.fillCircle(8, 12, 6);
+    g.fillStyle(0xFF6A1A, 1);
+    g.fillCircle(7.6, 11.6, 5);
     g.fillStyle(0xFFD700, 1);
     g.fillCircle(8, 10, 3);
+    g.fillStyle(0xFFEC70, 0.9);
+    g.fillCircle(7.4, 9.4, 1.8);
     g.fillStyle(0xFF6347, 0.7);
     g.fillCircle(6, 14, 2);
     g.fillCircle(10, 14, 2);
+    g.fillStyle(0xFFEC70, 0.4);
+    g.fillCircle(5.7, 13.6, 1);
+    g.fillCircle(9.7, 13.6, 1);
+    g.fillStyle(0xFF4500, 0.5);
+    g.fillCircle(12, 6, 1.2);
+    g.fillCircle(4, 7, 1);
     g.generateTexture('ember', 16, 20);
 
     // Fire (volcano decoration)
     g.clear();
+    g.fillStyle(0xB22222, 0.6);
+    g.fillTriangle(12, 2, 3, 28, 21, 28);
     g.fillStyle(0xFF4500, 1);
     g.fillTriangle(12, 4, 4, 28, 20, 28);
+    g.fillStyle(0xFF6A1A, 1);
+    g.fillTriangle(12, 7, 5.5, 28, 18.5, 28);
     g.fillStyle(0xFFD700, 1);
     g.fillTriangle(12, 12, 8, 24, 16, 24);
-    g.fillStyle(0xFFFF00, 0.8);
+    g.fillStyle(0xFFE870, 0.9);
+    g.fillTriangle(12, 15, 9.2, 23, 14.8, 23);
+    g.fillStyle(0xFFFF88, 0.85);
     g.fillTriangle(12, 18, 10, 22, 14, 22);
+    g.lineStyle(1.5, 0xB22222, 0.5);
+    g.lineBetween(12, 4, 4, 28);
+    g.lineBetween(12, 4, 20, 28);
     g.generateTexture('fire', 24, 32);
 
     // Gear (factory decoration)
     g.clear();
-    g.fillStyle(0x708090, 1);
-    g.fillCircle(16, 16, 10);
+    g.fillStyle(0x3a4046, 1);
     for (let i = 0; i < 8; i++) {
       const angle = (i / 8) * Math.PI * 2;
       g.fillRect(14 + Math.cos(angle) * 10, 14 + Math.sin(angle) * 10, 4, 8);
     }
+    g.fillStyle(0x4a5058, 1);
+    g.fillCircle(16, 16, 11);
+    g.fillStyle(0x708090, 1);
+    g.fillCircle(16, 16, 10);
+    g.fillStyle(0x94a2ac, 0.9);
+    g.fillCircle(13, 13, 6);
+    g.fillStyle(0xb8c4cc, 0.5);
+    g.fillCircle(12, 12, 3);
     g.fillStyle(0x505050, 1);
-    g.fillCircle(16, 16, 4);
+    g.fillCircle(16, 16, 4.5);
+    g.fillStyle(0x2c3034, 1);
+    g.fillCircle(16, 16, 3);
+    g.fillStyle(0x8892a0, 0.8);
+    g.fillCircle(14.6, 14.6, 1.2);
+    g.lineStyle(1.5, 0x2c3034, 0.7);
+    g.strokeCircle(16, 16, 8.5);
     g.generateTexture('gear', 32, 32);
 
     // Lava rock (volcano decoration)
     g.clear();
-    g.fillStyle(0x8B0000, 1);
+    g.fillStyle(0x000000, 0.25);
+    g.fillEllipse(16, 37.5, 24, 4);
+    g.fillStyle(0x5a0808, 1);
     g.fillEllipse(16, 20, 24, 20);
+    g.fillStyle(0x8B0000, 1);
+    g.fillEllipse(15.5, 19.5, 21.5, 17.5);
+    g.fillStyle(0xA81818, 0.7);
+    g.fillEllipse(12, 15, 11, 8);
     g.fillStyle(0xFF4500, 1);
     g.fillEllipse(12, 16, 8, 6);
+    g.fillStyle(0xFF7A20, 0.9);
+    g.fillEllipse(11.5, 15.5, 5.5, 4);
+    g.fillStyle(0xFFD700, 0.7);
+    g.fillCircle(10.5, 14.5, 1.5);
+    g.fillStyle(0xFF4500, 1);
     g.fillEllipse(20, 22, 5, 4);
+    g.fillStyle(0xFF9A40, 0.8);
+    g.fillEllipse(20.3, 21.7, 3, 2.4);
+    g.lineStyle(2, 0x3a0404, 0.9);
+    g.strokeEllipse(16, 20, 24, 20);
+    g.fillStyle(0x3a0404, 0.6);
+    g.fillCircle(22, 14, 1.5);
+    g.fillCircle(9, 24, 1.2);
     g.generateTexture('lava-rock', 32, 40);
 
     // Palm (beach decoration)
     g.clear();
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 50, 20, 4);
+    g.fillStyle(0x5a3210, 1);
+    g.fillRoundedRect(13, 22, 7, 30, 3);
     g.fillStyle(0x8B4513, 1);
-    g.fillRect(14, 24, 6, 28);
+    g.fillRoundedRect(14, 22, 5, 30, 2.5);
+    g.fillStyle(0xa05c28, 0.6);
+    g.fillRect(15, 24, 1.5, 26);
+    g.fillStyle(0x4a2408, 0.7);
+    g.fillCircle(16, 30, 1.2); g.fillCircle(15, 40, 1.1);
+    g.fillStyle(0x123c0c, 1);
+    g.fillEllipse(8, 16, 14, 22);
+    g.fillEllipse(22, 14, 12, 18);
+    g.fillEllipse(16, 9, 10, 14);
     g.fillStyle(0x228B22, 1);
-    g.fillEllipse(8, 16, 12, 20);
-    g.fillEllipse(20, 14, 10, 16);
-    g.fillEllipse(16, 10, 8, 12);
-    g.fillStyle(0x32CD32, 0.7);
+    g.fillEllipse(8, 15, 11, 18);
+    g.fillEllipse(22, 13, 9, 15);
+    g.fillEllipse(16, 8, 8, 11);
+    g.fillStyle(0x32CD32, 0.85);
     g.fillEllipse(6, 12, 6, 8);
     g.fillEllipse(22, 10, 5, 6);
+    g.fillEllipse(15, 6, 4, 5);
+    g.fillStyle(0xffa500, 0.9);
+    g.fillCircle(13, 22, 2.4); g.fillCircle(19, 21, 2);
+    g.fillStyle(0xffd966, 0.7);
+    g.fillCircle(12.5, 21.4, 1);
     g.generateTexture('palm', 32, 52);
 
     // Seagull (beach decoration)
     g.clear();
-    g.fillStyle(0xF5F5F5, 1);
-    g.fillEllipse(16, 16, 20, 8);
+    g.fillStyle(0x101010, 0.9);
+    g.fillEllipse(16, 16, 20, 9);
     g.fillTriangle(4, 14, 0, 12, 4, 18);
     g.fillTriangle(28, 14, 32, 12, 28, 18);
+    g.fillStyle(0xF5F5F5, 1);
+    g.fillEllipse(16, 15.2, 18, 7.5);
+    g.fillStyle(0xE0E0E0, 0.6);
+    g.fillEllipse(13, 13, 8, 3);
+    g.fillStyle(0xD8D8D8, 1);
+    g.fillTriangle(5, 13.5, 1.5, 12, 4, 16.5);
+    g.fillTriangle(27.5, 13.5, 30.5, 12, 28, 16.5);
+    g.fillStyle(0x8a8a8a, 0.6);
+    g.fillTriangle(6, 13, 3.5, 11.8, 5, 15);
+    g.lineStyle(2, 0x9a9a9a, 0.85);
+    g.strokeEllipse(16, 16, 20, 9);
     g.fillStyle(0x2F2F2F, 1);
-    g.fillCircle(22, 15, 2);
+    g.fillCircle(22, 15, 2.2);
+    g.fillStyle(0xFFA500, 0.9);
+    g.fillTriangle(23.5, 15, 27, 16, 23.5, 17);
+    g.fillStyle(0x000000, 1);
+    g.fillCircle(22.4, 14.4, 0.7);
     g.generateTexture('seagull', 32, 32);
 
     // Shell (beach decoration)
     g.clear();
-    g.fillStyle(0xFFE4C4, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 33, 22, 4);
+    g.fillStyle(0xD8B888, 1);
     g.fillEllipse(16, 18, 20, 16);
+    g.fillStyle(0xFFE4C4, 1);
+    g.fillEllipse(15.5, 17.5, 18, 14.5);
+    g.fillStyle(0xFFF2DC, 0.7);
+    g.fillEllipse(12, 13.5, 10, 6);
     g.fillStyle(0xDEB887, 1);
     g.fillTriangle(16, 4, 8, 26, 24, 26);
-    g.fillStyle(0xF5DEB3, 0.7);
-    g.fillEllipse(16, 14, 12, 8);
+    g.fillStyle(0xF0D0A8, 1);
+    g.fillTriangle(16, 5.5, 10, 25, 22, 25);
+    g.fillStyle(0xC8A878, 0.5);
+    g.fillTriangle(16, 6, 11, 24.5, 14, 24.5);
+    g.fillTriangle(16, 6, 18, 24.5, 21, 24.5);
+    g.lineStyle(2, 0x9a7a50, 0.9);
+    g.strokeEllipse(16, 18, 20, 16);
     g.generateTexture('shell', 32, 36);
 
     // Smoke (factory decoration)
     g.clear();
+    g.fillStyle(0x606060, 0.35);
+    g.fillCircle(8, 21, 8.5);
+    g.fillCircle(16, 17, 10.5);
+    g.fillCircle(24, 13, 8.5);
+    g.fillCircle(12, 9, 6.5);
     g.fillStyle(0x808080, 0.6);
     g.fillCircle(8, 20, 8);
     g.fillCircle(16, 16, 10);
     g.fillCircle(24, 12, 8);
     g.fillCircle(12, 8, 6);
-    g.fillStyle(0xA9A9A9, 0.4);
+    g.fillStyle(0xA9A9A9, 0.45);
+    g.fillCircle(15, 13, 6.5);
+    g.fillCircle(22, 10, 5);
+    g.fillStyle(0xC8C8C8, 0.35);
     g.fillCircle(20, 6, 5);
+    g.fillStyle(0xE0E0E0, 0.3);
+    g.fillCircle(21, 5.5, 3);
     g.generateTexture('smoke', 32, 32);
 
     // Tombstone (haunted decoration)
     g.clear();
-    g.fillStyle(0x696969, 1);
-    g.fillRect(8, 16, 16, 24);
+    g.fillStyle(0x000000, 0.3);
+    g.fillEllipse(16, 42.5, 26, 4);
+    g.fillStyle(0x4a4a4a, 1);
+    g.fillRoundedRect(8, 6, 16, 36, { tl: 7, tr: 7, bl: 1, br: 1 });
     g.fillRect(4, 12, 24, 8);
+    g.fillStyle(0x696969, 1);
+    g.fillRoundedRect(9, 6.8, 14, 34.4, { tl: 6.5, tr: 6.5, bl: 1, br: 1 });
+    g.fillRect(4.8, 12.8, 22.4, 6.4);
+    g.fillStyle(0x7d7d7d, 0.8);
+    g.fillRoundedRect(11, 7.5, 8, 11, 5);
     g.fillStyle(0x808080, 1);
-    g.fillRect(10, 8, 12, 8);
+    g.fillRoundedRect(10, 8, 12, 8, { tl: 6, tr: 6, bl: 0, br: 0 });
+    g.fillStyle(0x8f8f8f, 0.6);
+    g.fillRoundedRect(11, 8.6, 8, 4.5, 4);
     g.fillStyle(0xD3D3D3, 1);
     g.fillRect(10, 20, 10, 2);
     g.fillRect(10, 26, 8, 2);
     g.fillRect(10, 32, 6, 2);
+    g.fillStyle(0x9a9a9a, 0.5);
+    g.fillRect(10, 21.4, 10, 0.7);
+    g.lineStyle(2, 0x3a3a3a, 0.9);
+    g.strokeRoundedRect(8, 6, 16, 36, { tl: 7, tr: 7, bl: 1, br: 1 });
+    g.strokeRect(4, 12, 24, 8);
+    g.fillStyle(0x3d5a2a, 0.5);
+    g.fillEllipse(9, 40.5, 7, 3);
+    g.fillEllipse(23, 41, 6, 2.5);
     g.generateTexture('tombstone', 32, 44);
 
     // Web (haunted decoration)
     g.clear();
-    g.lineStyle(1, 0xD3D3D3, 0.8);
+    g.lineStyle(1.8, 0xA8A8B8, 0.6);
     g.lineBetween(16, 0, 16, 32);
     g.lineBetween(0, 16, 32, 16);
     g.lineBetween(4, 4, 28, 28);
@@ -2524,69 +3533,163 @@ export class BootScene extends Phaser.Scene {
     g.lineBetween(16, 0, 32, 16);
     g.lineBetween(16, 32, 0, 16);
     g.lineBetween(16, 32, 32, 16);
-g.generateTexture('web', 32, 32);
+    g.lineStyle(1, 0xD3D3D3, 0.9);
+    g.lineBetween(16, 0, 16, 32);
+    g.lineBetween(0, 16, 32, 16);
+    g.lineBetween(4, 4, 28, 28);
+    g.lineBetween(28, 4, 4, 28);
+    g.lineBetween(16, 0, 0, 16);
+    g.lineBetween(16, 0, 32, 16);
+    g.lineBetween(16, 32, 0, 16);
+    g.lineBetween(16, 32, 32, 16);
+    g.fillStyle(0xffffff, 0.5);
+    g.fillCircle(16, 16, 1.2);
+    g.generateTexture('web', 32, 32);
 
     // Log (forest decoration)
     g.clear();
-    g.fillStyle(0x8B4513, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 30, 28, 4);
+    g.fillStyle(0x5D4037, 1);
     g.fillEllipse(16, 20, 28, 14);
+    g.fillStyle(0x8B4513, 1);
+    g.fillEllipse(16, 19.5, 26, 12.5);
+    g.fillStyle(0xA05C34, 0.6);
+    g.fillEllipse(13, 17.5, 12, 7);
     g.fillStyle(0x6B3E0F, 1);
     g.fillEllipse(16, 20, 20, 10);
+    g.fillStyle(0x8a5c34, 1);
+    g.fillEllipse(16, 19.6, 18, 9);
+    g.fillStyle(0xC89868, 0.55);
+    g.fillEllipse(14, 18.5, 8, 4.5);
+    g.lineStyle(2, 0x3a2010, 0.9);
+    g.strokeEllipse(16, 20, 28, 14);
     g.fillStyle(0x5D4037, 0.8);
     g.fillCircle(8, 18, 3);
     g.fillCircle(20, 22, 2);
+    g.fillStyle(0x7a5a3a, 0.6);
+    g.fillCircle(7.6, 17.6, 2);
     g.generateTexture('log', 32, 32);
 
     // Vine (forest decoration)
     g.clear();
-    g.fillStyle(0x228B22, 1);
+    g.fillStyle(0x1a6a1a, 1);
     g.fillRect(14, 0, 4, 40);
-    g.fillStyle(0x32CD32, 1);
-    g.fillEllipse(14, 8, 10, 14);
-    g.fillEllipse(14, 20, 10, 14);
-    g.fillEllipse(14, 32, 10, 14);
+    g.fillStyle(0x228B22, 1);
+    g.fillRect(14.8, 0, 2.4, 40);
+    g.fillStyle(0x3aa03a, 0.6);
+    g.fillRect(15.2, 0, 1, 40);
+    const vineLeaf = (ly: number) => {
+      g.fillStyle(0x1a5a1a, 1);
+      g.fillEllipse(14, ly, 10, 14);
+      g.fillStyle(0x32CD32, 1);
+      g.fillEllipse(13.2, ly - 0.5, 8.5, 12);
+      g.fillStyle(0x54E054, 0.6);
+      g.fillEllipse(11.5, ly - 3, 4, 6);
+      g.lineStyle(1, 0x1a5a1a, 0.5);
+      g.lineBetween(14, ly - 6, 14, ly + 6);
+    };
+    vineLeaf(8);
+    vineLeaf(20);
+    vineLeaf(32);
     g.generateTexture('vine', 32, 44);
 
     // Pillar (ruins decoration)
     g.clear();
-    g.fillStyle(0x8B7355, 1);
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(16, 43, 26, 3);
+    g.fillStyle(0x6B5344, 1);
     g.fillRect(8, 0, 16, 44);
+    g.fillStyle(0x8B7355, 1);
+    g.fillRect(9, 0, 14, 44);
+    g.fillStyle(0xA0815F, 0.75);
+    g.fillRect(10.5, 0, 4, 44);
+    g.fillStyle(0x6B5344, 0.6);
+    g.fillRect(20.5, 0, 2, 44);
     g.fillStyle(0xA0522D, 1);
     g.fillRect(4, 0, 24, 8);
+    g.fillStyle(0xB87350, 1);
+    g.fillRect(4.8, 0.8, 22.4, 6.4);
+    g.fillStyle(0xC89070, 0.6);
+    g.fillRect(5.5, 1.5, 20, 2.5);
+    g.fillStyle(0xA0522D, 1);
     g.fillRect(4, 36, 24, 8);
-    g.fillStyle(0x6B5344, 1);
-    g.fillRect(10, 8, 4, 28);
-    g.fillRect(18, 8, 4, 28);
+    g.fillStyle(0xB87350, 1);
+    g.fillRect(4.8, 36.5, 22.4, 7);
+    g.fillStyle(0x7a4a28, 0.7);
+    g.fillRect(4.8, 41.5, 22.4, 2);
+    g.lineStyle(2, 0x4a3220, 0.9);
+    g.strokeRect(4, 0, 24, 8);
+    g.strokeRect(4, 36, 24, 8);
+    g.strokeRect(8, 0, 16, 44);
+    g.fillStyle(0x8a7048, 0.35);
+    g.fillCircle(12, 20, 1.4);
+    g.fillCircle(19, 30, 1.2);
     g.generateTexture('pillar', 32, 44);
 
     // Statue (ruins decoration)
     g.clear();
-    g.fillStyle(0x808080, 1);
-    g.fillRect(10, 8, 12, 24);
-    g.fillStyle(0x696969, 1);
-    g.fillCircle(16, 8, 8);
+    g.fillStyle(0x000000, 0.25);
+    g.fillEllipse(16, 43, 26, 3.5);
+    g.fillStyle(0x5a5a5a, 1);
     g.fillRect(8, 32, 16, 8);
+    g.fillStyle(0x6e6e6e, 1);
+    g.fillRect(8.8, 32.8, 14.4, 6.8);
+    g.fillStyle(0x696969, 1);
+    g.fillRect(10, 8, 12, 24);
+    g.fillStyle(0x7d7d7d, 1);
+    g.fillRect(11, 8, 10, 24);
+    g.fillStyle(0x8f8f8f, 0.8);
+    g.fillRect(12, 9, 4, 22);
+    g.fillStyle(0x555555, 0.7);
+    g.fillRect(19, 9, 2, 22);
+    g.fillStyle(0x808080, 1);
+    g.fillCircle(16, 8, 8);
+    g.fillStyle(0x8f8f8f, 1);
+    g.fillCircle(15.3, 7.3, 6.8);
     g.fillStyle(0xA9A9A9, 1);
     g.fillRect(12, 4, 8, 4);
+    g.fillStyle(0xBDBDBD, 0.7);
+    g.fillRect(12.8, 4.5, 6, 2.5);
     g.fillStyle(0x000000, 0.5);
-    g.fillCircle(14, 6, 2);
-    g.fillCircle(18, 6, 2);
+    g.fillCircle(14, 6.5, 1.8);
+    g.fillCircle(18, 6.5, 1.8);
+    g.fillStyle(0x4a4a4a, 0.5);
+    g.fillRect(13, 14, 2, 6);
+    g.fillRect(17, 22, 2, 5);
+    g.lineStyle(2, 0x3a3a3a, 0.9);
+    g.strokeRect(10, 8, 12, 24);
+    g.strokeRect(8, 32, 16, 8);
+    g.strokeCircle(16, 8, 8);
     g.generateTexture('statue', 32, 44);
 
     // Moss (ruins decoration)
     g.clear();
-    g.fillStyle(0x228B22, 0.8);
-    g.fillEllipse(16, 20, 24, 16);
+    g.fillStyle(0x1a5a1a, 0.9);
+    g.fillEllipse(16, 20.5, 25, 17);
+    g.fillStyle(0x228B22, 0.95);
+    g.fillEllipse(15.5, 19.5, 23, 15);
     g.fillStyle(0x32CD32, 0.6);
     g.fillEllipse(10, 16, 8, 8);
     g.fillEllipse(22, 18, 10, 6);
+    g.fillStyle(0x54e054, 0.35);
+    g.fillEllipse(9, 15, 4, 4);
     g.fillStyle(0x1a5a1a, 0.5);
     g.fillEllipse(14, 24, 6, 4);
+    g.fillStyle(0xB8E8C8, 0.4);
+    g.fillCircle(19, 14, 1.2);
+    g.fillCircle(8, 21, 1);
     g.generateTexture('moss', 32, 32);
 
     // Snowflake (ice-snow decoration)
     g.clear();
-    g.lineStyle(2, 0xE0FFFF, 1);
+    g.lineStyle(2.4, 0x9AC8E0, 0.5);
+    for (let i = 0; i < 6; i++) {
+      const angle = (i / 6) * Math.PI;
+      const len = 3 + (i % 3) * 2;
+      g.lineBetween(16, 16, 16 + Math.cos(angle) * len * 2, 16 + Math.sin(angle) * len * 2);
+    }
+    g.lineStyle(1.6, 0xE0FFFF, 1);
     for (let i = 0; i < 6; i++) {
       const angle = (i / 6) * Math.PI;
       const len = 3 + (i % 3) * 2;
@@ -2594,42 +3697,75 @@ g.generateTexture('web', 32, 32);
     }
     g.fillStyle(0xFFFFFF, 0.9);
     g.fillCircle(16, 16, 3);
+    g.fillStyle(0xB8E8F8, 0.8);
+    g.fillCircle(16, 16, 1.8);
     g.generateTexture('snowflake', 32, 32);
 
     // Icicle (ice-snow decoration)
     g.clear();
-    g.fillStyle(0xB0E0E6, 0.8);
-    g.fillTriangle(16, 0, 6, 24, 26, 24);
-    g.fillStyle(0xADD8E6, 0.6);
-    g.fillTriangle(16, 4, 10, 22, 22, 22);
-    g.fillStyle(0xFFFFFF, 0.4);
-    g.fillCircle(16, 8, 3);
+    g.fillStyle(0x6a9cb8, 0.9);
+    g.fillTriangle(16, 0, 5, 25, 27, 25);
+    g.fillStyle(0xB0E0E6, 1);
+    g.fillTriangle(16, 0, 7, 24, 25, 24);
+    g.fillStyle(0xd8f2fa, 1);
+    g.fillTriangle(16, 3, 10, 22, 22, 22);
+    g.fillStyle(0xffffff, 0.55);
+    g.fillTriangle(15, 4, 12, 18, 18, 18);
+    g.fillCircle(15, 8, 2.6);
+    g.lineStyle(1, 0xffffff, 0.8);
+    g.lineBetween(13, 4, 11, 16);
+    g.fillStyle(0x8ac0d8, 0.7);
+    g.fillTriangle(18, 6, 20, 20, 24, 22);
     g.generateTexture('icicle', 32, 28);
 
     // Iceberg (ice-snow decoration)
     g.clear();
-    g.fillStyle(0xE0FFFF, 0.8);
+    g.fillStyle(0x8AB8D0, 0.5);
     g.fillEllipse(20, 30, 36, 24);
+    g.fillStyle(0xE0FFFF, 0.85);
+    g.fillEllipse(20, 29.5, 33, 21);
     g.fillStyle(0xFFFFFF, 0.6);
     g.fillTriangle(12, 14, 20, 4, 28, 14);
+    g.fillStyle(0xB8E8F8, 0.55);
+    g.fillTriangle(12, 14, 20, 4, 20, 14);
     g.fillStyle(0xF0F8FF, 1);
     g.fillCircle(20, 10, 5);
+    g.fillStyle(0xffffff, 0.7);
+    g.fillCircle(18.5, 8.5, 2.2);
     g.generateTexture('iceberg', 40, 40);
 
     // Penguin (ice-snow decoration)
     g.clear();
+    g.fillStyle(0x000000, 0.25);
+    g.fillEllipse(16, 34, 22, 3.5);
     g.fillStyle(0x1a1a2e, 1);
     g.fillEllipse(16, 20, 20, 24);
+    g.fillStyle(0x2a2a44, 1);
+    g.fillEllipse(15.3, 19.3, 18, 22);
+    g.fillStyle(0x1a1a2e, 0.6);
+    g.fillEllipse(19.5, 24, 6, 10);
     g.fillStyle(0xFFFFFF, 1);
     g.fillEllipse(16, 16, 14, 16);
+    g.fillStyle(0xF0F0F8, 0.7);
+    g.fillEllipse(15.3, 15.3, 11.5, 13.5);
     g.fillStyle(0x000000, 1);
     g.fillCircle(13, 10, 2);
     g.fillCircle(19, 10, 2);
+    g.fillStyle(0xffffff, 0.9);
+    g.fillCircle(12.5, 9.5, 0.7);
+    g.fillCircle(18.5, 9.5, 0.7);
     g.fillStyle(0xFFA500, 1);
-    g.fillTriangle(14, 14, 18, 14, 16, 16);
+    g.fillTriangle(14, 14, 18, 14, 16, 16.5);
+    g.fillStyle(0xFFC040, 0.7);
+    g.fillTriangle(14.7, 14.3, 17.3, 14.3, 16, 15.5);
     g.fillStyle(0x1a1a2e, 1);
     g.fillEllipse(8, 28, 6, 4);
     g.fillEllipse(24, 28, 6, 4);
+    g.fillStyle(0xFFA500, 0.85);
+    g.fillEllipse(8, 27.7, 5, 3);
+    g.fillEllipse(24, 27.7, 5, 3);
+    g.lineStyle(2, 0x10101e, 0.85);
+    g.strokeEllipse(16, 20, 20, 24);
     g.generateTexture('penguin', 32, 36);
 
     g.destroy();
@@ -2641,17 +3777,7 @@ g.generateTexture('web', 32, 32);
     // ==================== GRASSLANDS BIOME (7 LAYERS) ====================
     // Layer 0: Sky with clouds, birds, sun glow, layered atmosphere
     g.clear();
-    g.fillStyle(0x1A3A5C, 1); g.fillRect(0, 0, 1200, 120);
-    g.fillStyle(0x2E5090, 1); g.fillRect(0, 120, 1200, 100);
-    g.fillStyle(0x4A90D9, 1); g.fillRect(0, 220, 1200, 90);
-    g.fillStyle(0x6BB5E8, 1); g.fillRect(0, 310, 1200, 80);
-    g.fillStyle(0x87CEEB, 1); g.fillRect(0, 390, 1200, 70);
-    g.fillStyle(0xB8E4F0, 1); g.fillRect(0, 460, 1200, 60);
-    g.fillStyle(0xD4F0FC, 1); g.fillRect(0, 520, 1200, 55);
-    g.fillStyle(0xE8F8FF, 1); g.fillRect(0, 575, 1200, 55);
-    g.fillStyle(0xFFFDE8, 1); g.fillRect(0, 630, 1200, 50);
-    g.fillStyle(0xFFF4C8, 1); g.fillRect(0, 680, 1200, 60);
-    g.fillStyle(0xFFEC90, 1); g.fillRect(0, 740, 1200, 60);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x1A3A5C, 0xFFEC90, 48);
     // Sun glow
     g.fillStyle(0xFFFFFF, 0.12); g.fillEllipse(900, 160, 320, 100);
     g.fillStyle(0xFFFCE0, 0.15); g.fillEllipse(900, 190, 200, 70);
@@ -2824,18 +3950,7 @@ g.generateTexture('web', 32, 32);
     // ==================== DESERT BIOME (7 LAYERS) ====================
     // Layer 0: Sunset desert sky with heat shimmer bands and vultures
     g.clear();
-    g.fillStyle(0x1A2A5C, 1); g.fillRect(0, 0, 1200, 110);
-    g.fillStyle(0x3A5BA0, 1); g.fillRect(0, 110, 1200, 90);
-    g.fillStyle(0x5B8BD4, 1); g.fillRect(0, 200, 1200, 80);
-    g.fillStyle(0x7EC8E3, 1); g.fillRect(0, 280, 1200, 70);
-    g.fillStyle(0xA8E0F0, 1); g.fillRect(0, 350, 1200, 60);
-    g.fillStyle(0xD0E8E0, 1); g.fillRect(0, 410, 1200, 55);
-    g.fillStyle(0xFFE4B5, 1); g.fillRect(0, 465, 1200, 55);
-    g.fillStyle(0xFFCF80, 1); g.fillRect(0, 520, 1200, 55);
-    g.fillStyle(0xFFB347, 1); g.fillRect(0, 575, 1200, 50);
-    g.fillStyle(0xFF8C1A, 1); g.fillRect(0, 625, 1200, 50);
-    g.fillStyle(0xE67300, 1); g.fillRect(0, 675, 1200, 50);
-    g.fillStyle(0xCC5500, 1); g.fillRect(0, 725, 1200, 75);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x1A2A5C, 0xCC5500, 48);
     // Heat shimmer
     g.fillStyle(0xFFD700, 0.12); g.fillRect(0, 600, 1200, 200);
     g.fillStyle(0xFFAA00, 0.08);
@@ -2984,14 +4099,7 @@ g.generateTexture('web', 32, 32);
     // ==================== WATER BIOME (7 LAYERS) ====================
     // Layer 0: Deep underwater gradient with caustic waves
     g.clear();
-    g.fillStyle(0x000A14, 1); g.fillRect(0, 0, 1200, 160);
-    g.fillStyle(0x001233, 1); g.fillRect(0, 160, 1200, 130);
-    g.fillStyle(0x001E4D, 1); g.fillRect(0, 290, 1200, 120);
-    g.fillStyle(0x003366, 1); g.fillRect(0, 410, 1200, 110);
-    g.fillStyle(0x004D80, 1); g.fillRect(0, 520, 1200, 90);
-    g.fillStyle(0x006994, 1); g.fillRect(0, 610, 1200, 70);
-    g.fillStyle(0x0088B8, 1); g.fillRect(0, 680, 1200, 60);
-    g.fillStyle(0x00A8D8, 1); g.fillRect(0, 740, 1200, 60);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x000A14, 0x00A8D8, 48);
     g.fillStyle(0x00C8F0, 0.25); g.fillRect(0, 720, 1200, 80);
     g.fillStyle(0x80D8F0, 0.12); g.fillRect(0, 0, 1200, 100);
     g.fillStyle(0x40C0E0, 0.05);
@@ -3154,16 +4262,7 @@ g.generateTexture('web', 32, 32);
     // ==================== ICE-SNOW BIOME (7 LAYERS) ====================
     // Layer 0: Aurora-lit polar sky with dynamic bands, stars
     g.clear();
-    g.fillStyle(0x0A0A1E, 1); g.fillRect(0, 0, 1200, 130);
-    g.fillStyle(0x10183A, 1); g.fillRect(0, 130, 1200, 110);
-    g.fillStyle(0x1A2A5C, 1); g.fillRect(0, 240, 1200, 100);
-    g.fillStyle(0x2E4880, 1); g.fillRect(0, 340, 1200, 90);
-    g.fillStyle(0x6A8CB8, 1); g.fillRect(0, 430, 1200, 80);
-    g.fillStyle(0x90B8D8, 1); g.fillRect(0, 510, 1200, 70);
-    g.fillStyle(0xB0D0E8, 1); g.fillRect(0, 580, 1200, 60);
-    g.fillStyle(0xD0E8F8, 1); g.fillRect(0, 640, 1200, 55);
-    g.fillStyle(0xE8F4FF, 1); g.fillRect(0, 695, 1200, 55);
-    g.fillStyle(0xF0F8FF, 1); g.fillRect(0, 750, 1200, 50);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x0A0A1E, 0xF0F8FF, 48);
     // Aurora bands
     g.fillStyle(0x00FF88, 0.12);
     g.fillEllipse(300, 180, 500, 80); g.fillEllipse(900, 200, 450, 70);
@@ -3324,19 +4423,7 @@ g.generateTexture('web', 32, 32);
     // ==================== SKY-CLOUDS BIOME (7 LAYERS) ====================
     // Layer 0: Dramatic multi-band sunset with stars
     g.clear();
-    g.fillStyle(0x1A0533, 1); g.fillRect(0, 0, 1200, 100);
-    g.fillStyle(0x2D0A5E, 1); g.fillRect(0, 100, 1200, 90);
-    g.fillStyle(0x4B1A8C, 1); g.fillRect(0, 190, 1200, 80);
-    g.fillStyle(0x6E2DA0, 1); g.fillRect(0, 270, 1200, 70);
-    g.fillStyle(0x9933AA, 1); g.fillRect(0, 340, 1200, 60);
-    g.fillStyle(0xCC4455, 1); g.fillRect(0, 400, 1200, 55);
-    g.fillStyle(0xEE6644, 1); g.fillRect(0, 455, 1200, 55);
-    g.fillStyle(0xFF8844, 1); g.fillRect(0, 510, 1200, 50);
-    g.fillStyle(0xFFAA55, 1); g.fillRect(0, 560, 1200, 50);
-    g.fillStyle(0xFFCC66, 1); g.fillRect(0, 610, 1200, 45);
-    g.fillStyle(0xEEDD88, 1); g.fillRect(0, 655, 1200, 45);
-    g.fillStyle(0xFFE4B5, 1); g.fillRect(0, 700, 1200, 50);
-    g.fillStyle(0xFFF0C8, 1); g.fillRect(0, 750, 1200, 50);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x1A0533, 0xFFF0C8, 48);
     g.fillStyle(0xFFFFFF, 0.5);
     for (let s = 0; s < 30; s++) {
       g.fillCircle((s * 67 + 13) % 1150 + 25, (s * 43 + 7) % 90 + 5, (s % 3) + 1);
@@ -3476,18 +4563,7 @@ g.generateTexture('web', 32, 32);
     // ==================== FOREST BIOME (7 LAYERS) ====================
     // Layer 0: Forest canopy sky with dappled light
     g.clear();
-    g.fillStyle(0x1A3A20, 1); g.fillRect(0, 0, 1200, 100);
-    g.fillStyle(0x265A30, 1); g.fillRect(0, 100, 1200, 90);
-    g.fillStyle(0x2E6E35, 1); g.fillRect(0, 190, 1200, 80);
-    g.fillStyle(0x3A8A40, 1); g.fillRect(0, 270, 1200, 70);
-    g.fillStyle(0x50A050, 1); g.fillRect(0, 340, 1200, 60);
-    g.fillStyle(0x6AB860, 1); g.fillRect(0, 400, 1200, 55);
-    g.fillStyle(0x80CC70, 1); g.fillRect(0, 455, 1200, 50);
-    g.fillStyle(0x98DC88, 1); g.fillRect(0, 505, 1200, 45);
-    g.fillStyle(0xB0E8A0, 1); g.fillRect(0, 550, 1200, 45);
-    g.fillStyle(0xC8F0B8, 1); g.fillRect(0, 595, 1200, 55);
-    g.fillStyle(0xE0F8D0, 1); g.fillRect(0, 650, 1200, 75);
-    g.fillStyle(0xF0FCE8, 1); g.fillRect(0, 725, 1200, 75);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x1A3A20, 0xF0FCE8, 48);
     // Dappled light spots
     g.fillStyle(0xFFFF80, 0.08);
     g.fillEllipse(200, 300, 30, 20); g.fillEllipse(500, 350, 25, 18);
@@ -3597,10 +4673,7 @@ g.generateTexture('web', 32, 32);
     // ==================== VILLAGE BIOME (7 LAYERS) ====================
     // Layer 0: Peaceful blue sky with sun, clouds, birds
     g.clear();
-    g.fillStyle(0x87CEEB, 1); g.fillRect(0, 0, 1200, 300);
-    g.fillStyle(0xA8D8F0, 1); g.fillRect(0, 300, 1200, 200);
-    g.fillStyle(0xC8E8F8, 1); g.fillRect(0, 500, 1200, 150);
-    g.fillStyle(0xE6E6FA, 1); g.fillRect(0, 650, 1200, 150);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x87CEEB, 0xE6E6FA, 40);
     // Clouds
     g.fillStyle(0xFFFFFF, 0.3);
     g.fillCircle(200, 200, 60); g.fillCircle(260, 190, 48); g.fillCircle(160, 205, 40);
@@ -3718,12 +4791,7 @@ g.generateTexture('web', 32, 32);
     // ==================== BEACH-ISLAND BIOME (7 LAYERS) ====================
     // Layer 0: Tropical sky with sun and distant seabirds
     g.clear();
-    g.fillStyle(0x00CED1, 1); g.fillRect(0, 0, 1200, 200);
-    g.fillStyle(0x40D8E0, 1); g.fillRect(0, 200, 1200, 180);
-    g.fillStyle(0x80E8F0, 1); g.fillRect(0, 380, 1200, 150);
-    g.fillStyle(0xB0F0F8, 1); g.fillRect(0, 530, 1200, 120);
-    g.fillStyle(0xD8F8FF, 1); g.fillRect(0, 650, 1200, 80);
-    g.fillStyle(0xFFB6C1, 1); g.fillRect(0, 730, 1200, 70);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x00CED1, 0xFFB6C1, 44);
     g.fillStyle(0xFFF4C0, 0.25); g.fillCircle(900, 120, 55);
     g.fillStyle(0xFFFFFF, 0.2); g.fillCircle(900, 120, 38);
     g.fillStyle(0x2A2A1A, 0.4);
@@ -3828,14 +4896,7 @@ g.generateTexture('web', 32, 32);
     // ==================== FACTORY BIOME (7 LAYERS) ====================
     // Layer 0: Smoggy industrial sky with glowing furnaces
     g.clear();
-    g.fillStyle(0x2A2A2A, 1); g.fillRect(0, 0, 1200, 150);
-    g.fillStyle(0x3A3A3A, 1); g.fillRect(0, 150, 1200, 130);
-    g.fillStyle(0x4A4A4A, 1); g.fillRect(0, 280, 1200, 120);
-    g.fillStyle(0x5A5A5A, 1); g.fillRect(0, 400, 1200, 100);
-    g.fillStyle(0x686868, 1); g.fillRect(0, 500, 1200, 90);
-    g.fillStyle(0x787878, 1); g.fillRect(0, 590, 1200, 80);
-    g.fillStyle(0x888888, 1); g.fillRect(0, 670, 1200, 70);
-    g.fillStyle(0x989898, 1); g.fillRect(0, 740, 1200, 60);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x242424, 0x989898, 40);
     g.fillStyle(0xFF4400, 0.08); g.fillRect(0, 450, 1200, 350);
     g.fillStyle(0xFF6600, 0.06);
     g.fillEllipse(400, 500, 300, 80); g.fillEllipse(800, 520, 250, 60);
@@ -3948,19 +5009,7 @@ g.generateTexture('web', 32, 32);
     // ==================== VOLCANO-LAVA BIOME (7 LAYERS) ====================
     // Layer 0: Dark ashy sky with red glow and ash particles
     g.clear();
-    g.fillStyle(0x0A0000, 1); g.fillRect(0, 0, 1200, 100);
-    g.fillStyle(0x1A0808, 1); g.fillRect(0, 100, 1200, 90);
-    g.fillStyle(0x2A1010, 1); g.fillRect(0, 190, 1200, 80);
-    g.fillStyle(0x3A1818, 1); g.fillRect(0, 270, 1200, 70);
-    g.fillStyle(0x4A2020, 1); g.fillRect(0, 340, 1200, 60);
-    g.fillStyle(0x5A2828, 1); g.fillRect(0, 400, 1200, 55);
-    g.fillStyle(0x6A3030, 1); g.fillRect(0, 455, 1200, 50);
-    g.fillStyle(0x7A3838, 1); g.fillRect(0, 505, 1200, 50);
-    g.fillStyle(0x8A4040, 1); g.fillRect(0, 555, 1200, 45);
-    g.fillStyle(0x9A4848, 1); g.fillRect(0, 600, 1200, 45);
-    g.fillStyle(0xAA5050, 1); g.fillRect(0, 645, 1200, 55);
-    g.fillStyle(0xBA5858, 1); g.fillRect(0, 700, 1200, 55);
-    g.fillStyle(0xCA6060, 1); g.fillRect(0, 755, 1200, 45);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x0A0000, 0xCA6060, 48);
     g.fillStyle(0xFF3300, 0.1); g.fillRect(0, 500, 1200, 300);
     g.fillStyle(0xFF8800, 0.06); g.fillEllipse(600, 700, 800, 250);
     // Ash
@@ -4075,16 +5124,8 @@ g.generateTexture('web', 32, 32);
     // ==================== HAUNTED-MANSION BIOME (7 LAYERS) ====================
     // Layer 0: Stormy night sky with lightning and dark clouds
     g.clear();
-    g.fillStyle(0x080812, 1); g.fillRect(0, 0, 1200, 100);
-    g.fillStyle(0x0D0D1A, 1); g.fillRect(0, 100, 1200, 90);
-    g.fillStyle(0x121030, 1); g.fillRect(0, 190, 1200, 80);
-    g.fillStyle(0x1A0D2E, 1); g.fillRect(0, 270, 1200, 70);
-    g.fillStyle(0x220E40, 1); g.fillRect(0, 340, 1200, 60);
-    g.fillStyle(0x2D1B4E, 1); g.fillRect(0, 400, 1200, 55);
-    g.fillStyle(0x1A0D2E, 1); g.fillRect(0, 455, 1200, 55);
-    g.fillStyle(0x120828, 1); g.fillRect(0, 510, 1200, 100);
-    g.fillStyle(0x0D0418, 1); g.fillRect(0, 610, 1200, 100);
-    g.fillStyle(0x1A0A25, 1); g.fillRect(0, 710, 1200, 90);
+    this.fillVGradient(g, 0, 0, 1200, 460, 0x080812, 0x2D1B4E, 30);
+    this.fillVGradient(g, 0, 460, 1200, 340, 0x2D1B4E, 0x1A0A25, 24);
     // Storm clouds
     g.fillStyle(0x1A1A2E, 0.6);
     g.fillCircle(200, 140, 90); g.fillCircle(320, 120, 75); g.fillCircle(150, 160, 60);
@@ -4203,19 +5244,7 @@ g.generateTexture('web', 32, 32);
     // ==================== RUINS BIOME (7 LAYERS) ====================
     // Layer 0: Tropical sunset sky with haze
     g.clear();
-    g.fillStyle(0x4A1040, 1); g.fillRect(0, 0, 1200, 100);
-    g.fillStyle(0x6B2050, 1); g.fillRect(0, 100, 1200, 90);
-    g.fillStyle(0x8C3060, 1); g.fillRect(0, 190, 1200, 80);
-    g.fillStyle(0xAD4070, 1); g.fillRect(0, 270, 1200, 70);
-    g.fillStyle(0xCE5080, 1); g.fillRect(0, 340, 1200, 60);
-    g.fillStyle(0xE87060, 1); g.fillRect(0, 400, 1200, 55);
-    g.fillStyle(0xF09050, 1); g.fillRect(0, 455, 1200, 55);
-    g.fillStyle(0xF8B040, 1); g.fillRect(0, 510, 1200, 50);
-    g.fillStyle(0xFCC030, 1); g.fillRect(0, 560, 1200, 50);
-    g.fillStyle(0xFFD020, 1); g.fillRect(0, 610, 1200, 45);
-    g.fillStyle(0xFFE860, 1); g.fillRect(0, 655, 1200, 45);
-    g.fillStyle(0xFFF0A0, 1); g.fillRect(0, 700, 1200, 50);
-    g.fillStyle(0xFFF8D0, 1); g.fillRect(0, 750, 1200, 50);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x4A1040, 0xFFF8D0, 48);
     g.fillStyle(0xFFDD44, 0.12); g.fillRect(0, 600, 1200, 200);
     // Distant jungle canopy
     g.fillStyle(0x1A4A1A, 0.2);
@@ -4319,17 +5348,7 @@ g.generateTexture('web', 32, 32);
     // ==================== CANYON-BASE BIOME (7 LAYERS) ====================
     // Layer 0: Red/orange canyon sky with layered atmosphere
     g.clear();
-    g.fillStyle(0x4A2020, 1); g.fillRect(0, 0, 1200, 120);
-    g.fillStyle(0x6E3040, 1); g.fillRect(0, 120, 1200, 100);
-    g.fillStyle(0x8E4050, 1); g.fillRect(0, 220, 1200, 90);
-    g.fillStyle(0xAE5060, 1); g.fillRect(0, 310, 1200, 80);
-    g.fillStyle(0xCE6070, 1); g.fillRect(0, 390, 1200, 70);
-    g.fillStyle(0xE87860, 1); g.fillRect(0, 460, 1200, 60);
-    g.fillStyle(0xF09050, 1); g.fillRect(0, 520, 1200, 55);
-    g.fillStyle(0xF8A840, 1); g.fillRect(0, 575, 1200, 55);
-    g.fillStyle(0xFCC030, 1); g.fillRect(0, 630, 1200, 50);
-    g.fillStyle(0xFFD040, 1); g.fillRect(0, 680, 1200, 60);
-    g.fillStyle(0xFFE060, 1); g.fillRect(0, 740, 1200, 60);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x4A2020, 0xFFE060, 48);
     g.fillStyle(0xFFDD44, 0.1); g.fillRect(0, 600, 1200, 200);
     g.generateTexture('bg_canyon_0', 1200, 800);
 
@@ -4434,11 +5453,7 @@ g.generateTexture('web', 32, 32);
     // ==================== SPACE-STAR BIOME (7 LAYERS) ====================
     // Layer 0: Deep space with colorful nebula backdrop
     g.clear();
-    g.fillStyle(0x000008, 1); g.fillRect(0, 0, 1200, 200);
-    g.fillStyle(0x050515, 1); g.fillRect(0, 200, 1200, 150);
-    g.fillStyle(0x0A0A20, 1); g.fillRect(0, 350, 1200, 150);
-    g.fillStyle(0x0F0F30, 1); g.fillRect(0, 500, 1200, 150);
-    g.fillStyle(0x151540, 1); g.fillRect(0, 650, 1200, 150);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x000008, 0x151540, 40);
     // Nebula clouds
     g.fillStyle(0x330066, 0.12); g.fillEllipse(300, 300, 400, 200);
     g.fillStyle(0x0066AA, 0.08); g.fillEllipse(800, 350, 350, 180);
@@ -4570,14 +5585,7 @@ g.generateTexture('web', 32, 32);
     // ==================== CASTLE-FINAL BIOME (7 LAYERS) ====================
     // Layer 0: Midnight sky with dark clouds
     g.clear();
-    g.fillStyle(0x000015, 1); g.fillRect(0, 0, 1200, 150);
-    g.fillStyle(0x000020, 1); g.fillRect(0, 150, 1200, 130);
-    g.fillStyle(0x050530, 1); g.fillRect(0, 280, 1200, 120);
-    g.fillStyle(0x0A0A45, 1); g.fillRect(0, 400, 1200, 100);
-    g.fillStyle(0x101060, 1); g.fillRect(0, 500, 1200, 90);
-    g.fillStyle(0x151570, 1); g.fillRect(0, 590, 1200, 80);
-    g.fillStyle(0x1A1A80, 1); g.fillRect(0, 670, 1200, 70);
-    g.fillStyle(0x202090, 1); g.fillRect(0, 740, 1200, 60);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x000015, 0x202090, 40);
     // Dark clouds
     g.fillStyle(0x0A0A1A, 0.5);
     g.fillCircle(200, 120, 100); g.fillCircle(320, 100, 85); g.fillCircle(150, 140, 70);

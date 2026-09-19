@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { getLevel, getLevelCount, LevelData } from '../src/data/levels/index';
 import { Physics, DEFAULT_PHYSICS } from '../src/engine/Physics';
-import { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat } from '../src/data/levels/helpers';
+import { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, canBreakBrick, isBrickLoadBearing } from '../src/data/levels/helpers';
+import { SPRING_VELOCITY } from '../src/config';
 
 describe('Physics', () => {
     describe('canReach', () => {
@@ -220,6 +221,92 @@ describe('DEFAULT_PHYSICS constants', () => {
         expect(DEFAULT_PHYSICS.MAX_JUMP_DISTANCE).toBe(800);
         expect(DEFAULT_PHYSICS.MAX_JUMP_UP).toBe(350);
         expect(DEFAULT_PHYSICS.MAX_FALL_DOWN).toBe(1000);
+    });
+});
+
+describe('New Gameplay Elements', () => {
+    const makeLevel = (platforms: LevelData['platforms'], overrides: Partial<LevelData> = {}): LevelData => ({
+        id: 1,
+        name: 'Test',
+        width: 2000,
+        height: 800,
+        biome: 'grasslands',
+        platforms,
+        coins: [],
+        questionBlocks: [],
+        enemies: [],
+        decorations: [],
+        playerStart: { x: 150, y: 400 },
+        goal: { x: 1000, y: 400 },
+        timeBonus: 100,
+        ...overrides,
+    });
+
+    describe('canBreakBrick', () => {
+        it('should break only for big player on breakable brick', () => {
+            expect(canBreakBrick(true, 'brick', false)).toBe(true);
+            expect(canBreakBrick(false, 'brick', false)).toBe(false);
+            expect(canBreakBrick(true, 'brick', true)).toBe(false);
+            expect(canBreakBrick(false, 'brick', true)).toBe(false);
+        });
+
+        it('should never break non-brick platforms', () => {
+            for (const isBig of [true, false]) {
+                for (const isLoadBearing of [true, false]) {
+                    expect(canBreakBrick(isBig, 'grass', isLoadBearing)).toBe(false);
+                    expect(canBreakBrick(isBig, 'brick_secret', isLoadBearing)).toBe(false);
+                    expect(canBreakBrick(isBig, 'brick_multi', isLoadBearing)).toBe(false);
+                    expect(canBreakBrick(isBig, 'stone', isLoadBearing)).toBe(false);
+                }
+            }
+        });
+    });
+
+    describe('SPRING_VELOCITY', () => {
+        it('should exist between -1000 and -1500', () => {
+            expect(typeof SPRING_VELOCITY).toBe('number');
+            expect(SPRING_VELOCITY).toBeLessThanOrEqual(-1000);
+            expect(SPRING_VELOCITY).toBeGreaterThanOrEqual(-1500);
+        });
+    });
+
+    describe('createSpring / createSpike', () => {
+        it('createSpring should preserve x and y', () => {
+            const s = createSpring(123, 456);
+            expect(s.x).toBe(123);
+            expect(s.y).toBe(456);
+        });
+
+        it('createSpike should preserve x and y', () => {
+            const sp = createSpike(78, 90);
+            expect(sp.x).toBe(78);
+            expect(sp.y).toBe(90);
+        });
+    });
+
+    describe('isBrickLoadBearing', () => {
+        it('should flag a brick that is the only path across a gap', () => {
+            const level = makeLevel([
+                createPlat(200, 500, 200, 32, 'grass'),
+                createPlat(500, 500, 100, 32, 'brick'),
+                createPlat(1000, 500, 600, 32, 'grass'),
+            ]);
+            expect(isBrickLoadBearing(level, { x: 500, y: 500, type: 'brick' })).toBe(true);
+        });
+
+        it('should not flag a redundant brick', () => {
+            const level = makeLevel([
+                createPlat(200, 500, 700, 32, 'grass'),
+                createPlat(500, 500, 100, 32, 'brick'),
+                createPlat(1000, 500, 600, 32, 'grass'),
+            ]);
+            expect(isBrickLoadBearing(level, { x: 500, y: 500, type: 'brick' })).toBe(false);
+        });
+
+        it('should return false for unknown brick positions', () => {
+            const level = makeLevel([createPlat(200, 500, 200, 32, 'grass')]);
+            expect(isBrickLoadBearing(level, { x: 9999, y: 500, type: 'brick' })).toBe(false);
+        });
     });
 });
 

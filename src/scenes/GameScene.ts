@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
 import { loadLevel, getLevelName } from '../generator/LevelLoader';
 import type { LevelData, Biome } from '../data/levels/index';
-import { GAME_HEIGHT, GAME_WIDTH, BIOME_GRAVITY } from '../config';
+import { GAME_HEIGHT, GAME_WIDTH, BIOME_GRAVITY, SPRING_VELOCITY } from '../config';
 import { goToTitle } from '../sceneNav';
+import { canBreakBrick, isBrickLoadBearing } from '../data/levels/helpers';
 
 const PLAYER_SPEED = 300;
 const JUMP_VELOCITY = -900;
@@ -111,6 +112,10 @@ export class GameScene extends Phaser.Scene {
   private lastBossShot: number = 0;
   private fallingHazards!: Phaser.Physics.Arcade.Group;
   private windTime: number = 0;
+  private springs!: Phaser.Physics.Arcade.StaticGroup;
+  private spikes!: Phaser.Physics.Arcade.StaticGroup;
+  private coinGateText?: Phaser.GameObjects.Text;
+  private coinGateOpen: boolean = false;
 
   constructor() { super({ key: 'Game' }); }
 
@@ -155,6 +160,7 @@ export class GameScene extends Phaser.Scene {
     this.setupPlayer(level);
     this.createUI();
     this.setupCollisions();
+    this.updateCoinGate();
     this.setupTimer();
     
     this.shootKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.X);
@@ -227,6 +233,8 @@ export class GameScene extends Phaser.Scene {
     this.fireballs = this.physics.add.group();
     this.bossProjectiles = this.physics.add.group();
     this.fallingHazards = this.physics.add.group();
+    this.springs = this.physics.add.staticGroup();
+    this.spikes = this.physics.add.staticGroup();
   }
 
   private spawnEntities(level: LevelData) {
@@ -480,6 +488,22 @@ export class GameScene extends Phaser.Scene {
       }
     });
     
+    if (level.springs) {
+      level.springs.forEach(s => {
+        const spring = this.springs.create(s.x, s.y + 10, 'spring');
+        (spring.body as Phaser.Physics.Arcade.StaticBody).setSize(28, 12, false);
+        spring.refreshBody();
+      });
+    }
+
+    if (level.spikes) {
+      level.spikes.forEach(sp => {
+        const spike = this.spikes.create(sp.x, sp.y, 'spike');
+        (spike.body as Phaser.Physics.Arcade.StaticBody).setSize(24, 16, true);
+        spike.refreshBody();
+      });
+    }
+
     // Level 60: Rising lava mechanic
     if (level.id === 60) {
       const lava = this.platforms.create(level.width / 2, level.height + 150, 'ground_lava');
@@ -540,6 +564,11 @@ export class GameScene extends Phaser.Scene {
     // Correctly store and setup the goal
     this.goal = this.physics.add.sprite(level.goal.x, level.goal.y, 'flag').setImmovable(true);
     (this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false;
+    this.coinGateOpen = false;
+    if (level.coinGoal) {
+      this.goal.setAlpha(0.4);
+      (this.goal.body as Phaser.Physics.Arcade.Body).enable = false;
+    }
   }
 
   private setupPlayer(level: LevelData) {
@@ -586,7 +615,9 @@ export class GameScene extends Phaser.Scene {
           }
         }
         if (platType === 'brick' && b.body.blocked?.up === false) {
-          if (this.isPlayerBig || this.isPlayerFire) {
+          const isBig = this.isPlayerBig || this.isPlayerFire;
+          const loadBearing = this.currentLevelData ? isBrickLoadBearing(this.currentLevelData, b) : false;
+          if (canBreakBrick(isBig, platType, loadBearing)) {
             b.destroy();
             for (let i = 0; i < 6; i++) {
               const debris = this.add.rectangle(b.x + Phaser.Math.Between(-10, 10), b.y, 4, 4, 0x8B4513);
@@ -597,14 +628,14 @@ export class GameScene extends Phaser.Scene {
                 y: debris.y + Phaser.Math.Between(-80, -20),
                 alpha: 0,
                 angle: Phaser.Math.Between(-180, 180),
-                duration: 500,
+                duration: 300,
                 onComplete: () => debris.destroy()
               });
             }
             this.score += 50;
             this.playBlockSound();
           } else {
-            this.tweens.add({ targets: b, y: b.y - 10, duration: 100, yoyo: true });
+            this.tweens.add({ targets: b, y: b.y - 6, duration: 120, yoyo: true, ease: 'Sine.easeInOut' });
             this.playBlockSound();
           }
         }
@@ -740,6 +771,18 @@ export class GameScene extends Phaser.Scene {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.collider(this.fallingHazards, this.solidPlatforms, (f: any) => f.destroy());
     this.physics.add.collider(this.fallingHazards, this.platforms, (f: any) => f.destroy());
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.physics.add.collider(this.player, this.springs, (p: any, s: any) => {
+      if (p.body?.touching?.down && !this.isDead) {
+        p.setVelocityY(SPRING_VELOCITY);
+        s.setScale(s.scaleX, 0.6);
+        this.tweens.add({ targets: s, scaleY: 1, duration: 120, ease: 'Back.Out' });
+        this.playJumpSound();
+      }
+    });
+
+    this.physics.add.overlap(this.player, this.spikes, () => this.die());
   }
 
   private killEnemy(enemy: Phaser.GameObjects.Sprite, scoreAmount: number = 500) {
@@ -906,6 +949,32 @@ export class GameScene extends Phaser.Scene {
       stroke: '#000',
       strokeThickness: 1
     }).setOrigin(1, 1).setScrollFactor(0).setDepth(1000);
+
+    if (levelData?.coinGoal) {
+      this.coinGateText = this.add.text(GAME_WIDTH / 2, 100, '', {
+        fontSize: '16px',
+        fontFamily: 'Arial',
+        color: '#FFD700',
+        stroke: '#000',
+        strokeThickness: 2
+      }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
+    }
+  }
+
+  private updateCoinGate() {
+    const goal = this.currentLevelData?.coinGoal;
+    if (!goal || this.coinGateOpen) return;
+    if (this.coinCount < goal) return;
+    this.coinGateOpen = true;
+    (this.goal.body as Phaser.Physics.Arcade.Body).enable = true;
+    this.tweens.add({ targets: this.goal, alpha: 1, duration: 300 });
+    this.tweens.add({ targets: this.goal, scaleX: 1.2, scaleY: 1.2, duration: 200, yoyo: true, ease: 'Sine.easeInOut' });
+    if (this.coinGateText) this.coinGateText.setText('Gate offen!');
+    if (this.audioContext) {
+      this.playNote(523.25, 'triangle', 0.06, 0.15, 0);
+      this.time.delayedCall(120, () => this.playNote(659.25, 'triangle', 0.06, 0.15, 0));
+      this.time.delayedCall(240, () => this.playNote(783.99, 'triangle', 0.08, 0.25, 0));
+    }
   }
 
   private updateUI() {
@@ -923,6 +992,10 @@ export class GameScene extends Phaser.Scene {
     this.timerValText.setText(time.toString().padStart(3, '0'));
     this.timerValText.setColor(time < 50 ? '#ff4444' : time < 100 ? '#ffaa00' : '#ffffff');
     this.livesValText.setText(String(this.lives));
+    const coinGoal = this.currentLevelData?.coinGoal;
+    if (coinGoal && !this.coinGateOpen) {
+      this.coinGateText?.setText(`Coins: ${Math.min(this.coinCount, coinGoal)} / ${coinGoal}`);
+    }
   }
 
   private showScorePopup(text: string, x: number, y: number) {
@@ -943,6 +1016,7 @@ export class GameScene extends Phaser.Scene {
     this.coinCount++;
     this.score += 100;
     this.playCoinSound();
+    this.updateCoinGate();
     if (this.coinCount - this.lastCoinMilestone >= 100) {
       this.lastCoinMilestone += 100;
       const text = this.add.text(GAME_WIDTH / 2, 200, '1-UP', {
@@ -1439,6 +1513,7 @@ export class GameScene extends Phaser.Scene {
 
   private reachGoal() {
       if (this.isTransitioning) return;
+      if (this.currentLevelData?.coinGoal && this.coinCount < this.currentLevelData.coinGoal) return;
       this.isTransitioning = true;
       this.playGoalSound();
       this.isMusicPlaying = false;

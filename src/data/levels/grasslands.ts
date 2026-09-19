@@ -1,7 +1,7 @@
 // Grasslands World - 6 distinct level types (IDs 1-6)
 // Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Flaggen-Run
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 const S = 0.65;
 
@@ -53,6 +53,8 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       for (let x = 4400; x < 5200; x += 200) cs.push(createCoin(x * S, 500));
       for (let x = 5400; x < 6300; x += 200) cs.push(createCoin(x * S, 500));
       cs.push(createCoin(465, 360), createCoin(520, 360), createCoin(575, 360));
+      // Discoverer moment: bonus coin arc above the tutorial spring
+      cs.push(createCoin(360, 420), createCoin(400, 380), createCoin(440, 420), createCoin(400, 280));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -86,6 +88,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       { pipeX: 3678 * S, pipeY: 506, targetLevelIndex: 5 },
     ],
     timeBonus: 120,
+    springs: [createSpring(400, 530)],
     movingPlatforms: [
       createMovingPlat(4808 * S, 490, 130, 24, 'platform_easy', 'horizontal', 280, 20),
     ],
@@ -154,6 +157,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       for (let x = 5500 * L2S; x < 6100 * L2S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 7200 * L2S; x < 8000 * L2S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 9200 * L2S; x < 10000 * L2S; x += 200) cs.push(createCoin(x, 500));
+      // Coin arcs above the two gap-section springs
+      cs.push(createCoin(1260, 420), createCoin(1300, 380), createCoin(1340, 420));
+      cs.push(createCoin(4610, 420), createCoin(4650, 380), createCoin(4690, 420));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -191,6 +197,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 6625, y: 528 },
     timeBonus: 140,
+    springs: [createSpring(1300, 530), createSpring(4650, 530)],
     movingPlatforms: [
       // Bridge between Ground B and Ground C
       createMovingPlat(2400 * 0.625, 490, 140, 24, 'platform_medium', 'horizontal', 350, 22),
@@ -225,6 +232,11 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
 
       // Small ground between pipe groups
       plats.push(createPlat(3300 * L3S, 550, 400 * L3S, 40, 'grass'));
+
+      // Breakable brick bonus wall — hangs above the ground (never load-bearing:
+      // the ground below remains the main path). Big Mario can smash it from
+      // below for the coins on top.
+      plats.push(createPlat(1950, 420, 96, 24, 'brick'));
 
       // Stepping to reach pipe section 2 at 3700
       plats.push(...gapWithPlatforms(L3S, 3250, 550, 600, 3));
@@ -286,6 +298,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       for (let x = 7700 * L3S; x < 8200 * L3S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 12300 * L3S; x < 12800 * L3S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 13900 * L3S; x < 14500 * L3S; x += 200) cs.push(createCoin(x, 500));
+      // Brick-bonus coins (above the breakable brick)
+      cs.push(createCoin(1920, 350), createCoin(1950, 330), createCoin(1980, 350));
+      // Coin arc above the spring before pipe section 6
+      cs.push(createCoin(6960, 420), createCoin(7000, 380), createCoin(7040, 420));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -327,6 +343,8 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       playerStart: { x: 150, y: 500 },
     goal: { x: 14100 * 0.6, y: 528 },
     timeBonus: 160,
+    springs: [createSpring(7000, 530)],
+    spikes: [createSpike(1920, 522), createSpike(8100, 522)],
     movingPlatforms: [
       // Help transition between ground and elevated section
       createMovingPlat(5000 * 0.6, 490, 130, 24, 'platform_medium', 'horizontal', 400, 22),
@@ -420,6 +438,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       for (let x = 4600; x < 4800; x += 100) cs.push(createCoin(x * L4S, 190));
       // Coins along mixed-height section
       cs.push(createCoin(7500 * L4S, 190));
+      // Coin ladder up to the peak platform
+      cs.push(createCoin(7500 * L4S, 470), createCoin(7500 * L4S, 400), createCoin(7500 * L4S, 330));
+      // Coin arc above the spring after climb 1
+      cs.push(createCoin(1660, 420), createCoin(1700, 380), createCoin(1740, 420));
       for (let x = 9100 * L4S; x < 9700 * L4S; x += 200) cs.push(createCoin(x, 500));
       // Climb 3 peak
       for (let x = 10600; x < 10800; x += 100) cs.push(createCoin(x * L4S, 190));
@@ -466,11 +488,14 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 15500 * 0.556, y: 528 },
     timeBonus: 180,
+    springs: [createSpring(1700, 530)],
     movingPlatforms: [
       // Bridge between start ground and climb 1 approach
       createMovingPlat(700 * 0.556, 490, 120, 24, 'platform_medium', 'horizontal', 300, 20),
       // Helper between scattered platforms
       createMovingPlat(8800 * 0.556, 470, 130, 24, 'platform_medium', 'horizontal', 280, 22),
+      // Vertical helper at the secondary climb
+      createMovingPlat(12500 * 0.556, 350, 120, 24, 'platform_easy', 'vertical', 150, 18),
     ],
   },
 
@@ -526,6 +551,8 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       for (let x = 6000 * L5S; x < 7800 * L5S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 9500 * L5S; x < 11300 * L5S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 12500 * L5S; x < 14300 * L5S; x += 200) cs.push(createCoin(x, 500));
+      // Coin arc above the spring in the goal arena
+      cs.push(createCoin(5960, 420), createCoin(6000, 380), createCoin(6040, 420));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -541,12 +568,10 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     enemies: (() => {
       const L5S = 0.5;
       return [
-        // Arena 1: 5 enemies
+        // Arena 1: 4 enemies
         createEnemy(350 * L5S, 510, 'goomba'),
-        createEnemy(600 * L5S, 510, 'goomba'),
         createEnemy(900 * L5S, 510, 'koopa'),
         createEnemy(1200 * L5S, 510, 'goomba'),
-        createEnemy(1500 * L5S, 510, 'robot'),
         // Arena 2: 4 enemies  
         createEnemy(3000 * L5S, 510, 'spiny'),
         createEnemy(3400 * L5S, 510, 'goomba'),
@@ -566,6 +591,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
         // Arena 5: 2 enemies
         createEnemy(12600 * L5S, 510, 'goomba'),
         createEnemy(14000 * L5S, 510, 'spiny'),
+        // Floating pursuers roam the mid gaps
+        createEnemy(5500 * L5S, 400, 'ghost'),
+        createEnemy(11000 * L5S, 400, 'ghost'),
       ];
     })(),
     decorations: (() => {
@@ -581,6 +609,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 12500 * 0.5, y: 528 },
     timeBonus: 200,
+    coinGoal: 25,
+    springs: [createSpring(6000, 530)],
+    spikes: [createSpike(1100, 522), createSpike(1350, 522)],
     movingPlatforms: [
       // Quick skip over gap 2
       createMovingPlat(5500 * 0.5, 490, 130, 24, 'platform_medium', 'horizontal', 350, 25),
@@ -642,6 +673,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       for (let x = 9800 * L6S; x < 11800 * L6S; x += 180) cs.push(createCoin(x, 500));
       for (let x = 12800 * L6S; x < 14800 * L6S; x += 180) cs.push(createCoin(x, 500));
       for (let x = 15100 * L6S; x < 17100 * L6S; x += 180) cs.push(createCoin(x, 500));
+      // Coin arcs above the two wind-compensation springs
+      cs.push(createCoin(1660, 420), createCoin(1700, 380), createCoin(1740, 420));
+      cs.push(createCoin(5810, 420), createCoin(5850, 380), createCoin(5890, 420));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -686,6 +720,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 15100 * 0.45, y: 528 },
     timeBonus: 220,
+    springs: [createSpring(1700, 530), createSpring(5850, 530)],
     movingPlatforms: [
       // Speed across gap 1
       createMovingPlat(2800 * 0.45, 490, 140, 24, 'platform_medium', 'horizontal', 350, 26),
@@ -693,6 +728,8 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       createMovingPlat(5800 * 0.45, 490, 130, 24, 'platform_medium', 'horizontal', 320, 26),
       // Bridge gap 3
       createMovingPlat(12400 * 0.45, 490, 140, 24, 'platform_medium', 'horizontal', 350, 24),
+      // Vertical lifter for wind-dodging variety
+      createMovingPlat(10500 * 0.45, 480, 120, 24, 'platform_easy', 'vertical', 180, 20),
     ],
   },
 ];

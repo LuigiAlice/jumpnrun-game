@@ -32,6 +32,8 @@ export const PHYSICS = {
   MAX_FALL_DOWN: 1000,
 };
 
+export const SPRING_VELOCITY = -1350;
+
 // Get effective gravity for a biome (falls back to default)
 export function getBiomeGravity(biome: string): number {
   return BIOME_GRAVITY[biome] ?? PHYSICS.GRAVITY;

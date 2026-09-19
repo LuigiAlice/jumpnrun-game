@@ -1,5 +1,7 @@
 // Level creation helpers - separated to avoid circular imports
 import type { PlatformType, EnemyType, QuestionBlockContent, DecorationType, Platform, Goal, MovingPlatform, LevelData } from './index';
+import { Physics } from '../../engine/Physics';
+import { getBiomeGravity } from '../../config';
 
 export type { LevelData };
 export const createPlat = (x: number, y: number, w: number, h: number, type: PlatformType): Platform => ({ x, y, w, h, type });
@@ -9,6 +11,29 @@ export const createEnemy = (x: number, y: number, type: EnemyType) => ({ x, y, t
 export const createDeco = (x: number, y: number, type: DecorationType) => ({ x, y, type });
 export const createGoal = (x: number, y: number, points: number, difficulty: Goal['difficulty']): Goal => ({ x, y, points, difficulty });
 export const createMovingPlat = (x: number, y: number, w: number, h: number, type: PlatformType, moveType: 'horizontal' | 'vertical' | 'circular', range: number, speed: number): MovingPlatform => ({ x, y, w, h, type, moveType, range, speed });
+export const createSpring = (x: number, y: number) => ({ x, y });
+export const createSpike = (x: number, y: number) => ({ x, y });
+
+export const canBreakBrick = (isBig: boolean, platformType: string, isLoadBearing: boolean): boolean =>
+  platformType === 'brick' && isBig && !isLoadBearing;
+
+export function isBrickLoadBearing(level: LevelData, brick: { x: number; y: number; type: string }): boolean {
+  const indices: number[] = [];
+  level.platforms.forEach((p, idx) => {
+    if ((p.type as string) === brick.type && p.x === brick.x && p.y === brick.y) {
+      indices.push(idx);
+    }
+  });
+  if (indices.length === 0) return false;
+  const gravity = getBiomeGravity(level.biome);
+  for (const idx of indices) {
+    const remaining = level.platforms.filter((_, j) => j !== idx);
+    const physics = new Physics(remaining, level.width, level.height, level.movingPlatforms || [], gravity);
+    const result = physics.isFullyTraversableToGoal(level.playerStart.x, level.playerStart.y, level.goal.x);
+    if (!result.traversable) return true;
+  }
+  return false;
+}
 
 export const gapWithPlatforms = (S: number, startX: number, baseY: number, gapWidth: number, platformCount: number): any[] => {
   const plats = [];

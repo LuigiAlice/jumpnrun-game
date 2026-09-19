@@ -63,6 +63,37 @@ PLAYER_MOVE_SPEED:   300
 | Big Mario | 24x48 | player_big | Kann Gegner stompen, QB-Inhalt triggern |
 | Fire Mario | 24x48 | player_fire | Kann Feuerbälle schießen (alle 250ms) |
 
+## Sprungfedern (`springs`)
+
+| Eigenschaft | Wert |
+|-------------|------|
+| Texture | `spring` (32×20) |
+| Position | y = Plattform-Oberkante (Feder-Body 28×12 top-aligned) |
+| Launch | `SPRING_VELOCITY = -1350` → Sprunghöhe ~455px (vs. normal ~202px) |
+| Feedback | Squash-Tween (scaleY 0.6→1, 120ms) + Sound |
+| Regel | Bonus-Element — Solver kennt Federn nicht, Level müssen ohne Feder lösbar bleiben |
+
+## Stachel-Fallen (`spikes`)
+
+| Eigenschaft | Wert |
+|-------------|------|
+| Texture | `spike` (24×16, 3 Zacken) |
+| Position | y = Plattform-Oberkante − 8 (Sprite-Zentrum) |
+| Schaden | Overlap → sofortiger Tod (`die()`, wie Lava) |
+| Design-Regeln | ≥ 96px Abstand zu QBs/Goal, ≥ 150px zu playerStart, nie über Lücken, nie auf Moving-Platforms, max 1 Sprite pro Position |
+
+## Zerstörbare Bricks
+
+- Big Mario zerbricht 'brick'-Plattformen beim Sprung von unten (`canBreakBrick()`) → +50 Punkte, Debris-Partikel
+- Small Mario: nur Bonk (Wobble)
+- **Load-Bearing-Schutz**: Bricks, deren Fehlen das Level unlösbar machen würde, zerbrechen nicht (`isBrickLoadBearing()`, on-demand BFS ~50-100ms pro Bonk) — Wobble-Tween stattdessen
+
+## Münz-Tor (`coinGoal`)
+
+- Optional in LevelData: Goal-Flag bleibt inaktiv (alpha 0.4, Body disabled) bis `coins >= coinGoal`
+- HUD-Hint: "Coins: X / Y" → "Gate offen!" + Glow-Tween + Arpeggio
+- Regeln: `coinGoal ≤ Coins im Level` (~60-70% der Coins empfohlen)
+
 ## Power-ups (Question Blocks)
 
 | Item | Wirkung | Punkte |
@@ -190,6 +221,8 @@ PLAYER_MOVE_SPEED:   300
 ## Level-Struktur
 
 ### 90 Level, 15 Biomes, 6 Levels pro Biome
+
+> **Level-Upgrade-Status (Pilot)**: grasslands (1-6) und desert (7-12) sind mit dem neuen Element-Mix aufgebaut (Springs, Spikes, Breakable Bricks, Coin-Muster, variierte Moving-Plats, 2 coinGoal-Level). Die restlichen 13 Biome folgen (s. LEVEL_PLAN.md Phase 6b).
 
 | Biome | Levels | Plattformen | Dekorationen |
 |-------|--------|-------------|--------------|

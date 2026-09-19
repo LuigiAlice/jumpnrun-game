@@ -25,15 +25,16 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 - Tests run from `tests/**/*.test.ts`
 - Run single test: `npm test -- LevelSolvability.test.ts`
 - TypeScript Fehler müssen vor test/build behoben werden
-- 128 Tests in 5 Dateien (Physics, LevelInvariant, LevelSolvability, GameLogic, AssetCoverage)
-- E2E: 6 Playwright-Tests in `e2e/**/*.test.ts`
+- 160 Tests in 7 Dateien (Physics, LevelInvariant, LevelSolvability, GameLogic, AssetCoverage, NewElements, PilotElements)
+- E2E: 6 Playwright-Tests in `e2e/**/*.test.ts` (benötigt `npx playwright install chromium`)
 
 ## Architecture
 - **Entry**: `src/main.ts` initializes Phaser.Game
 - **Scenes**: `src/scenes/` contains BootScene, TitleScene, GameScene, GameOverScene
 - **Physics**: Arcade physics, biome-abhängige Gravity (s. `BIOME_GRAVITY`), `JUMP_VELOCITY: -900`, `PLAYER_SPEED: 300`
 - **Solver**: `src/engine/Physics.ts` – BFS path-finding mit biome-bewusster Gravitation. `Physics(platforms, w, h, movingPlatforms, gravity)` akzeptiert optionalen gravity-Parameter. Max-Sprungweite wird rein physikalisch berechnet (kein MAX_PRACTICAL_JUMP mehr). `MAX_JUMP_UP: 350`, `MAX_FALL_DOWN: 1000`
-- **Konstanten**: `src/config.ts` – `PHYSICS.GRAVITY: 2000`, `JUMP_SPEED: 900`, `HORIZONTAL_SPEED: 300`, `MAX_JUMP_DISTANCE: 800`
+- **Konstanten**: `src/config.ts` – `PHYSICS.GRAVITY: 2000`, `JUMP_SPEED: 900`, `HORIZONTAL_SPEED: 300`, `MAX_JUMP_DISTANCE: 800`, `SPRING_VELOCITY: -1350` (Sprungfeder, Sprunghöhe ~455px bei g=2000)
+- **Neue Elemente** (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinGoal?: number`): Springs (y = Plattform-Oberkante, Launch via `SPRING_VELOCITY` + Squash-Tween, GameScene ~774), Spikes (y = Oberkante − 8, Overlap → `die()`, GameScene ~786), Zerstörbare Bricks (Big Mario zerstört 'brick' von unten via `canBreakBrick()`, load-bearing Bricks → Wobble-Schutz via `isBrickLoadBearing()`, +50 Punkte, GameScene ~616), Münz-Tor (`coinGoal` sperrt Goal bis X Coins, HUD-Hint, GameScene ~568/964/1516). Helper: `createSpring`, `createSpike` in helpers.ts (re-exportiert in levels/index.ts). Solver kennt neue Elemente NICHT — Elemente dürfen nie Pflicht sein. Tests: `tests/NewElements.test.ts`, `tests/PilotElements.test.ts`.
 - **Biome Gravity**: `BIOME_GRAVITY` in `config.ts` (space-star: 1000, water: 1200, sky-clouds/beach-island: 1500, volcano-lava: 2200)
 - **Level Auto-Fixer**: `src/data/levels/index.ts` → `ensureSolvable()` (exportiert) fügt bei `getLevel()` automatisch Trittplattformen hinzu, falls biome-bewusste Max-Sprungweite überschritten wird. Typ: 'platform_easy'. QB-Clearance: platY wird auf das MINIMUM der minPlatY-Werte aller betroffenen Question Blocks gehoben; nach dem Loop wird per `console.warn` gewarnt, falls das Level nicht vollständig lösbar gemacht werden konnte. Exportiert: `ALL_LEVELS`, `ensureSolvable`, `getLevel`, `getLevelCount`, `getBiome`. Invariant-Tests: `tests/LevelInvariant.test.ts`.
 - **Level Data**: 90 levels across 15 biomes in `src/data/levels/`
