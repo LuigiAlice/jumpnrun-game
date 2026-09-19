@@ -1318,6 +1318,7 @@ export class GameScene extends Phaser.Scene {
           const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.player.x, this.player.y);
           proj.setVelocity(Math.cos(angle) * 200, Math.sin(angle) * 200);
           proj.setScale(1.5);
+          (proj.body as Phaser.Physics.Arcade.Body).setSize(24, 24, true);
         }
       }
       // Koopa shell timer: re-awaken after 4s
@@ -1351,6 +1352,7 @@ export class GameScene extends Phaser.Scene {
         const hazard = this.fallingHazards.create(xPos, -50, 'fireball');
         hazard.setVelocityY(300);
         hazard.setScale(0.8);
+        (hazard.body as Phaser.Physics.Arcade.Body).setSize(12.8, 12.8, true);
         hazard.setData('type', 'falling_hazard');
       }
     }
@@ -1432,7 +1434,7 @@ export class GameScene extends Phaser.Scene {
   private shootFireball() {
       const offsetX = this.player.flipX ? -20 : 20;
       const f = this.fireballs.create(this.player.x + offsetX, this.player.y, 'fireball');
-      f.setVelocity(this.player.flipX ? -450 : 450, 200).setBounce(1, 0.8).setCircle(4);
+      f.setVelocity(this.player.flipX ? -450 : 450, 200).setBounce(1, 0.8).setCircle(5, 3, 3);
   }
 
   private reachGoal() {

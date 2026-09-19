@@ -25,7 +25,7 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 - Tests run from `tests/**/*.test.ts`
 - Run single test: `npm test -- LevelSolvability.test.ts`
 - TypeScript Fehler müssen vor test/build behoben werden
-- 127 Tests in 8 Dateien (Physics, LevelSolvability, GameLogic, AssetCoverage, debug-solvability, 3 weitere)
+- 128 Tests in 5 Dateien (Physics, LevelInvariant, LevelSolvability, GameLogic, AssetCoverage)
 - E2E: 6 Playwright-Tests in `e2e/**/*.test.ts`
 
 ## Architecture
@@ -35,7 +35,7 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 - **Solver**: `src/engine/Physics.ts` – BFS path-finding mit biome-bewusster Gravitation. `Physics(platforms, w, h, movingPlatforms, gravity)` akzeptiert optionalen gravity-Parameter. Max-Sprungweite wird rein physikalisch berechnet (kein MAX_PRACTICAL_JUMP mehr). `MAX_JUMP_UP: 350`, `MAX_FALL_DOWN: 1000`
 - **Konstanten**: `src/config.ts` – `PHYSICS.GRAVITY: 2000`, `JUMP_SPEED: 900`, `HORIZONTAL_SPEED: 300`, `MAX_JUMP_DISTANCE: 800`
 - **Biome Gravity**: `BIOME_GRAVITY` in `config.ts` (space-star: 1000, water: 1200, sky-clouds/beach-island: 1500, volcano-lava: 2200)
-- **Level Auto-Fixer**: `src/data/levels/index.ts` → `ensureSolvable()` fügt bei `getLevel()` automatisch Trittplattformen hinzu, falls biome-bewusste Max-Sprungweite überschritten wird. Typ: 'platform_easy'.
+- **Level Auto-Fixer**: `src/data/levels/index.ts` → `ensureSolvable()` (exportiert) fügt bei `getLevel()` automatisch Trittplattformen hinzu, falls biome-bewusste Max-Sprungweite überschritten wird. Typ: 'platform_easy'. QB-Clearance: platY wird auf das MINIMUM der minPlatY-Werte aller betroffenen Question Blocks gehoben; nach dem Loop wird per `console.warn` gewarnt, falls das Level nicht vollständig lösbar gemacht werden konnte. Exportiert: `ALL_LEVELS`, `ensureSolvable`, `getLevel`, `getLevelCount`, `getBiome`. Invariant-Tests: `tests/LevelInvariant.test.ts`.
 - **Level Data**: 90 levels across 15 biomes in `src/data/levels/`
 
 ## Key Config

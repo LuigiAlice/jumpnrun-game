@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { getLevel, getLevelCount, LevelData } from '../src/data/levels/index';
+import { describe, it, expect, vi } from 'vitest';
+import { getLevel, getLevelCount, ensureSolvable, ALL_LEVELS, Platform, LevelData } from '../src/data/levels/index';
 import { Physics } from '../src/engine/Physics';
 import { getBiomeGravity } from '../src/config';
 
@@ -287,5 +287,101 @@ describe('Individual Level Tests', () => {
             failures.forEach(f => console.log(`  ${f}`));
         }
         expect(failures.length).toBe(0);
+    });
+});
+
+function buildSyntheticGapLevel(questionBlocks: { x: number; y: number; contents: 'coin' }[]): LevelData {
+    const platforms: Platform[] = [
+        { x: 200, y: 520, w: 200, h: 40, type: 'grass' },
+        { x: 750, y: 520, w: 200, h: 40, type: 'grass' },
+    ];
+    return {
+        id: 9999,
+        name: 'Synthetic QB Gap Level',
+        width: 1200,
+        height: 1200,
+        biome: 'grasslands',
+        platforms,
+        coins: [],
+        questionBlocks,
+        enemies: [],
+        decorations: [],
+        playerStart: { x: 200, y: 470 },
+        goal: { x: 750, y: 480 },
+        timeBonus: 300,
+    };
+}
+
+function qbBlockedByPlatform(p: Platform, qb: { x: number; y: number }): boolean {
+    return Math.abs(p.x - qb.x) < (p.w / 2 + 16) &&
+        p.y > qb.y - 16 - 56 - 12 &&
+        p.y < qb.y + 16 + 12;
+}
+
+describe('Question Block Auto-Fix Adjustment', () => {
+    it('multi-QB conflict: auto platform must satisfy the max clearance of ALL nearby QBs', () => {
+        const level = buildSyntheticGapLevel([
+            { x: 457, y: 500, contents: 'coin' },
+            { x: 457, y: 545, contents: 'coin' },
+        ]);
+        const fixed = ensureSolvable(level);
+
+        const originalCount = level.platforms.length;
+        expect(fixed.platforms.length, 'auto-fixer should have added at least one platform').toBeGreaterThan(originalCount);
+
+        const firstAdded = fixed.platforms[originalCount];
+        expect(firstAdded.y, 'platY must be lifted to the maximum clearance requirement of all affected QBs (min of 416 and 461)').toBe(416);
+
+        const physics = new Physics(fixed.platforms as any[], fixed.width, fixed.height, fixed.movingPlatforms as any[] || [], 2000);
+        expect(physics.isFullyTraversableToGoal(fixed.playerStart.x, fixed.playerStart.y, fixed.goal.x).traversable,
+            'fixed synthetic level should be fully traversable').toBe(true);
+
+        for (const p of fixed.platforms.slice(originalCount)) {
+            for (const qb of fixed.questionBlocks) {
+                expect(qbBlockedByPlatform(p, qb),
+                    `Level ${fixed.id}: auto platform (${p.x.toFixed(1)}, ${p.y.toFixed(1)}, w=${p.w}) blocks QB at (${qb.x}, ${qb.y})`).toBe(false);
+            }
+        }
+    });
+
+    it('unfixable level: ensureSolvable must warn exactly once instead of failing silently', () => {
+        const level: LevelData = {
+            id: 8888,
+            name: 'Synthetic Unfixable Level',
+            width: 1200,
+            height: 1200,
+            biome: 'grasslands',
+            platforms: [
+                { x: 200, y: 520, w: 200, h: 40, type: 'grass' },
+                { x: 700, y: 100, w: 200, h: 40, type: 'grass' },
+            ],
+            coins: [],
+            questionBlocks: [],
+            enemies: [],
+            decorations: [],
+            playerStart: { x: 200, y: 470 },
+            goal: { x: 700, y: 80 },
+            timeBonus: 300,
+        };
+
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            const fixed = ensureSolvable(level);
+            const physics = new Physics(fixed.platforms as any[], fixed.width, fixed.height, [], 2000);
+            expect(physics.isFullyTraversableToGoal(fixed.playerStart.x, fixed.playerStart.y, fixed.goal.x).traversable,
+                'level with unreachable target (too high) should remain non-traversable').toBe(false);
+            expect(warnSpy).toHaveBeenCalledTimes(1);
+            expect(String(warnSpy.mock.calls[0][0])).toContain('8888');
+            expect(String(warnSpy.mock.calls[0][0])).toContain('Synthetic Unfixable Level');
+        } finally {
+            warnSpy.mockRestore();
+        }
+    });
+
+    it('original level data must not be mutated by ensureSolvable', () => {
+        const original = ALL_LEVELS[0];
+        const before = JSON.stringify(original.platforms);
+        ensureSolvable(original);
+        expect(JSON.stringify(original.platforms)).toBe(before);
     });
 });

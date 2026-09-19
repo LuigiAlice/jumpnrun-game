@@ -34,278 +34,444 @@ export class BootScene extends Phaser.Scene {
       const totalH = h + yOff;
       const cx = w / 2;
 
-      let leftBootX = cx - 7;
-      let rightBootX = cx + 7;
-      let leftLegX = cx - 8;
-      let rightLegX = cx + 1;
-      let leftArmX = cx - 14;
-      let rightArmX = cx + 8;
-      let leftHandX = cx - 14;
-      let rightHandX = cx + 14;
-      let armY = 0;
-      let handY = 0;
+      // ── Color palette ─────────────────────────────────────────────────
+      const SKIN        = 0xffcc99;
+      const SKIN_LIGHT  = 0xffdfb8;
+      const SKIN_SHADOW = 0xe6a060;
+      const SKIN_DARK   = 0xc07030;
+      const CHEEK       = 0xff8888;
+      const HAIR        = 0x3d1f00;
+      const HAIR_MID    = 0x5a3010;
+      const HAIR_LIGHT  = 0x7a5020;
+      const WHITE       = 0xffffff;
+
+      const shirtDark  = Phaser.Display.Color.ValueToColor(shirtColor).darken(30).color;
+      const shirtLight = Phaser.Display.Color.ValueToColor(shirtColor).lighten(35).color;
+      const pantsDark  = Phaser.Display.Color.ValueToColor(pantsColor).darken(30).color;
+      const pantsLight = Phaser.Display.Color.ValueToColor(pantsColor).lighten(35).color;
+
+      const headCY = h * 0.21 + yOff;
+      const headRX = w * 0.50;
+      const headRY = h * 0.205;
+
+      // ── Body layout ───────────────────────────────────────────────────
+      const bodyY = h * 0.44 + yOff;
+      const bodyH = h * 0.24;
+      const bibW  = w * 0.58;
+
+      // ── Pose-based positions ──────────────────────────────────────────
+      let leftBootX  = cx - 7,  leftBootY  = h * 0.88 + yOff;
+      let rightBootX = cx + 7,  rightBootY = h * 0.88 + yOff;
+      let leftLegX   = cx - 8,  leftLegY   = h * 0.63 + yOff, leftLegH  = h * 0.23;
+      let rightLegX  = cx + 1,  rightLegY  = h * 0.63 + yOff, rightLegH = h * 0.23;
+      let leftArmX   = cx - 14, leftArmY   = bodyY + 1, leftArmH  = bodyH * 0.52;
+      let leftHandX  = cx - 14, leftHandY  = bodyY + bodyH * 0.30;
+      let rightArmX  = cx + 8,  rightArmY  = bodyY + 1, rightArmH = bodyH * 0.52;
+      let rightHandX = cx + 14, rightHandY = bodyY + bodyH * 0.30;
+      let capTilt = 0;
 
       if (pose === 'walk1') {
-        leftBootX = cx - 10; rightBootX = cx + 10;
-        leftLegX = cx - 11; rightLegX = cx + 4;
-        leftArmX = cx - 16; rightArmX = cx + 10;
-        leftHandX = cx - 16; rightHandX = cx + 10;
+        leftBootX = cx - 10;  leftBootY  = h * 0.88 + yOff;
+        leftLegX  = cx - 11;  leftLegY   = h * 0.63 + yOff; leftLegH  = h * 0.23;
+        rightBootX = cx + 9;  rightBootY = h * 0.83 + yOff;
+        rightLegX  = cx + 2;  rightLegY  = h * 0.58 + yOff; rightLegH = h * 0.20;
+        leftArmX   = cx - 14; leftArmY   = bodyY - 2; leftArmH  = bodyH * 0.50;
+        leftHandX  = cx - 15; leftHandY  = bodyY + bodyH * 0.08;
+        rightArmX  = cx + 7;  rightArmY  = bodyY + 4; rightArmH = bodyH * 0.44;
+        rightHandX = cx + 12; rightHandY = bodyY + bodyH * 0.55;
       } else if (pose === 'walk2') {
-        leftBootX = cx - 4; rightBootX = cx + 4;
-        leftLegX = cx - 5; rightLegX = cx + 7;
-        leftArmX = cx - 12; rightArmX = cx + 16;
-        leftHandX = cx - 12; rightHandX = cx + 16;
+        leftBootX  = cx - 9;   leftBootY  = h * 0.83 + yOff;
+        leftLegX   = cx - 10;  leftLegY   = h * 0.58 + yOff; leftLegH  = h * 0.20;
+        rightBootX = cx + 10;  rightBootY = h * 0.88 + yOff;
+        rightLegX  = cx + 3;   rightLegY  = h * 0.63 + yOff; rightLegH = h * 0.23;
+        leftArmX   = cx - 12;  leftArmY   = bodyY + 4; leftArmH  = bodyH * 0.44;
+        leftHandX  = cx - 11;  leftHandY  = bodyY + bodyH * 0.55;
+        rightArmX  = cx + 8;   rightArmY  = bodyY - 2; rightArmH = bodyH * 0.50;
+        rightHandX = cx + 15;  rightHandY = bodyY + bodyH * 0.08;
       } else if (pose === 'jump') {
-        leftBootX = cx - 3; rightBootX = cx + 3;
-        leftLegX = cx - 5; rightLegX = cx + 5;
-        leftArmX = cx - 16; rightArmX = cx + 16;
-        leftHandX = cx - 16; rightHandX = cx + 16;
+        rightArmX  = cx + 6;   rightArmY  = bodyY - 9;  rightArmH  = bodyH * 0.80;
+        rightHandX = cx + 9;   rightHandY = bodyY - 13;
+        leftArmX   = cx - 15;  leftArmY   = bodyY + 4;  leftArmH   = bodyH * 0.50;
+        leftHandX  = cx - 17;  leftHandY  = bodyY + bodyH * 0.68;
+        leftBootX  = cx - 6;   leftBootY  = h * 0.74 + yOff;
+        leftLegX   = cx - 7;   leftLegY   = h * 0.52 + yOff; leftLegH = h * 0.18;
+        rightBootX = cx + 8;   rightBootY = h * 0.89 + yOff;
+        rightLegX  = cx + 2;   rightLegY  = h * 0.62 + yOff; rightLegH = h * 0.27;
+        capTilt = isBig ? -0.6 : -2.5;
       }
 
-      const SKIN = 0xffddbb;
-      const SKIN_SHADOW = 0xf0c8a0;
-      const SKIN_DARK = 0xdba878;
-      const CHEEK = 0xffaaaa;
-      const HAIR = 0x4a2800;
-      const HAIR_LIGHT = 0x6b3f10;
+      // ════ GROUND SHADOW ═══════════════════════════════════════════════
+      g.fillStyle(0x000000, 0.18);
+      g.fillEllipse(cx, totalH - 0.5, w * 0.6, 4.5);
 
-      const headCY = h * 0.22 + yOff;
-      const headRX = w * 0.50;
-      const headRY = h * 0.20;
+      // ════ BOOTS ═══════════════════════════════════════════════════════
+      const drawBoot = (bx: number, by: number) => {
+        // Dark sole
+        g.fillStyle(0x1a0a00, 1);
+        g.fillEllipse(bx + 1, by + 2, 13, 4.5);
+        // Boot main body
+        g.fillStyle(0x3d2000, 1);
+        g.fillRoundedRect(bx - 4, by - 3, 10, 5.5, 2);
+        // Toe cap
+        g.fillStyle(0x4a2800, 1);
+        g.fillEllipse(bx + 3, by - 0.5, 9, 5.5);
+        // Toe highlight
+        g.fillStyle(0x6a4015, 1);
+        g.fillEllipse(bx + 2, by - 1.5, 6, 3.5);
+        // Shine
+        g.fillStyle(WHITE, 0.28);
+        g.fillCircle(bx + 1, by - 2, 1.5);
+      };
+      drawBoot(leftBootX, leftBootY);
+      drawBoot(rightBootX, rightBootY);
 
-      const shirtDark = Phaser.Display.Color.ValueToColor(shirtColor).darken(25).color;
-      const shirtLight = Phaser.Display.Color.ValueToColor(shirtColor).lighten(30).color;
-      const pantsDark = Phaser.Display.Color.ValueToColor(pantsColor).darken(25).color;
-      const pantsLight = Phaser.Display.Color.ValueToColor(pantsColor).lighten(30).color;
+      // ════ LEGS ════════════════════════════════════════════════════════
+      const drawLeg = (lx: number, ly: number, lh: number) => {
+        g.fillStyle(pantsColor, 1);
+        g.fillRoundedRect(lx, ly, 8, lh, 3.5);
+        g.fillStyle(pantsLight, 0.38);
+        g.fillRoundedRect(lx + 1, ly + 1, 3, lh - 3, 2);
+        g.fillStyle(pantsDark, 0.45);
+        g.fillRoundedRect(lx + 5, ly + 1, 2, lh - 3, 1);
+        // Trouser crease
+        g.fillStyle(pantsDark, 0.20);
+        g.fillRect(lx + 3.5, ly + 2, 1, lh - 5);
+      };
+      drawLeg(leftLegX, leftLegY, leftLegH);
+      drawLeg(rightLegX, rightLegY, rightLegH);
 
-      // SHADOW
+      // ════ BODY ════════════════════════════════════════════════════════
+      // Overall bib
+      g.fillStyle(pantsColor, 1);
+      g.fillRoundedRect(cx - bibW / 2, bodyY, bibW, bodyH, {tl: 5, tr: 5, bl: 6, br: 6});
+      g.fillStyle(pantsLight, 0.28);
+      g.fillRoundedRect(cx - bibW / 2 + 2, bodyY + 2, bibW * 0.38, bodyH - 4, 3);
+      g.fillStyle(pantsDark, 0.28);
+      g.fillRoundedRect(cx + bibW * 0.10, bodyY + 2, bibW * 0.32, bodyH - 4, 3);
+      // Bib flap
+      const bibY = bodyY - 2.5;
+      const bibFW = bibW * 0.66;
+      g.fillStyle(pantsColor, 1);
+      g.fillRoundedRect(cx - bibFW / 2, bibY, bibFW, bodyH * 0.40, {tl: 3, tr: 3, bl: 0, br: 0});
+      g.fillStyle(pantsDark, 0.20);
+      g.fillRect(cx - bibFW / 2 + 1, bibY, 2, bodyH * 0.40);
+      g.fillStyle(pantsLight, 0.18);
+      g.fillRect(cx + bibFW / 2 - 3, bibY, 2, bodyH * 0.40);
+      // Shoulder straps
+      const strapX1  = cx - bibW / 2 - 0.5;
+      const strapX2  = cx + bibW / 2 - 3.5;
+      const strapTopY = bodyY - 2;
+      const strapH   = bodyH * 0.88;
+      g.fillStyle(pantsColor, 1);
+      g.fillRoundedRect(strapX1, strapTopY, 4, strapH, 2);
+      g.fillRoundedRect(strapX2, strapTopY, 4, strapH, 2);
+      g.fillStyle(pantsDark, 0.32);
+      g.fillRect(strapX1, strapTopY, 1.5, strapH);
+      g.fillRect(strapX2, strapTopY, 1.5, strapH);
+      g.fillStyle(pantsLight, 0.22);
+      g.fillRect(strapX1 + 2.5, strapTopY, 1, strapH);
+      g.fillRect(strapX2 + 2.5, strapTopY, 1, strapH);
+      // Shirt
+      g.fillStyle(shirtColor, 1);
+      g.fillRoundedRect(cx - bibW / 2 - 1, bodyY - 5, bibW + 2, bodyH * 0.58, {tl: 7, tr: 7, bl: 0, br: 0});
+      g.fillStyle(shirtLight, 0.32);
+      g.fillRoundedRect(cx - bibW / 2 + 2, bodyY - 4, bibW * 0.42, bodyH * 0.30, 3);
+      g.fillStyle(shirtDark, 0.22);
+      g.fillRoundedRect(cx + bibW * 0.08, bodyY - 4, bibW * 0.36, bodyH * 0.30, 3);
       g.fillStyle(0x000000, 0.12);
-      g.fillEllipse(cx, totalH - 1, w * 0.55, 4);
+      g.fillRect(cx - bibW / 2, bodyY - 0.5, bibW, 1);
+      // Gold buttons on strap ends
+      const btnY = bibY + 5;
+      g.fillStyle(0xffcc00, 1);
+      g.fillCircle(strapX1 + 2, btnY, 2.8);
+      g.fillCircle(strapX2 + 2, btnY, 2.8);
+      g.fillStyle(0xffee88, 0.9);
+      g.fillCircle(strapX1 + 1.5, btnY - 0.8, 1.2);
+      g.fillCircle(strapX2 + 1.5, btnY - 0.8, 1.2);
 
-      // BOOTS
-      g.fillStyle(0x3d1f00, 1);
-      g.fillEllipse(leftBootX, h * 0.88 + yOff, 10, 6);
-      g.fillEllipse(rightBootX, h * 0.88 + yOff, 10, 6);
-      g.fillStyle(0x5a2e0a, 1);
-      g.fillEllipse(leftBootX, h * 0.87 + yOff, 8, 4);
-      g.fillEllipse(rightBootX, h * 0.87 + yOff, 8, 4);
-      g.fillStyle(0x7a4a1a, 0.6);
-      g.fillEllipse(leftBootX, h * 0.85 + yOff, 5, 2);
-      g.fillEllipse(rightBootX, h * 0.85 + yOff, 5, 2);
+      // ════ ARMS & GLOVES ═══════════════════════════════════════════════
+      const drawArm = (ax: number, ay: number, ah: number, hx: number, hy: number, isLeft: boolean) => {
+        // Shoulder ball
+        g.fillStyle(shirtColor, 1);
+        g.fillCircle(ax + (isLeft ? 4 : 2), ay, 5.5);
+        g.fillStyle(shirtLight, 0.40);
+        g.fillCircle(ax + 3, ay - 1.5, 2.5);
+        // Arm tube
+        g.fillStyle(shirtColor, 1);
+        g.fillRoundedRect(ax, ay, 7, ah, 3.5);
+        g.fillStyle(isLeft ? shirtLight : shirtDark, 0.28);
+        g.fillRoundedRect(isLeft ? ax + 1 : ax + 4, ay + 1, 2, ah - 3, 1.5);
+        // Cuff
+        g.fillStyle(shirtDark, 0.50);
+        g.fillRoundedRect(ax, ay + ah - 3, 7, 3, {bl: 3, br: 3, tl: 0, tr: 0});
+        // Glove
+        g.fillStyle(WHITE, 1);
+        g.fillCircle(hx, hy, 5.5);
+        g.fillStyle(0xe8e8e8, 1);
+        g.fillCircle(hx, hy + 1, 4.5);
+        // Glove seams
+        g.lineStyle(0.9, 0xbbbbbb, 1);
+        g.lineBetween(hx - 2, hy - 2.5, hx - 2, hy + 1.5);
+        g.lineBetween(hx,     hy - 3,   hx,     hy + 2);
+        g.lineBetween(hx + 2, hy - 2.5, hx + 2, hy + 1.5);
+        // Glove shine
+        g.fillStyle(WHITE, 0.50);
+        g.fillCircle(hx - 1.5, hy - 3, 1.3);
+      };
+      drawArm(leftArmX,  leftArmY,  leftArmH,  leftHandX,  leftHandY,  true);
+      drawArm(rightArmX, rightArmY, rightArmH, rightHandX, rightHandY, false);
 
-      // LEGS
-      g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(leftLegX, h * 0.62 + yOff, 7, h * 0.24, 3);
-      g.fillRoundedRect(rightLegX, h * 0.62 + yOff, 7, h * 0.24, 3);
-      g.fillStyle(pantsDark, 0.5);
-      g.fillRect(cx - 1, h * 0.62 + yOff, 2, h * 0.24);
-      g.fillStyle(pantsLight, 0.4);
-      g.fillRoundedRect(leftLegX + 1, h * 0.63 + yOff, 3, h * 0.2, 2);
-      g.fillRoundedRect(rightLegX + 1, h * 0.63 + yOff, 3, h * 0.2, 2);
-
-      // BODY (overalls)
-      const bodyY = h * 0.45 + yOff;
-      const bodyH = h * 0.22;
-      armY = bodyY + 1;
-      handY = bodyY + bodyH * 0.3;
-      if (pose === 'jump') {
-        armY = bodyY - 6;
-        handY = bodyY - 8;
-      }
-      g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(cx - 9, bodyY, 18, bodyH, {tl: 4, tr: 4, bl: 5, br: 5});
-      const bibY = bodyY - 2;
-      g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(cx - 6, bibY, 12, bodyH * 0.38, {tl: 2, tr: 2, bl: 0, br: 0});
-      g.fillStyle(pantsDark, 0.25);
-      g.fillRect(cx - 1, bodyY + 2, 2, bodyH - 4);
-      g.fillStyle(pantsLight, 0.25);
-      g.fillRoundedRect(cx - 8, bodyY + 2, 4, bodyH - 6, 2);
-
-      // SHIRT
-      g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 10, bodyY - 4, 20, bodyH * 0.55, {tl: 6, tr: 6, bl: 0, br: 0});
-      g.fillStyle(0xffffff, 0.1);
-      g.fillRoundedRect(cx - 3, bodyY - 3, 6, bodyH * 0.15, 2);
-      g.fillStyle(shirtLight, 0.3);
-      g.fillRoundedRect(cx - 8, bodyY - 2, 6, bodyH * 0.3, 2);
-      g.fillStyle(shirtDark, 0.2);
-      g.fillRoundedRect(cx + 3, bodyY - 2, 5, bodyH * 0.3, 2);
-
-      // GOLD BUTTONS
-      g.fillStyle(0xffdd00, 1);
-      g.fillCircle(cx - 3, bibY + 4, 2);
-      g.fillCircle(cx + 3, bibY + 4, 2);
-      g.fillStyle(0xffff88, 0.7);
-      g.fillCircle(cx - 3, bibY + 3.5, 0.8);
-      g.fillCircle(cx + 3, bibY + 3.5, 0.8);
-
-      // ARMS
-      g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(leftArmX, armY, 6, bodyH * 0.5, 3);
-      g.fillRoundedRect(rightArmX, armY, 6, bodyH * 0.5, 3);
-      g.fillStyle(shirtDark, 0.2);
-      g.fillRect(leftArmX, armY, 2, bodyH * 0.4);
-      g.fillRect(rightArmX + 4, armY, 2, bodyH * 0.4);
-      g.fillStyle(0xffffff, 1);
-      g.fillCircle(leftHandX, handY, 4.5);
-      g.fillCircle(rightHandX, handY, 4.5);
-      g.fillStyle(0xeeeeee, 1);
-      g.fillCircle(leftHandX, handY + 1, 3.5);
-      g.fillCircle(rightHandX, handY + 1, 3.5);
-
-      // EARS
+      // ════ HEAD ════════════════════════════════════════════════════════
+      // Neck
       g.fillStyle(SKIN, 1);
-      g.fillCircle(cx - headRX * 0.92, headCY, 4.5);
-      g.fillCircle(cx + headRX * 0.92, headCY, 4.5);
-      g.fillStyle(SKIN_SHADOW, 0.5);
-      g.fillCircle(cx - headRX * 0.92 + 0.5, headCY + 1, 2);
-      g.fillCircle(cx + headRX * 0.92 - 0.5, headCY + 1, 2);
-
-      // HEAD
+      g.fillRoundedRect(cx - 4.5, headCY + headRY * 0.80, 9, 5.5, 2);
+      g.fillStyle(SKIN_SHADOW, 0.35);
+      g.fillRect(cx - 4.5, headCY + headRY * 0.80, 2, 5.5);
+      // Ears
+      const earY = headCY + headRY * 0.06;
+      const earR = 4.0;
+      const earDX = Math.min(headRX * 0.94, w / 2 - earR);
       g.fillStyle(SKIN, 1);
-      g.fillCircle(cx, headCY, headRX * 0.88);
-      g.fillStyle(SKIN_SHADOW, 0.25);
-      g.fillEllipse(cx, headCY + headRY * 0.3, headRX * 1.2, headRY * 0.35);
-      g.fillStyle(CHEEK, 0.35);
-      g.fillEllipse(cx - headRX * 0.45, headCY + headRY * 0.2, headRX * 0.26, headRY * 0.18);
-      g.fillEllipse(cx + headRX * 0.45, headCY + headRY * 0.2, headRX * 0.26, headRY * 0.18);
+      g.fillCircle(cx - earDX, earY, earR);
+      g.fillStyle(SKIN_SHADOW, 0.45);
+      g.fillCircle(cx - earDX + 0.5, earY + 1.5, 3.2);
+      g.fillStyle(CHEEK, 0.55);
+      g.fillCircle(cx - earDX, earY, 2.2);   // inner ear
+      g.fillStyle(SKIN, 1);
+      g.fillCircle(cx + earDX, earY, earR);
+      g.fillStyle(SKIN_SHADOW, 0.45);
+      g.fillCircle(cx + earDX - 0.5, earY + 1.5, 3.2);
+      g.fillStyle(CHEEK, 0.55);
+      g.fillCircle(cx + earDX, earY, 2.2);
+      // Head main
+      g.fillStyle(SKIN, 1);
+      g.fillEllipse(cx, headCY, headRX * 1.85, headRY * 1.90);
+      // Jaw volume shading
+      g.fillStyle(SKIN_SHADOW, 0.18);
+      g.fillEllipse(cx, headCY + headRY * 0.42, headRX * 1.50, headRY * 0.75);
+      // Top-left highlight
+      g.fillStyle(SKIN_LIGHT, 0.38);
+      g.fillEllipse(cx - headRX * 0.22, headCY - headRY * 0.24, headRX * 0.90, headRY * 0.62);
+      // Cheeks
+      g.fillStyle(CHEEK, 0.30);
+      g.fillEllipse(cx - headRX * 0.48, headCY + headRY * 0.24, headRX * 0.32, headRY * 0.22);
+      g.fillEllipse(cx + headRX * 0.48, headCY + headRY * 0.24, headRX * 0.32, headRY * 0.22);
+      // Cap shadow on forehead
+      g.fillStyle(0x000000, 0.13);
+      g.fillEllipse(cx, headCY - headRY * 0.30 + capTilt, headRX * 1.40, headRY * 0.36);
 
-      // HAIR
+      // ════ HAIR ════════════════════════════════════════════════════════
+      const capY = headCY - headRY * 0.92 + capTilt;
       g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - headRX * 0.75, headCY - headRY * 0.95, headRX * 1.5, headRY * 0.5, {tl: 5, tr: 5, bl: 0, br: 0});
-      g.fillRect(cx - headRX * 0.85, headCY - headRY * 0.7, 4, headRY * 0.4);
-      g.fillRect(cx + headRX * 0.7, headCY - headRY * 0.7, 4, headRY * 0.4);
-      g.fillStyle(HAIR_LIGHT, 0.35);
-      g.fillRoundedRect(cx - headRX * 0.5, headCY - headRY * 0.85, headRX * 0.4, headRY * 0.2, 2);
+      // Hair band under cap
+      g.fillRoundedRect(cx - headRX * 0.84, headCY - headRY * 0.90 + capTilt, headRX * 1.68, headRY * 0.50, {tl: 5, tr: 5, bl: 0, br: 0});
+      // Left sideburn + curl
+      g.fillRect(cx - headRX * 0.90, headCY - headRY * 0.55 + capTilt, 5.5, headRY * 0.62);
+      g.fillCircle(cx - headRX * 0.80, headCY + headRY * 0.12 + capTilt, 5.0);
+      g.fillCircle(cx - headRX * 0.76, headCY + headRY * 0.27 + capTilt, 3.2);
+      // Right sideburn + curl
+      g.fillRect(cx + headRX * 0.76, headCY - headRY * 0.55 + capTilt, 5.5, headRY * 0.62);
+      g.fillCircle(cx + headRX * 0.80, headCY + headRY * 0.12 + capTilt, 5.0);
+      g.fillCircle(cx + headRX * 0.76, headCY + headRY * 0.27 + capTilt, 3.2);
+      // Hair sheens
+      g.fillStyle(HAIR_LIGHT, 0.38);
+      g.fillRoundedRect(cx - headRX * 0.52, headCY - headRY * 0.82 + capTilt, headRX * 0.44, headRY * 0.22, 3);
+      g.fillStyle(HAIR_MID, 0.28);
+      g.fillRoundedRect(cx + headRX * 0.00, headCY - headRY * 0.79 + capTilt, headRX * 0.34, headRY * 0.14, 2);
 
-      // CAP
-      const capY = headCY - headRY * 0.92;
+      // ════ CAP ═════════════════════════════════════════════════════════
+      // Dome
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - headRX * 0.78, capY, headRX * 1.56, headRY * 0.65, {tl: 6, tr: 6, bl: 1, br: 1});
-      g.fillStyle(shirtDark, 0.2);
-      g.fillRoundedRect(cx - headRX * 0.7, capY + headRY * 0.2, headRX * 1.4, headRY * 0.3, 2);
+      g.fillEllipse(cx, capY + headRY * 0.40, headRX * 1.68, headRY * 0.70);
+      g.fillStyle(shirtDark, 0.28);
+      g.fillEllipse(cx, capY + headRY * 0.55, headRX * 1.52, headRY * 0.28);
+      g.fillStyle(shirtLight, 0.32);
+      g.fillEllipse(cx - headRX * 0.22, capY + headRY * 0.07, headRX * 0.68, headRY * 0.38);
+      g.fillStyle(WHITE, 0.22);
+      g.fillCircle(cx - headRX * 0.30, capY + headRY * 0.13, headRY * 0.17);
+      // Cap band
+      g.fillStyle(shirtDark, 0.75);
+      g.fillRoundedRect(cx - headRX * 0.85, capY + headRY * 0.48, headRX * 1.70, headRY * 0.20, 2);
+      g.fillStyle(shirtLight, 0.25);
+      g.fillRoundedRect(cx - headRX * 0.78, capY + headRY * 0.48, headRX * 0.72, headRY * 0.08, 1);
+      // Brim (3-layer depth)
+      g.fillStyle(shirtDark, 1);
+      g.fillRoundedRect(cx - 3, capY + headRY * 0.62, headRX * 1.30, headRY * 0.28, {bl: 5, br: 5, tl: 1, tr: 1});
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 2, capY + headRY * 0.35, headRX * 0.9, headRY * 0.2, {tl: 0, tr: 3, bl: 0, br: 3});
-      g.fillStyle(shirtDark, 0.25);
-      g.fillRoundedRect(cx + headRX * 0.2, capY + headRY * 0.35, headRX * 0.5, headRY * 0.12, {tl: 0, tr: 2, bl: 0, br: 2});
-      g.fillStyle(shirtLight, 0.3);
-      g.fillRoundedRect(cx - headRX * 0.55, capY + 2, headRX * 0.5, headRY * 0.18, 3);
+      g.fillRoundedRect(cx - 4, capY + headRY * 0.54, headRX * 1.32, headRY * 0.22, {bl: 5, br: 5, tl: 1, tr: 1});
+      g.fillStyle(shirtLight, 0.32);
+      g.fillRoundedRect(cx - 3, capY + headRY * 0.55, headRX * 0.85, headRY * 0.08, 2);
 
-      // "M" BADGE
-      g.fillStyle(0xffffff, 1);
-      g.fillCircle(cx, capY + headRY * 0.25, headRY * 0.28);
+      // ════ M BADGE ═════════════════════════════════════════════════════
+      g.fillStyle(WHITE, 1);
+      g.fillCircle(cx - 1, capY + headRY * 0.34, headRY * 0.30);
+      g.fillStyle(0x000000, 0.08);
+      g.fillEllipse(cx - 1, capY + headRY * 0.46, headRY * 0.46, headRY * 0.12);
+      // M letter vector path
       g.fillStyle(shirtColor, 1);
-      g.fillRect(cx - 2, capY + headRY * 0.08, 0.8, headRY * 0.3);
-      g.fillRect(cx + 1.2, capY + headRY * 0.08, 0.8, headRY * 0.3);
-      g.fillRect(cx - 0.6, capY + headRY * 0.14, 1.2, 1.2);
-      g.fillStyle(0xffffff, 0.35);
-      g.fillCircle(cx, capY + headRY * 0.2, headRY * 0.12);
+      const mx = cx - 1, my = capY + headRY * 0.34;
+      const mw = headRY * 0.22, mh = headRY * 0.22;
+      g.beginPath();
+      g.moveTo(mx - mw,        my + mh);
+      g.lineTo(mx - mw,        my - mh);
+      g.lineTo(mx - mw * 0.5,  my - mh);
+      g.lineTo(mx,             my);
+      g.lineTo(mx + mw * 0.5,  my - mh);
+      g.lineTo(mx + mw,        my - mh);
+      g.lineTo(mx + mw,        my + mh);
+      g.lineTo(mx + mw * 0.6,  my + mh);
+      g.lineTo(mx + mw * 0.6,  my - mh * 0.15);
+      g.lineTo(mx,             my + mh * 0.62);
+      g.lineTo(mx - mw * 0.6,  my - mh * 0.15);
+      g.lineTo(mx - mw * 0.6,  my + mh);
+      g.closePath();
+      g.fillPath();
+      g.fillStyle(WHITE, 0.42);
+      g.fillCircle(cx - mw * 1.5, my - mh * 0.3, headRY * 0.09);
 
-      // EYES
-      const eyeY = headCY - headRY * 0.04;
-      g.fillStyle(SKIN_SHADOW, 0.25);
-      g.fillEllipse(cx - headRX * 0.28, eyeY + 1, headRX * 0.32, headRY * 0.22);
-      g.fillEllipse(cx + headRX * 0.28, eyeY + 1, headRX * 0.32, headRY * 0.22);
-      g.fillStyle(0xffffff, 1);
-      g.fillEllipse(cx - headRX * 0.28, eyeY, headRX * 0.36, headRY * 0.42);
-      g.fillEllipse(cx + headRX * 0.28, eyeY, headRX * 0.36, headRY * 0.42);
+      // ════ EYES ════════════════════════════════════════════════════════
+      const eyeY  = headCY - headRY * 0.02;
+      const eyeLX = cx - headRX * 0.30;
+      const eyeRX = cx + headRX * 0.30;
+      const eyeW  = headRX * 0.40;
+      const eyeH  = headRY * 0.48;
+      // Eye socket shadows
+      g.fillStyle(SKIN_SHADOW, 0.32);
+      g.fillEllipse(eyeLX, eyeY + 1.5, eyeW + 2, eyeH + 2);
+      g.fillEllipse(eyeRX, eyeY + 1.5, eyeW + 2, eyeH + 2);
+      // Whites
+      g.fillStyle(WHITE, 1);
+      g.fillEllipse(eyeLX, eyeY, eyeW, eyeH);
+      g.fillEllipse(eyeRX, eyeY, eyeW, eyeH);
+      // Upper shadow on whites
       g.fillStyle(0x000000, 0.06);
-      g.fillEllipse(cx - headRX * 0.28, eyeY - headRY * 0.12, headRX * 0.36, headRY * 0.16);
-      g.fillEllipse(cx + headRX * 0.28, eyeY - headRY * 0.12, headRX * 0.36, headRY * 0.16);
-
-      g.fillStyle(0x111122, 1);
-      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.22);
-      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.22);
-      g.fillStyle(0x4499ee, 1);
-      g.fillCircle(cx - headRX * 0.26, eyeY, headRX * 0.17);
-      g.fillCircle(cx + headRX * 0.30, eyeY, headRX * 0.17);
-      g.fillStyle(0x3377bb, 0.5);
-      g.fillCircle(cx - headRX * 0.26, eyeY + headRY * 0.06, headRX * 0.13);
-      g.fillCircle(cx + headRX * 0.30, eyeY + headRY * 0.06, headRX * 0.13);
-
+      g.fillEllipse(eyeLX, eyeY - eyeH * 0.28, eyeW, eyeH * 0.35);
+      g.fillEllipse(eyeRX, eyeY - eyeH * 0.28, eyeW, eyeH * 0.35);
+      // Iris (3 layers)
+      g.fillStyle(0x091830, 1);
+      g.fillCircle(eyeLX, eyeY, headRX * 0.25);
+      g.fillCircle(eyeRX, eyeY, headRX * 0.25);
+      g.fillStyle(0x1a77dd, 1);
+      g.fillCircle(eyeLX, eyeY, headRX * 0.20);
+      g.fillCircle(eyeRX, eyeY, headRX * 0.20);
+      g.fillStyle(0x55aaff, 1);
+      g.fillCircle(eyeLX, eyeY + headRY * 0.04, headRX * 0.13);
+      g.fillCircle(eyeRX, eyeY + headRY * 0.04, headRX * 0.13);
+      // Pupil
       g.fillStyle(0x000000, 1);
-      g.fillCircle(cx - headRX * 0.27, eyeY, headRX * 0.11);
-      g.fillCircle(cx + headRX * 0.29, eyeY, headRX * 0.11);
-      g.fillStyle(0x000000, 1);
-      g.fillCircle(cx - headRX * 0.28, eyeY, headRX * 0.08);
-      g.fillCircle(cx + headRX * 0.28, eyeY, headRX * 0.08);
+      g.fillCircle(eyeLX, eyeY, headRX * 0.11);
+      g.fillCircle(eyeRX, eyeY, headRX * 0.11);
+      // Shine
+      g.fillStyle(WHITE, 1);
+      g.fillCircle(eyeLX + headRX * 0.09, eyeY - headRY * 0.14, headRX * 0.10);
+      g.fillCircle(eyeRX + headRX * 0.09, eyeY - headRY * 0.14, headRX * 0.10);
+      g.fillStyle(WHITE, 0.62);
+      g.fillCircle(eyeLX - headRX * 0.10, eyeY + headRY * 0.06, headRX * 0.05);
+      g.fillCircle(eyeRX - headRX * 0.10, eyeY + headRY * 0.06, headRX * 0.05);
+      // Eyelashes (3 per eye, fan shape)
+      g.lineStyle(1.2, HAIR, 1);
+      const lashOffsets = [-headRX * 0.13, 0, headRX * 0.13];
+      lashOffsets.forEach((ox, li) => {
+        const ly = eyeY - eyeH * 0.48;
+        g.lineBetween(eyeLX + ox, ly, eyeLX + ox - (li - 1) * 0.8, ly - 2.5);
+        g.lineBetween(eyeRX + ox, ly, eyeRX + ox - (li - 1) * 0.8, ly - 2.5);
+      });
 
-      g.fillStyle(0xffffff, 1);
-      g.fillCircle(cx - headRX * 0.19, eyeY - headRY * 0.12, headRX * 0.10);
-      g.fillCircle(cx + headRX * 0.37, eyeY - headRY * 0.12, headRX * 0.10);
-      g.fillStyle(0xffffff, 0.55);
-      g.fillCircle(cx - headRX * 0.33, eyeY + headRY * 0.06, headRX * 0.05);
-      g.fillCircle(cx + headRX * 0.23, eyeY + headRY * 0.06, headRX * 0.05);
-      g.fillStyle(0xffffff, 0.3);
-      g.fillCircle(cx - headRX * 0.24, eyeY + headRY * 0.14, headRX * 0.04);
-      g.fillCircle(cx + headRX * 0.32, eyeY + headRY * 0.14, headRX * 0.04);
-
-      // EYEBROWS
+      // ════ EYEBROWS ════════════════════════════════════════════════════
       g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - headRX * 0.42, eyeY - headRY * 0.24, headRX * 0.30, headRY * 0.10, 2);
-      g.fillRoundedRect(cx + headRX * 0.16, eyeY - headRY * 0.24, headRX * 0.30, headRY * 0.10, 2);
-      g.fillStyle(HAIR_LIGHT, 0.25);
-      g.fillRoundedRect(cx - headRX * 0.38, eyeY - headRY * 0.22, headRX * 0.22, headRY * 0.04, 1);
-      g.fillRoundedRect(cx + headRX * 0.20, eyeY - headRY * 0.22, headRX * 0.22, headRY * 0.04, 1);
+      g.beginPath();
+      g.moveTo(cx - headRX * 0.46, eyeY - headRY * 0.29);
+      g.lineTo(cx - headRX * 0.12, eyeY - headRY * 0.27);
+      g.lineTo(cx - headRX * 0.12, eyeY - headRY * 0.18);
+      g.lineTo(cx - headRX * 0.46, eyeY - headRY * 0.18);
+      g.closePath();
+      g.fillPath();
+      g.beginPath();
+      g.moveTo(cx + headRX * 0.12, eyeY - headRY * 0.27);
+      g.lineTo(cx + headRX * 0.46, eyeY - headRY * 0.29);
+      g.lineTo(cx + headRX * 0.46, eyeY - headRY * 0.18);
+      g.lineTo(cx + headRX * 0.12, eyeY - headRY * 0.18);
+      g.closePath();
+      g.fillPath();
+      g.fillStyle(HAIR_LIGHT, 0.32);
+      g.fillRoundedRect(cx - headRX * 0.43, eyeY - headRY * 0.27, headRX * 0.26, headRY * 0.06, 1);
+      g.fillRoundedRect(cx + headRX * 0.14, eyeY - headRY * 0.27, headRX * 0.26, headRY * 0.06, 1);
 
-      // NOSE
-      g.fillStyle(SKIN_DARK, 0.6);
-      g.fillCircle(cx, eyeY + headRY * 0.18, headRY * 0.14);
+      // ════ NOSE ════════════════════════════════════════════════════════
+      const noseX = cx + headRX * 0.08;
+      const noseY = eyeY + headRY * 0.23;
+      g.fillStyle(SKIN_DARK, 0.45);
+      g.fillEllipse(noseX, noseY + 1.5, headRY * 0.38, headRY * 0.24);
       g.fillStyle(SKIN, 1);
-      g.fillCircle(cx, eyeY + headRY * 0.17, headRY * 0.11);
-      g.fillStyle(0xffffff, 0.35);
-      g.fillCircle(cx - 0.5, eyeY + headRY * 0.14, headRY * 0.04);
+      g.fillCircle(noseX, noseY, headRY * 0.18);
+      g.fillStyle(WHITE, 0.52);
+      g.fillCircle(noseX - headRY * 0.07, noseY - headRY * 0.07, headRY * 0.07);
+      g.fillStyle(SKIN_DARK, 0.38);
+      g.fillCircle(noseX + headRY * 0.08, noseY + headRY * 0.08, headRY * 0.055);
 
-      // MUSTACHE
+      // ════ MUSTACHE ════════════════════════════════════════════════════
+      const mustY = eyeY + headRY * 0.37;
       g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - headRX * 0.36, eyeY + headRY * 0.30, headRX * 0.72, headRY * 0.14, 2);
-      g.fillStyle(HAIR, 0.8);
-      g.fillCircle(cx - headRX * 0.32, eyeY + headRY * 0.34, headRY * 0.07);
-      g.fillCircle(cx + headRX * 0.32, eyeY + headRY * 0.34, headRY * 0.07);
-      g.fillStyle(HAIR_LIGHT, 0.2);
-      g.fillRoundedRect(cx - headRX * 0.2, eyeY + headRY * 0.31, headRX * 0.4, headRY * 0.05, 1);
+      // Left curl path
+      g.beginPath();
+      g.moveTo(cx - headRX * 0.42, mustY);
+      g.lineTo(cx - 0.5, mustY);
+      g.lineTo(cx - 0.5, mustY + headRY * 0.14);
+      g.lineTo(cx - headRX * 0.38, mustY + headRY * 0.18);
+      g.lineTo(cx - headRX * 0.42, mustY + headRY * 0.08);
+      g.closePath();
+      g.fillPath();
+      // Right curl path
+      g.beginPath();
+      g.moveTo(cx + 0.5, mustY);
+      g.lineTo(cx + headRX * 0.42, mustY);
+      g.lineTo(cx + headRX * 0.42, mustY + headRY * 0.08);
+      g.lineTo(cx + headRX * 0.38, mustY + headRY * 0.18);
+      g.lineTo(cx + 0.5, mustY + headRY * 0.14);
+      g.closePath();
+      g.fillPath();
+      // Curl tip circles
+      g.fillCircle(cx - headRX * 0.40, mustY + headRY * 0.11, headRY * 0.11);
+      g.fillCircle(cx + headRX * 0.40, mustY + headRY * 0.11, headRY * 0.11);
+      // Sheen
+      g.fillStyle(HAIR_LIGHT, 0.28);
+      g.fillRoundedRect(cx - headRX * 0.26, mustY + 1.2, headRX * 0.52, headRY * 0.07, 2);
 
-      // SMILE
-      g.fillStyle(0x883300, 0.4);
-      g.fillRoundedRect(cx - headRX * 0.14, eyeY + headRY * 0.40, headRX * 0.28, headRY * 0.08, 2);
-      g.fillStyle(0x662200, 0.3);
-      g.fillRoundedRect(cx - headRX * 0.16, eyeY + headRY * 0.40, headRX * 0.32, 1, 1);
+      // ════ MOUTH ═══════════════════════════════════════════════════════
+      g.fillStyle(SKIN_DARK, 0.38);
+      g.fillRoundedRect(cx - headRX * 0.19, mustY + headRY * 0.18, headRX * 0.38, headRY * 0.10, 2);
+      g.fillStyle(SKIN_DARK, 0.22);
+      g.fillRoundedRect(cx - headRX * 0.21, mustY + headRY * 0.17, headRX * 0.42, 1, 1);
 
       g.generateTexture(key, w, totalH);
     };
 
-    drawMario('player_idle', 0xee3333, 0x2266dd, false);
-    drawMario('player_walk1', 0xee3333, 0x2266dd, false, 'walk1');
-    drawMario('player_walk2', 0xee3333, 0x2266dd, false, 'walk2');
-    drawMario('player_jump', 0xee3333, 0x2266dd, false, 'jump');
-    drawMario('player_big_idle', 0xee3333, 0x2266dd, true);
-    drawMario('player_big_walk1', 0xee3333, 0x2266dd, true, 'walk1');
-    drawMario('player_big_walk2', 0xee3333, 0x2266dd, true, 'walk2');
-    drawMario('player_big_jump', 0xee3333, 0x2266dd, true, 'jump');
-    drawMario('player_fire_idle', 0xffffff, 0xee4444, true);
-    drawMario('player_fire_walk1', 0xffffff, 0xee4444, true, 'walk1');
-    drawMario('player_fire_walk2', 0xffffff, 0xee4444, true, 'walk2');
-    drawMario('player_fire_jump', 0xffffff, 0xee4444, true, 'jump');
+    // Classic red/blue Mario
+    drawMario('player_idle',      0xdd2222, 0x1a5fcc, false);
+    drawMario('player_walk1',     0xdd2222, 0x1a5fcc, false, 'walk1');
+    drawMario('player_walk2',     0xdd2222, 0x1a5fcc, false, 'walk2');
+    drawMario('player_jump',      0xdd2222, 0x1a5fcc, false, 'jump');
+    drawMario('player_big_idle',  0xdd2222, 0x1a5fcc, true);
+    drawMario('player_big_walk1', 0xdd2222, 0x1a5fcc, true, 'walk1');
+    drawMario('player_big_walk2', 0xdd2222, 0x1a5fcc, true, 'walk2');
+    drawMario('player_big_jump',  0xdd2222, 0x1a5fcc, true, 'jump');
+    // Fire Mario – white/orange
+    drawMario('player_fire_idle',  0xf8f8f8, 0xdd4411, true);
+    drawMario('player_fire_walk1', 0xf8f8f8, 0xdd4411, true, 'walk1');
+    drawMario('player_fire_walk2', 0xf8f8f8, 0xdd4411, true, 'walk2');
+    drawMario('player_fire_jump',  0xf8f8f8, 0xdd4411, true, 'jump');
 
-    // Fireball
+    // Fireball – enhanced multi-layer glow
     g.clear();
-    g.fillStyle(0xff2200, 0.08);
-    g.fillCircle(6, 6, 7);
-    g.fillStyle(0xff4400, 0.15);
-    g.fillCircle(6, 6, 6);
-    g.fillStyle(0xff7700, 0.35);
-    g.fillCircle(6, 6, 5);
-    g.fillStyle(0xffaa00, 0.7);
-    g.fillCircle(6, 6, 4);
-    g.fillStyle(0xffdd00, 1);
-    g.fillCircle(6, 6, 3);
-    g.fillStyle(0xffffff, 0.6);
-    g.fillCircle(6, 6, 1.2);
-    g.generateTexture('fireball', 12, 12);
+    g.fillStyle(0xff1100, 0.06); g.fillCircle(8, 8, 9);
+    g.fillStyle(0xff3300, 0.12); g.fillCircle(8, 8, 7.5);
+    g.fillStyle(0xff6600, 0.28); g.fillCircle(8, 8, 6);
+    g.fillStyle(0xffaa00, 0.60); g.fillCircle(8, 8, 4.5);
+    g.fillStyle(0xffee00, 1);    g.fillCircle(8, 8, 3);
+    g.fillStyle(0xffffff, 0.85); g.fillCircle(8, 8, 1.5);
+    g.generateTexture('fireball', 16, 16);
     g.destroy();
   }
-
   private createEnemyTextures() {
     const g = this.add.graphics();
 
