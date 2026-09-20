@@ -119,7 +119,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     // Brueckel-Bruecke ueber der Spalte
     platforms.push(createCrumblePlat(1230, 700, 120, 24));              // top 688
     platforms.push(createCrumblePlat(1400, 720, 120, 24));              // top 708
-    platforms.push(...pitWithLedges(1100, 740, 400, 180, 60, 'stone')); // Spaltenboden top 920
+    platforms.push(...pitWithLedges(1100, 740, 400, 180, 'stone')); // Spaltenboden top 920
     platforms.push(createPlat(1450, 840, 120, 24, 'platform_easy'));    // top 828 sicherer Ausstieg
     platforms.push(createPlat(2000, 780, 1000, 40, 'stone'));           // top 760 [1500,2500]
     platforms.push(...gapWithPlatforms(1, 2500, 772, 800, 3, {
@@ -223,7 +223,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     ]));
     platforms.push(createPlat(3900, 760, 900, 40, 'stone'));            // top 740 [3450,4350]
     platforms.push(createPlat(5425, 760, 1250, 40, 'sandstone'));       // top 740 [4800,6050]
-    platforms.push(...pitWithLedges(6050, 740, 300, 150, 60, 'stone')); // Spaltenboden top 890
+    platforms.push(...pitWithLedges(6050, 740, 300, 150, 'stone')); // Spaltenboden top 890
     platforms.push(createPlat(6480, 830, 120, 24, 'platform_easy'));    // top 818 Ausstieg
     platforms.push(createPlat(7300, 780, 1300, 40, 'stone'));           // top 760 [6650,7950]
     platforms.push(...staircase(7950, 760, 3, 80, 150, 45, 'sandstone'));

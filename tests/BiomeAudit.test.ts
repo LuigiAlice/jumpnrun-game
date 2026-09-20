@@ -141,15 +141,15 @@ describe.skipIf(!biome)(`BiomeAudit: ${biome}`, () => {
     const has = (fn: (l: LevelData) => boolean) => levels.some(fn);
     const featureMap: Record<string, Record<string, boolean>> = {
       'grasslands': { windZones: true, checkpoints: false },
-      'desert': { windZones: true, keys: true },
-      'water': { waterZones: true },
+      'desert': { windZones: true, keys: true, goals: true },
+      'water': { waterZones: true, rising: true },
       'ice-snow': { ice: true },
       'sky-clouds': { crumble: true, windZones: true },
       'forest': { crumble: false },
       'village': { windZones: true, keys: true, checkpoints: true },
-      'beach-island': { waterZones: true },
+      'beach-island': { waterZones: true, rising: true },
       'factory': { conveyor: true, cannons: true },
-      'volcano-lava': { crumble: false },
+      'volcano-lava': { crumble: false, rising: true },
       'haunted-mansion': { keys: true, hidden: true },
       'ruins': { crumble: true, keys: true, hidden: true },
       'canyon-base': { crumble: true, windZones: true, cannons: true },
@@ -158,12 +158,20 @@ describe.skipIf(!biome)(`BiomeAudit: ${biome}`, () => {
     };
     const expected = featureMap[biome!] || {};
     if (expected.crumble) expect(has(l => l.platforms.some(p => p.crumble)), 'crumble platforms missing').toBe(true);
-    if (expected.ice) expect(has(l => l.platforms.some(p => p.type === 'ice')), 'ice platforms missing').toBe(true);
-    if (expected.conveyor) expect(has(l => l.platforms.some(p => p.conveyor !== undefined)), 'conveyor platforms missing').toBe(true);
+    if (expected.ice) {
+      const iceLevels = levels.filter(l => l.platforms.some(p => p.type === 'ice'));
+      expect(iceLevels.length, 'ice platforms needed in >=2 levels').toBeGreaterThanOrEqual(2);
+    }
+    if (expected.conveyor) {
+      const beltLevels = levels.filter(l => l.platforms.some(p => p.conveyor !== undefined));
+      expect(beltLevels.length, 'conveyor belts needed in >=2 levels').toBeGreaterThanOrEqual(2);
+    }
     if (expected.windZones) expect(has(l => (l.windZones || []).length > 0), 'wind zones missing').toBe(true);
     if (expected.waterZones) expect(has(l => (l.waterZones || []).length > 0), 'water zones missing').toBe(true);
     if (expected.cannons) expect(has(l => (l.cannons || []).length > 0), 'cannons missing').toBe(true);
     if (expected.keys) expect(has(l => (l.keys || []).length > 0), 'keys/doors missing').toBe(true);
+    if (expected.goals) expect(has(l => (l.goals || []).length > 0), 'multi-goal flags missing').toBe(true);
+    if (expected.rising) expect(has(l => !!l.rising), 'rising hazard missing').toBe(true);
     if (expected.hidden) expect(has(l => l.platforms.some(p => p.type === 'hidden' || p.type === 'brick_secret' || p.type === 'brick_multi')), 'hidden/secret bricks missing').toBe(true);
     if (expected.checkpoints) {
       const long = levels.filter(l => l.width >= 16000);

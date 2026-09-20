@@ -1,7 +1,7 @@
 // 100 Levels - 15 Biome (Super Mario inspired)
 
 // Re-export helpers from separate file to avoid circular imports
-export { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, canBreakBrick, isBrickLoadBearing, createCrumblePlat, createConveyorPlat, createIcePlat, createCheckpoint, createWindZone, createWaterZone, createKey, createDoor, createCannon, staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder } from './helpers';
+export { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, canBreakBrick, isBrickLoadBearing, createCrumblePlat, createConveyorPlat, createIcePlat, createCheckpoint, createWindZone, createWaterZone, createKey, createDoor, createCannon, staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder, seg } from './helpers';
 
 export type Biome = 
   | 'grasslands' | 'desert' | 'water' | 'ice-snow'
@@ -107,6 +107,8 @@ export interface LevelData {
     cannons?: { x: number; y: number; dir: 1 | -1; intervalMs?: number; speed?: number }[];
     /** Zeit-Tor: goal stays locked until this many seconds of the level have elapsed. */
     timeGate?: number;
+    /** Rising flood/lava finale: spawns a level-wide floor that chases the player (keeps ~560px distance). */
+    rising?: { kind: 'lava' | 'water'; speed?: number };
     timeBonus: number;
 }
 

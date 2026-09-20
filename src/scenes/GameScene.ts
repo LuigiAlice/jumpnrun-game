@@ -131,7 +131,7 @@ export class GameScene extends Phaser.Scene {
   private totalTime: number = 300;
   private levelElapsed: number = 0;
   private timeGateText?: Phaser.GameObjects.Text;
-  private windZoneTimers: Map<number, number> = new Map();
+  private windZoneTimers: Map<object, number> = new Map();
 
   constructor() { super({ key: 'Game' }); }
 
@@ -543,20 +543,15 @@ export class GameScene extends Phaser.Scene {
       });
     }
 
-    // Level 60: Rising lava mechanic
-    if (level.id === 60) {
-      const lava = this.platforms.create(level.width / 2, level.height + 150, 'ground_lava');
-      lava.setDisplaySize(level.width, 300).refreshBody();
-      (lava as any).platformType = 'lava';
-      lava.setData('risingLava', true);
-    }
-    
-    // L18, L48: Rising water/tide
-    if (level.id === 18 || level.id === 48) {
-      const water = this.platforms.create(level.width / 2, level.height + 200, 'ground_water');
-      water.setDisplaySize(level.width, 400).refreshBody();
-      (water as any).platformType = 'lava';
-      water.setData('risingLava', true);
+    // Rising lava/water: data-driven via level.rising (Phase 9)
+    if (level.rising) {
+      const isWater = level.rising.kind === 'water';
+      const floor = this.platforms.create(level.width / 2, level.height + (isWater ? 200 : 150), isWater ? 'ground_water' : 'ground_lava');
+      floor.setDisplaySize(level.width, isWater ? 400 : 300).refreshBody();
+      // Reuses the lava-kill semantics: touching the rising flood is lethal (same as before).
+      (floor as any).platformType = 'lava';
+      floor.setData('risingLava', true);
+      floor.setData('risingSpeed', level.rising.speed ?? 0.4);
     }
     
     // Phase 9: crumble is data-driven (p.crumble in level data). Legacy fallback
@@ -623,7 +618,7 @@ export class GameScene extends Phaser.Scene {
     (level.doors || []).forEach(d => {
       const door = this.solidPlatforms.create(d.x, d.y, 'metal');
       door.setDisplaySize(d.w, d.h).refreshBody();
-      (door as any).platformType = 'door';
+      door.setData('door', true);
       door.setTint(0x99bbff);
       this.doorSprites.push(door);
     });
@@ -1096,6 +1091,15 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /** Shared coin/time gate condition (updateCoinGate + reachGoal). */
+  private goalUnlocked(): boolean {
+    const level = this.currentLevelData;
+    if (!level) return false;
+    const coinOk = !level.coinGoal || this.coinCount >= level.coinGoal;
+    const timeOk = !level.timeGate || this.levelElapsed >= level.timeGate;
+    return coinOk && timeOk;
+  }
+
   private updateCoinGate() {
     const level = this.currentLevelData;
     if (!level) return;
@@ -1104,7 +1108,7 @@ export class GameScene extends Phaser.Scene {
     if (!coinGoal && !timeGate) return;
     const coinOk = !coinGoal || this.coinCount >= coinGoal;
     const timeOk = !timeGate || this.levelElapsed >= timeGate;
-    if (coinOk && timeOk) {
+    if (this.goalUnlocked()) {
       if (this.coinGateOpen) return;
       this.coinGateOpen = true;
       (this.goal.body as Phaser.Physics.Arcade.Body).enable = true;
@@ -1244,6 +1248,9 @@ export class GameScene extends Phaser.Scene {
     this.updateUI();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     const dt = this.game.loop.delta / 1000;
+    // One ground lookup per frame (used by ice slip and conveyor belts below)
+    const groundPlat = body.blocked.down ? this.getGroundPlatform() : null;
+    const groundType = (groundPlat as any)?.platformType;
 
     if (this.cursors.left.isDown) {
       this.player.setFlipX(true);
@@ -1262,8 +1269,6 @@ export class GameScene extends Phaser.Scene {
         body.velocity.x = Math.min(body.velocity.x + ACCEL * dt, PLAYER_SPEED);
       }
     } else {
-      const groundPlat = body.blocked.down ? this.getGroundPlatform() : null;
-      const groundType = (groundPlat as any)?.platformType;
       const onIcePlatform = groundType === 'ice';
       const onSnowBiome = !!body.blocked.down && this.currentLevelData?.biome === 'ice-snow';
       if (onIcePlatform || onSnowBiome) {
@@ -1322,8 +1327,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Conveyor belts (Phase 9): shift the player while standing on a belt
-    const standingPlat = body.blocked.down ? this.getGroundPlatform() : null;
-    const beltSpeed = standingPlat ? (standingPlat as any).getData?.('conveyor') : undefined;
+    const beltSpeed = groundPlat ? (groundPlat as any).getData?.('conveyor') : undefined;
     if (beltSpeed) body.x += beltSpeed * dt;
 
     // Swimming: water biome below y=500 or inside a water zone (Phase 9)
@@ -1352,7 +1356,8 @@ export class GameScene extends Phaser.Scene {
       if (p.getData?.('risingLava')) {
         const chaseFloor = this.player.y + 560;
         if (p.y > chaseFloor) {
-          p.y -= Math.min(0.4, p.y - chaseFloor);
+          const speed = p.getData('risingSpeed') ?? 0.4;
+          p.y -= Math.min(speed, p.y - chaseFloor);
           p.body.updateFromGameObject();
         }
       }
@@ -1394,14 +1399,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Wind zones (Phase 9): periodic gust while inside the zone
-    (this.currentLevelData?.windZones || []).forEach((z, i) => {
+    (this.currentLevelData?.windZones || []).forEach((z) => {
       const inside = this.player.x >= z.x && this.player.x <= z.x + z.w &&
         this.player.y >= z.y && this.player.y <= z.y + z.h;
       if (!inside) return;
-      const last = this.windZoneTimers.get(i) ?? 0;
+      const last = this.windZoneTimers.get(z) ?? 0;
       const interval = z.intervalMs ?? 3000;
       if (time - last >= interval) {
-        this.windZoneTimers.set(i, time);
+        this.windZoneTimers.set(z, time);
         const gust = Phaser.Math.Between(1, 2) === 1 ? -z.strength : z.strength;
         body.setVelocityX(body.velocity.x + gust);
       }
@@ -1713,11 +1718,7 @@ export class GameScene extends Phaser.Scene {
 
   private reachGoal(bonusPoints: number = 0) {
       if (this.isTransitioning) return;
-      const level = this.currentLevelData;
-      if (!level) return;
-      const coinOk = !level.coinGoal || this.coinCount >= level.coinGoal;
-      const timeOk = !level.timeGate || this.levelElapsed >= level.timeGate;
-      if (!coinOk || !timeOk) return;
+      if (!this.goalUnlocked()) return;
       this.isTransitioning = true;
       this.playGoalSound();
       this.isMusicPlaying = false;

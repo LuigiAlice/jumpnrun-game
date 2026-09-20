@@ -120,7 +120,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     platforms.push(createPlat(1450, 420, 260, 40, 'grass'));
     platforms.push(createPlat(1720, 500, 140, 24, 'platform_medium'));
     // Pit 1 (depth 180) with ledges out of it
-    platforms.push(...pitWithLedges(1850, 640, 700, 180, 60, 'stone'));
+    platforms.push(...pitWithLedges(1850, 640, 700, 180, 'stone'));
     platforms.push(createPlat(1980, 760, 110, 24, 'platform_easy'));
     platforms.push(createPlat(2250, 700, 110, 24, 'platform_medium'));
     platforms.push(createPlat(2480, 660, 110, 24, 'platform_hard'));
@@ -133,7 +133,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     platforms.push(...twoTierSection(3450, 640, 700, 'grass', 'stone'));
     platforms.push(createPlat(4450, 660, 600, 40, 'grass'));
     // Pit 2 (depth 200)
-    platforms.push(...pitWithLedges(4800, 640, 600, 200, 60, 'stone'));
+    platforms.push(...pitWithLedges(4800, 640, 600, 200, 'stone'));
     platforms.push(createPlat(4950, 760, 100, 24, 'platform_easy'));
     platforms.push(createPlat(5250, 700, 100, 24, 'platform_medium'));
     platforms.push(createPlat(5700, 660, 700, 40, 'grass'));
@@ -262,7 +262,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     platforms.push(createPlat(3450, 430, 120, 24, 'platform_medium'));
     platforms.push(createPlat(3620, 350, 140, 24, 'brick_secret'));
     // Pit with ledges back up
-    platforms.push(...pitWithLedges(3900, 500, 500, 160, 60, 'stone'));
+    platforms.push(...pitWithLedges(3900, 500, 500, 160, 'stone'));
     platforms.push(createPlat(4000, 590, 110, 24, 'platform_easy'));
     platforms.push(createPlat(4220, 540, 110, 24, 'platform_medium'));
     platforms.push(createPlat(4800, 500, 800, 40, 'grass'));
@@ -460,7 +460,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     platforms.push(...twoTierSection(2350, 640, 700, 'grass', 'stone'));
     platforms.push(createPlat(3250, 660, 700, 40, 'grass'));
     // Pit arena with spiked floor and climb-out ledges
-    platforms.push(...pitWithLedges(3700, 640, 800, 200, 60, 'stone'));
+    platforms.push(...pitWithLedges(3700, 640, 800, 200, 'stone'));
     platforms.push(createPlat(3800, 760, 110, 24, 'platform_easy'));
     platforms.push(createPlat(4000, 700, 110, 24, 'platform_medium'));
     platforms.push(createPlat(4200, 740, 110, 24, 'platform_easy'));

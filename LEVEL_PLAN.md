@@ -145,12 +145,13 @@ Implementiert (Engine: GameScene/helpers/config, Tests: NewElements + PilotEleme
 **Status**: ABGESCHLOSSEN — Engine + Typen + Tests + alle 15 Biome umgebaut. Verifikation: `tests/Phase9Features.test.ts` (28 Tests), `tests/BiomeAudit.test.ts` (scoped pro Biom), `tests/ElementMix.test.ts`, `LEVEL_PLAN.md`-Spezifikation unten.
 
 **Neue LevelData-Felder** (alle optional, Solver-agnostisch, dürfen nie Pflichtweg sein):
-`checkpoints`, `windZones`, `waterZones`, `keys`, `doors`, `cannons`, `timeGate`; Plattform-Extras `crumble`, `conveyor`; `PlatformType` 'ice'; nutzbar: `hidden`, `brick_secret`, `brick_multi`; QB-Inhalt `oneup`; `goals` (Multi-Goal).
+`checkpoints`, `windZones`, `waterZones`, `keys`, `doors`, `cannons`, `timeGate`, `rising`; Plattform-Extras `crumble`, `conveyor`; `PlatformType` 'ice'; nutzbar: `hidden`, `brick_secret`, `brick_multi`; QB-Inhalt `oneup`; `goals` (Multi-Goal).
 
 **Helfer v2** (`helpers.ts`, absolute Koordinaten, `baseTop` = Oberkante des Bodens):
+- `seg(l, r, top, h, type)` — Segment aus linker/rechter Kante + Oberkante (gemeinsame Basis mehrerer Biome-Dateien)
 - `staircase(startX, baseTop, steps, rise=70, width=140, gapX=40, type)`
 - `plateauSection(startX, baseTop, specs[{dx,dy,w,h?,type?}])`
-- `pitWithLedges(pitStart, baseTop, pitWidth, pitDepth=160, ledgeWidth=60, type)`
+- `pitWithLedges(pitStart, baseTop, pitWidth, pitDepth=160, type)` — Grubenboden; die umliegende Erde bildet die Ränder
 - `twoTierSection(startX, baseTop, length, lowerType?, upperType?)` — obere Route bei baseTop−160
 - `islandCluster(startX, baseTop, specs[{dx,dy,w,type?}])`
 - `zigzagClimb(startX, baseTop, steps=6, rise=90, width=110, swing=130, type)`

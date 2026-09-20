@@ -26,7 +26,7 @@ export const RUINS_LEVELS: LevelData[] = [
   (() => {
     const platforms = [] as LevelData['platforms'];
     platforms.push(createPlat(600, 760, 1000, 48, 'ruins'));
-    platforms.push(...pitWithLedges(1100, 736, 240, 140, 60, 'sandstone'));
+    platforms.push(...pitWithLedges(1100, 736, 240, 140, 'sandstone'));
     // Geheim-Brick über dem Grubenrand (nur mit Sprung erreichbar)
     platforms.push(createPlat(1300, 600, 140, 24, 'brick_secret'));
     platforms.push(createPlat(1800, 760, 800, 48, 'ruins'));
@@ -150,7 +150,7 @@ export const RUINS_LEVELS: LevelData[] = [
     platforms.push(createPlat(4450, 760, 800, 48, 'ruins'));
     platforms.push(...twoTierSection(4900, 736, 900, 'stone', 'sandstone'));
     platforms.push(createPlat(6400, 760, 900, 48, 'ruins'));
-    platforms.push(...pitWithLedges(6900, 736, 280, 150, 60, 'sandstone'));
+    platforms.push(...pitWithLedges(6900, 736, 280, 150, 'sandstone'));
     // Insel-Cluster über der Grabkammer
     platforms.push(...islandCluster(6900, 736, [
       { dx: 0, dy: 150, w: 120, type: 'platform_easy' },
@@ -645,7 +645,7 @@ export const RUINS_LEVELS: LevelData[] = [
     }));
     platforms.push(createPlat(6600, 940, 900, 48, 'ruins'));
     platforms.push(createPlat(7600, 900, 700, 48, 'stone'));
-    platforms.push(...pitWithLedges(8000, 876, 300, 60, 60, 'sandstone'));
+    platforms.push(...pitWithLedges(8000, 876, 300, 60, 'sandstone'));
     platforms.push(createPlat(8800, 900, 700, 48, 'ruins'));
     platforms.push(createPlat(9500, 860, 600, 48, 'sandstone'));
     // Fallstücke (Crumble) über der sicheren Querung

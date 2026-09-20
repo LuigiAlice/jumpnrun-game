@@ -14,14 +14,10 @@ import {
   LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat,
   createSpring, createSpike, createCheckpoint, createWaterZone, createCrumblePlat,
   staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster,
-  zigzagClimb, overhangSection, gapWithPlatforms, coinArc, coinDiamond, coinTrail, coinLadder,
+  zigzagClimb, overhangSection, gapWithPlatforms, coinArc, coinDiamond, coinTrail, coinLadder, seg,
 } from './helpers';
 
 type PlatType = Parameters<typeof createPlat>[4];
-
-/** Plattform aus linker/rechter Kante + Oberkante (top = y - h/2). */
-const seg = (l: number, r: number, top: number, h: number, type: PlatType) =>
-  createPlat((l + r) / 2, top + h / 2, r - l, h, type);
 
 const dec = (x: number, y: number, type: 'palm' | 'seagull' | 'shell' | 'sea' | 'coral') =>
   createDeco(x, y, type);
@@ -47,7 +43,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       seg(1780, 2020, 450, 24, 'wood'),
       seg(2060, 2200, 490, 24, 'wood'),
       seg(2240, 2900, 550, 40, 'sand'),
-      ...pitWithLedges(2900, 550, 240, 160, 60, 'sand'),
+      ...pitWithLedges(2900, 550, 240, 160, 'sand'),
       seg(3140, 3700, 550, 40, 'sand'),
       ...staircase(3700, 550, 3, 90, 180, 40, 'platform_medium'),
       seg(4440, 4900, 190, 40, 'stone'),
@@ -543,6 +539,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     playerStart: { x: 140, y: 704 },
     goal: { x: 14800, y: 120 },
     timeBonus: 240,
+    rising: { kind: 'water', speed: 0.25 },
     goals: [
       { x: 2200, y: 380, points: 2500, difficulty: 'hard' },
       { x: 6800, y: 160, points: 3000, difficulty: 'hard' },

@@ -198,6 +198,15 @@ describe('Phase 9: data-driven level elements', () => {
     }
   });
 
+  it('rising water and lava finales are data-driven', () => {
+    expect(levels[17].rising?.kind).toBe('water');
+    expect(levels[47].rising?.kind).toBe('water');
+    expect(levels[59].rising?.kind).toBe('lava');
+    for (const level of levels) {
+      if (level.rising) expect(['lava', 'water']).toContain(level.rising.kind);
+    }
+  });
+
   it('time-gate levels are achievable within their time bonus', () => {
     const gated = levels.filter(l => l.timeGate !== undefined);
     expect(gated.length).toBeGreaterThanOrEqual(2);

@@ -15,7 +15,7 @@ import {
   LevelData, createPlat, createQB, createEnemy, createDeco, createMovingPlat,
   createSpring, createSpike, createCrumblePlat, createCheckpoint, createKey, createDoor,
   staircase, plateauSection, pitWithLedges, twoTierSection, zigzagClimb, islandCluster,
-  gapWithPlatforms, coinArc, coinDiamond, coinTrail, coinLadder,
+  gapWithPlatforms, coinArc, coinDiamond, coinTrail, coinLadder, seg,
 } from './helpers';
 
 type PType = LevelData['platforms'][number]['type'];
@@ -23,7 +23,7 @@ type Plat = LevelData['platforms'][number];
 
 /** Solider Boden von x1 bis x2 mit Oberkante topY. */
 const ground = (x1: number, x2: number, topY: number, type: PType = 'stone'): Plat =>
-  createPlat((x1 + x2) / 2, topY + 20, x2 - x1, 40, type);
+  seg(x1, x2, topY, 40, type);
 
 /** Schwebende Trittplatte (24px hoch), y = Zentrum. */
 const slab = (cx: number, topY: number, w: number, type: PType = 'platform_medium'): Plat =>
@@ -364,7 +364,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     platforms.push(...pipePair(5050, 620));
     platforms.push(lavaPool(5300, 5900, 740));                         // Lava-Fluss 3
     platforms.push(ground(5900, 6800, 620));                           // top 620  [5900,6800]
-    platforms.push(...pitWithLedges(6800, 620, 700, 160, 60, 'lava')); // Lavagrube top 780
+    platforms.push(...pitWithLedges(6800, 620, 700, 160, 'lava')); // Lavagrube top 780
     platforms.push(slab(6900, 610, 100, 'platform_medium'));
     platforms.push(slab(7080, 600, 90, 'platform_easy'));
     platforms.push(slab(7260, 615, 80, 'platform_hard'));
@@ -510,7 +510,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
   (() => {
     const platforms = [] as Plat[];
     platforms.push(ground(0, 1200, 660));                              // top 660  [0,1200]
-    platforms.push(...pitWithLedges(1200, 660, 500, 100, 60, 'stone')); // Grubenboden top 760
+    platforms.push(...pitWithLedges(1200, 660, 500, 100, 'stone')); // Grubenboden top 760
     platforms.push(slab(1320, 630, 90, 'platform_easy'));              // Gruben-Tritt top 630
     platforms.push(slab(1520, 610, 80, 'platform_medium'));            // Gruben-Tritt top 610
     platforms.push(ground(1700, 2600, 640));                           // top 640  [1700,2600]
@@ -640,7 +640,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     platforms.push(ground(2100, 3400, 620));                           // Arena 2 top 620 [2100,3400]
     platforms.push(lavaPool(3400, 4000, 740));                         // Lavagraben 2
     platforms.push(ground(4000, 5300, 560));                           // Arena 3 top 560 [4000,5300]
-    platforms.push(...pitWithLedges(5300, 560, 500, 160, 60, 'lava')); // Lavagrube top 720
+    platforms.push(...pitWithLedges(5300, 560, 500, 160, 'lava')); // Lavagrube top 720
     platforms.push(slab(5420, 550, 90, 'platform_easy'));
     platforms.push(slab(5620, 535, 80, 'platform_hard'));
     platforms.push(ground(5800, 7100, 540));                           // Arena 4 top 540 [5800,7100]
@@ -898,6 +898,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
       playerStart: { x: 170, y: 648 },
       goal: { x: 13100, y: 110 },
       timeBonus: 240,
+      rising: { kind: 'lava' },
       springs: [createSpring(4350, 430), createSpring(11350, 220)],
       spikes: [createSpike(8700, 152), createSpike(10000, 232)],
       checkpoints: [

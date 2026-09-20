@@ -17,14 +17,10 @@ import {
   LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat,
   createSpring, createSpike, createCheckpoint, createWaterZone, createKey, createDoor,
   createCrumblePlat, staircase, plateauSection, pitWithLedges, twoTierSection,
-  islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
+  islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder, seg,
 } from './helpers';
 
 type PlatType = Parameters<typeof createPlat>[4];
-
-/** Plattform aus linker/rechter Kante + Oberkante (top = y - h/2). */
-const seg = (l: number, r: number, top: number, h: number, type: PlatType) =>
-  createPlat((l + r) / 2, top + h / 2, r - l, h, type);
 
 export const WATER_LEVELS: LevelData[] = [
   // ==========================================================================
@@ -117,7 +113,7 @@ export const WATER_LEVELS: LevelData[] = [
       seg(0, 700, 620, 40, 'water'),
       seg(740, 940, 560, 24, 'platform_medium'),
       ...overhangSection(980, 620, 900, 1400, 200, 'cave'),
-      ...pitWithLedges(1400, 620, 200, 160, 60, 'cave'),
+      ...pitWithLedges(1400, 620, 200, 160, 'cave'),
       seg(1920, 2500, 660, 40, 'water'),
       ...twoTierSection(2540, 660, 900, 'water', 'platform_hard'),
       seg(3480, 3780, 580, 24, 'platform_medium'),
@@ -665,6 +661,7 @@ export const WATER_LEVELS: LevelData[] = [
     playerStart: { x: 140, y: 480 },
     goal: { x: 11900, y: 100 },
     timeBonus: 220,
+    rising: { kind: 'water', speed: 0.25 },
     springs: [createSpring(5850, 500), createSpring(6850, 340)],
     spikes: [
       createSpike(2900, 752),

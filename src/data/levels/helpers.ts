@@ -23,6 +23,10 @@ export const createSpike = (x: number, y: number) => ({ x, y });
 
 const PLATFORM_H = 24;
 
+/** Solid segment from left/right edge + top edge (top = y - h/2). Single source for biome files. */
+export const seg = (l: number, r: number, top: number, h: number, type: PlatformType): Platform =>
+  createPlat((l + r) / 2, top + h / 2, r - l, h, type);
+
 export const createCrumblePlat = (x: number, y: number, w: number, h: number, type: PlatformType = 'platform_medium'): Platform =>
   ({ x, y, w, h, type, crumble: true });
 
@@ -57,8 +61,8 @@ export const plateauSection = (startX: number, baseTop: number, specs: { dx: num
     return createPlat(startX + s.dx + s.w / 2, baseTop - s.dy + h / 2, s.w, h, s.type ?? 'stone');
   });
 
-/** Pit with raised ledges and a lower floor. */
-export const pitWithLedges = (pitStart: number, baseTop: number, pitWidth: number, pitDepth: number = 160, ledgeWidth: number = 60, type: PlatformType = 'stone'): Platform[] => {
+/** Pit floor below the surrounding ground (the surrounding ground forms the ledges). */
+export const pitWithLedges = (pitStart: number, baseTop: number, pitWidth: number, pitDepth: number = 160, type: PlatformType = 'stone'): Platform[] => {
   const floor = createPlat(pitStart + pitWidth / 2, baseTop + pitDepth + 20, pitWidth, 40, type);
   return [floor];
 };

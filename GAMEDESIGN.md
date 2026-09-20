@@ -115,8 +115,8 @@ Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pf
 | **1-UP-Block** | `QuestionBlockContent 'oneup'` | QB gibt +1 Leben (1-UP-Popup + Arpeggio) |
 | **Geheim-Bricks** | `hidden`, `brick_secret`, `brick_multi` | `hidden` wird beim Bonk sichtbar (+Münze), `brick_secret` gibt Münze, `brick_multi` mehrfach (300ms Cooldown) |
 
-- Steigende Lava/Flut (L60/L18/L48) folgt dem Spieler mit Chase-Abstand 560px und kann ihn nicht einkesseln
-- Crumble/Wind/Fallhazards sind datengetrieben statt an Level-IDs gebunden (Legacy-Fallback für L30/72/78/84 entfernt)
+- Steigende Lava/Flut (L60/L18/L48) ist datengetrieben (`rising: { kind: 'lava' | 'water', speed? }`), folgt dem Spieler mit Chase-Abstand 560px und kann ihn nicht einkesseln; Berührung bleibt tödlich (Lava-Semantik)
+- Crumble/Wind/Fallhazards sind datengetrieben statt an Level-IDs gebunden (Legacy-Fallback für L30/72/78/84 greift nur, wenn ein Level keine expliziten `crumble`-Flags setzt)
 
 ## Power-ups (Question Blocks)
 
