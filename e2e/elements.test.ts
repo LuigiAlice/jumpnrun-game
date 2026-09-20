@@ -29,31 +29,36 @@ test.describe('Pilot elements runtime verification', () => {
   test('T1: spring launches player with SPRING_VELOCITY and long apex', async ({ page }) => {
     await startLevel(page, 0);
     const res = await inGame(page, `
-      const g = window.__game;
       const spring = scene.springs.getChildren()[0];
       if (!spring) return { error: 'no spring found' };
       const sx = spring.x, sy = spring.y;
+      const sample = { minVy: 0, minY: Infinity, launchedAt: -1, frames: 0, apexReached: false };
+      let finish = () => {};
+      const done = new Promise(r => { finish = r; });
+      const onUpdate = () => {
+        const p = scene.player;
+        if (!p || !p.body) return;
+        sample.frames++;
+        const vy = p.body.velocity.y;
+        if (vy < sample.minVy) sample.minVy = vy;
+        if (vy <= -1250 && sample.launchedAt < 0) sample.launchedAt = sample.frames;
+        if (sample.launchedAt > 0) {
+          if (p.y < sample.minY) sample.minY = p.y;
+          if (vy >= 0) { sample.apexReached = true; finish(); }
+        }
+      };
+      scene.events.on('update', onUpdate);
       scene.player.body.reset(sx, sy - 60);
       scene.player.body.setVelocityX(0);
-      let minVy = 0, minY = Infinity, launchedAt = -1;
-      const t0 = performance.now();
-      while (performance.now() - t0 < 2500) {
-        const sc = g.scene.getScene('Game');
-        const p = sc && sc.player;
-        if (p) {
-          const vy = p.body.velocity.y;
-          if (vy < minVy) minVy = vy;
-          if (p.y < minY) minY = p.y;
-          if (launchedAt < 0 && vy <= -1250) launchedAt = performance.now() - t0;
-        }
-        if (launchedAt >= 0 && performance.now() - t0 - launchedAt > 900) break;
-        await new Promise(r => setTimeout(r, 10));
-      }
-      return { sx, sy, minVy, minY, launchedAt };
+      await Promise.race([done, new Promise(r => setTimeout(r, 25000))]);
+      scene.events.off('update', onUpdate);
+      return { sx, sy, minVy: sample.minVy, minY: sample.minY, launchedAt: sample.launchedAt, frames: sample.frames, apexReached: sample.apexReached };
     `);
     expect(res.error).toBeUndefined();
+    expect(res.frames, 'scene update loop did not run').toBeGreaterThan(10);
     expect(res.launchedAt, `spring launch never reached -1250 (minVy=${res.minVy})`).toBeGreaterThanOrEqual(0);
     expect(res.minVy, `expected launch velocity <= -1300, got ${res.minVy}`).toBeLessThanOrEqual(-1300);
+    expect(res.apexReached, 'apex was not reached before sampling ended').toBe(true);
     const apex = res.sy - res.minY;
     expect(apex, `apex ${apex}px above spring too low`).toBeGreaterThanOrEqual(300);
   });
