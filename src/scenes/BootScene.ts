@@ -131,19 +131,29 @@ export class BootScene extends Phaser.Scene {
       const totalH = h + yOff;
       const cx = w / 2;
 
-      // ── Color palette ─────────────────────────────────────────────────
-      const SKIN        = 0xffcc99;
-      const SKIN_LIGHT  = 0xffdfb8;
-      const SKIN_SHADOW = 0xe6a060;
-      const SKIN_DARK   = 0xc07030;
-      const CHEEK       = 0xff8888;
-      const HAIR        = 0x3d1f00;
-      const HAIR_MID    = 0x5a3010;
-      const HAIR_LIGHT  = 0x7a5020;
+      // ── Palette: 3-tone harmony per material, outline = darkest tone ────
+      const SKIN        = 0xF5C99B;
+      const SKIN_LIGHT  = 0xFBE1B8;
+      const SKIN_SHADOW = 0xC98A57;
+      const SKIN_DEEP   = 0xA8653A;
+      const SKIN_OUT    = 0xB0744A;
+      const CHEEK       = 0xF49E8C;
+      const HAIR        = 0x3A2418;
+      const HAIR_MID    = 0x543726;
+      const HAIR_LIGHT  = 0x6B4A32;
       const WHITE       = 0xffffff;
+      const GLOVE_SHADE = 0xE8E8E8;
+      const GLOVE_LINE  = 0xC9C9D2;
+      const BOOT        = 0x7A4426;
+      const BOOT_LIGHT  = 0x9A5C38;
+      const BOOT_DARK   = 0x4A2814;
+      const BTN_GOLD    = 0xFFD34E;
+      const BTN_DARK    = 0xE8A81E;
 
       const shirtDark  = Phaser.Display.Color.ValueToColor(shirtColor).darken(30).color;
       const shirtLight = Phaser.Display.Color.ValueToColor(shirtColor).lighten(35).color;
+      const shirtDeep  = Phaser.Display.Color.ValueToColor(shirtColor).darken(48).color;
+      const shirtPale  = Phaser.Display.Color.ValueToColor(shirtColor).lighten(52).color;
       const pantsDark  = Phaser.Display.Color.ValueToColor(pantsColor).darken(30).color;
       const pantsLight = Phaser.Display.Color.ValueToColor(pantsColor).lighten(35).color;
 
@@ -151,12 +161,11 @@ export class BootScene extends Phaser.Scene {
       const headRX = w * 0.50;
       const headRY = h * 0.205;
 
-      // ── Body layout ───────────────────────────────────────────────────
       const bodyY = h * 0.44 + yOff;
       const bodyH = h * 0.24;
       const bibW  = w * 0.58;
 
-      // ── Pose-based positions ──────────────────────────────────────────
+      // ── Pose skeleton: one parameterization for all schemes ─────────────
       let leftBootX  = cx - 7,  leftBootY  = h * 0.88 + yOff;
       let rightBootX = cx + 7,  rightBootY = h * 0.88 + yOff;
       let leftLegX   = cx - 8,  leftLegY   = h * 0.63 + yOff, leftLegH  = h * 0.23;
@@ -166,6 +175,7 @@ export class BootScene extends Phaser.Scene {
       let rightArmX  = cx + 8,  rightArmY  = bodyY + 1, rightArmH = bodyH * 0.52;
       let rightHandX = cx + 14, rightHandY = bodyY + bodyH * 0.30;
       let capTilt = 0;
+      let bob = 0;
 
       if (pose === 'walk1') {
         leftBootX = cx - 10;  leftBootY  = h * 0.88 + yOff;
@@ -176,15 +186,17 @@ export class BootScene extends Phaser.Scene {
         leftHandX  = cx - 15; leftHandY  = bodyY + bodyH * 0.08;
         rightArmX  = cx + 7;  rightArmY  = bodyY + 4; rightArmH = bodyH * 0.44;
         rightHandX = cx + 12; rightHandY = bodyY + bodyH * 0.55;
+        bob = -1;
       } else if (pose === 'walk2') {
         leftBootX  = cx - 9;   leftBootY  = h * 0.83 + yOff;
-        leftLegX   = cx - 10;  leftLegY   = h * 0.58 + yOff; leftLegH  = h * 0.20;
+        leftLegX   = cx - 10;  leftLegY   = h * 0.58 + yOff; leftLegH = h * 0.20;
         rightBootX = cx + 10;  rightBootY = h * 0.88 + yOff;
         rightLegX  = cx + 3;   rightLegY  = h * 0.63 + yOff; rightLegH = h * 0.23;
         leftArmX   = cx - 12;  leftArmY   = bodyY + 4; leftArmH  = bodyH * 0.44;
         leftHandX  = cx - 11;  leftHandY  = bodyY + bodyH * 0.55;
         rightArmX  = cx + 8;   rightArmY  = bodyY - 2; rightArmH = bodyH * 0.50;
         rightHandX = cx + 15;  rightHandY = bodyY + bodyH * 0.08;
+        bob = 0;
       } else if (pose === 'jump') {
         rightArmX  = cx + 6;   rightArmY  = bodyY - 9;  rightArmH  = bodyH * 0.80;
         rightHandX = cx + 9;   rightHandY = bodyY - 13;
@@ -194,40 +206,45 @@ export class BootScene extends Phaser.Scene {
         leftLegX   = cx - 7;   leftLegY   = h * 0.52 + yOff; leftLegH = h * 0.18;
         rightBootX = cx + 8;   rightBootY = h * 0.89 + yOff;
         rightLegX  = cx + 2;   rightLegY  = h * 0.62 + yOff; rightLegH = h * 0.27;
-        capTilt = isBig ? -0.6 : -2.5;
+        capTilt = 0;
+        bob = -1.5;
       }
+
+      const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
+      leftArmX = clamp(leftArmX, 2, w - 10);
+      rightArmX = clamp(rightArmX, 4, w - 8);
+      leftHandX = clamp(leftHandX, 6, w - 6);
+      rightHandX = clamp(rightHandX, 6, w - 6);
+      leftLegX = clamp(leftLegX, 0.5, w - 8.5);
+      rightLegX = clamp(rightLegX, 0.5, w - 8.5);
+      leftBootX = clamp(leftBootX, 6, w - 8);
+      rightBootX = clamp(rightBootX, 6, w - 8);
 
       // ════ GROUND SHADOW ═══════════════════════════════════════════════
       g.fillStyle(0x000000, 0.18);
       g.fillEllipse(cx, totalH - 0.5, w * 0.6, 4.5);
 
-      // ════ BOOTS ═══════════════════════════════════════════════════════
+      // ════ BOOTS (rounded, warm brown, toe shine) ═══════════════════════
       const drawBoot = (bx: number, by: number) => {
-        // Sock cuff peeking above boot
-        g.fillStyle(0xf2ead8, 1);
+        g.fillStyle(0xF3EBDC, 1);
         g.fillRoundedRect(bx - 3, by - 4.5, 9, 3, 1.2);
-        g.fillStyle(0xd8c8b0, 0.55);
+        g.fillStyle(0xD9CBb4, 0.55);
         g.fillRect(bx - 3, by - 3.2, 9, 0.8);
-        // Dark sole
-        g.fillStyle(0x1a0a00, 1);
+        g.fillStyle(BOOT_DARK, 1);
         g.fillEllipse(bx + 1, by + 2, 13, 4.5);
-        // Boot main body
-        g.fillStyle(0x3d2000, 1);
+        g.fillStyle(BOOT, 1);
         g.fillRoundedRect(bx - 4, by - 3, 10, 5.5, 2);
-        // Toe cap
-        g.fillStyle(0x4a2800, 1);
+        g.fillStyle(BOOT_LIGHT, 1);
         g.fillEllipse(bx + 3, by - 0.5, 9, 5.5);
-        // Toe highlight
-        g.fillStyle(0x6a4015, 1);
+        g.fillStyle(this.lerpColor(BOOT_LIGHT, WHITE, 0.35), 1);
         g.fillEllipse(bx + 2, by - 1.5, 6, 3.5);
-        // Shine
         g.fillStyle(WHITE, 0.28);
         g.fillCircle(bx + 1, by - 2, 1.5);
       };
       drawBoot(leftBootX, leftBootY);
       drawBoot(rightBootX, rightBootY);
 
-      // ════ LEGS ════════════════════════════════════════════════════════
+      // ════ LEGS (denim cylinders with soft seam) ════════════════════════
       const drawLeg = (lx: number, ly: number, lh: number) => {
         g.fillStyle(pantsColor, 1);
         g.fillRoundedRect(lx, ly, 8, lh, 3.5);
@@ -235,23 +252,28 @@ export class BootScene extends Phaser.Scene {
         g.fillRoundedRect(lx + 1, ly + 1, 3, lh - 3, 2);
         g.fillStyle(pantsDark, 0.45);
         g.fillRoundedRect(lx + 5, ly + 1, 2, lh - 3, 1);
-        // Trouser crease
         g.fillStyle(pantsDark, 0.20);
         g.fillRect(lx + 3.5, ly + 2, 1, lh - 5);
       };
       drawLeg(leftLegX, leftLegY, leftLegH);
       drawLeg(rightLegX, rightLegY, rightLegH);
 
-      // ════ BODY ════════════════════════════════════════════════════════
-      // Overall bib
+      // ════ BODY: shirt layer, overall bib, straps, gold buttons ═════════
+      const bodyTop = bodyY + bob;
+      g.fillStyle(shirtColor, 1);
+      g.fillRoundedRect(cx - bibW / 2 - 1, bodyTop - 5, bibW + 2, bodyH * 0.62, {tl: 7, tr: 7, bl: 0, br: 0});
+      g.fillStyle(shirtLight, 0.32);
+      g.fillRoundedRect(cx - bibW / 2 + 2, bodyTop - 4, bibW * 0.42, bodyH * 0.30, 3);
+      g.fillStyle(shirtDark, 0.24);
+      g.fillRoundedRect(cx + bibW * 0.08, bodyTop - 4, bibW * 0.36, bodyH * 0.32, 3);
+
       g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(cx - bibW / 2, bodyY, bibW, bodyH, {tl: 5, tr: 5, bl: 6, br: 6});
-      g.fillStyle(pantsLight, 0.28);
-      g.fillRoundedRect(cx - bibW / 2 + 2, bodyY + 2, bibW * 0.38, bodyH - 4, 3);
-      g.fillStyle(pantsDark, 0.28);
-      g.fillRoundedRect(cx + bibW * 0.10, bodyY + 2, bibW * 0.32, bodyH - 4, 3);
-      // Bib flap
-      const bibY = bodyY - 2.5;
+      g.fillRoundedRect(cx - bibW / 2, bodyTop, bibW, bodyH, {tl: 5, tr: 5, bl: 6, br: 6});
+      this.fillVGradient(g, cx - bibW / 2 + 1, bodyTop + 1, bibW - 2, bodyH - 2,
+        this.lerpColor(pantsColor, pantsLight, 0.30), pantsColor, 10);
+      g.fillStyle(pantsDark, 0.26);
+      g.fillRoundedRect(cx + bibW * 0.10, bodyTop + 2, bibW * 0.32, bodyH - 4, 3);
+      const bibY = bodyTop - 2.5;
       const bibFW = bibW * 0.66;
       g.fillStyle(pantsColor, 1);
       g.fillRoundedRect(cx - bibFW / 2, bibY, bibFW, bodyH * 0.40, {tl: 3, tr: 3, bl: 0, br: 0});
@@ -259,10 +281,9 @@ export class BootScene extends Phaser.Scene {
       g.fillRect(cx - bibFW / 2 + 1, bibY, 2, bodyH * 0.40);
       g.fillStyle(pantsLight, 0.18);
       g.fillRect(cx + bibFW / 2 - 3, bibY, 2, bodyH * 0.40);
-      // Shoulder straps
       const strapX1  = cx - bibW / 2 - 0.5;
       const strapX2  = cx + bibW / 2 - 3.5;
-      const strapTopY = bodyY - 2;
+      const strapTopY = bodyTop - 2;
       const strapH   = bodyH * 0.88;
       g.fillStyle(pantsColor, 1);
       g.fillRoundedRect(strapX1, strapTopY, 4, strapH, 2);
@@ -272,33 +293,32 @@ export class BootScene extends Phaser.Scene {
       g.fillRect(strapX2, strapTopY, 1.5, strapH);
       g.fillStyle(pantsLight, 0.22);
       g.fillRect(strapX1 + 2.5, strapTopY, 1, strapH);
-      g.fillRect(strapX2 + 2.5, strapTopY, 1, strapH);
-      // Shirt
-      g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - bibW / 2 - 1, bodyY - 5, bibW + 2, bodyH * 0.58, {tl: 7, tr: 7, bl: 0, br: 0});
-      g.fillStyle(shirtLight, 0.32);
-      g.fillRoundedRect(cx - bibW / 2 + 2, bodyY - 4, bibW * 0.42, bodyH * 0.30, 3);
-      g.fillStyle(shirtDark, 0.22);
-      g.fillRoundedRect(cx + bibW * 0.08, bodyY - 4, bibW * 0.36, bodyH * 0.30, 3);
+
       g.fillStyle(0x000000, 0.12);
-      g.fillRect(cx - bibW / 2, bodyY - 0.5, bibW, 1);
-      // Gold buttons on strap ends
+      g.fillRect(cx - bibW / 2, bodyTop - 0.5, bibW, 1);
+
       const btnY = bibY + 5;
-      g.fillStyle(0xffcc00, 1);
-      g.fillCircle(strapX1 + 2, btnY, 2.8);
-      g.fillCircle(strapX2 + 2, btnY, 2.8);
-      g.fillStyle(0xffee88, 0.9);
-      g.fillCircle(strapX1 + 1.5, btnY - 0.8, 1.2);
-      g.fillCircle(strapX2 + 1.5, btnY - 0.8, 1.2);
-      // Subtle fabric crease lines
+      const drawButton = (bx: number) => {
+        g.fillStyle(BTN_DARK, 1);
+        g.fillCircle(bx + 0.4, btnY + 0.5, 2.9);
+        g.fillStyle(BTN_GOLD, 1);
+        g.fillCircle(bx, btnY, 2.6);
+        g.fillStyle(this.lerpColor(BTN_GOLD, WHITE, 0.55), 1);
+        g.fillCircle(bx - 0.7, btnY - 0.8, 1.1);
+        g.fillStyle(BTN_DARK, 0.5);
+        g.fillCircle(bx + 0.6, btnY + 0.9, 0.9);
+      };
+      drawButton(strapX1 + 2);
+      drawButton(strapX2 + 2);
+
       g.lineStyle(1, pantsDark, 0.20);
-      g.lineBetween(cx - bibW * 0.30, bodyY + bodyH * 0.52, cx - bibW * 0.26, bodyY + bodyH - 3);
-      g.lineBetween(cx + bibW * 0.26, bodyY + bodyH * 0.52, cx + bibW * 0.30, bodyY + bodyH - 3);
+      g.lineBetween(cx - bibW * 0.30, bodyTop + bodyH * 0.52, cx - bibW * 0.26, bodyTop + bodyH - 3);
+      g.lineBetween(cx + bibW * 0.26, bodyTop + bodyH * 0.52, cx + bibW * 0.30, bodyTop + bodyH - 3);
       g.lineStyle(1, shirtDark, 0.25);
-      g.lineBetween(cx - bibW * 0.44, bodyY - 1, cx - bibW * 0.32, bodyY + 2);
-      g.lineBetween(cx + bibW * 0.32, bodyY - 1, cx + bibW * 0.44, bodyY + 2);
+      g.lineBetween(cx - bibW * 0.44, bodyTop - 1, cx - bibW * 0.32, bodyTop + 2);
+      g.lineBetween(cx + bibW * 0.32, bodyTop - 1, cx + bibW * 0.44, bodyTop + 2);
       g.lineStyle(0, 0x000000, 0);
-      // Fire emblem flames on fire variant
+
       if (shirtColor === 0xf8f8f8) {
         const flame = (fx: number, fy: number, fs: number) => {
           g.fillStyle(0xff7a00, 0.95);
@@ -308,37 +328,31 @@ export class BootScene extends Phaser.Scene {
           g.fillStyle(0xfff0a0, 0.8);
           g.fillCircle(fx, fy + fs * 0.35, fs * 0.22);
         };
-        flame(cx - bibW * 0.36, bodyY - 2.5, 2.2);
-        flame(cx + bibW * 0.36, bodyY - 2.5, 2.2);
-        flame(cx, bodyY + bodyH * 0.74, 3.2);
+        flame(cx - bibW * 0.36, bodyTop - 2.5, 2.2);
+        flame(cx + bibW * 0.36, bodyTop - 2.5, 2.2);
+        flame(cx, bodyTop + bodyH * 0.74, 3.2);
       }
 
-      // ════ ARMS & GLOVES ═══════════════════════════════════════════════
+      // ════ ARMS (cylinders) & GLOVES (spheres) ══════════════════════════
       const drawArm = (ax: number, ay: number, ah: number, hx: number, hy: number, isLeft: boolean) => {
-        // Shoulder ball
         g.fillStyle(shirtColor, 1);
         g.fillCircle(ax + (isLeft ? 4 : 2), ay, 5.5);
         g.fillStyle(shirtLight, 0.40);
         g.fillCircle(ax + 3, ay - 1.5, 2.5);
-        // Arm tube
         g.fillStyle(shirtColor, 1);
         g.fillRoundedRect(ax, ay, 7, ah, 3.5);
         g.fillStyle(isLeft ? shirtLight : shirtDark, 0.28);
         g.fillRoundedRect(isLeft ? ax + 1 : ax + 4, ay + 1, 2, ah - 3, 1.5);
-        // Cuff
         g.fillStyle(shirtDark, 0.50);
         g.fillRoundedRect(ax, ay + ah - 3, 7, 3, {bl: 3, br: 3, tl: 0, tr: 0});
-        // Glove
         g.fillStyle(WHITE, 1);
         g.fillCircle(hx, hy, 5.5);
-        g.fillStyle(0xe8e8e8, 1);
+        g.fillStyle(GLOVE_SHADE, 1);
         g.fillCircle(hx, hy + 1, 4.5);
-        // Glove seams
-        g.lineStyle(0.9, 0xbbbbbb, 1);
+        g.lineStyle(0.9, GLOVE_LINE, 1);
         g.lineBetween(hx - 2, hy - 2.5, hx - 2, hy + 1.5);
         g.lineBetween(hx,     hy - 3,   hx,     hy + 2);
         g.lineBetween(hx + 2, hy - 2.5, hx + 2, hy + 1.5);
-        // Glove shine
         g.fillStyle(WHITE, 0.50);
         g.fillCircle(hx - 1.5, hy - 3, 1.3);
       };
@@ -346,95 +360,81 @@ export class BootScene extends Phaser.Scene {
       drawArm(rightArmX, rightArmY, rightArmH, rightHandX, rightHandY, false);
 
       // ════ HEAD ════════════════════════════════════════════════════════
-      // Neck
       g.fillStyle(SKIN, 1);
       g.fillRoundedRect(cx - 4.5, headCY + headRY * 0.80, 9, 5.5, 2);
       g.fillStyle(SKIN_SHADOW, 0.35);
       g.fillRect(cx - 4.5, headCY + headRY * 0.80, 2, 5.5);
-      // Ears
       const earY = headCY + headRY * 0.06;
       const earR = 4.0;
-      const earDX = Math.min(headRX * 0.94, w / 2 - earR);
+      const earDX = Math.min(headRX * 0.94, w / 2 - earR - 0.6);
       g.fillStyle(SKIN, 1);
       g.fillCircle(cx - earDX, earY, earR);
       g.fillStyle(SKIN_SHADOW, 0.45);
       g.fillCircle(cx - earDX + 0.5, earY + 1.5, 3.2);
       g.fillStyle(CHEEK, 0.55);
-      g.fillCircle(cx - earDX, earY, 2.2);   // inner ear
+      g.fillCircle(cx - earDX, earY, 2.2);
       g.fillStyle(SKIN, 1);
       g.fillCircle(cx + earDX, earY, earR);
       g.fillStyle(SKIN_SHADOW, 0.45);
       g.fillCircle(cx + earDX - 0.5, earY + 1.5, 3.2);
       g.fillStyle(CHEEK, 0.55);
       g.fillCircle(cx + earDX, earY, 2.2);
-      // Head main
       g.fillStyle(SKIN, 1);
       g.fillEllipse(cx, headCY, headRX * 1.85, headRY * 1.90);
-      // Jaw volume shading
       g.fillStyle(SKIN_SHADOW, 0.18);
       g.fillEllipse(cx, headCY + headRY * 0.42, headRX * 1.50, headRY * 0.75);
-      // Top-left highlight
       g.fillStyle(SKIN_LIGHT, 0.38);
       g.fillEllipse(cx - headRX * 0.22, headCY - headRY * 0.24, headRX * 0.90, headRY * 0.62);
-      // Cheeks
       g.fillStyle(CHEEK, 0.30);
       g.fillEllipse(cx - headRX * 0.48, headCY + headRY * 0.24, headRX * 0.32, headRY * 0.22);
       g.fillEllipse(cx + headRX * 0.48, headCY + headRY * 0.24, headRX * 0.32, headRY * 0.22);
-      // Cap shadow on forehead
       g.fillStyle(0x000000, 0.13);
       g.fillEllipse(cx, headCY - headRY * 0.30 + capTilt, headRX * 1.40, headRY * 0.36);
 
       // ════ HAIR ════════════════════════════════════════════════════════
       const capY = headCY - headRY * 0.92 + capTilt;
       g.fillStyle(HAIR, 1);
-      // Hair band under cap
       g.fillRoundedRect(cx - headRX * 0.84, headCY - headRY * 0.90 + capTilt, headRX * 1.68, headRY * 0.50, {tl: 5, tr: 5, bl: 0, br: 0});
-      // Left sideburn + curl
       g.fillRect(cx - headRX * 0.90, headCY - headRY * 0.55 + capTilt, 5.5, headRY * 0.62);
-      g.fillCircle(cx - headRX * 0.80, headCY + headRY * 0.12 + capTilt, 5.0);
-      g.fillCircle(cx - headRX * 0.76, headCY + headRY * 0.27 + capTilt, 3.2);
-      // Right sideburn + curl
-      g.fillRect(cx + headRX * 0.76, headCY - headRY * 0.55 + capTilt, 5.5, headRY * 0.62);
-      g.fillCircle(cx + headRX * 0.80, headCY + headRY * 0.12 + capTilt, 5.0);
-      g.fillCircle(cx + headRX * 0.76, headCY + headRY * 0.27 + capTilt, 3.2);
-      // Hair sheens
+      g.fillCircle(cx - headRX * 0.72, headCY + headRY * 0.12 + capTilt, 3.6);
+      g.fillCircle(cx - headRX * 0.66, headCY + headRY * 0.27 + capTilt, 2.6);
+      g.fillRect(cx + headRX * 0.60, headCY - headRY * 0.55 + capTilt, 5.0, headRY * 0.62);
+      g.fillCircle(cx + headRX * 0.72, headCY + headRY * 0.12 + capTilt, 3.6);
+      g.fillCircle(cx + headRX * 0.66, headCY + headRY * 0.27 + capTilt, 2.6);
       g.fillStyle(HAIR_LIGHT, 0.38);
       g.fillRoundedRect(cx - headRX * 0.52, headCY - headRY * 0.82 + capTilt, headRX * 0.44, headRY * 0.22, 3);
       g.fillStyle(HAIR_MID, 0.28);
       g.fillRoundedRect(cx + headRX * 0.00, headCY - headRY * 0.79 + capTilt, headRX * 0.34, headRY * 0.14, 2);
 
-      // ════ CAP ═════════════════════════════════════════════════════════
-      // Dome
+      // ════ CAP: dome gradient + sheen + band + curved brim ══════════════
       g.fillStyle(shirtColor, 1);
-      g.fillEllipse(cx, capY + headRY * 0.40, headRX * 1.68, headRY * 0.70);
+      g.fillEllipse(cx, capY + headRY * 0.40, headRX * 1.80, headRY * 0.70);
       g.fillStyle(shirtDark, 0.28);
-      g.fillEllipse(cx, capY + headRY * 0.55, headRX * 1.52, headRY * 0.28);
-      g.fillStyle(shirtLight, 0.32);
-      g.fillEllipse(cx - headRX * 0.22, capY + headRY * 0.07, headRX * 0.68, headRY * 0.38);
-      g.fillStyle(WHITE, 0.22);
-      g.fillCircle(cx - headRX * 0.30, capY + headRY * 0.13, headRY * 0.17);
-      // Cap bevel edge along dome top
+      g.fillEllipse(cx, capY + headRY * 0.55, headRX * 1.62, headRY * 0.26);
+      g.fillStyle(shirtLight, 0.24);
+      g.fillEllipse(cx - headRX * 0.24, capY + headRY * 0.32, headRX * 0.80, headRY * 0.22);
+      g.fillStyle(WHITE, 0.15);
+      g.fillCircle(cx - headRX * 0.32, capY + headRY * 0.24, headRY * 0.13);
       g.fillStyle(shirtLight, 0.45);
-      g.fillEllipse(cx - headRX * 0.02, capY + headRY * 0.28, headRX * 1.26, headRY * 0.10);
-      // Cap band
+      g.fillEllipse(cx - headRX * 0.02, capY + headRY * 0.34, headRX * 1.42, headRY * 0.10);
       g.fillStyle(shirtDark, 0.75);
-      g.fillRoundedRect(cx - headRX * 0.85, capY + headRY * 0.48, headRX * 1.70, headRY * 0.20, 2);
+      g.fillRoundedRect(cx - headRX * 0.86, capY + headRY * 0.48, headRX * 1.72, headRY * 0.20, 2);
       g.fillStyle(shirtLight, 0.25);
       g.fillRoundedRect(cx - headRX * 0.78, capY + headRY * 0.48, headRX * 0.72, headRY * 0.08, 1);
-      // Brim (3-layer depth)
+      const brimTopW = Math.min(headRX * 1.32, w - 0.5 - (cx - 4));
+      const brimDarkW = Math.min(headRX * 1.30, w - 0.5 - (cx - 3));
       g.fillStyle(shirtDark, 1);
-      g.fillRoundedRect(cx - 3, capY + headRY * 0.62, headRX * 1.30, headRY * 0.28, {bl: 5, br: 5, tl: 1, tr: 1});
+      g.fillRoundedRect(cx - 3, capY + headRY * 0.62, brimDarkW, headRY * 0.28, {bl: 5, br: 5, tl: 1, tr: 1});
       g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 4, capY + headRY * 0.54, headRX * 1.32, headRY * 0.22, {bl: 5, br: 5, tl: 1, tr: 1});
+      g.fillRoundedRect(cx - 4, capY + headRY * 0.54, brimTopW, headRY * 0.22, {bl: 5, br: 5, tl: 1, tr: 1});
       g.fillStyle(shirtLight, 0.32);
-      g.fillRoundedRect(cx - 3, capY + headRY * 0.55, headRX * 0.85, headRY * 0.08, 2);
+      g.fillRoundedRect(cx - 3, capY + headRY * 0.55, brimTopW * 0.64, headRY * 0.08, 2);
 
-      // ════ M BADGE ═════════════════════════════════════════════════════
+      // ════ M BADGE (white disc + bevel + M) ═════════════════════════════
       g.fillStyle(WHITE, 1);
       g.fillCircle(cx - 1, capY + headRY * 0.34, headRY * 0.30);
       g.fillStyle(0x000000, 0.08);
       g.fillEllipse(cx - 1, capY + headRY * 0.46, headRY * 0.46, headRY * 0.12);
-      // M letter vector path
       g.fillStyle(shirtColor, 1);
       const mx = cx - 1, my = capY + headRY * 0.34;
       const mw = headRY * 0.22, mh = headRY * 0.22;
@@ -456,25 +456,21 @@ export class BootScene extends Phaser.Scene {
       g.fillStyle(WHITE, 0.42);
       g.fillCircle(cx - mw * 1.5, my - mh * 0.3, headRY * 0.09);
 
-      // ════ EYES ════════════════════════════════════════════════════════
+      // ════ EYES: big readable — sclera + iris + pupil + 2 glints ════════
       const eyeY  = headCY - headRY * 0.02;
       const eyeLX = cx - headRX * 0.30;
       const eyeRX = cx + headRX * 0.30;
       const eyeW  = headRX * 0.40;
       const eyeH  = headRY * 0.48;
-      // Eye socket shadows
       g.fillStyle(SKIN_SHADOW, 0.32);
       g.fillEllipse(eyeLX, eyeY + 1.5, eyeW + 2, eyeH + 2);
       g.fillEllipse(eyeRX, eyeY + 1.5, eyeW + 2, eyeH + 2);
-      // Whites
       g.fillStyle(WHITE, 1);
       g.fillEllipse(eyeLX, eyeY, eyeW, eyeH);
       g.fillEllipse(eyeRX, eyeY, eyeW, eyeH);
-      // Upper shadow on whites
       g.fillStyle(0x000000, 0.06);
       g.fillEllipse(eyeLX, eyeY - eyeH * 0.28, eyeW, eyeH * 0.35);
       g.fillEllipse(eyeRX, eyeY - eyeH * 0.28, eyeW, eyeH * 0.35);
-      // Iris (3 layers)
       g.fillStyle(0x091830, 1);
       g.fillCircle(eyeLX, eyeY, headRX * 0.25);
       g.fillCircle(eyeRX, eyeY, headRX * 0.25);
@@ -484,18 +480,15 @@ export class BootScene extends Phaser.Scene {
       g.fillStyle(0x55aaff, 1);
       g.fillCircle(eyeLX, eyeY + headRY * 0.04, headRX * 0.13);
       g.fillCircle(eyeRX, eyeY + headRY * 0.04, headRX * 0.13);
-      // Pupil
       g.fillStyle(0x000000, 1);
       g.fillCircle(eyeLX, eyeY, headRX * 0.11);
       g.fillCircle(eyeRX, eyeY, headRX * 0.11);
-      // Shine
       g.fillStyle(WHITE, 1);
       g.fillCircle(eyeLX + headRX * 0.09, eyeY - headRY * 0.14, headRX * 0.10);
       g.fillCircle(eyeRX + headRX * 0.09, eyeY - headRY * 0.14, headRX * 0.10);
       g.fillStyle(WHITE, 0.62);
       g.fillCircle(eyeLX - headRX * 0.10, eyeY + headRY * 0.06, headRX * 0.05);
       g.fillCircle(eyeRX - headRX * 0.10, eyeY + headRY * 0.06, headRX * 0.05);
-      // Eyelashes (3 per eye, fan shape)
       g.lineStyle(1.2, HAIR, 1);
       const lashOffsets = [-headRX * 0.13, 0, headRX * 0.13];
       lashOffsets.forEach((ox, li) => {
@@ -524,22 +517,21 @@ export class BootScene extends Phaser.Scene {
       g.fillRoundedRect(cx - headRX * 0.43, eyeY - headRY * 0.27, headRX * 0.26, headRY * 0.06, 1);
       g.fillRoundedRect(cx + headRX * 0.14, eyeY - headRY * 0.27, headRX * 0.26, headRY * 0.06, 1);
 
-      // ════ NOSE ════════════════════════════════════════════════════════
+      // ════ NOSE: big round with shadow + shine ══════════════════════════
       const noseX = cx + headRX * 0.08;
       const noseY = eyeY + headRY * 0.23;
-      g.fillStyle(SKIN_DARK, 0.45);
+      g.fillStyle(SKIN_DEEP, 0.45);
       g.fillEllipse(noseX, noseY + 1.5, headRY * 0.38, headRY * 0.24);
       g.fillStyle(SKIN, 1);
       g.fillCircle(noseX, noseY, headRY * 0.18);
       g.fillStyle(WHITE, 0.52);
       g.fillCircle(noseX - headRY * 0.07, noseY - headRY * 0.07, headRY * 0.07);
-      g.fillStyle(SKIN_DARK, 0.38);
+      g.fillStyle(SKIN_DEEP, 0.38);
       g.fillCircle(noseX + headRY * 0.08, noseY + headRY * 0.08, headRY * 0.055);
 
-      // ════ MUSTACHE ════════════════════════════════════════════════════
+      // ════ MUSTACHE: groomed with strands ═══════════════════════════════
       const mustY = eyeY + headRY * 0.37;
       g.fillStyle(HAIR, 1);
-      // Left curl path
       g.beginPath();
       g.moveTo(cx - headRX * 0.42, mustY);
       g.lineTo(cx - 0.5, mustY);
@@ -548,7 +540,6 @@ export class BootScene extends Phaser.Scene {
       g.lineTo(cx - headRX * 0.42, mustY + headRY * 0.08);
       g.closePath();
       g.fillPath();
-      // Right curl path
       g.beginPath();
       g.moveTo(cx + 0.5, mustY);
       g.lineTo(cx + headRX * 0.42, mustY);
@@ -557,25 +548,24 @@ export class BootScene extends Phaser.Scene {
       g.lineTo(cx + 0.5, mustY + headRY * 0.14);
       g.closePath();
       g.fillPath();
-      // Curl tip circles
       g.fillCircle(cx - headRX * 0.40, mustY + headRY * 0.11, headRY * 0.11);
       g.fillCircle(cx + headRX * 0.40, mustY + headRY * 0.11, headRY * 0.11);
-      // Sheen
       g.fillStyle(HAIR_LIGHT, 0.28);
       g.fillRoundedRect(cx - headRX * 0.26, mustY + 1.2, headRX * 0.52, headRY * 0.07, 2);
 
       // ════ MOUTH ═══════════════════════════════════════════════════════
-      g.fillStyle(SKIN_DARK, 0.38);
+      g.fillStyle(SKIN_DEEP, 0.38);
       g.fillRoundedRect(cx - headRX * 0.19, mustY + headRY * 0.18, headRX * 0.38, headRY * 0.10, 2);
-      g.fillStyle(SKIN_DARK, 0.22);
+      g.fillStyle(SKIN_DEEP, 0.22);
       g.fillRoundedRect(cx - headRX * 0.21, mustY + headRY * 0.17, headRX * 0.42, 1, 1);
 
+      // ════ WONDER GLOSS PASS ═══════════════════════════════════════════
       g.lineStyle(1.1, 0xffffff, 0.25);
-      g.strokeEllipse(cx - headRX * 0.18, capY + headRY * 0.12 + capTilt, headRX * 1.3, headRY * 0.62);
+      g.strokeEllipse(cx - headRX * 0.14, capY + headRY * 0.46 + capTilt, headRX * 1.15, headRY * 0.40);
       g.lineStyle(0.9, 0xffffff, 0.2);
-      g.strokeRoundedRect(cx - bibW * 0.52, bodyY - 4.5, bibW * 0.6, bodyH * 0.5, 6);
+      g.strokeRoundedRect(cx - bibW * 0.52, bodyTop - 4.5, bibW * 0.6, bodyH * 0.5, 6);
       g.lineStyle(0.8, 0xffffff, 0.16);
-      g.strokeEllipse(cx - earDX - 1.5, earY - 1.5, earR * 1.7, earR * 1.7);
+      g.strokeEllipse(cx - earDX - 0.8, earY - 0.8, earR * 1.55, earR * 1.55);
 
       g.generateTexture(key, w, totalH);
     };
@@ -6155,4 +6145,4 @@ export class BootScene extends Phaser.Scene {
     g.generateTexture('particle', 8, 8);
     g.destroy();
   }
-}
+  }
