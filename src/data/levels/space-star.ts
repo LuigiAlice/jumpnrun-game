@@ -1,662 +1,627 @@
-// Space Star World - 6 Levels (IDs 79-84)
-// Distinct structures: Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Asteroiden-Feld
+// Space Star (ids 79-84) — Phase 9 rebuild
+// Archetypes: 79 Orbit, 80 Asteroidenfeld, 81 Raumstation,
+// 82 Satelliten-Kletterer, 83 UFO-Horde, 84 Nova-Finale.
+// Low gravity is 1000: safe rises <=330px, safe same-height gaps <=420px.
+// The levels really use that reach: wide island chains, tall towers,
+// circular orbit platforms and long asteroid hops.
+// All levels are authored solvable (ensureSolvable adds nothing).
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import {
+  LevelData, createPlat, createQB, createEnemy, createDeco,
+  createMovingPlat, createSpring, createSpike, createCrumblePlat,
+  createCheckpoint, createKey, createDoor,
+  staircase, plateauSection, twoTierSection, islandCluster,
+  zigzagClimb, coinArc, coinDiamond, coinTrail, coinLadder,
+  gapWithPlatforms,
+} from './helpers';
 
 export const SPACE_STAR_LEVELS: LevelData[] = [
-    // ============================================================
-    // LEVEL 79: Tutorial — Simple space station path, one gap, few enemies
-    // S=0.556
-    // ============================================================
-    {
-        id: 79,
-        name: "Orbital Station Alpha",
-        width: 6000,
-        height: 650,
-        biome: 'space-star',
-        platforms: (() => {
-            const S = 0.556;
-            const plats: any[] = [];
-            // Nearly continuous ground, one gap bridged by moving platform
-            plats.push(createPlat(0, 600, 2000 * S, 40, 'space'));
-            plats.push(createPlat(1400 * S, 600, 1200 * S, 40, 'space'));
-            // Gap section — moving platform bridges the gap
-            plats.push(createPlat(3000 * S, 600, 1000 * S, 40, 'space'));
-            plats.push(createPlat(4200 * S, 600, 1800 * S, 40, 'space'));
-            plats.push(createPlat(6200 * S, 600, 1200 * S, 40, 'space'));
-            plats.push(createPlat(7600 * S, 600, 1500 * S, 40, 'space'));
-            // Elevated exploration platforms
-            plats.push(createPlat(1800 * S, 500, 150, 28, 'metal'));
-            plats.push(createPlat(2100 * S, 420, 120, 28, 'platform_easy'));
-            plats.push(createPlat(5000 * S, 500, 150, 28, 'metal'));
-            plats.push(createPlat(5300 * S, 420, 120, 28, 'platform_medium'));
-            plats.push(createPlat(5600 * S, 340, 100, 28, 'platform_hard'));
-            plats.push(createPlat(600, 480, 140, 24, 'metal'));
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.556;
-            const coins: any[] = [];
-            for (let x = 400 * S; x < 1300 * S; x += 120 * S) coins.push(createCoin(x, 550));
-            for (let x = 3100 * S; x < 3900 * S; x += 120 * S) coins.push(createCoin(x, 550));
-            for (let x = 4300 * S; x < 5900 * S; x += 120 * S) coins.push(createCoin(x, 550));
-            for (let x = 6300 * S; x < 7400 * S; x += 120 * S) coins.push(createCoin(x, 550));
-            coins.push(createCoin(1850 * S, 440), createCoin(2150 * S, 360));
-            coins.push(createCoin(5050 * S, 440), createCoin(5350 * S, 360));
-            coins.push(createCoin(5650 * S, 280));
-            coins.push(createCoin(570, 440), createCoin(600, 440), createCoin(630, 440));
-            // Sternen-Konstellation (Diamant) above the discovery spring — launch bonus
-            coins.push(createCoin(850, 430), createCoin(790, 370), createCoin(910, 370), createCoin(850, 310));
-            return coins;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.556;
-            return [
-                createQB(2150 * S, 350, 'mushroom'),
-                createQB(5350 * S, 350, 'star'),
-                createQB(5650 * S, 270, 'flower'),
-                createQB(600, 420, 'star'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.556;
-            return [
-                createEnemy(800 * S, 560, 'goomba'),
-                createEnemy(3500 * S, 560, 'ufo'),
-                createEnemy(6000 * S, 560, 'goomba'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.556;
-            return [
-                createDeco(500 * S, 550, 'planet'),
-                createDeco(2500 * S, 550, 'rocket'),
-                createDeco(4800 * S, 550, 'satellite'),
-                createDeco(7000 * S, 550, 'asteroid'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 490 },
-        goal: { x: 4500, y: 578 },
-        timeBonus: 100,
-        movingPlatforms: [
-            createMovingPlat(1450, 520, 120, 24, 'platform_medium', 'horizontal', 400, 20),
-            // Langsame Trajekt-Orbit-Bahn (traumhafte slow circular)
-            createMovingPlat(2600, 470, 110, 24, 'platform_medium', 'circular', 140, 12),
-        ],
-        // Discovery-Spring (Biome-Gravity 1000 → Feder-Hub ~910px, nur Bonus-Erreichbarkeit)
-        springs: [createSpring(850, 580)],
-    },
+  // ============================================================
+  // Level 79 (Orbit): weiter Orbit-Ring mit Inselkette, circularer
+  // Orbit-Bahn und vertikalem Aufzug, Feder zum Hochplateau,
+  // Treppenaufstieg zur Zielplattform. 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(...plateauSection(0, 820, [
+      { dx: 0, dy: 0, w: 1400, h: 40, type: 'space' },              // top 820 [0,1400]
+      { dx: 1600, dy: 52, w: 300, h: 24, type: 'platform_medium' }, // top 768
+    ]));
+    platforms.push(createPlat(1100, 492, 220, 24, 'platform_hard')); // top 480 Feder-Plateau
+    platforms.push(...islandCluster(2100, 768, [
+      { dx: 0, dy: 0, w: 240, type: 'space' },                      // top 768 [2100,2340]
+      { dx: 380, dy: 80, w: 200, type: 'platform_easy' },           // top 688
+      { dx: 740, dy: 170, w: 220, type: 'platform_medium' },        // top 598
+    ]));
+    platforms.push(createPlat(3750, 560, 400, 24, 'platform_hard')); // top 548
+    platforms.push(createPlat(4500, 240, 300, 24, 'platform_hard')); // top 228
+    platforms.push(createPlat(4950, 180, 200, 24, 'platform_medium')); // top 168 Mond-Bonus
+    platforms.push(createPlat(5200, 600, 400, 24, 'space'));        // top 588
+    platforms.push(createPlat(6000, 560, 500, 40, 'space'));        // top 540
+    platforms.push(...staircase(6250, 540, 3, 80, 150, 45, 'space')); // tops 460/380/300
+    platforms.push(createPlat(7100, 300, 300, 24, 'platform_hard')); // top 288
+    platforms.push(createPlat(7900, 480, 600, 40, 'space'));        // top 460 Ziel [7600,8200]
 
-    // ============================================================
-    // LEVEL 80: Gap-Strecke — 4-5 gap sections with moving platforms
-    // S=0.526
-    // ============================================================
-    {
-        id: 80,
-        name: "Asteroid Belt Crossing",
-        width: 12000,
-        height: 680,
-        biome: 'space-star',
-        platforms: (() => {
-            const S = 0.526;
-            const plats: any[] = [];
-            // Ground sections alternating with gaps
-            // Section 0: start
-            plats.push(createPlat(0, 620, 1800 * S, 40, 'space'));
-            // Gap 1 — moving plat + stepping plats
-            plats.push(createPlat(1200 * S, 620, 800 * S, 40, 'space'));
-            // Gap 2
-            plats.push(createPlat(2400 * S, 620, 1000 * S, 40, 'space'));
-            // Gap 3
-            plats.push(createPlat(3800 * S, 620, 900 * S, 40, 'space'));
-            // Gap 4
-            plats.push(createPlat(5000 * S, 620, 1200 * S, 40, 'space'));
-            // Gap 5
-            plats.push(createPlat(6600 * S, 620, 800 * S, 40, 'space'));
-            plats.push(createPlat(7800 * S, 620, 1400 * S, 40, 'space'));
-            // Final section
-            plats.push(createPlat(9600 * S, 620, 1600 * S, 40, 'space'));
-            // Stepping platforms in gaps
-            plats.push(...gapWithPlatforms(S, 1000, 620, 200, 3));
-            plats.push(...gapWithPlatforms(S, 2100, 620, 300, 3));
-            plats.push(...gapWithPlatforms(S, 3400, 620, 400, 4));
-            plats.push(...gapWithPlatforms(S, 4800, 620, 200, 3));
-            plats.push(...gapWithPlatforms(S, 6400, 620, 200, 3));
-            // Elevated platforms
-            plats.push(createPlat(1600 * S, 520, 120, 28, 'metal'));
-            plats.push(createPlat(3000 * S, 500, 120, 28, 'platform_easy'));
-            plats.push(createPlat(4400 * S, 520, 120, 28, 'metal'));
-            plats.push(createPlat(5800 * S, 500, 120, 28, 'platform_medium'));
-            plats.push(createPlat(7200 * S, 520, 120, 28, 'metal'));
-            plats.push(createPlat(9000 * S, 500, 120, 28, 'platform_hard'));
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.526;
-            const coins: any[] = [];
-            for (let x = 300 * S; x < 1100 * S; x += 150 * S) coins.push(createCoin(x, 570));
-            for (let x = 2500 * S; x < 3700 * S; x += 150 * S) coins.push(createCoin(x, 570));
-            for (let x = 5100 * S; x < 6500 * S; x += 150 * S) coins.push(createCoin(x, 570));
-            for (let x = 7900 * S; x < 9500 * S; x += 150 * S) coins.push(createCoin(x, 570));
-            for (let x = 9700 * S; x < 11100 * S; x += 150 * S) coins.push(createCoin(x, 570));
-            coins.push(createCoin(1650 * S, 460), createCoin(3050 * S, 440));
-            coins.push(createCoin(4450 * S, 460), createCoin(5850 * S, 440));
-            coins.push(createCoin(7250 * S, 460), createCoin(9050 * S, 440));
-            // Coin arcs above the two gap-section springs
-            coins.push(createCoin(660, 500), createCoin(700, 460), createCoin(740, 500));
-            coins.push(createCoin(4260, 500), createCoin(4300, 460), createCoin(4340, 500));
-            // Sternen-Konstellation ("grosser Wagen") high above the gap run
-            coins.push(createCoin(1750, 340), createCoin(1810, 280), createCoin(1870, 260), createCoin(1930, 280), createCoin(1990, 330), createCoin(2050, 390), createCoin(2100, 440));
-            return coins;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.526;
-            return [
-                createQB(1650 * S, 450, 'mushroom'),
-                createQB(3050 * S, 430, 'star'),
-                createQB(5850 * S, 430, 'flower'),
-                createQB(9050 * S, 430, 'mushroom'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.526;
-            return [
-                createEnemy(600 * S, 580, 'ufo'),
-                createEnemy(2000 * S, 580, 'robot'),
-                createEnemy(2900 * S, 580, 'ufo'),
-                createEnemy(4200 * S, 580, 'fireball'),
-                createEnemy(5500 * S, 580, 'robot'),
-                createEnemy(7000 * S, 580, 'ufo'),
-                createEnemy(8500 * S, 580, 'robot'),
-                createEnemy(10200 * S, 580, 'fireball'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.526;
-            return [
-                createDeco(400 * S, 570, 'planet'),
-                createDeco(2000 * S, 570, 'rocket'),
-                createDeco(4000 * S, 570, 'asteroid'),
-                createDeco(6000 * S, 570, 'satellite'),
-                createDeco(8000 * S, 570, 'planet'),
-                createDeco(10500 * S, 570, 'rocket'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 510 },
-        goal: { x: 5300, y: 598 },
-        timeBonus: 150,
-        movingPlatforms: [
-            createMovingPlat(999, 500, 120, 24, 'platform_medium', 'horizontal', 350, 22),
-            createMovingPlat(2420, 480, 100, 24, 'platform_medium', 'vertical', 180, 20),
-        ],
-        springs: [createSpring(700, 600), createSpring(4300, 600)],
-    },
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 740, 950, 740, 4));
+    coins.push(...coinArc(1100, 560, 5, 80, 70));
+    coins.push(...coinDiamond(1100, 400, 70));
+    coins.push(...coinTrail(1650, 700, 1950, 700, 3));
+    coins.push(...coinArc(2200, 620, 5, 90, 80));
+    coins.push(...coinDiamond(2950, 520, 60));
+    coins.push(...coinArc(3250, 560, 5, 90, 80));
+    coins.push(...coinLadder(4500, 200, 80, 4));
+    coins.push(...coinDiamond(4950, 100, 70));
+    coins.push(...coinTrail(5100, 520, 5350, 520, 3));
+    coins.push(...coinArc(6050, 480, 5, 80, 70));
+    coins.push(...coinTrail(6400, 380, 6700, 380, 3));
+    coins.push(...coinTrail(7400, 400, 8000, 400, 4));
 
-    // ============================================================
-    // LEVEL 81: Röhren-Labyrinth — 5-8 pipe sections with piranhas (space theme)
-    // S=0.5
-    // ============================================================
-    {
-        id: 81,
-        name: "Nebula Core Expedition",
-        width: 12000,
-        height: 700,
-        biome: 'space-star',
-        platforms: (() => {
-            const S = 0.5;
-            const plats: any[] = [];
-            // Ground with pipe sections interspersed
-            plats.push(createPlat(0, 640, 1600 * S, 40, 'space'));
-            // Pipe section 1
-            plats.push(...pipeSection(S, 700, 640, 2));
-            // Ground between
-            plats.push(createPlat(1800 * S, 640, 1000 * S, 40, 'space'));
-            // Pipe section 2
-            plats.push(...pipeSection(S, 2500, 640, 3));
-            // Ground between
-            plats.push(createPlat(4200 * S, 640, 800 * S, 40, 'space'));
-            // Pipe section 3
-            plats.push(...pipeSection(S, 4800, 640, 2));
-            // Ground between
-            plats.push(createPlat(5900 * S, 640, 1000 * S, 40, 'space'));
-            // Pipe section 4
-            plats.push(...pipeSection(S, 6700, 640, 3));
-            // Ground between
-            plats.push(createPlat(8400 * S, 640, 800 * S, 40, 'space'));
-            // Pipe section 5
-            plats.push(...pipeSection(S, 9000, 640, 2));
-            // Ground between
-            plats.push(createPlat(10100 * S, 640, 1000 * S, 40, 'space'));
-            // Pipe section 6
-            plats.push(...pipeSection(S, 10900, 640, 2));
-            // End ground
-            plats.push(createPlat(12000 * S, 640, 1500 * S, 40, 'space'));
-            // Elevated metal platforms
-            plats.push(createPlat(1000 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(3300 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(5100 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(7500 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(9200 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(11300 * S, 540, 120, 28, 'metal'));
-            // Breakable brick bonus — hangs above the middle ground connector
-            // (ground below stays the main path, never load-bearing)
-            plats.push(createPlat(2750, 500, 96, 24, 'brick'));
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.5;
-            const coins: any[] = [];
-            for (let x = 300 * S; x < 700 * S; x += 120 * S) coins.push(createCoin(x, 590));
-            for (let x = 1900 * S; x < 2500 * S; x += 120 * S) coins.push(createCoin(x, 590));
-            for (let x = 4300 * S; x < 4800 * S; x += 120 * S) coins.push(createCoin(x, 590));
-            for (let x = 6000 * S; x < 6700 * S; x += 120 * S) coins.push(createCoin(x, 590));
-            for (let x = 8500 * S; x < 9000 * S; x += 120 * S) coins.push(createCoin(x, 590));
-            for (let x = 10200 * S; x < 10900 * S; x += 120 * S) coins.push(createCoin(x, 590));
-            for (let x = 12100 * S; x < 12800 * S; x += 120 * S) coins.push(createCoin(x, 590));
-            coins.push(createCoin(1050 * S, 480), createCoin(3350 * S, 480));
-            coins.push(createCoin(5150 * S, 480), createCoin(7550 * S, 480));
-            coins.push(createCoin(9250 * S, 480), createCoin(11350 * S, 480));
-            // Breakable-brick bonus coins (Big Mario smashes it from below)
-            coins.push(createCoin(2720, 455), createCoin(2750, 435), createCoin(2780, 455));
-            // Sternen-Konstellation (Diamant) above the spring on the middle ground
-            coins.push(createCoin(2900, 420), createCoin(2840, 350), createCoin(2960, 350), createCoin(2900, 280));
-            return coins;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.5;
-            return [
-                createQB(1050 * S, 470, 'mushroom'),
-                createQB(3350 * S, 470, 'star'),
-                createQB(5150 * S, 470, 'flower'),
-                createQB(7550 * S, 470, 'mushroom'),
-                createQB(9250 * S, 470, 'star'),
-                createQB(11350 * S, 470, 'flower'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.5;
-            return [
-                createEnemy(500 * S, 600, 'ufo'),
-                createEnemy(1300 * S, 600, 'piranha'),
-                createEnemy(2200 * S, 600, 'robot'),
-                createEnemy(3000 * S, 600, 'piranha'),
-                createEnemy(3800 * S, 600, 'ufo'),
-                createEnemy(5500 * S, 600, 'piranha'),
-                createEnemy(6400 * S, 600, 'fireball'),
-                createEnemy(7200 * S, 600, 'piranha'),
-                createEnemy(8800 * S, 600, 'robot'),
-                createEnemy(9600 * S, 600, 'piranha'),
-                createEnemy(10500 * S, 600, 'fireball'),
-                createEnemy(11400 * S, 600, 'piranha'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.5;
-            return [
-                createDeco(400 * S, 590, 'planet'),
-                createDeco(2800 * S, 590, 'rocket'),
-                createDeco(5600 * S, 590, 'asteroid'),
-                createDeco(8000 * S, 590, 'satellite'),
-                createDeco(10600 * S, 590, 'planet'),
-                createDeco(12600 * S, 590, 'rocket'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 530 },
-        goal: { x: 6200, y: 618 },
-        timeBonus: 170,
-        movingPlatforms: [
-            createMovingPlat(800, 500, 120, 24, 'platform_medium', 'horizontal', 300, 20),
-            createMovingPlat(4100, 460, 100, 24, 'platform_medium', 'vertical', 160, 22),
-        ],
-        springs: [createSpring(2850, 620)],
-        // Spike passages on the pipe-base ground connectors (≥150px clear of QBs, clear of coin trails)
-        spikes: [createSpike(750, 612), createSpike(1950, 612), createSpike(4930, 612)],
-    },
+    return {
+      id: 79, name: 'Orbit', width: 8600, height: 1000, biome: 'space-star',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3250, 640, 120, 24, 'platform_easy', 'circular', 120, 20),
+        createMovingPlat(4200, 420, 120, 24, 'platform_medium', 'vertical', 150, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(350, 720, 'mushroom'),
+        createQB(2120, 668, 'coin'),
+        createQB(5200, 488, 'flower'),
+        createQB(6300, 360, 'star'),
+        createQB(8100, 360, 'coin'),
+      ],
+      enemies: [
+        createEnemy(800, 800, 'robot'),
+        createEnemy(1700, 748, 'robot'),
+        createEnemy(2580, 668, 'robot'),
+        createEnemy(2950, 578, 'robot'),
+        createEnemy(6000, 520, 'robot'),
+        createEnemy(7100, 268, 'robot'),
+        createEnemy(2300, 500, 'ufo'),
+        createEnemy(4400, 320, 'ufo'),
+        createEnemy(6800, 180, 'ufo'),
+        createEnemy(5000, 300, 'ghost'),
+      ],
+      decorations: [
+        createDeco(600, 520, 'planet'),
+        createDeco(1600, 420, 'satellite'),
+        createDeco(2400, 320, 'asteroid'),
+        createDeco(3600, 300, 'rocket'),
+        createDeco(5200, 260, 'planet'),
+        createDeco(7000, 200, 'satellite'),
+        createDeco(7800, 320, 'star'),
+        createDeco(300, 780, 'asteroid'),
+      ],
+      playerStart: { x: 250, y: 796 },
+      goal: { x: 7900, y: 460 },
+      timeBonus: 150,
+      springs: [createSpring(1000, 820)],
+      spikes: [createSpike(1200, 812), createSpike(2900, 590)],
+    };
+  })(),
 
-    // ============================================================
-    // LEVEL 82: Vertikal-Kletterer — 3-4 verticalClimb sections in zero-G
-    // S=0.476
-    // ============================================================
-    {
-        id: 82,
-        name: "Void Passage Alpha",
-        width: 11000,
-        height: 700,
-        biome: 'space-star',
-        platforms: (() => {
-            const S = 0.476;
-            const plats: any[] = [];
-            // Start ground
-            plats.push(createPlat(0, 630, 1000 * S, 40, 'space'));
-            // Bridge to climb 1
-            plats.push(createPlat(800 * S, 580, 120, 28, 'platform_easy'));
-            // Vertical climb 1
-            plats.push(...verticalClimb(S, 1100, 630, 'space'));
-            // Ground after climb 1
-            plats.push(createPlat(3200 * S, 630, 700 * S, 40, 'space'));
-            // Vertical climb 2
-            plats.push(...verticalClimb(S, 4000, 630, 'space'));
-            // Ground after climb 2
-            plats.push(createPlat(6100 * S, 630, 800 * S, 40, 'space'));
-            // Vertical climb 3
-            plats.push(...verticalClimb(S, 7000, 630, 'space'));
-            // Ground after climb 3
-            plats.push(createPlat(9100 * S, 630, 700 * S, 40, 'space'));
-            // Vertical climb 4
-            plats.push(...verticalClimb(S, 10000, 630, 'space'));
-            // Final ground to goal
-            plats.push(createPlat(12100 * S, 630, 2000 * S, 40, 'space'));
-            // Scattered floating platforms for zero-G feel
-            plats.push(createPlat(500 * S, 520, 100, 28, 'metal'));
-            plats.push(createPlat(1400 * S, 300, 100, 28, 'platform_hard'));
-            plats.push(createPlat(5000 * S, 300, 100, 28, 'platform_hard'));
-            plats.push(createPlat(8000 * S, 300, 100, 28, 'platform_hard'));
-            plats.push(createPlat(11000 * S, 300, 100, 28, 'platform_hard'));
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.476;
-            const coins: any[] = [];
-            for (let x = 200 * S; x < 700 * S; x += 120 * S) coins.push(createCoin(x, 580));
-            for (let x = 3300 * S; x < 3900 * S; x += 120 * S) coins.push(createCoin(x, 580));
-            for (let x = 6200 * S; x < 6900 * S; x += 120 * S) coins.push(createCoin(x, 580));
-            for (let x = 9200 * S; x < 9900 * S; x += 120 * S) coins.push(createCoin(x, 580));
-            for (let x = 12200 * S; x < 14000 * S; x += 120 * S) coins.push(createCoin(x, 580));
-            coins.push(createCoin(550 * S, 460), createCoin(1450 * S, 240));
-            coins.push(createCoin(5050 * S, 240), createCoin(8050 * S, 240));
-            coins.push(createCoin(11050 * S, 240));
-            // Coin ladder above the spring shortcut after climb 1
-            coins.push(createCoin(1600, 520), createCoin(1600, 450), createCoin(1600, 380), createCoin(1600, 310), createCoin(1600, 240), createCoin(1540, 180), createCoin(1660, 180));
-            return coins;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.476;
-            return [
-                createQB(550 * S, 450, 'mushroom'),
-                createQB(1450 * S, 230, 'star'),
-                createQB(5050 * S, 230, 'flower'),
-                createQB(8050 * S, 230, 'mushroom'),
-                createQB(11050 * S, 230, 'star'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.476;
-            return [
-                createEnemy(400 * S, 590, 'ufo'),
-                createEnemy(1800 * S, 550, 'robot'),
-                createEnemy(2500 * S, 230, 'ufo'),
-                createEnemy(3700 * S, 550, 'fireball'),
-                createEnemy(4500 * S, 230, 'robot'),
-                createEnemy(5200 * S, 590, 'ufo'),
-                createEnemy(6500 * S, 550, 'robot'),
-                createEnemy(7500 * S, 230, 'ufo'),
-                createEnemy(9500 * S, 550, 'fireball'),
-                createEnemy(10500 * S, 230, 'robot'),
-                createEnemy(11500 * S, 550, 'ufo'),
-                createEnemy(13000 * S, 590, 'robot'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.476;
-            return [
-                createDeco(300 * S, 580, 'planet'),
-                createDeco(2500 * S, 580, 'rocket'),
-                createDeco(5200 * S, 580, 'asteroid'),
-                createDeco(8000 * S, 580, 'satellite'),
-                createDeco(11000 * S, 580, 'planet'),
-                createDeco(13500 * S, 580, 'rocket'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 520 },
-        goal: { x: 6000, y: 608 },
-        timeBonus: 190,
-        movingPlatforms: [
-            createMovingPlat(1428, 480, 100, 24, 'platform_medium', 'vertical', 180, 20),
-            createMovingPlat(3237, 480, 120, 24, 'platform_medium', 'horizontal', 300, 22),
-        ],
-        springs: [createSpring(1600, 610)],
-        spikes: [createSpike(2800, 602), createSpike(5600, 602)],
-    },
+  // ============================================================
+  // Level 80 (Asteroidenfeld): weite Inselkette, brueckelnde
+  // Asteroiden-Bruecke mit sicherer Schluchtroute darunter,
+  // circulare Bahn ueber den Kern, vertikaler Aufzug. 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(600, 860, 1200, 40, 'space'));        // top 840 [0,1200]
+    platforms.push(createPlat(1150, 520, 180, 24, 'platform_hard')); // top 508 Feder-Plateau
+    platforms.push(...islandCluster(1300, 840, [
+      { dx: 0, dy: 40, w: 200, type: 'platform_medium' },          // top 800 [1300,1500]
+      { dx: 320, dy: 0, w: 180, type: 'space' },                   // top 840
+      { dx: 620, dy: 90, w: 220, type: 'platform_easy' },          // top 750
+    ]));
+    // Brueckel-Asteroiden (schnelle obere Route)
+    platforms.push(createCrumblePlat(2350, 700, 120, 24));           // top 688
+    platforms.push(createCrumblePlat(2600, 620, 120, 24));           // top 608
+    platforms.push(createCrumblePlat(2850, 540, 120, 24));           // top 528
+    platforms.push(createCrumblePlat(3100, 460, 120, 24));           // top 448
+    platforms.push(createPlat(3400, 380, 300, 24, 'platform_hard')); // top 368 Bonus
+    // Sichere Route durch die Schlucht
+    platforms.push(createPlat(2800, 980, 1600, 40, 'stone'));        // top 960 [2000,3600]
+    platforms.push(createPlat(3750, 900, 300, 24, 'platform_easy')); // top 888 Ausstieg
+    platforms.push(createPlat(4400, 860, 700, 40, 'space'));         // top 840 [4050,4750]
+    platforms.push(createPlat(5600, 720, 400, 24, 'platform_easy')); // top 708
+    platforms.push(createPlat(6300, 680, 400, 40, 'space'));         // top 660 [6100,6500]
+    platforms.push(createPlat(6900, 620, 300, 24, 'platform_medium')); // top 608
+    platforms.push(createPlat(7700, 340, 350, 24, 'platform_hard')); // top 328
+    platforms.push(createPlat(8400, 560, 600, 40, 'space'));         // top 540 Ziel [8100,8700]
 
-    // ============================================================
-    // LEVEL 83: Gegner-Horde — 15-20 enemies (ufos, robots, fireballs)
-    // S=0.455
-    // ============================================================
-    {
-        id: 83,
-        name: "Gravity Well Station",
-        width: 10000,
-        height: 700,
-        biome: 'space-star',
-        platforms: (() => {
-            const S = 0.455;
-            const plats: any[] = [];
-            // Continuous ground with enemy horde
-            plats.push(createPlat(0, 640, 2000 * S, 40, 'space'));
-            plats.push(createPlat(1300 * S, 640, 1600 * S, 40, 'space'));
-            plats.push(createPlat(2800 * S, 640, 1400 * S, 40, 'space'));
-            plats.push(createPlat(4100 * S, 640, 1600 * S, 40, 'space'));
-            plats.push(createPlat(5500 * S, 640, 1500 * S, 40, 'space'));
-            plats.push(createPlat(6800 * S, 640, 1400 * S, 40, 'space'));
-            plats.push(createPlat(8000 * S, 640, 1600 * S, 40, 'space'));
-            plats.push(createPlat(9400 * S, 640, 1400 * S, 40, 'space'));
-            plats.push(createPlat(10600 * S, 640, 2000 * S, 40, 'space'));
-            // Safe elevated platforms for dodging
-            plats.push(createPlat(700 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(2000 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(3500 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(4800 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(6200 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(7400 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(8800 * S, 540, 120, 28, 'metal'));
-            plats.push(createPlat(10000 * S, 540, 120, 28, 'metal'));
-            // Higher safe platforms
-            plats.push(createPlat(2500 * S, 460, 100, 28, 'platform_easy'));
-            plats.push(createPlat(5600 * S, 460, 100, 28, 'platform_medium'));
-            plats.push(createPlat(8200 * S, 460, 100, 28, 'platform_hard'));
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.455;
-            const coins: any[] = [];
-            for (let x = 300 * S; x < 1200 * S; x += 110 * S) coins.push(createCoin(x, 590));
-            for (let x = 2900 * S; x < 4000 * S; x += 110 * S) coins.push(createCoin(x, 590));
-            for (let x = 5600 * S; x < 6700 * S; x += 110 * S) coins.push(createCoin(x, 590));
-            for (let x = 8100 * S; x < 9300 * S; x += 110 * S) coins.push(createCoin(x, 590));
-            for (let x = 10700 * S; x < 12000 * S; x += 110 * S) coins.push(createCoin(x, 590));
-            coins.push(createCoin(750 * S, 480), createCoin(2050 * S, 480));
-            coins.push(createCoin(2550 * S, 400), createCoin(3550 * S, 480));
-            coins.push(createCoin(4850 * S, 480), createCoin(5650 * S, 400));
-            coins.push(createCoin(6250 * S, 480), createCoin(7450 * S, 480));
-            coins.push(createCoin(8250 * S, 400), createCoin(8850 * S, 480));
-            coins.push(createCoin(10050 * S, 480));
-            // Coin arc above the spring in the last stretch
-            coins.push(createCoin(4610, 530), createCoin(4650, 490), createCoin(4690, 530));
-            // Sternen-Konstellation (Diamant) above the slow circular orbit
-            coins.push(createCoin(3850, 380), createCoin(3790, 320), createCoin(3910, 320), createCoin(3850, 260));
-            return coins;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.455;
-            return [
-                createQB(2550 * S, 390, 'mushroom'),
-                createQB(5650 * S, 390, 'star'),
-                createQB(8250 * S, 390, 'star'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.455;
-            return [
-                createEnemy(400 * S, 600, 'ufo'),
-                createEnemy(600 * S, 600, 'robot'),
-                createEnemy(800 * S, 600, 'fireball'),
-                createEnemy(1000 * S, 600, 'ufo'),
-                createEnemy(1400 * S, 600, 'robot'),
-                createEnemy(1600 * S, 600, 'fireball'),
-                createEnemy(1800 * S, 600, 'ufo'),
-                createEnemy(2200 * S, 600, 'robot'),
-                createEnemy(2400 * S, 600, 'fireball'),
-                createEnemy(3000 * S, 600, 'ufo'),
-                createEnemy(3200 * S, 600, 'robot'),
-                createEnemy(3800 * S, 600, 'ufo'),
-                createEnemy(4200 * S, 600, 'fireball'),
-                createEnemy(4400 * S, 600, 'robot'),
-                createEnemy(4600 * S, 600, 'ufo'),
-                createEnemy(5200 * S, 600, 'fireball'),
-                createEnemy(5800 * S, 600, 'robot'),
-                createEnemy(6000 * S, 600, 'ufo'),
-                createEnemy(7000 * S, 600, 'fireball'),
-                createEnemy(7200 * S, 600, 'robot'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.455;
-            return [
-                createDeco(300 * S, 590, 'planet'),
-                createDeco(2300 * S, 590, 'rocket'),
-                createDeco(4500 * S, 590, 'asteroid'),
-                createDeco(6800 * S, 590, 'satellite'),
-                createDeco(9500 * S, 590, 'planet'),
-                createDeco(11500 * S, 590, 'rocket'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 530 },
-        goal: { x: 5100, y: 618 },
-        timeBonus: 200,
-        movingPlatforms: [
-            createMovingPlat(910, 500, 120, 24, 'platform_medium', 'horizontal', 350, 22),
-            createMovingPlat(3321, 480, 100, 24, 'platform_medium', 'vertical', 160, 20),
-            // Langsame Trajekt-Orbit-Bahn (traumhafte slow circular)
-            createMovingPlat(3900, 500, 110, 24, 'platform_easy', 'circular', 130, 12),
-        ],
-        springs: [createSpring(4650, 620)],
-        // Zwei Spike-Gassen in den mittleren Arenen (≥150px clear of QBs, clear of coin trails)
-        spikes: [createSpike(2150, 612), createSpike(2190, 612), createSpike(4400, 612), createSpike(4440, 612)],
-    },
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 780, 1000, 780, 4));
+    coins.push(...coinArc(1150, 440, 5, 80, 70));
+    coins.push(...coinDiamond(1400, 720, 70));
+    coins.push(...coinTrail(1650, 760, 1950, 760, 3));
+    coins.push(...coinArc(2350, 620, 5, 80, 70));
+    coins.push(...coinDiamond(2600, 380, 60));
+    coins.push(...coinLadder(3400, 320, 100, 4));
+    coins.push(...coinTrail(2200, 1000, 2900, 1000, 3));
+    coins.push(...coinArc(3750, 820, 5, 80, 70));
+    coins.push(...coinTrail(4200, 760, 4600, 760, 3));
+    coins.push(...coinArc(5100, 700, 5, 90, 80));
+    coins.push(...coinTrail(5700, 640, 6050, 640, 3));
+    coins.push(...coinTrail(6350, 600, 6650, 600, 3));
+    coins.push(...coinDiamond(6900, 540, 60));
+    coins.push(...coinTrail(7500, 260, 7800, 260, 3));
+    coins.push(...coinTrail(8200, 480, 8600, 480, 3));
 
-    // ============================================================
-    // LEVEL 84: Asteroiden-Feld Finale — Scattered space platforms, floating feel
-    // S=0.417
-    // ============================================================
-    {
-        id: 84,
-        name: "Supernova Finale",
-        width: 12000,
-        height: 700,
-        biome: 'space-star',
-        platforms: (() => {
-            const S = 0.417;
-            const plats: any[] = [];
-            // Start ground
-            plats.push(createPlat(0, 640, 1800 * S, 40, 'space'));
-            // Low scattered section — asteroid field
-            plats.push(createPlat(1200 * S, 640, 800 * S, 40, 'space'));
-            plats.push(createPlat(2200 * S, 600, 150, 28, 'platform_easy'));
-            plats.push(createPlat(2600 * S, 640, 600 * S, 40, 'space'));
-            plats.push(createPlat(3400 * S, 580, 150, 28, 'platform_medium'));
-            plats.push(createPlat(3800 * S, 640, 900 * S, 40, 'space'));
-            plats.push(createPlat(5000 * S, 560, 150, 28, 'platform_hard'));
-            // Middle section — floating sensation
-            plats.push(createPlat(5400 * S, 640, 700 * S, 40, 'space'));
-            plats.push(createPlat(6000 * S, 520, 100, 28, 'platform_easy'));
-            plats.push(createPlat(6300 * S, 440, 100, 28, 'platform_medium'));
-            plats.push(createPlat(6600 * S, 360, 100, 28, 'platform_hard'));
-            plats.push(createPlat(6900 * S, 280, 100, 28, 'platform_hard'));
-            plats.push(createPlat(7200 * S, 360, 100, 28, 'platform_medium'));
-            plats.push(createPlat(7500 * S, 440, 100, 28, 'platform_easy'));
-            // Landing
-            plats.push(createPlat(7800 * S, 640, 1000 * S, 40, 'space'));
-            // High floating climax
-            plats.push(createPlat(9000 * S, 640, 600 * S, 40, 'space'));
-            plats.push(createPlat(9600 * S, 520, 100, 28, 'platform_hard'));
-            plats.push(createPlat(9900 * S, 420, 100, 28, 'platform_medium'));
-            plats.push(createPlat(10200 * S, 320, 100, 28, 'platform_easy'));
-            plats.push(createPlat(10500 * S, 220, 100, 28, 'platform_hard'));
-            plats.push(createPlat(10800 * S, 320, 100, 28, 'platform_medium'));
-            plats.push(createPlat(11100 * S, 420, 100, 28, 'platform_easy'));
-            // Final ground
-            plats.push(createPlat(11400 * S, 640, 1500 * S, 40, 'space'));
-            // Metal scattered decorations
-            plats.push(createPlat(1500 * S, 560, 80, 24, 'metal'));
-            plats.push(createPlat(4400 * S, 560, 80, 24, 'metal'));
-            plats.push(createPlat(8500 * S, 560, 80, 24, 'metal'));
-            plats.push(createPlat(9200 * S, 560, 80, 24, 'metal'));
-            plats.push(createPlat(10300 * S, 180, 80, 24, 'metal'));
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.417;
-            const coins: any[] = [];
-            for (let x = 300 * S; x < 1100 * S; x += 100 * S) coins.push(createCoin(x, 590));
-            for (let x = 2700 * S; x < 3700 * S; x += 100 * S) coins.push(createCoin(x, 590));
-            for (let x = 3900 * S; x < 5300 * S; x += 100 * S) coins.push(createCoin(x, 590));
-            for (let x = 7900 * S; x < 8900 * S; x += 100 * S) coins.push(createCoin(x, 590));
-            for (let x = 11500 * S; x < 12800 * S; x += 100 * S) coins.push(createCoin(x, 590));
-            coins.push(createCoin(2250 * S, 540), createCoin(3450 * S, 520));
-            coins.push(createCoin(5050 * S, 500), createCoin(6050 * S, 460));
-            coins.push(createCoin(6450 * S, 380), createCoin(6750 * S, 300));
-            coins.push(createCoin(7050 * S, 220), createCoin(7350 * S, 300));
-            coins.push(createCoin(7650 * S, 380));
-            coins.push(createCoin(9750 * S, 460), createCoin(10050 * S, 360));
-            coins.push(createCoin(10350 * S, 260), createCoin(10650 * S, 160));
-            coins.push(createCoin(10950 * S, 260), createCoin(11250 * S, 360));
-            // Nova-Konstellation above the middle asteroid gap
-            coins.push(createCoin(3400, 400), createCoin(3340, 340), createCoin(3460, 340), createCoin(3400, 280));
-            // Coin arcs above the two compensation springs
-            coins.push(createCoin(260, 520), createCoin(300, 480), createCoin(340, 520));
-            coins.push(createCoin(4810, 520), createCoin(4850, 480), createCoin(4890, 520));
-            return coins;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.417;
-            return [
-                createQB(5050 * S, 490, 'mushroom'),
-                createQB(6750 * S, 290, 'star'),
-                createQB(10650 * S, 150, 'star'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.417;
-            return [
-                createEnemy(600 * S, 600, 'ufo'),
-                createEnemy(1800 * S, 600, 'robot'),
-                createEnemy(3000 * S, 600, 'ufo'),
-                createEnemy(4200 * S, 600, 'fireball'),
-                createEnemy(4800 * S, 500, 'ufo'),
-                createEnemy(5800 * S, 600, 'robot'),
-                createEnemy(6400 * S, 380, 'ufo'),
-                createEnemy(7000 * S, 240, 'robot'),
-                createEnemy(7600 * S, 380, 'ufo'),
-                createEnemy(8600 * S, 600, 'fireball'),
-                createEnemy(9400 * S, 600, 'robot'),
-                createEnemy(10000 * S, 360, 'ufo'),
-                createEnemy(10700 * S, 260, 'robot'),
-                createEnemy(11000 * S, 360, 'ufo'),
-                createEnemy(12000 * S, 600, 'fireball'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.417;
-            return [
-                createDeco(400 * S, 590, 'planet'),
-                createDeco(2000 * S, 590, 'asteroid'),
-                createDeco(4500 * S, 590, 'rocket'),
-                createDeco(6500 * S, 250, 'satellite'),
-                createDeco(9000 * S, 590, 'asteroid'),
-                createDeco(11000 * S, 590, 'planet'),
-                createDeco(12500 * S, 590, 'rocket'),
-            ];
-        })(),
-        playerStart: { x: 150, y: 530 },
-        goal: { x: 4950, y: 618 },
-        timeBonus: 220,
-        movingPlatforms: [
-            createMovingPlat(1334, 480, 120, 24, 'platform_medium', 'horizontal', 300, 22),
-            createMovingPlat(3461, 480, 100, 24, 'platform_medium', 'vertical', 180, 20),
-            createMovingPlat(4712, 400, 100, 24, 'platform_medium', 'circular', 150, 22),
-        ],
-        // Kompensations-Springs für das asteroidenreiche Finale (Bonus-Erreichbarkeit)
-        springs: [createSpring(300, 620), createSpring(4850, 620)],
-        spikes: [createSpike(3150, 612)],
-    },
+    return {
+      id: 80, name: 'Asteroidenfeld', width: 9000, height: 1000, biome: 'space-star',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(5100, 780, 120, 24, 'platform_medium', 'circular', 130, 20),
+        createMovingPlat(7300, 500, 120, 24, 'platform_medium', 'vertical', 140, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(400, 740, 'mushroom'),
+        createQB(4000, 740, 'oneup'),
+        createQB(6300, 560, 'coin'),
+        createQB(7700, 228, 'star'),
+      ],
+      enemies: [
+        createEnemy(500, 820, 'robot'),
+        createEnemy(1400, 780, 'robot'),
+        createEnemy(2030, 730, 'robot'),
+        createEnemy(3300, 940, 'robot'),
+        createEnemy(4300, 820, 'robot'),
+        createEnemy(5600, 688, 'robot'),
+        createEnemy(6300, 640, 'robot'),
+        createEnemy(6900, 588, 'robot'),
+        createEnemy(2500, 420, 'ufo'),
+        createEnemy(4800, 520, 'ufo'),
+        createEnemy(7200, 300, 'ufo'),
+        createEnemy(8000, 280, 'ufo'),
+      ],
+      decorations: [
+        createDeco(500, 400, 'planet'),
+        createDeco(1800, 300, 'asteroid'),
+        createDeco(2600, 200, 'asteroid'),
+        createDeco(3200, 260, 'satellite'),
+        createDeco(4600, 380, 'rocket'),
+        createDeco(6200, 300, 'planet'),
+        createDeco(7500, 180, 'asteroid'),
+        createDeco(8300, 320, 'star'),
+      ],
+      playerStart: { x: 250, y: 816 },
+      goal: { x: 8400, y: 540 },
+      timeBonus: 160,
+      springs: [createSpring(1000, 840)],
+      spikes: [createSpike(1100, 832), createSpike(2500, 952)],
+    };
+  })(),
+
+  // ============================================================
+  // Level 81 (Raumstation): Dockingbay, Zwei-Ebenen-Halle,
+  // Zickzack-Schacht, circularer Aussenring mit Schluessel,
+  // Bonusraum hinter Tuer (oneup), vertikaler Aufzug zum
+  // Beobachtungsdeck, Zickzack zum Katwalk, Endkorridor.
+  // 2 Checkpoints, 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(...plateauSection(0, 860, [
+      { dx: 0, dy: 0, w: 1400, h: 40, type: 'metal' },              // top 860 [0,1400]
+      { dx: 1500, dy: 20, w: 600, h: 40, type: 'metal' },           // top 840 [1500,2100]
+    ]));
+    platforms.push(...twoTierSection(2100, 840, 1000, 'metal', 'platform_medium')); // unten top 840, oben top 680
+    platforms.push(...zigzagClimb(3200, 840, 4, 90, 110, 130, 'platform_medium')); // tops 750/660/570/480
+    platforms.push(createPlat(3700, 420, 700, 40, 'metal'));         // top 400 [3350,4050]
+    platforms.push(createPlat(4800, 200, 500, 24, 'platform_hard')); // top 188 Aussenring [4550,5050]
+    platforms.push(createPlat(5400, 680, 600, 40, 'metal'));         // top 660 [5100,5700]
+    platforms.push(createPlat(6050, 740, 500, 40, 'metal'));         // top 720 Bonusraum [5800,6300]
+    platforms.push(createPlat(6500, 260, 400, 24, 'platform_easy')); // top 248 Laufsteg
+    platforms.push(createPlat(7300, 300, 800, 40, 'metal'));         // top 280 Beobachtungsdeck [6900,7700]
+    platforms.push(createPlat(7900, 240, 300, 24, 'platform_medium')); // top 228
+    platforms.push(...zigzagClimb(8300, 228, 3, 70, 110, 130, 'platform_medium')); // tops 158/88/18
+    platforms.push(createPlat(9000, 120, 500, 40, 'metal'));         // top 100 Katwalk [8750,9250]
+    platforms.push(createPlat(9900, 220, 600, 40, 'metal'));         // top 200 [9600,10200]
+    platforms.push(createPlat(11000, 300, 800, 40, 'space'));        // top 280 [10600,11400]
+    platforms.push(createPlat(11900, 260, 600, 40, 'metal'));        // top 240 Ziel [11600,12200]
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 800, 1000, 800, 4));
+    coins.push(...coinArc(1800, 780, 5, 80, 70));
+    coins.push(...coinArc(2600, 760, 5, 90, 80));
+    coins.push(...coinLadder(2266, 620, 520, 4));
+    coins.push(...coinArc(3330, 680, 5, 80, 70));
+    coins.push(...coinTrail(3450, 320, 3950, 320, 4));
+    coins.push(...coinArc(4400, 280, 5, 90, 80));
+    coins.push(...coinDiamond(4800, 120, 70));
+    coins.push(...coinTrail(5150, 580, 5600, 580, 4));
+    coins.push(...coinTrail(5950, 660, 6250, 660, 3));
+    coins.push(...coinArc(6500, 180, 5, 80, 70));
+    coins.push(...coinTrail(7000, 200, 7600, 200, 4));
+    coins.push(...coinTrail(8800, 40, 9200, 40, 3));
+    coins.push(...coinTrail(9700, 140, 10150, 140, 3));
+    coins.push(...coinTrail(10800, 220, 11350, 220, 4));
+    coins.push(...coinTrail(11700, 180, 12150, 180, 3));
+
+    return {
+      id: 81, name: 'Raumstation', width: 12600, height: 1100, biome: 'space-star',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(4400, 360, 120, 24, 'platform_easy', 'circular', 140, 22),
+        createMovingPlat(6100, 480, 120, 24, 'platform_medium', 'vertical', 160, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(400, 760, 'mushroom'),
+        createQB(1700, 740, 'coin'),
+        createQB(3500, 300, 'flower'),
+        createQB(6150, 620, 'oneup'),
+        createQB(7100, 180, 'star'),
+        createQB(11900, 140, 'coin'),
+      ],
+      enemies: [
+        createEnemy(600, 840, 'robot'),
+        createEnemy(1800, 820, 'robot'),
+        createEnemy(2600, 820, 'robot'),
+        createEnemy(3700, 380, 'robot'),
+        createEnemy(6500, 228, 'robot'),
+        createEnemy(7300, 260, 'robot'),
+        createEnemy(9900, 180, 'robot'),
+        createEnemy(11900, 220, 'robot'),
+        createEnemy(4400, 200, 'ufo'),
+        createEnemy(6800, 140, 'ufo'),
+        createEnemy(10400, 180, 'ufo'),
+        createEnemy(5500, 400, 'ghost'),
+      ],
+      decorations: [
+        createDeco(300, 700, 'satellite'),
+        createDeco(1500, 500, 'rocket'),
+        createDeco(2900, 400, 'planet'),
+        createDeco(4200, 200, 'satellite'),
+        createDeco(5700, 300, 'asteroid'),
+        createDeco(6700, 100, 'star'),
+        createDeco(8400, 100, 'satellite'),
+        createDeco(10200, 120, 'planet'),
+        createDeco(11500, 180, 'rocket'),
+      ],
+      playerStart: { x: 250, y: 836 },
+      goal: { x: 11900, y: 240 },
+      timeBonus: 200,
+      checkpoints: [
+        createCheckpoint(7300, 264),
+        createCheckpoint(9000, 84),
+      ],
+      springs: [createSpring(1000, 860)],
+      spikes: [createSpike(1100, 852), createSpike(7400, 272)],
+      keys: [createKey(4900, 148)],
+      doors: [createDoor(5900, 640, 40, 160)],
+    };
+  })(),
+
+  // ============================================================
+  // Level 82 (Satelliten-Kletterer): weiter Aufstieg ueber
+  // Zickzack, circularer Satelliten-Orbit, vertikale Aufzuege,
+  // sichere Treppenroute parallel zur Brueckel-Abkuerzung,
+  // langer Abstieg zum Ziel. 3 Checkpoints, 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(700, 1040, 1400, 40, 'space'));        // top 1020 [0,1400]
+    platforms.push(createPlat(1600, 960, 300, 24, 'platform_easy')); // top 948
+    platforms.push(...zigzagClimb(1900, 948, 5, 90, 110, 130, 'platform_medium')); // tops 858..498
+    platforms.push(createPlat(2400, 460, 350, 24, 'platform_hard')); // top 448
+    platforms.push(createPlat(3250, 260, 400, 24, 'platform_easy')); // top 248 Satellit
+    platforms.push(createPlat(4100, 300, 600, 40, 'metal'));         // top 280 Station [3800,4400]
+    platforms.push(...staircase(4400, 280, 3, 80, 150, 45, 'metal')); // tops 200/120/40
+    platforms.push(createPlat(5250, 60, 300, 24, 'platform_easy'));  // top 48 sichere Route
+    platforms.push(createPlat(5750, 40, 250, 24, 'platform_medium')); // top 28
+    platforms.push(createPlat(6300, 100, 500, 40, 'space'));         // top 80 Deck [6050,6550]
+    platforms.push(createCrumblePlat(6750, 80, 120, 24));            // top 68 Brueckel-Abkuerzung
+    platforms.push(createCrumblePlat(7000, 60, 120, 24));            // top 48
+    platforms.push(createPlat(7300, 200, 500, 40, 'metal'));         // top 180 Landung [7050,7550]
+    platforms.push(createPlat(8100, 360, 600, 40, 'metal'));         // top 340 [7800,8400]
+    platforms.push(createPlat(9000, 500, 700, 40, 'space'));         // top 480 [8650,9350]
+    platforms.push(createPlat(10000, 620, 700, 40, 'metal'));        // top 600 [9650,10350]
+    platforms.push(createPlat(10900, 700, 700, 40, 'space'));        // top 680 [10550,11250]
+    platforms.push(createPlat(11900, 780, 800, 40, 'space'));        // top 760 Ziel [11500,12300]
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 960, 1000, 960, 4));
+    coins.push(...coinArc(1300, 880, 5, 80, 70));
+    coins.push(...coinArc(2100, 780, 5, 90, 80));
+    coins.push(...coinDiamond(2400, 380, 70));
+    coins.push(...coinArc(2850, 300, 5, 80, 70));
+    coins.push(...coinDiamond(3250, 180, 70));
+    coins.push(...coinArc(3700, 320, 5, 80, 70));
+    coins.push(...coinTrail(3850, 220, 4250, 220, 4));
+    coins.push(...coinLadder(4100, 200, 20, 4));
+    coins.push(...coinTrail(5150, 0, 5600, 0, 4));
+    coins.push(...coinArc(6300, 20, 5, 80, 70));
+    coins.push(...coinTrail(6800, 0, 7150, 0, 3));
+    coins.push(...coinArc(7300, 120, 5, 80, 70));
+    coins.push(...coinTrail(7900, 280, 8300, 280, 3));
+    coins.push(...coinTrail(8800, 420, 9250, 420, 3));
+    coins.push(...coinTrail(9800, 540, 10250, 540, 3));
+    coins.push(...coinTrail(10700, 620, 11150, 620, 3));
+    coins.push(...coinTrail(11700, 700, 12250, 700, 4));
+
+    return {
+      id: 82, name: 'Satelliten-Kletterer', width: 12600, height: 1150, biome: 'space-star',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(2850, 380, 120, 24, 'platform_medium', 'circular', 130, 20),
+        createMovingPlat(3700, 400, 120, 24, 'platform_medium', 'vertical', 170, 20),
+        createMovingPlat(6850, 260, 120, 24, 'platform_medium', 'vertical', 180, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(400, 920, 'mushroom'),
+        createQB(3900, 180, 'flower'),
+        createQB(9200, 380, 'star'),
+        createQB(11900, 660, 'coin'),
+      ],
+      enemies: [
+        createEnemy(700, 1000, 'robot'),
+        createEnemy(1600, 928, 'robot'),
+        createEnemy(2400, 428, 'robot'),
+        createEnemy(3250, 228, 'robot'),
+        createEnemy(4100, 260, 'robot'),
+        createEnemy(7300, 160, 'robot'),
+        createEnemy(8100, 320, 'robot'),
+        createEnemy(10000, 580, 'robot'),
+        createEnemy(2800, 200, 'ufo'),
+        createEnemy(6000, 200, 'ufo'),
+        createEnemy(8600, 300, 'ufo'),
+        createEnemy(11000, 500, 'ufo'),
+        createEnemy(5000, 300, 'ghost'),
+      ],
+      decorations: [
+        createDeco(300, 940, 'asteroid'),
+        createDeco(1200, 700, 'planet'),
+        createDeco(2200, 500, 'satellite'),
+        createDeco(3400, 300, 'rocket'),
+        createDeco(4600, 100, 'planet'),
+        createDeco(6200, 0, 'satellite'),
+        createDeco(7600, 80, 'star'),
+        createDeco(8800, 240, 'asteroid'),
+        createDeco(10400, 400, 'planet'),
+        createDeco(11500, 560, 'satellite'),
+      ],
+      playerStart: { x: 250, y: 996 },
+      goal: { x: 11900, y: 760 },
+      timeBonus: 190,
+      checkpoints: [
+        createCheckpoint(4100, 264),
+        createCheckpoint(7300, 164),
+        createCheckpoint(10000, 584),
+      ],
+      springs: [createSpring(1300, 1020)],
+      spikes: [createSpike(1000, 1012), createSpike(7900, 332)],
+    };
+  })(),
+
+  // ============================================================
+  // Level 83 (UFO-Horde): Inselkette, circulare Bahn, Zwei-Ebenen-
+  // Sektor, vertikaler Aufzug zum UFO-Nest, horizontaler Transporter,
+  // variable Gap-Treppe, Muenz-Tor (30 Coins). 2 Checkpoints, 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(800, 880, 1600, 40, 'space'));        // top 860 [0,1600]
+    platforms.push(...islandCluster(1800, 860, [
+      { dx: 0, dy: 60, w: 220, type: 'platform_medium' },          // top 800 [1800,2020]
+      { dx: 400, dy: 0, w: 200, type: 'space' },                   // top 860
+      { dx: 800, dy: 80, w: 240, type: 'platform_easy' },          // top 780
+    ]));
+    platforms.push(createPlat(3700, 620, 500, 40, 'space'));         // top 600 [3450,3950]
+    platforms.push(...twoTierSection(3950, 600, 900, 'space', 'platform_medium')); // unten top 600, oben top 440
+    platforms.push(createPlat(5200, 560, 600, 40, 'metal'));         // top 540 [4900,5500]
+    platforms.push(createPlat(6150, 240, 400, 24, 'platform_hard')); // top 228 UFO-Nest
+    platforms.push(createPlat(6700, 480, 500, 40, 'space'));         // top 460 [6450,6950]
+    platforms.push(createPlat(7900, 560, 500, 40, 'space'));         // top 540 [7650,8150]
+    platforms.push(...gapWithPlatforms(1, 8150, 552, 700, 3, {
+      widths: [120, 130, 110], dy: [30, 60, 0],
+      types: ['platform_medium', 'platform_easy', 'platform_hard'], xOffsets: [0, 20, -15],
+    }));
+    platforms.push(createPlat(9100, 560, 600, 40, 'space'));         // top 540 [8800,9400]
+    platforms.push(createPlat(10000, 600, 700, 40, 'metal'));        // top 580 [9650,10350]
+    platforms.push(createPlat(11100, 640, 800, 40, 'space'));        // top 620 Ziel [10700,11500]
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 780, 1000, 780, 4));
+    coins.push(...coinArc(1910, 720, 5, 90, 80));
+    coins.push(...coinDiamond(2720, 680, 70));
+    coins.push(...coinArc(3200, 620, 5, 90, 80));
+    coins.push(...coinTrail(4000, 520, 4800, 520, 5));
+    coins.push(...coinDiamond(4400, 360, 70));
+    coins.push(...coinTrail(5000, 460, 5450, 460, 4));
+    coins.push(...coinLadder(6150, 180, 60, 4));
+    coins.push(...coinArc(6700, 400, 5, 80, 70));
+    coins.push(...coinTrail(7300, 440, 7600, 440, 3));
+    coins.push(...coinTrail(8900, 460, 9400, 460, 4));
+    coins.push(...coinArc(10000, 520, 5, 80, 70));
+    coins.push(...coinTrail(10800, 560, 11400, 560, 4));
+
+    return {
+      id: 83, name: 'UFO-Horde', width: 12000, height: 1000, biome: 'space-star',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3200, 700, 120, 24, 'platform_easy', 'circular', 150, 22),
+        createMovingPlat(5750, 420, 120, 24, 'platform_medium', 'vertical', 160, 20),
+        createMovingPlat(7300, 520, 140, 24, 'platform_easy', 'horizontal', 160, 22),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(400, 760, 'mushroom'),
+        createQB(2400, 760, 'coin'),
+        createQB(5200, 440, 'star'),
+        createQB(9100, 440, 'flower'),
+        createQB(10000, 480, 'oneup'),
+      ],
+      enemies: [
+        createEnemy(600, 840, 'robot'),
+        createEnemy(1910, 780, 'robot'),
+        createEnemy(2300, 840, 'robot'),
+        createEnemy(3700, 580, 'robot'),
+        createEnemy(4400, 580, 'robot'),
+        createEnemy(5200, 520, 'robot'),
+        createEnemy(6700, 440, 'robot'),
+        createEnemy(7900, 520, 'robot'),
+        createEnemy(9100, 520, 'robot'),
+        createEnemy(1200, 600, 'ufo'),
+        createEnemy(2900, 500, 'ufo'),
+        createEnemy(3600, 450, 'ufo'),
+        createEnemy(4600, 380, 'ufo'),
+        createEnemy(5600, 350, 'ufo'),
+        createEnemy(6400, 300, 'ufo'),
+        createEnemy(7000, 350, 'ufo'),
+        createEnemy(8000, 420, 'ufo'),
+        createEnemy(8800, 400, 'ufo'),
+        createEnemy(9800, 450, 'ufo'),
+        createEnemy(10800, 500, 'ufo'),
+        createEnemy(2600, 300, 'ghost'),
+        createEnemy(6600, 200, 'ghost'),
+      ],
+      decorations: [
+        createDeco(400, 700, 'planet'),
+        createDeco(1600, 500, 'asteroid'),
+        createDeco(2200, 400, 'asteroid'),
+        createDeco(3500, 300, 'satellite'),
+        createDeco(4700, 200, 'rocket'),
+        createDeco(5900, 100, 'planet'),
+        createDeco(7100, 200, 'asteroid'),
+        createDeco(8500, 300, 'satellite'),
+        createDeco(9700, 380, 'star'),
+        createDeco(10900, 420, 'planet'),
+      ],
+      playerStart: { x: 250, y: 836 },
+      goal: { x: 11100, y: 620 },
+      timeBonus: 170,
+      coinGoal: 30,
+      checkpoints: [
+        createCheckpoint(5200, 524),
+        createCheckpoint(9100, 524),
+      ],
+      springs: [createSpring(1300, 860)],
+      spikes: [createSpike(1500, 852), createSpike(7800, 532)],
+    };
+  })(),
+
+  // ============================================================
+  // Level 84 (Nova-Finale): brueckelnde Asteroiden-Spirale hoch
+  // zum Nova-Kern, sichere Schluchtroute darunter, circulare
+  // Kernbahn, vertikaler Aufzug, Brueckel-Abkuerzung parallel zur
+  // sicheren Treppenroute, Kronen-Aufstieg, Muenz-Tor (32 Coins).
+  // 2 Checkpoints, 3 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(800, 900, 1600, 40, 'space'));        // top 880 [0,1600]
+    // Brueckel-Spirale (obere Risiko-Route)
+    platforms.push(createCrumblePlat(1850, 760, 130, 24));           // top 748
+    platforms.push(createCrumblePlat(2100, 660, 130, 24));           // top 648
+    platforms.push(createCrumblePlat(2350, 560, 130, 24));           // top 548
+    platforms.push(createCrumblePlat(2600, 460, 130, 24));           // top 448
+    platforms.push(createCrumblePlat(2850, 360, 130, 24));           // top 348
+    platforms.push(createCrumblePlat(3100, 280, 130, 24));           // top 268
+    platforms.push(createPlat(3500, 240, 400, 24, 'platform_hard')); // top 228 Nova-Nest
+    // Sichere Route durch die Schlucht
+    platforms.push(createPlat(2300, 1060, 1600, 40, 'stone'));       // top 1040 [1500,3100]
+    platforms.push(createPlat(3250, 980, 200, 24, 'platform_easy')); // top 968 Ausstieg
+    platforms.push(createPlat(3700, 900, 600, 40, 'space'));         // top 880 [3400,4000]
+    platforms.push(createPlat(4800, 720, 500, 40, 'space'));         // top 700 [4550,5050]
+    platforms.push(createPlat(5800, 380, 500, 24, 'platform_hard')); // top 368 Nova-Kern
+    platforms.push(createPlat(6500, 560, 500, 40, 'space'));         // top 540 [6250,6750]
+    // Brueckel-Abkuerzung (obere Linie)
+    platforms.push(createCrumblePlat(7100, 560, 140, 24));           // top 548
+    platforms.push(createCrumblePlat(7400, 500, 140, 24));           // top 488
+    platforms.push(createCrumblePlat(7700, 440, 140, 24));           // top 428
+    // Sichere Route (untere Linie) + Treppen zum Finaldeck
+    platforms.push(createPlat(7100, 760, 300, 40, 'stone'));         // top 740 [6950,7250]
+    platforms.push(createPlat(7700, 800, 400, 40, 'stone'));         // top 780 [7500,7900]
+    platforms.push(createPlat(8300, 680, 200, 24, 'platform_easy')); // top 668
+    platforms.push(createPlat(8550, 560, 200, 24, 'platform_medium')); // top 548
+    platforms.push(createPlat(8100, 420, 600, 40, 'space'));         // top 400 Finaldeck [7800,8400]
+    platforms.push(createPlat(9100, 480, 700, 40, 'space'));         // top 460 [8750,9450]
+    platforms.push(...staircase(9450, 460, 3, 90, 160, 50, 'metal')); // tops 370/280/190
+    platforms.push(createPlat(10400, 160, 700, 40, 'space'));        // top 140 Nova-Krone [10050,10750]
+    platforms.push(createPlat(11200, 260, 600, 40, 'metal'));        // top 240 [10900,11500]
+    platforms.push(createPlat(12200, 360, 800, 40, 'space'));        // top 340 Ziel [11800,12600]
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 800, 1000, 800, 4));
+    coins.push(...coinArc(1300, 780, 5, 90, 80));
+    coins.push(...coinArc(2000, 640, 5, 90, 80));
+    coins.push(...coinDiamond(2600, 300, 70));
+    coins.push(...coinLadder(3500, 200, 60, 4));
+    coins.push(...coinTrail(2300, 1000, 2900, 1000, 3));
+    coins.push(...coinTrail(3700, 800, 3900, 800, 3));
+    coins.push(...coinArc(4300, 700, 5, 90, 80));
+    coins.push(...coinTrail(4600, 620, 5000, 620, 4));
+    coins.push(...coinDiamond(5800, 300, 70));
+    coins.push(...coinTrail(6300, 460, 6650, 460, 3));
+    coins.push(...coinArc(7100, 480, 5, 80, 70));
+    coins.push(...coinTrail(7500, 720, 7850, 720, 3));
+    coins.push(...coinTrail(8900, 380, 9400, 380, 4));
+    coins.push(...coinLadder(9950, 160, 20, 4));
+    coins.push(...coinTrail(10150, 100, 10650, 100, 3));
+    coins.push(...coinTrail(10950, 200, 11450, 200, 4));
+    coins.push(...coinArc(12200, 280, 5, 80, 70));
+
+    return {
+      id: 84, name: 'Nova-Finale', width: 13000, height: 1050, biome: 'space-star',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(4300, 800, 120, 24, 'platform_medium', 'circular', 140, 22),
+        createMovingPlat(5350, 560, 120, 24, 'platform_medium', 'vertical', 170, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(400, 780, 'mushroom'),
+        createQB(3500, 128, 'oneup'),
+        createQB(4800, 600, 'flower'),
+        createQB(10400, 40, 'star'),
+        createQB(12200, 240, 'coin'),
+      ],
+      enemies: [
+        createEnemy(600, 860, 'robot'),
+        createEnemy(2300, 1020, 'robot'),
+        createEnemy(3700, 860, 'robot'),
+        createEnemy(4800, 680, 'robot'),
+        createEnemy(6500, 520, 'robot'),
+        createEnemy(7100, 720, 'robot'),
+        createEnemy(7700, 760, 'robot'),
+        createEnemy(9100, 440, 'robot'),
+        createEnemy(11200, 220, 'robot'),
+        createEnemy(2000, 400, 'ufo'),
+        createEnemy(5000, 300, 'ufo'),
+        createEnemy(6800, 200, 'ufo'),
+        createEnemy(8600, 300, 'ufo'),
+        createEnemy(10500, 100, 'ufo'),
+        createEnemy(4000, 300, 'ghost'),
+        createEnemy(9800, 200, 'ghost'),
+      ],
+      decorations: [
+        createDeco(300, 800, 'asteroid'),
+        createDeco(1500, 600, 'planet'),
+        createDeco(2800, 200, 'rocket'),
+        createDeco(4200, 400, 'satellite'),
+        createDeco(5600, 200, 'star'),
+        createDeco(7000, 600, 'asteroid'),
+        createDeco(8400, 300, 'planet'),
+        createDeco(9600, 300, 'satellite'),
+        createDeco(10800, 100, 'asteroid'),
+        createDeco(12000, 200, 'planet'),
+      ],
+      playerStart: { x: 250, y: 856 },
+      goal: { x: 12200, y: 340 },
+      timeBonus: 260,
+      coinGoal: 32,
+      checkpoints: [
+        createCheckpoint(4800, 684),
+        createCheckpoint(9100, 444),
+      ],
+      springs: [createSpring(1300, 880)],
+      spikes: [createSpike(700, 872), createSpike(6600, 532), createSpike(9000, 452)],
+    };
+  })(),
 ];

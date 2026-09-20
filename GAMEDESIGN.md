@@ -96,6 +96,28 @@ PLAYER_MOVE_SPEED:   300
 - HUD-Hint: "Coins: X / Y" → "Gate offen!" + Glow-Tween + Arpeggio
 - Regeln: `coinGoal ≤ Coins im Level` (~60-70% der Coins empfohlen)
 
+## Level-Elemente Phase 9 (datengetrieben)
+
+Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pflichtweg sein:
+
+| Element | LevelData | Verhalten |
+|---------|-----------|-----------|
+| **Crumble-Plattformen** | `Platform.crumble: true` | 800ms nach Betreten bröckeln, 3s Respawn; Finale-Biome sky/ruins/canyon/space; jede Stelle hat sichere Alternativroute |
+| **Eis-Plattformen** | `PlatformType 'ice'` | Rutschfaktor ×0.96 (biome-unabhängig); nur ice-snow; `snow` rutscht im Biom weiterhin ×0.92 |
+| **Förderbänder** | `Platform.conveyor: px/s` | Schiebt den Spieler beim Stehen (positiv = rechts); factory-Level, beide Richtungen |
+| **Checkpoints** | `checkpoints: {x,y}[]` | Overlap aktiviert Respawn-Punkt (Flagge wird gelb); nach Tod Respawn dort, weiterhin 1 Leben Abzug; nur Level width ≥ 12000 |
+| **Wind-Zonen** | `windZones: {x,y,w,h,strength,intervalMs}[]` | Periodischer seitlicher Schub (Default alle 3s, ±strength) nur innerhalb des Rechtecks; transluzente Markierung |
+| **Wasser-Zonen** | `waterZones: {x,y,w,h}[]` | Aktiviert Schwimm-Physik (Gravity 600, ↑ −250, Drift ×0.95) innerhalb des Rechtecks; bläuliches Overlay |
+| **Schlüssel & Türen** | `keys: {x,y}[]`, `doors: {x,y,w,h}[]` | Alle Schlüssel sammeln öffnet sämtliche Türen (Alpha 0.2, Body disabled); nur Bonusräume, nie Start/Goal blockierend |
+| **Kanonen** | `cannons: {x,y,dir,intervalMs,speed}[]` | Feuern tödliche Projektile (Default alle 2,5s); Schusslinien nie direkt auf Pflicht-Landeplätze |
+| **Zeit-Tor** | `timeGate: number` | Goal bleibt gesperrt, bis X Sekunden vergangen sind; HUD-Countdown "Zeit-Tor: Xs" |
+| **Multi-Goal** | `goals: Goal[]` | Zusätzliche goldene Flaggen mit eigenen Punkten; Berühren beendet das Level mit Bonus |
+| **1-UP-Block** | `QuestionBlockContent 'oneup'` | QB gibt +1 Leben (1-UP-Popup + Arpeggio) |
+| **Geheim-Bricks** | `hidden`, `brick_secret`, `brick_multi` | `hidden` wird beim Bonk sichtbar (+Münze), `brick_secret` gibt Münze, `brick_multi` mehrfach (300ms Cooldown) |
+
+- Steigende Lava/Flut (L60/L18/L48) folgt dem Spieler mit Chase-Abstand 560px und kann ihn nicht einkesseln
+- Crumble/Wind/Fallhazards sind datengetrieben statt an Level-IDs gebunden (Legacy-Fallback für L30/72/78/84 entfernt)
+
 ## Power-ups (Question Blocks)
 
 | Item | Wirkung | Punkte |
@@ -258,10 +280,10 @@ PLAYER_MOVE_SPEED:   300
 | L48 | beach-island | Steigende Flut |
 | L54 | factory | Fallende Hindernisse |
 | L60 | volcano-lava | Steigende Lava (0.4px/Frame) |
-| L66 | canyon-base | Fallende Felsen |
+| L66 | haunted-mansion | Fallende Hindernisse |
 | L72 | ruins | Bröckel-Plattformen |
-| L78 | space-star | Bröckel-Plattformen |
-| L84 | haunted-mansion | Bröckel-Plattformen |
+| L78 | canyon-base | Bröckel-Plattformen |
+| L84 | space-star | Bröckel-Plattformen |
 | L90 | castle-final | Bosskampf (HP-Bar, Projektile, Arena-Wände) |
 
 ### Secret Rooms

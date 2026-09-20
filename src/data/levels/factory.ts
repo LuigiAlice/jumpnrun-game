@@ -1,777 +1,598 @@
-// Factory World - 6 distinct level types (IDs 49-54)
-// Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Förderband-Finale
+// Factory World (ids 49-54) — Phase 9 rebuild
+// Archetypes:
+//   L49 "Gear Grinder"     - Maschinenhalle (Tutorial: Terrassen, erste Foerderbaender)
+//   L50 "Steel Girders"    - Stahltraeger (Girder-Hopping, Crumble-Stahlplatte, Chasm-Bruecke)
+//   L51 "Pipeworks"        - Rohrwerk (Pipes + Piranhas, zwei Kanonen, Vertikal-Aufzug)
+//   L52 "Smokestack Climb" - Schornstein-Aufzug (drei vertikale Aufzuege, hohe Schornsteine)
+//   L53 "Robot Rampage"    - Roboterhorde (Kampf-Arenen, Foerderbaender in beide Richtungen)
+//   L54 "Conveyor Chaos"   - Foerderband-Finale (lange Baender, Kanonen, Schluessel+Tuer-Bonusraum)
+//
+// Factory gravity is 2000: safe rises <=160px, safe same-height gaps <=210px, falls <=1000px.
+// All levels are authored solvable — ensureSolvable() must not add a single platform.
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import {
+  LevelData, createPlat, createQB, createEnemy, createDeco, createMovingPlat,
+  createSpring, createSpike, createCrumblePlat, createConveyorPlat, createCheckpoint,
+  createKey, createDoor, createCannon, staircase, pitWithLedges, gapWithPlatforms,
+  coinArc, coinDiamond, coinTrail, coinLadder,
+} from './helpers';
+
+/** Pipe + pipe_top standing on a ground whose top edge is `top`. */
+const pipePair = (x: number, top: number): LevelData['platforms'] => [
+  createPlat(x, top - 32, 64, 64, 'pipe'),
+  createPlat(x, top - 76, 80, 24, 'pipe_top'),
+];
 
 export const FACTORY_LEVELS: LevelData[] = [
   // ============================================================
-  // LEVEL 49: Tutorial — Simple factory path, one gap, few enemies
-  // S=0.625, width=20000
+  // Level 49 (Maschinenhalle): sanfter Einstieg ueber Metall-
+  // Terrassen, erstes Foerderband (rechts) mit Bremsweg, ein
+  // Ruecklauf-Band (links), Grube mit Leitern, optionale
+  // Katwalk-Alkove und ein Vertikal-Aufzug. 1 Spring, 1 Spike.
   // ============================================================
-  {
-    id: 49, name: "Gear Grinder", width: 20000, height: 650, biome: 'factory',
-    platforms: (() => {
-      const S = 0.625;
-      const plats: any[] = [];
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(600, 600, 1200, 40, 'metal'));          // top 580  [0,1200]
+    platforms.push(...staircase(1200, 580, 3, 70, 140, 40, 'metal')); // tops 510/440/370
+    platforms.push(createPlat(1880, 410, 360, 40, 'metal'));          // top 390  [1700,2060]
+    platforms.push(createPlat(500, 480, 260, 24, 'platform_medium')); // Katwalk top 468 [370,630]
+    platforms.push(createPlat(2350, 560, 300, 40, 'metal'));          // top 540  [2200,2500]
+    platforms.push(createConveyorPlat(2830, 532, 660, 24, 'metal', 1, 60)); // Band R top 520 [2500,3160]
+    platforms.push(createPlat(3480, 580, 640, 40, 'metal'));          // top 560  [3160,3800]
+    platforms.push(...pitWithLedges(3800, 560, 420, 160, 60, 'metal')); // Grubenboden top 720
+    platforms.push(createPlat(3860, 682, 110, 24, 'platform_easy'));  // Leiter L top 670
+    platforms.push(createPlat(4160, 682, 110, 24, 'platform_easy'));  // Leiter R top 670
+    platforms.push(createPlat(4540, 580, 640, 40, 'metal'));          // top 560  [4220,4860]
+    platforms.push(createConveyorPlat(5160, 572, 600, 24, 'metal', -1, 50)); // Band L top 560 [4860,5460]
+    platforms.push(createPlat(5760, 580, 600, 40, 'metal'));          // top 560  [5460,6060]
+    platforms.push(createPlat(6480, 480, 700, 40, 'metal'));          // top 460  [6130,6830]
+    platforms.push(createPlat(6480, 322, 220, 24, 'platform_hard'));  // Giebel top 310
+    platforms.push(createPlat(2160, 400, 160, 24, 'platform_hard'));  // Alkove top 388
+    platforms.push(createPlat(2350, 312, 140, 24, 'platform_medium')); // Aufzugsziel top 300
 
-      // Start ground
-      plats.push(createPlat(100 * S, 600, 1000 * S, 40, 'metal'));
-      plats.push(createPlat(1300 * S, 600, 800 * S, 40, 'metal'));
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 520, 1100, 520, 5));
+    coins.push(...coinTrail(1250, 500, 1650, 340, 4));
+    coins.push(...coinDiamond(500, 420, 60));
+    coins.push(...coinArc(2350, 480, 5, 120, 70));
+    coins.push(...coinDiamond(2830, 460, 60));
+    coins.push(...coinArc(4010, 650, 5, 170, 90));
+    coins.push(...coinDiamond(2160, 330, 60));
+    coins.push(...coinTrail(5200, 510, 5700, 510, 4));
+    coins.push(...coinLadder(5600, 520, 320, 4));
+    coins.push(...coinTrail(6250, 400, 6750, 400, 4));
+    coins.push(...coinTrail(6420, 260, 6540, 260, 3));
 
-      // Gap with more stepping platforms
-      plats.push(...gapWithPlatforms(S, 2100, 600, 300, 2));
-
-      // Ground after gap
-      plats.push(createPlat(2800 * S, 600, 600 * S, 40, 'metal'));
-
-      // Bridge to pipe section
-      plats.push(...gapWithPlatforms(S, 3600, 600, 400, 3));
-      // Pipe section — 2 pipes
-      plats.push(...pipeSection(S, 3600, 600, 2));
-
-      // Bridge after pipes
-      plats.push(...gapWithPlatforms(S, 5000, 600, 400, 3));
-
-      // Ground after pipes
-      plats.push(createPlat(5000 * S, 600, 800 * S, 40, 'metal'));
-
-      // Bridge to final ground
-      plats.push(...gapWithPlatforms(S, 6300, 600, 400, 3));
-
-      // Final ground to goal
-      plats.push(createPlat(6300 * S, 600, 1000 * S, 40, 'metal'));
-      plats.push(...gapWithPlatforms(S, 7800, 600, 400, 3));
-      plats.push(createPlat(7800 * S, 600, 800 * S, 40, 'metal'));
-
-      // Secret room: hidden pipe room below middle ground
-      plats.push(createPlat(3300, 660, 180, 24, 'metal'));
-
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.625;
-      const cs: any[] = [];
-      for (let x = 300; x < 2000; x += 200) cs.push(createCoin(x * S, 550));
-      for (let x = 2800 * S; x < 3600 * S; x += 200) cs.push(createCoin(x, 550));
-      for (let x = 5000 * S; x < 6000 * S; x += 200) cs.push(createCoin(x, 550));
-      for (let x = 6300 * S; x < 7300 * S; x += 200) cs.push(createCoin(x, 550));
-      cs.push(createCoin(3250, 640), createCoin(3300, 640), createCoin(3350, 640), createCoin(3400, 640));
-      // Coin arc above the discovery spring
-      cs.push(createCoin(660, 420), createCoin(700, 380), createCoin(740, 420));
-      return cs;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.625;
-      return [
-        createQB(500 * S, 530, 'mushroom'),
-        createQB(1700 * S, 530, 'coin'),
-        createQB(3200 * S, 530, 'mushroom'),
-        createQB(5400 * S, 530, 'flower'),
-        createQB(6700 * S, 530, 'coin'),
-        createQB(3300, 610, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.625;
-      return [
-        createEnemy(600 * S, 560, 'robot'),
-        createEnemy(1600 * S, 560, 'goomba'),
-        createEnemy(3900 * S, 560, 'piranha'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.625;
-      return [
-        createDeco(300 * S, 560, 'gear'),
-        createDeco(1500 * S, 560, 'conveyor'),
-        createDeco(3000 * S, 560, 'crane'),
-        createDeco(5200 * S, 560, 'smoke'),
-        createDeco(6500 * S, 560, 'gear'),
-      ];
-    })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 6800 * 0.625, y: 578 },
-    timeBonus: 120,
-    movingPlatforms: [
-      createMovingPlat(4500 * 0.625, 540, 130, 24, 'platform_easy', 'horizontal', 300, 20),
-    ],
-    // Tutorial discovery spring on the second metal stretch
-    springs: [createSpring(700, 580)],
-  },
+    return {
+      id: 49, name: 'Gear Grinder', width: 7200, height: 900, biome: 'factory',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(2350, 440, 110, 24, 'platform_medium', 'vertical', 80, 22),
+        createMovingPlat(5600, 470, 110, 24, 'platform_hard', 'circular', 60, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(700, 490, 'mushroom'),
+        createQB(2600, 460, 'coin'),
+        createQB(4500, 480, 'oneup'),
+        createQB(6600, 380, 'flower'),
+      ],
+      enemies: [
+        createEnemy(900, 572, 'robot'),
+        createEnemy(1600, 362, 'goomba'),
+        createEnemy(1900, 382, 'koopa'),
+        createEnemy(2400, 532, 'crab'),
+        createEnemy(3400, 552, 'robot'),
+        createEnemy(4400, 552, 'spiny'),
+        createEnemy(5300, 552, 'goomba'),
+        createEnemy(6000, 552, 'crab'),
+      ],
+      decorations: [
+        createDeco(300, 540, 'gear'),
+        createDeco(1500, 330, 'crane'),
+        createDeco(2300, 400, 'smoke'),
+        createDeco(3200, 460, 'conveyor'),
+        createDeco(4010, 660, 'ember'),
+        createDeco(4200, 500, 'gear'),
+        createDeco(5200, 500, 'chain'),
+        createDeco(6200, 420, 'crane'),
+        createDeco(6600, 260, 'smoke'),
+        createDeco(7000, 520, 'pipe'),
+      ],
+      playerStart: { x: 200, y: 564 },
+      goal: { x: 6600, y: 452 },
+      timeBonus: 150,
+      springs: [createSpring(5600, 560)],
+      spikes: [createSpike(4700, 552)],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 50: Gap-Strecke — 5 gap sections, 4 moving platforms
-  // S=0.6, width=21000
+  // Level 50 (Stahltraeger): Girder-Hopping ueber einen Abgrund,
+  // Chasm-Bruecke aus horizontaler Moving-Platform, Vertical-
+  // Aufzug zur Bonus-Stahlplatte und eine einstuergende
+  // Crumble-Platte als Abkuerzung (mit sicherem Tiefweg).
   // ============================================================
-  {
-    id: 50, name: "Steel Gaps", width: 21000, height: 650, biome: 'factory',
-    platforms: (() => {
-      const S = 0.6;
-      const plats: any[] = [];
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(500, 600, 1000, 40, 'metal'));          // top 580  [0,1000]
+    platforms.push(...gapWithPlatforms(1, 1000, 580, 560, 3, {
+      widths: [110, 90, 130], dy: [40, 0, 80],
+      types: ['platform_easy', 'platform_medium', 'platform_hard'],
+    }));                                                              // tops 528/568/488
+    platforms.push(createPlat(1680, 460, 380, 40, 'metal'));          // top 440  [1490,1870]
+    platforms.push(createPlat(2020, 412, 120, 24, 'platform_medium')); // Strahl top 400
+    platforms.push(createPlat(2330, 452, 100, 24, 'platform_easy'));  // Strahl top 440
+    platforms.push(createPlat(2620, 392, 140, 24, 'platform_hard'));  // Strahl top 380
+    platforms.push(createPlat(2945, 472, 110, 24, 'platform_medium')); // Strahl top 460
+    platforms.push(createPlat(3350, 660, 640, 40, 'metal'));          // Tiefdeck top 640 [3030,3670]
+    platforms.push(createPlat(3300, 300, 160, 24, 'platform_medium')); // Bonus top 288
+    platforms.push(createPlat(4000, 480, 110, 24, 'platform_easy'));  // Nische top 468
+    platforms.push(createPlat(4400, 620, 600, 40, 'metal'));          // top 600  [4100,4700]
+    platforms.push(...staircase(4700, 600, 3, 70, 140, 40, 'metal')); // tops 530/460/390
+    platforms.push(createPlat(5500, 420, 520, 40, 'metal'));          // Traeger top 400 [5240,5760]
+    platforms.push(createCrumblePlat(6060, 392, 320, 24, 'metal'));   // Crumble-Platte top 380
+    platforms.push(createPlat(6060, 640, 500, 40, 'metal'));          // Tiefweg top 620 [5810,6310]
+    platforms.push(createPlat(6600, 480, 560, 40, 'metal'));          // Ziel-Traeger top 460
+    platforms.push(createPlat(6300, 340, 120, 24, 'platform_medium')); // Bonus top 328
+    platforms.push(createPlat(6560, 280, 140, 24, 'platform_hard'));  // Bonus top 268
 
-      // Ground A
-      plats.push(createPlat(250 * S, 600, 800 * S, 40, 'metal'));
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(120, 520, 950, 520, 5));
+    coins.push(...coinArc(1280, 480, 5, 150, 80));
+    coins.push(...coinDiamond(1680, 370, 60));
+    coins.push(...coinTrail(2050, 350, 2600, 340, 4));
+    coins.push(...coinArc(3885, 560, 5, 170, 80));
+    coins.push(...coinTrail(3100, 580, 3600, 580, 4));
+    coins.push(...coinLadder(4350, 540, 320, 5));
+    coins.push(...coinDiamond(3300, 240, 70));
+    coins.push(...coinTrail(4900, 450, 5150, 410, 4));
+    coins.push(...coinTrail(5300, 340, 5700, 340, 4));
+    coins.push(...coinDiamond(6060, 320, 60));
+    coins.push(...coinTrail(6350, 410, 6800, 410, 4));
 
-      // Bridge platforms before gap 1
-      plats.push(createPlat(500, 600, 100, 24, 'platform_easy'));
-      plats.push(createPlat(620, 570, 100, 24, 'platform_medium'));
-
-      // Gap 1: 3 stepping platforms
-      plats.push(...gapWithPlatforms(S, 1100, 600, 500, 3));
-
-      // Ground B
-      plats.push(createPlat(2100 * S, 600, 600 * S, 40, 'metal'));
-
-      // Gap 2: 4 stepping platforms
-      plats.push(...gapWithPlatforms(S, 2800, 600, 600, 4));
-
-      // Ground C
-      plats.push(createPlat(3900 * S, 600, 500 * S, 40, 'metal'));
-
-      // Gap 3: 3 stepping platforms
-      plats.push(...gapWithPlatforms(S, 4500, 600, 500, 3));
-
-      // Ground D
-      plats.push(createPlat(5500 * S, 600, 600 * S, 40, 'metal'));
-
-      // Gap 4: 3 stepping platforms
-      plats.push(...gapWithPlatforms(S, 6200, 600, 500, 3));
-
-      // Ground E
-      plats.push(createPlat(7200 * S, 600, 800 * S, 40, 'metal'));
-
-      // Gap 5: 4 stepping platforms
-      plats.push(...gapWithPlatforms(S, 8100, 600, 600, 4));
-
-      // Ground F (goal area)
-      plats.push(createPlat(9200 * S, 600, 800 * S, 40, 'metal'));
-      plats.push(createPlat(10300 * S, 600, 500 * S, 40, 'metal'));
-
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.6;
-      const cs: any[] = [];
-      for (let x = 300; x < 1000; x += 200) cs.push(createCoin(x * S, 550));
-      for (let x = 2100 * S; x < 2700 * S; x += 200) cs.push(createCoin(x, 550));
-      for (let x = 5500 * S; x < 6100 * S; x += 200) cs.push(createCoin(x, 550));
-      for (let x = 7200 * S; x < 8000 * S; x += 200) cs.push(createCoin(x, 550));
-      for (let x = 9200 * S; x < 10000 * S; x += 200) cs.push(createCoin(x, 550));
-      // Coin arcs above both springs
-      cs.push(createCoin(160, 420), createCoin(200, 380), createCoin(240, 420));
-      cs.push(createCoin(4160, 420), createCoin(4200, 380), createCoin(4240, 420));
-      return cs;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.6;
-      return [
-        createQB(500 * S, 530, 'mushroom'),
-        createQB(2300 * S, 530, 'coin'),
-        createQB(3700 * S, 530, 'flower'),
-        createQB(5800 * S, 530, 'mushroom'),
-        createQB(9500 * S, 530, 'star'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.6;
-      return [
-        createEnemy(500 * S, 560, 'robot'),
-        createEnemy(1600 * S, 560, 'crab'),
-        createEnemy(2400 * S, 560, 'goomba'),
-        createEnemy(3200 * S, 560, 'koopa'),
-        createEnemy(5800 * S, 560, 'robot'),
-        createEnemy(7600 * S, 560, 'goomba'),
-        createEnemy(8400 * S, 560, 'spiny'),
-        createEnemy(9600 * S, 560, 'crab'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.6;
-      return [
-        createDeco(400 * S, 560, 'gear'),
-        createDeco(2300 * S, 560, 'conveyor'),
-        createDeco(5600 * S, 560, 'crane'),
-        createDeco(9400 * S, 560, 'smoke'),
-      ];
-    })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 9600 * 0.6, y: 578 },
-    timeBonus: 140,
-    movingPlatforms: [
-      createMovingPlat(1600 * 0.6, 530, 140, 24, 'platform_medium', 'horizontal', 350, 22),
-      createMovingPlat(4000 * 0.6, 520, 130, 24, 'platform_medium', 'horizontal', 320, 20),
-      createMovingPlat(5800 * 0.6, 530, 140, 24, 'platform_medium', 'horizontal', 380, 22),
-      createMovingPlat(8000 * 0.6, 520, 120, 24, 'platform_easy', 'vertical', 200, 18),
-    ],
-    // Gap-Strecke: two launch springs with coin arcs + guarded conveyor passages
-    springs: [createSpring(200, 580), createSpring(4200, 580)],
-    spikes: [createSpike(4400, 572), createSpike(5400, 572)],
-  },
+    return {
+      id: 50, name: 'Steel Girders', width: 8800, height: 950, biome: 'factory',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3885, 620, 130, 24, 'platform_medium', 'horizontal', 145, 20),
+        createMovingPlat(3300, 480, 110, 24, 'platform_easy', 'vertical', 130, 22),
+        createMovingPlat(8000, 300, 110, 24, 'platform_hard', 'circular', 80, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(700, 500, 'mushroom'),
+        createQB(1750, 360, 'coin'),
+        createQB(4750, 450, 'flower'),
+        createQB(6700, 380, 'star'),
+      ],
+      enemies: [
+        createEnemy(800, 572, 'robot'),
+        createEnemy(1750, 432, 'goomba'),
+        createEnemy(2350, 432, 'spiny'),
+        createEnemy(3200, 632, 'crab'),
+        createEnemy(4500, 592, 'koopa'),
+        createEnemy(4900, 452, 'robot'),
+        createEnemy(5450, 392, 'goomba'),
+        createEnemy(6650, 452, 'spiny'),
+      ],
+      decorations: [
+        createDeco(250, 540, 'chain'),
+        createDeco(1500, 360, 'crane'),
+        createDeco(2900, 420, 'gear'),
+        createDeco(3885, 700, 'ember'),
+        createDeco(4800, 520, 'smoke'),
+        createDeco(5600, 340, 'gear'),
+        createDeco(6100, 560, 'fire'),
+        createDeco(6800, 380, 'crane'),
+        createDeco(7300, 480, 'chain'),
+      ],
+      playerStart: { x: 200, y: 564 },
+      goal: { x: 6700, y: 452 },
+      timeBonus: 170,
+      springs: [createSpring(4350, 600)],
+      spikes: [createSpike(3300, 632), createSpike(4300, 592)],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 51: Röhren-Labyrinth — 7 pipe sections, piranhas, mixed heights
-  // S=0.556, width=22000
+  // Level 51 (Rohrwerk): Rohr-Gassen mit Piranhas, zwei Kanonen
+  // (Schusslinien immer ueber Kopfhoehe der Pflicht-Landeplaetze),
+  // ein Vertikal-Aufzug zur oberen Rohrebene und ein Ruecklauf-
+  // Foerderband. 2 Springs, 2 Spikes.
   // ============================================================
-  {
-    id: 51, name: "Pipe Maze", width: 22000, height: 900, biome: 'factory',
-    platforms: (() => {
-      const S = 0.556;
-      const plats: any[] = [];
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(600, 600, 1200, 40, 'metal'));          // top 580  [0,1200]
+    platforms.push(...gapWithPlatforms(1, 1200, 580, 360, 2, {
+      widths: [110, 120], dy: [40, 0], types: ['platform_easy', 'platform_medium'],
+    }));                                                              // tops 528/568
+    platforms.push(createPlat(2150, 580, 1020, 40, 'metal'));         // top 560  [1640,2660]
+    platforms.push(...pipePair(1950, 560));
+    platforms.push(...pipePair(2400, 560));
+    platforms.push(createConveyorPlat(2960, 572, 600, 24, 'metal', 1, 70)); // Band R top 560 [2660,3260]
+    platforms.push(createPlat(3580, 600, 640, 40, 'metal'));          // top 580  [3260,3900]
+    platforms.push(createPlat(3580, 440, 220, 24, 'platform_medium')); // Rohr-Ebene top 428
+    platforms.push(createPlat(3950, 600, 100, 280, 'metal'));         // Kanonenturm top 460
+    platforms.push(createPlat(4090, 512, 120, 24, 'platform_medium')); // Tritt top 500
+    platforms.push(createPlat(4300, 532, 120, 24, 'platform_hard'));  // Tritt top 520
+    platforms.push(createPlat(4800, 560, 800, 40, 'metal'));          // top 540  [4400,5200]
+    platforms.push(...pipePair(4650, 540));
+    platforms.push(createPlat(5850, 420, 700, 40, 'metal'));          // obere Ebene top 400 [5500,6200]
+    platforms.push(...pipePair(5650, 400));
+    platforms.push(...pipePair(6050, 400));
+    platforms.push(createPlat(6450, 422, 200, 24, 'platform_medium')); // Abstieg top 410
+    platforms.push(createPlat(7000, 620, 700, 40, 'metal'));          // top 600  [6650,7350]
+    platforms.push(createPlat(6250, 380, 80, 160, 'metal'));          // Kanonenblock top 300
+    platforms.push(createConveyorPlat(7650, 592, 600, 24, 'metal', -1, 60)); // Band L top 580 [7350,7950]
+    platforms.push(createPlat(8300, 620, 660, 40, 'metal'));          // top 600  [7970,8630]
+    platforms.push(...pitWithLedges(8630, 600, 420, 160, 60, 'metal')); // Grube top 760
+    platforms.push(createPlat(8690, 722, 110, 24, 'platform_easy'));  // Leiter L top 710
+    platforms.push(createPlat(8990, 722, 110, 24, 'platform_easy'));  // Leiter R top 710
+    platforms.push(createPlat(9100, 700, 140, 24, 'platform_medium')); // Stufe top 688
+    platforms.push(createPlat(9600, 620, 800, 40, 'metal'));          // top 600  [9200,10000]
+    platforms.push(createPlat(9600, 512, 200, 24, 'platform_hard'));  // Bonus top 500
 
-      // Start ground
-      plats.push(createPlat(250 * S, 600, 800 * S, 40, 'metal'));
-      plats.push(createPlat(1300 * S, 600, 500 * S, 40, 'metal'));
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 520, 1100, 520, 5));
+    coins.push(...coinArc(1320, 470, 5, 140, 70));
+    coins.push(...coinTrail(1800, 480, 2550, 480, 4));
+    coins.push(...coinDiamond(2960, 490, 60));
+    coins.push(...coinArc(4010, 530, 5, 150, 80));
+    coins.push(...coinLadder(3580, 560, 470, 4));
+    coins.push(...coinTrail(4500, 480, 5100, 480, 4));
+    coins.push(...coinDiamond(5380, 340, 70));
+    coins.push(...coinTrail(5600, 320, 6100, 320, 4));
+    coins.push(...coinArc(7000, 540, 5, 200, 80));
+    coins.push(...coinTrail(7500, 520, 7900, 520, 4));
+    coins.push(...coinArc(8840, 690, 5, 170, 80));
+    coins.push(...coinLadder(9600, 560, 520, 4));
+    coins.push(...coinTrail(9250, 560, 9950, 560, 4));
 
-      // Pipe section 1 — 3 pipes at ground level
-      plats.push(...pipeSection(S, 1800, 600, 3));
-
-      // Small ground between pipe groups
-      plats.push(createPlat(3300 * S, 600, 400 * S, 40, 'metal'));
-
-      // Pipe section 2 — 4 pipes at ground level
-      plats.push(...pipeSection(S, 3700, 600, 4));
-
-      // Elevated ground — players jump up via pipe tops
-      plats.push(createPlat(5600 * S, 500, 600 * S, 40, 'metal'));
-
-      // Pipe section 3 — 3 pipes at elevated level
-      plats.push(...pipeSection(S, 6300, 500, 3));
-
-      // Drop transition back to ground
-      plats.push(createPlat(7700 * S, 560, 150, 28, 'platform_easy'));
-      plats.push(createPlat(8100 * S, 620, 150, 28, 'platform_easy'));
-
-      // Ground section
-      plats.push(createPlat(8300 * S, 600, 500 * S, 40, 'metal'));
-
-      // Pipe section 4 — 5 pipes at ground level
-      plats.push(...pipeSection(S, 8800, 600, 5));
-
-      // Ground
-      plats.push(createPlat(10800 * S, 600, 400 * S, 40, 'metal'));
-
-      // Pipe section 5 — 3 pipes at ground level
-      plats.push(...pipeSection(S, 11200, 600, 3));
-
-      // Ground stretch
-      plats.push(createPlat(12700 * S, 600, 500 * S, 40, 'metal'));
-
-      // Pipe section 6 — 4 pipes at ground
-      plats.push(...pipeSection(S, 13300, 600, 4));
-
-      // Ground
-      plats.push(createPlat(15200 * S, 600, 400 * S, 40, 'metal'));
-
-      // Pipe section 7 — 3 pipes
-      plats.push(...pipeSection(S, 15700, 600, 3));
-
-      // Goal ground
-      plats.push(createPlat(17200 * S, 600, 800 * S, 40, 'metal'));
-
-      // Bridge platforms to close BFS gaps
-      plats.push(createPlat(3451.0, 396, 100, 24, 'platform_easy'));
-      plats.push(createPlat(7356.9, 496, 100, 24, 'platform_easy'));
-
-      // Breakable brick bonus ledges (optional, not load-bearing)
-      plats.push(createPlat(4615, 490, 120, 24, 'brick'));
-      plats.push(createPlat(7200, 470, 90, 24, 'brick'));
-
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.556;
-      const cs: any[] = [];
-      for (let x = 300; x < 1700; x += 200) cs.push(createCoin(x * S, 550));
-      for (let x = 3300 * S; x < 3700 * S; x += 200) cs.push(createCoin(x, 550));
-      for (let x = 5600 * S; x < 6200 * S; x += 200) cs.push(createCoin(x, 450));
-      for (let x = 8300 * S; x < 8800 * S; x += 200) cs.push(createCoin(x, 550));
-      for (let x = 12700 * S; x < 13300 * S; x += 200) cs.push(createCoin(x, 550));
-      for (let x = 17200 * S; x < 18000 * S; x += 200) cs.push(createCoin(x, 550));
-      // Breakable brick bonus coins
-      cs.push(createCoin(4585, 440), createCoin(4615, 440), createCoin(4645, 440));
-      cs.push(createCoin(7180, 420), createCoin(7220, 420));
-      return cs;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.556;
-      return [
-        createQB(500 * S, 530, 'mushroom'),
-        createQB(2000 * S, 530, 'coin'),
-        createQB(5400 * S, 530, 'flower'),
-        createQB(5900 * S, 430, 'mushroom'),
-        createQB(9000 * S, 530, 'star'),
-        createQB(11400 * S, 530, 'coin'),
-        createQB(17500 * S, 530, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.556;
-      return [
-        createEnemy(500 * S, 560, 'robot'),
-        createEnemy(1900 * S, 560, 'piranha'),
-        createEnemy(2400 * S, 560, 'piranha'),
-        createEnemy(2900 * S, 560, 'piranha'),
-        createEnemy(3900 * S, 560, 'piranha'),
-        createEnemy(6400 * S, 460, 'piranha'),
-        createEnemy(6800 * S, 460, 'piranha'),
-        createEnemy(7200 * S, 460, 'piranha'),
-        createEnemy(8500 * S, 560, 'goomba'),
-        createEnemy(9000 * S, 560, 'piranha'),
-        createEnemy(11400 * S, 560, 'piranha'),
-        createEnemy(13500 * S, 560, 'piranha'),
-        createEnemy(15900 * S, 560, 'piranha'),
-        createEnemy(17500 * S, 560, 'robot'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.556;
-      return [
-        createDeco(400 * S, 560, 'conveyor'),
-        createDeco(2500 * S, 560, 'gear'),
-        createDeco(5800 * S, 460, 'crane'),
-        createDeco(8500 * S, 560, 'smoke'),
-        createDeco(13000 * S, 560, 'conveyor'),
-        createDeco(15500 * S, 560, 'gear'),
-        createDeco(17400 * S, 560, 'crane'),
-      ];
-    })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 17600 * 0.556, y: 578 },
-    timeBonus: 160,
-    movingPlatforms: [
-      createMovingPlat(5100 * 0.556, 540, 130, 24, 'platform_medium', 'horizontal', 400, 22),
-      createMovingPlat(10400 * 0.556, 540, 120, 24, 'platform_medium', 'vertical', 180, 20),
-      createMovingPlat(16300 * 0.556, 530, 130, 24, 'platform_medium', 'horizontal', 350, 24),
-    ],
-    // Pipe passages guarded by spikes + breakable brick bonus ledges
-    spikes: [createSpike(750, 572), createSpike(1850, 572), createSpike(6000, 572), createSpike(7100, 572)],
-  },
+    return {
+      id: 51, name: 'Pipeworks', width: 10400, height: 950, biome: 'factory',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(5380, 420, 120, 24, 'platform_medium', 'vertical', 120, 24),
+        createMovingPlat(5150, 420, 110, 24, 'platform_hard', 'circular', 80, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(700, 500, 'mushroom'),
+        createQB(2300, 480, 'coin'),
+        createQB(3600, 348, 'flower'),
+        createQB(7300, 520, 'star'),
+      ],
+      enemies: [
+        createEnemy(900, 572, 'robot'),
+        createEnemy(1950, 528, 'piranha'),
+        createEnemy(2400, 528, 'piranha'),
+        createEnemy(2600, 552, 'goomba'),
+        createEnemy(3400, 572, 'spiny'),
+        createEnemy(4650, 508, 'piranha'),
+        createEnemy(4800, 532, 'crab'),
+        createEnemy(5650, 368, 'piranha'),
+        createEnemy(5900, 392, 'goomba'),
+        createEnemy(6050, 368, 'piranha'),
+        createEnemy(7000, 592, 'robot'),
+        createEnemy(8300, 592, 'koopa'),
+        createEnemy(9500, 592, 'spiny'),
+      ],
+      decorations: [
+        createDeco(350, 540, 'pipe'),
+        createDeco(1700, 500, 'gear'),
+        createDeco(3200, 520, 'smoke'),
+        createDeco(3800, 380, 'crane'),
+        createDeco(5000, 500, 'chain'),
+        createDeco(6000, 340, 'smoke'),
+        createDeco(7100, 560, 'gear'),
+        createDeco(8840, 700, 'ember'),
+        createDeco(9800, 540, 'crane'),
+      ],
+      playerStart: { x: 200, y: 564 },
+      goal: { x: 9800, y: 592 },
+      timeBonus: 190,
+      springs: [createSpring(700, 580), createSpring(9400, 600)],
+      spikes: [createSpike(3700, 572), createSpike(8500, 592)],
+      cannons: [
+        createCannon(3950, 420, 1, 2200, 240),
+        createCannon(6250, 340, 1, 2200, 240),
+      ],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 52: Vertikal-Kletterer — 4 verticalClimb sections, mixed heights
-  // S=0.5, width=22000
+  // Level 52 (Schornstein-Aufzug): vertikaler Innenraum mit drei
+  // Schornsteinen und drei vertikalen Aufzuegen; Aufstieg bis auf
+  // die Dachebene, Abstieg ueber Hallenboeden. 1 Spring, 2 Spikes.
   // ============================================================
-  {
-    id: 52, name: "Smokestack Climb", width: 22000, height: 900, biome: 'factory',
-    platforms: (() => {
-      const S = 0.5;
-      const plats: any[] = [];
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(700, 780, 1400, 40, 'metal'));          // Halle top 760 [0,1400]
+    platforms.push(...staircase(1400, 760, 2, 80, 140, 40, 'metal')); // tops 680/600
+    platforms.push(createPlat(2000, 560, 400, 40, 'metal'));          // top 540  [1800,2200]
+    platforms.push(createPlat(2800, 340, 400, 40, 'metal'));          // top 320  [2600,3000]
+    platforms.push(createPlat(3200, 280, 160, 80, 'metal'));          // Schornstein top 240
+    platforms.push(createPlat(3550, 480, 200, 24, 'platform_medium')); // Abstieg top 468
+    platforms.push(createPlat(4200, 760, 1000, 40, 'metal'));         // Halle 2 top 740 [3700,4700]
+    platforms.push(createPlat(5300, 560, 400, 40, 'metal'));          // top 540  [5100,5500]
+    platforms.push(createPlat(5800, 480, 400, 40, 'metal'));          // top 460  [5600,6000]
+    platforms.push(createPlat(6600, 260, 500, 40, 'metal'));          // Dach top 240 [6350,6850]
+    platforms.push(createPlat(7100, 220, 120, 120, 'metal'));         // Schornstein 2 top 160
+    platforms.push(createPlat(6600, 120, 200, 24, 'platform_hard'));  // Bonus top 108
+    platforms.push(createPlat(7400, 300, 400, 40, 'metal'));          // Finale top 280 [7200,7600]
 
-      // Start ground
-      plats.push(createPlat(250 * S, 600, 600 * S, 40, 'metal'));
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 700, 1300, 700, 5));
+    coins.push(...coinTrail(1450, 620, 1700, 560, 4));
+    coins.push(...coinArc(2000, 480, 5, 170, 80));
+    coins.push(...coinDiamond(2400, 360, 70));
+    coins.push(...coinTrail(2650, 260, 2950, 260, 4));
+    coins.push(...coinTrail(3250, 300, 3450, 400, 3));
+    coins.push(...coinArc(4200, 660, 5, 220, 80));
+    coins.push(...coinDiamond(4880, 420, 80));
+    coins.push(...coinTrail(5150, 480, 5450, 480, 4));
+    coins.push(...coinLadder(6000, 520, 320, 4));
+    coins.push(...coinTrail(6400, 180, 6800, 180, 4));
+    coins.push(...coinDiamond(6600, 60, 70));
+    coins.push(...coinTrail(7250, 240, 7550, 240, 4));
 
-      // Short bridge platform
-      plats.push(createPlat(950 * S, 540, 120, 28, 'platform_easy'));
-
-      // Vertical climb 1 — arc going up and down
-      plats.push(...verticalClimb(S, 1100, 600, 'brick'));
-
-      // Ground after climb 1
-      plats.push(createPlat(3200 * S, 600, 600 * S, 40, 'metal'));
-
-      // Vertical climb 2 — higher arc
-      plats.push(...verticalClimb(S, 3800, 600, 'brick'));
-
-      // Ground after climb 2
-      plats.push(createPlat(5900 * S, 600, 500 * S, 40, 'metal'));
-
-      // Scattered platforms at mixed heights for varied climbing
-      plats.push(createPlat(6600 * S, 520, 120, 28, 'platform_easy'));
-      plats.push(createPlat(6900 * S, 440, 120, 28, 'platform_medium'));
-      plats.push(createPlat(7200 * S, 360, 120, 28, 'platform_hard'));
-      plats.push(createPlat(7500 * S, 280, 150, 40, 'brick'));
-      plats.push(createPlat(7900 * S, 360, 120, 28, 'platform_hard'));
-      plats.push(createPlat(8200 * S, 440, 120, 28, 'platform_medium'));
-      plats.push(createPlat(8500 * S, 520, 120, 28, 'platform_easy'));
-
-      // Ground mid-section
-      plats.push(createPlat(9100 * S, 600, 600 * S, 40, 'metal'));
-
-      // Vertical climb 3
-      plats.push(...verticalClimb(S, 9700, 600, 'brick'));
-
-      // Ground after climb 3
-      plats.push(createPlat(11800 * S, 600, 600 * S, 40, 'metal'));
-
-      // Secondary climb — scattered platforms
-      plats.push(createPlat(12600 * S, 530, 120, 28, 'platform_easy'));
-      plats.push(createPlat(12900 * S, 470, 120, 28, 'platform_medium'));
-      plats.push(createPlat(13200 * S, 410, 120, 28, 'platform_hard'));
-      plats.push(createPlat(13500 * S, 350, 140, 32, 'platform_hard'));
-
-      // Descending platforms
-      plats.push(createPlat(13900 * S, 410, 120, 28, 'platform_hard'));
-      plats.push(createPlat(14200 * S, 470, 120, 28, 'platform_medium'));
-      plats.push(createPlat(14500 * S, 530, 120, 28, 'platform_easy'));
-
-      // Vertical climb 4
-      plats.push(...verticalClimb(S, 15100, 600, 'brick'));
-
-      // Final ground to goal
-      plats.push(createPlat(17200 * S, 600, 800 * S, 40, 'metal'));
-
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.5;
-      const cs: any[] = [];
-      for (let x = 300; x < 900; x += 200) cs.push(createCoin(x * S, 550));
-      // Coins along verticalClimb 1 top
-      for (let x = 1900; x < 2100; x += 100) cs.push(createCoin(x * S, 240));
-      for (let x = 3200 * S; x < 3800 * S; x += 200) cs.push(createCoin(x, 550));
-      // Coins at climb 2 peak
-      for (let x = 4600; x < 4800; x += 100) cs.push(createCoin(x * S, 240));
-      // Mixed-height section coins
-      cs.push(createCoin(7500 * S, 230));
-      for (let x = 9100 * S; x < 9700 * S; x += 200) cs.push(createCoin(x, 550));
-      // Climb 3 peak
-      for (let x = 10600; x < 10800; x += 100) cs.push(createCoin(x * S, 240));
-      for (let x = 11800 * S; x < 12400 * S; x += 200) cs.push(createCoin(x, 550));
-      // Climb 4 peak
-      for (let x = 16000; x < 16200; x += 100) cs.push(createCoin(x * S, 240));
-      for (let x = 17200 * S; x < 18000 * S; x += 200) cs.push(createCoin(x, 550));
-      // Coin ladder up the mixed-height section
-      cs.push(createCoin(3300, 470), createCoin(3450, 390), createCoin(3600, 310), createCoin(3750, 170));
-      return cs;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.5;
-      return [
-        createQB(500 * S, 530, 'mushroom'),
-        createQB(2000 * S, 220, 'star'),
-        createQB(3400 * S, 530, 'flower'),
-        createQB(4700 * S, 220, 'mushroom'),
-        createQB(9200 * S, 530, 'coin'),
-        createQB(10700 * S, 220, 'star'),
-        createQB(16000 * S, 220, 'mushroom'),
-        createQB(17500 * S, 530, 'flower'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.5;
-      return [
-        createEnemy(400 * S, 560, 'robot'),
-        createEnemy(1600 * S, 520, 'crab'),
-        createEnemy(2200 * S, 240, 'goomba'),
-        createEnemy(3300 * S, 560, 'koopa'),
-        createEnemy(4300 * S, 520, 'robot'),
-        createEnemy(5000 * S, 240, 'goomba'),
-        createEnemy(6100 * S, 560, 'robot'),
-        createEnemy(7400 * S, 230, 'crab'),
-        createEnemy(9900 * S, 560, 'robot'),
-        createEnemy(10300 * S, 240, 'koopa'),
-        createEnemy(12800 * S, 490, 'goomba'),
-        createEnemy(15300 * S, 520, 'robot'),
-        createEnemy(15800 * S, 240, 'crab'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.5;
-      return [
-        createDeco(300 * S, 560, 'conveyor'),
-        createDeco(2500 * S, 240, 'gear'),
-        createDeco(6000 * S, 560, 'smoke'),
-        createDeco(9300 * S, 560, 'crane'),
-        createDeco(10400 * S, 240, 'conveyor'),
-        createDeco(15400 * S, 240, 'gear'),
-        createDeco(17400 * S, 560, 'smoke'),
-      ];
-    })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 17600 * 0.5, y: 578 },
-    timeBonus: 180,
-    movingPlatforms: [
-      createMovingPlat(700 * 0.5, 530, 120, 24, 'platform_medium', 'horizontal', 300, 20),
-      // Smokestack elevator between the mixed-height platforms
-      createMovingPlat(3900, 500, 120, 24, 'platform_medium', 'vertical', 160, 20),
-      createMovingPlat(8800 * 0.5, 520, 130, 24, 'platform_medium', 'horizontal', 280, 22),
-      createMovingPlat(16600 * 0.5, 520, 130, 24, 'platform_medium', 'horizontal', 320, 24),
-    ],
-    // Vertikal-Kletterer: spring shortcut + guarded ground stretches + coin ladder gate
-    springs: [createSpring(2870, 580)],
-    spikes: [createSpike(1500, 572), createSpike(3030, 572)],
-    coinGoal: 16,
-  },
+    return {
+      id: 52, name: 'Smokestack Climb', width: 7800, height: 1100, biome: 'factory',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(2400, 480, 120, 24, 'platform_medium', 'vertical', 170, 24),
+        createMovingPlat(4880, 560, 120, 24, 'platform_medium', 'vertical', 200, 26),
+        createMovingPlat(6150, 320, 120, 24, 'platform_hard', 'vertical', 150, 26),
+        createMovingPlat(2000, 360, 110, 24, 'platform_hard', 'circular', 80, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(600, 680, 'mushroom'),
+        createQB(1900, 460, 'coin'),
+        createQB(5300, 460, 'flower'),
+        createQB(6800, 160, 'oneup'),
+      ],
+      enemies: [
+        createEnemy(900, 752, 'robot'),
+        createEnemy(1900, 532, 'crab'),
+        createEnemy(2700, 312, 'spiny'),
+        createEnemy(3500, 460, 'goomba'),
+        createEnemy(4000, 732, 'robot'),
+        createEnemy(5200, 532, 'koopa'),
+        createEnemy(5700, 452, 'crab'),
+        createEnemy(6500, 232, 'spiny'),
+        createEnemy(7400, 272, 'goomba'),
+      ],
+      decorations: [
+        createDeco(300, 700, 'smoke'),
+        createDeco(1200, 620, 'gear'),
+        createDeco(2400, 400, 'crane'),
+        createDeco(3200, 200, 'smoke'),
+        createDeco(4300, 680, 'chain'),
+        createDeco(5000, 480, 'gear'),
+        createDeco(6150, 220, 'crane'),
+        createDeco(7100, 120, 'ember'),
+        createDeco(7500, 220, 'smoke'),
+      ],
+      playerStart: { x: 200, y: 744 },
+      goal: { x: 7500, y: 272 },
+      timeBonus: 210,
+      springs: [createSpring(500, 760)],
+      spikes: [createSpike(1100, 752), createSpike(4400, 732)],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 53: Gegner-Horde — 15-20 enemies, simpler layout, combat focus
-  // S=0.455, width=20000
+  // Level 53 (Roboterhorde): breite Kampf-Arenen mit Foerder-
+  // baendern in beide Richtungen, Grube mit Aufzug, Bonus-Stahl-
+  // plaettchen und 18 Waechtern. Muenz-Tor (coinGoal 24).
   // ============================================================
-  {
-    id: 53, name: "Robot Rampage", width: 20000, height: 700, biome: 'factory',
-    platforms: (() => {
-      const S = 0.455;
-      const plats: any[] = [];
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(450, 660, 900, 40, 'metal'));           // top 640  [0,900]
+    platforms.push(createConveyorPlat(1475, 652, 1150, 24, 'metal', 1, 70)); // Band R top 640 [900,2050]
+    platforms.push(createPlat(2275, 660, 150, 40, 'metal'));          // top 640  [2200,2350]
+    platforms.push(createConveyorPlat(2700, 652, 700, 24, 'metal', -1, 70)); // Band L top 640 [2350,3050]
+    platforms.push(createPlat(3225, 660, 350, 40, 'metal'));          // top 640  [3050,3400]
+    platforms.push(createPlat(3900, 720, 1000, 40, 'metal'));         // Grube top 700 [3400,4400]
+    platforms.push(createPlat(4550, 620, 300, 40, 'metal'));          // top 600  [4400,4700]
+    platforms.push(createConveyorPlat(5000, 612, 600, 24, 'metal', 1, 80)); // Band R top 600 [4700,5300]
+    platforms.push(createPlat(5450, 620, 300, 40, 'metal'));          // top 600  [5300,5600]
+    platforms.push(createConveyorPlat(6200, 652, 800, 24, 'metal', -1, 80)); // Band L top 640 [5800,6600]
+    platforms.push(createPlat(6700, 660, 200, 40, 'metal'));          // top 640  [6600,6800]
+    platforms.push(createPlat(6870, 620, 120, 24, 'platform_easy'));  // Tritt top 608
+    platforms.push(createPlat(7125, 600, 250, 40, 'metal'));          // top 580  [7000,7250]
+    platforms.push(createConveyorPlat(7500, 592, 500, 24, 'metal', 1, 80)); // Band R top 580 [7250,7750]
+    platforms.push(createPlat(8075, 600, 650, 40, 'metal'));          // top 580  [7750,8400]
+    platforms.push(createPlat(8900, 540, 600, 40, 'metal'));          // top 520  [8600,9200]
+    platforms.push(createPlat(9700, 500, 800, 40, 'metal'));          // Ziel top 480 [9300,10100]
+    platforms.push(createPlat(5000, 480, 140, 24, 'platform_medium')); // Bonus top 468
+    platforms.push(createPlat(7600, 460, 200, 24, 'platform_hard'));  // Bonus top 448
+    platforms.push(createPlat(4300, 320, 160, 24, 'platform_hard'));  // Aufzugsziel top 308
 
-      // Arena 1 — long combat area
-      plats.push(createPlat(250 * S, 650, 1800 * S, 40, 'metal'));
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 580, 850, 580, 5));
+    coins.push(...coinArc(1475, 580, 5, 260, 80));
+    coins.push(...coinTrail(2250, 580, 3350, 580, 6));
+    coins.push(...coinDiamond(5000, 400, 70));
+    coins.push(...coinTrail(4500, 540, 5500, 540, 5));
+    coins.push(...coinArc(6250, 580, 5, 220, 70));
+    coins.push(...coinDiamond(4300, 240, 70));
+    coins.push(...coinTrail(7050, 520, 8350, 520, 6));
+    coins.push(...coinTrail(8650, 460, 9150, 460, 4));
+    coins.push(...coinTrail(9350, 420, 10050, 420, 5));
+    coins.push(...coinDiamond(7600, 380, 60));
+    coins.push(...coinDiamond(8800, 300, 70));
 
-      // Short gap
-      plats.push(...gapWithPlatforms(S, 2300, 650, 300, 1));
-
-      // Arena 2
-      plats.push(createPlat(3200 * S, 650, 2000 * S, 40, 'metal'));
-
-      // Short gap
-      plats.push(...gapWithPlatforms(S, 5500, 650, 350, 2));
-
-      // Arena 3
-      plats.push(createPlat(6700 * S, 650, 1800 * S, 40, 'metal'));
-
-      // Pipe section with piranhas
-      plats.push(...pipeSection(S, 8600, 650, 3));
-
-      // Arena 4
-      plats.push(createPlat(10500 * S, 650, 2000 * S, 40, 'metal'));
-
-      // Short gap
-      plats.push(...gapWithPlatforms(S, 12700, 650, 350, 2));
-
-      // Arena 5 (goal arena)
-      plats.push(createPlat(14000 * S, 650, 1800 * S, 40, 'metal'));
-
-      // Extra platforms
-      plats.push(createPlat(16000 * S, 580, 120, 28, 'platform_easy'));
-      plats.push(createPlat(16300 * S, 530, 120, 28, 'platform_medium'));
-
-      // Bridge platforms to close BFS gaps
-      plats.push(createPlat(794.0, 530, 100, 24, 'platform_easy'));
-      plats.push(createPlat(2208.3, 530, 100, 24, 'platform_easy'));
-      plats.push(createPlat(3729.8, 546, 100, 24, 'platform_easy'));
-      plats.push(createPlat(5507.0, 530, 100, 24, 'platform_easy'));
-      plats.push(createPlat(6999.8, 520, 100, 24, 'platform_easy'));
-
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.455;
-      const cs: any[] = [];
-      for (let x = 300; x < 2200; x += 200) cs.push(createCoin(x * S, 600));
-      for (let x = 3200 * S; x < 5200 * S; x += 200) cs.push(createCoin(x, 600));
-      for (let x = 6700 * S; x < 8500 * S; x += 200) cs.push(createCoin(x, 600));
-      for (let x = 10500 * S; x < 12500 * S; x += 200) cs.push(createCoin(x, 600));
-      for (let x = 14000 * S; x < 15800 * S; x += 200) cs.push(createCoin(x, 600));
-      return cs;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.455;
-      return [
-        createQB(400 * S, 580, 'mushroom'),
-        createQB(3500 * S, 580, 'coin'),
-        createQB(7000 * S, 580, 'flower'),
-        createQB(10800 * S, 580, 'mushroom'),
-        createQB(14300 * S, 580, 'star'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.455;
-      return [
-        // Arena 1: 4 enemies
-        createEnemy(350 * S, 610, 'robot'),
-        createEnemy(600 * S, 610, 'robot'),
-        createEnemy(900 * S, 610, 'goomba'),
-        createEnemy(1200 * S, 610, 'koopa'),
-        // Arena 2: 5 enemies
-        createEnemy(3300 * S, 610, 'robot'),
-        createEnemy(3700 * S, 610, 'crab'),
-        createEnemy(4100 * S, 610, 'goomba'),
-        createEnemy(4500 * S, 610, 'koopa'),
-        createEnemy(4900 * S, 610, 'robot'),
-        // Arena 3: 4 enemies + piranhas
-        createEnemy(6900 * S, 610, 'robot'),
-        createEnemy(7400 * S, 610, 'goomba'),
-        createEnemy(7900 * S, 610, 'koopa'),
-        createEnemy(8800 * S, 610, 'piranha'),
-        createEnemy(9200 * S, 610, 'piranha'),
-        // Arena 4: 3 enemies
-        createEnemy(10700 * S, 610, 'robot'),
-        createEnemy(11200 * S, 610, 'crab'),
-        createEnemy(11700 * S, 610, 'robot'),
-        // Arena 5: 3 enemies
-        createEnemy(14200 * S, 610, 'robot'),
-        createEnemy(15000 * S, 610, 'goomba'),
-        createEnemy(15500 * S, 610, 'koopa'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.455;
-      return [
-        createDeco(400 * S, 610, 'gear'),
-        createDeco(2000 * S, 610, 'conveyor'),
-        createDeco(3600 * S, 610, 'smoke'),
-        createDeco(5200 * S, 610, 'crane'),
-        createDeco(7200 * S, 610, 'gear'),
-        createDeco(10800 * S, 610, 'conveyor'),
-        createDeco(14000 * S, 610, 'smoke'),
-        createDeco(15500 * S, 610, 'gear'),
-      ];
-    })(),
-    playerStart: { x: 150, y: 600 },
-    goal: { x: 14400 * 0.455, y: 628 },
-    timeBonus: 200,
-    movingPlatforms: [
-      createMovingPlat(6000 * 0.455, 590, 130, 24, 'platform_medium', 'horizontal', 350, 25),
-      createMovingPlat(10000 * 0.455, 580, 120, 24, 'platform_medium', 'horizontal', 400, 24),
-      createMovingPlat(14500 * 0.455, 580, 130, 24, 'platform_easy', 'vertical', 180, 22),
-    ],
-    // Spike-Gasse through Arena 2 + single guard in Arena 4
-    spikes: [createSpike(1250, 622), createSpike(1320, 622), createSpike(1390, 622), createSpike(5200, 622)],
-    coinGoal: 20,
-  },
+    return {
+      id: 53, name: 'Robot Rampage', width: 11600, height: 900, biome: 'factory',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(4300, 560, 120, 24, 'platform_medium', 'vertical', 120, 22),
+        createMovingPlat(10600, 420, 110, 24, 'platform_hard', 'circular', 80, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(700, 560, 'mushroom'),
+        createQB(3000, 560, 'flower'),
+        createQB(5100, 520, 'coin'),
+        createQB(8200, 500, 'star'),
+      ],
+      enemies: [
+        createEnemy(900, 632, 'robot'),
+        createEnemy(1050, 632, 'goomba'),
+        createEnemy(2300, 632, 'koopa'),
+        createEnemy(2900, 632, 'robot'),
+        createEnemy(3200, 632, 'crab'),
+        createEnemy(3700, 692, 'goomba'),
+        createEnemy(4100, 692, 'spiny'),
+        createEnemy(4600, 592, 'robot'),
+        createEnemy(5000, 460, 'spiny'),
+        createEnemy(5500, 592, 'crab'),
+        createEnemy(6000, 632, 'koopa'),
+        createEnemy(6500, 632, 'goomba'),
+        createEnemy(7100, 572, 'robot'),
+        createEnemy(7600, 572, 'crab'),
+        createEnemy(8300, 572, 'spiny'),
+        createEnemy(8700, 512, 'goomba'),
+        createEnemy(9500, 472, 'robot'),
+        createEnemy(9900, 472, 'koopa'),
+      ],
+      decorations: [
+        createDeco(300, 600, 'gear'),
+        createDeco(1200, 560, 'conveyor'),
+        createDeco(2400, 560, 'smoke'),
+        createDeco(3300, 560, 'gear'),
+        createDeco(3900, 800, 'ember'),
+        createDeco(4900, 540, 'crane'),
+        createDeco(6100, 560, 'conveyor'),
+        createDeco(7200, 500, 'smoke'),
+        createDeco(8400, 500, 'gear'),
+        createDeco(9800, 400, 'crane'),
+      ],
+      playerStart: { x: 200, y: 624 },
+      goal: { x: 9900, y: 472 },
+      timeBonus: 220,
+      coinGoal: 24,
+      timeGate: 40,
+      goals: [
+        { x: 9500, y: 472, points: 2500, difficulty: 'hard' },
+      ],
+      springs: [createSpring(700, 640), createSpring(8800, 520)],
+      spikes: [createSpike(560, 632), createSpike(5450, 592), createSpike(7950, 572)],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 54: Förderband-Finale — Conveyor-like linear path, many obstacles
-  // S=0.417, width=22000
+  // Level 54 (Foerderband-Finale): lange Baender in beide
+  // Richtungen, zwei Kanonen ueber Kopfhoehe, Vertikal-Aufzug zur
+  // oberen Bandetage, Checkpoints und ein optionaler Maschinen-
+  // raum (Schluessel + Tuer, nur Bonus, mit Notausstieg).
   // ============================================================
-  {
-    id: 54, name: "Conveyor Chaos", width: 22000, height: 700, biome: 'factory',
-    platforms: (() => {
-      const S = 0.417;
-      const plats: any[] = [];
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(700, 680, 1400, 40, 'metal'));          // top 660  [0,1400]
+    platforms.push(createConveyorPlat(1900, 672, 1000, 24, 'metal', 1, 90)); // Band R top 660 [1400,2400]
+    platforms.push(createPlat(2800, 720, 800, 40, 'metal'));          // top 700  [2400,3200]
+    platforms.push(createPlat(3320, 672, 120, 24, 'platform_medium')); // Tritt top 660
+    platforms.push(createPlat(3500, 700, 80, 200, 'metal'));          // Kanonenturm top 600
+    platforms.push(createPlat(4000, 680, 900, 40, 'metal'));          // top 660  [3550,4450]
+    platforms.push(createConveyorPlat(4950, 672, 900, 24, 'metal', -1, 90)); // Band L top 660 [4500,5400]
+    platforms.push(createPlat(6000, 700, 1200, 40, 'metal'));         // top 680  [5400,6600]
+    platforms.push(createPlat(7150, 380, 700, 40, 'metal'));          // obere Etage top 360 [6800,7500]
+    platforms.push(createConveyorPlat(7900, 372, 800, 24, 'metal', 1, 100)); // Band R top 360 [7500,8300]
+    platforms.push(createPlat(8420, 392, 120, 24, 'platform_medium')); // Tritt top 380
+    platforms.push(createPlat(8600, 320, 80, 200, 'metal'));          // Kanonenblock top 220
+    platforms.push(createPlat(8850, 352, 120, 24, 'platform_hard'));  // Tritt top 340
+    platforms.push(createPlat(9400, 400, 600, 40, 'metal'));          // top 380  [9100,9700]
+    platforms.push(createPlat(9900, 500, 200, 24, 'platform_medium')); // Abstieg top 488
+    platforms.push(createPlat(10450, 560, 600, 40, 'metal'));         // top 540  [10150,10750]
+    platforms.push(createPlat(11300, 540, 800, 40, 'metal'));         // Bruecke top 520 [10900,11700]
+    platforms.push(createPlat(11300, 880, 800, 40, 'metal'));         // Maschinenraum top 860
+    platforms.push(createPlat(10960, 760, 40, 200, 'metal'));         // Raumwand L top 660
+    platforms.push(createPlat(11640, 760, 40, 200, 'metal'));         // Raumwand R top 660
+    platforms.push(createPlat(11080, 760, 120, 24, 'platform_easy')); // Notausstieg 1 top 748
+    platforms.push(createPlat(10850, 700, 120, 24, 'platform_easy')); // Notausstieg 2 top 688
+    platforms.push(createPlat(11550, 720, 120, 24, 'platform_medium')); // Bonus-Ausstieg top 708
+    platforms.push(createPlat(12000, 620, 600, 40, 'metal'));         // top 600  [11700,12300]
+    platforms.push(createPlat(12700, 560, 600, 40, 'metal'));         // Ziel top 540 [12400,13000]
+    platforms.push(createPlat(12850, 400, 200, 24, 'platform_hard')); // Bonus top 388
 
-      // Section 1 — Start sprint
-      plats.push(createPlat(250 * S, 650, 2000 * S, 40, 'metal'));
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 600, 1300, 600, 5));
+    coins.push(...coinArc(1900, 580, 5, 260, 80));
+    coins.push(...coinTrail(2500, 620, 3100, 620, 4));
+    coins.push(...coinDiamond(3500, 420, 70));
+    coins.push(...coinArc(4950, 580, 5, 240, 80));
+    coins.push(...coinTrail(5500, 600, 6500, 600, 5));
+    coins.push(...coinTrail(6900, 300, 7500, 300, 4));
+    coins.push(...coinDiamond(7900, 280, 70));
+    coins.push(...coinTrail(8400, 320, 8900, 280, 4));
+    coins.push(...coinTrail(9200, 320, 9600, 320, 4));
+    coins.push(...coinDiamond(10450, 440, 70));
+    coins.push(...coinTrail(11000, 480, 11600, 480, 4));
+    coins.push(...coinTrail(11050, 800, 11150, 800, 3));
+    coins.push(...coinTrail(11420, 800, 11580, 800, 3));
+    coins.push(...coinTrail(11800, 540, 12250, 540, 4));
+    coins.push(...coinArc(12700, 460, 5, 140, 70));
+    coins.push(...coinTrail(12780, 320, 12920, 320, 3));
 
-      // Bridge platforms before gap
-      plats.push(createPlat(660, 650, 100, 24, 'platform_easy'));
-      plats.push(createPlat(810, 620, 100, 24, 'platform_medium'));
-
-      // Brief gap with platforms
-      plats.push(...gapWithPlatforms(S, 2500, 650, 250, 1));
-
-      // Section 2 — Long run with scattered elevated platforms
-      plats.push(createPlat(3200 * S, 650, 2000 * S, 40, 'metal'));
-
-      // Elevated obstacle platforms
-      plats.push(createPlat(4000 * S, 570, 120, 28, 'platform_easy'));
-      plats.push(createPlat(4400 * S, 500, 120, 28, 'platform_medium'));
-
-      // Section 3 — Conveyor area with pipes as obstacles
-      plats.push(...pipeSection(S, 5200, 650, 2));
-
-      // Continue ground
-      plats.push(createPlat(6500 * S, 650, 2000 * S, 40, 'metal'));
-
-      // Section 4 — Dense obstacle area
-      plats.push(createPlat(8800 * S, 570, 120, 28, 'platform_easy'));
-      plats.push(createPlat(9200 * S, 490, 120, 28, 'platform_medium'));
-      plats.push(createPlat(9600 * S, 410, 120, 28, 'platform_hard'));
-      plats.push(createPlat(10000 * S, 490, 120, 28, 'platform_medium'));
-
-      // Ground continues
-      plats.push(createPlat(10400 * S, 650, 2000 * S, 40, 'metal'));
-
-      // Pipe obstacle area
-      plats.push(...pipeSection(S, 12600, 650, 3));
-
-      // Section 5 — Final conveyor dash
-      plats.push(createPlat(14200 * S, 650, 2000 * S, 40, 'metal'));
-
-      // Elevated platforms in final section
-      plats.push(createPlat(14800 * S, 570, 120, 28, 'platform_easy'));
-      plats.push(createPlat(15200 * S, 500, 120, 28, 'platform_medium'));
-      plats.push(createPlat(15600 * S, 430, 120, 28, 'platform_hard'));
-
-      // Brief gap
-      plats.push(...gapWithPlatforms(S, 16300, 650, 300, 2));
-
-      // Section 6 — Goal stretch
-      plats.push(createPlat(17200 * S, 650, 2000 * S, 40, 'metal'));
-
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.417;
-      const cs: any[] = [];
-      for (let x = 300; x < 2400; x += 180) cs.push(createCoin(x * S, 600));
-      for (let x = 3200 * S; x < 5200 * S; x += 180) cs.push(createCoin(x, 600));
-      for (let x = 6500 * S; x < 8500 * S; x += 180) cs.push(createCoin(x, 600));
-      for (let x = 10400 * S; x < 12400 * S; x += 180) cs.push(createCoin(x, 600));
-      for (let x = 14200 * S; x < 16200 * S; x += 180) cs.push(createCoin(x, 600));
-      for (let x = 17200 * S; x < 19200 * S; x += 180) cs.push(createCoin(x, 600));
-      // Coin arcs above both rescue springs
-      cs.push(createCoin(350, 530), createCoin(400, 490), createCoin(450, 530));
-      cs.push(createCoin(6060, 530), createCoin(6100, 490), createCoin(6140, 530));
-      return cs;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.417;
-      return [
-        createQB(1200 * S, 580, 'mushroom'),
-        createQB(5400 * S, 580, 'coin'),
-        createQB(7000 * S, 580, 'flower'),
-        createQB(11000 * S, 580, 'star'),
-        createQB(15000 * S, 580, 'mushroom'),
-        createQB(17800 * S, 580, 'coin'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.417;
-      return [
-        // Section 1: 2 enemies
-        createEnemy(800 * S, 610, 'robot'),
-        createEnemy(1800 * S, 610, 'goomba'),
-        // Section 2: 3 enemies
-        createEnemy(3500 * S, 610, 'koopa'),
-        createEnemy(4300 * S, 610, 'robot'),
-        createEnemy(4900 * S, 610, 'crab'),
-        // Section 2 elevated
-        createEnemy(4500 * S, 460, 'goomba'),
-        // Section 3: 3 enemies + piranhas
-        createEnemy(5400 * S, 610, 'piranha'),
-        createEnemy(5600 * S, 610, 'piranha'),
-        createEnemy(6800 * S, 610, 'robot'),
-        createEnemy(7800 * S, 610, 'goomba'),
-        // Section 4: 3 enemies
-        createEnemy(10700 * S, 610, 'robot'),
-        createEnemy(11500 * S, 610, 'koopa'),
-        // Section 4 elevated
-        createEnemy(9800 * S, 370, 'crab'),
-        // Section 5: 4 enemies + piranhas
-        createEnemy(12700 * S, 610, 'piranha'),
-        createEnemy(13100 * S, 610, 'piranha'),
-        createEnemy(12900 * S, 610, 'piranha'),
-        createEnemy(14500 * S, 610, 'robot'),
-        createEnemy(15500 * S, 610, 'goomba'),
-        // Section 6: 3 enemies
-        createEnemy(17500 * S, 610, 'robot'),
-        createEnemy(18300 * S, 610, 'koopa'),
-        createEnemy(18900 * S, 610, 'crab'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.417;
-      return [
-        createDeco(500 * S, 610, 'conveyor'),
-        createDeco(2000 * S, 610, 'gear'),
-        createDeco(3500 * S, 610, 'conveyor'),
-        createDeco(5200 * S, 610, 'smoke'),
-        createDeco(5300 * S, 610, 'crane'),
-        createDeco(7000 * S, 610, 'conveyor'),
-        createDeco(9000 * S, 610, 'gear'),
-        createDeco(9600 * S, 610, 'smoke'),
-        createDeco(10700 * S, 610, 'conveyor'),
-        createDeco(12700 * S, 610, 'crane'),
-        createDeco(14500 * S, 610, 'conveyor'),
-        createDeco(15200 * S, 610, 'gear'),
-        createDeco(16000 * S, 610, 'smoke'),
-        createDeco(17500 * S, 610, 'conveyor'),
-        createDeco(18500 * S, 610, 'gear'),
-      ];
-    })(),
-    playerStart: { x: 150, y: 600 },
-    goal: { x: 17600 * 0.417, y: 628 },
-    timeBonus: 220,
-    movingPlatforms: [
-      // Conveyor-style moving platforms across gaps
-      createMovingPlat(2800 * 0.417, 590, 140, 24, 'platform_medium', 'horizontal', 350, 26),
-      createMovingPlat(6000 * 0.417, 580, 130, 24, 'platform_medium', 'horizontal', 320, 26),
-      createMovingPlat(9000 * 0.417, 580, 130, 24, 'platform_medium', 'horizontal', 380, 28),
-      createMovingPlat(12000 * 0.417, 570, 140, 24, 'platform_medium', 'horizontal', 400, 24),
-      createMovingPlat(16500 * 0.417, 580, 130, 24, 'platform_medium', 'horizontal', 300, 22),
-    ],
-    // Finale compensation: rescue springs against falling hazards + flat spikes
-    springs: [createSpring(400, 630), createSpring(6100, 630)],
-    spikes: [createSpike(320, 622), createSpike(4400, 622)],
-  },
+    return {
+      id: 54, name: 'Conveyor Chaos', width: 13200, height: 1000, biome: 'factory',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(6740, 500, 120, 24, 'platform_medium', 'vertical', 150, 24),
+        createMovingPlat(10400, 380, 110, 24, 'platform_hard', 'circular', 80, 20),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(600, 580, 'mushroom'),
+        createQB(2900, 620, 'coin'),
+        createQB(6100, 600, 'flower'),
+        createQB(11450, 780, 'oneup'),
+        createQB(12100, 520, 'star'),
+      ],
+      enemies: [
+        createEnemy(900, 652, 'robot'),
+        createEnemy(2000, 652, 'goomba'),
+        createEnemy(2600, 692, 'crab'),
+        createEnemy(3900, 652, 'spiny'),
+        createEnemy(5600, 672, 'koopa'),
+        createEnemy(7300, 352, 'robot'),
+        createEnemy(7900, 352, 'goomba'),
+        createEnemy(8700, 332, 'spiny'),
+        createEnemy(9300, 372, 'crab'),
+        createEnemy(10300, 532, 'koopa'),
+        createEnemy(11200, 512, 'robot'),
+        createEnemy(12100, 592, 'goomba'),
+        createEnemy(12600, 532, 'spiny'),
+      ],
+      decorations: [
+        createDeco(300, 620, 'conveyor'),
+        createDeco(1700, 600, 'gear'),
+        createDeco(3400, 620, 'smoke'),
+        createDeco(4900, 600, 'crane'),
+        createDeco(6300, 620, 'conveyor'),
+        createDeco(7200, 320, 'gear'),
+        createDeco(8100, 300, 'smoke'),
+        createDeco(9400, 340, 'crane'),
+        createDeco(10450, 500, 'chain'),
+        createDeco(12100, 540, 'gear'),
+        createDeco(12900, 480, 'smoke'),
+      ],
+      playerStart: { x: 200, y: 644 },
+      goal: { x: 12850, y: 532 },
+      timeBonus: 260,
+      springs: [createSpring(500, 660), createSpring(5700, 680)],
+      spikes: [createSpike(1000, 652), createSpike(4200, 652), createSpike(6300, 672)],
+      checkpoints: [createCheckpoint(3800, 644), createCheckpoint(12000, 584)],
+      keys: [createKey(7850, 300)],
+      doors: [createDoor(11300, 760, 40, 220)],
+      cannons: [
+        createCannon(3500, 480, -1, 2200, 240),
+        createCannon(8600, 180, -1, 2000, 280),
+      ],
+    };
+  })(),
 ];

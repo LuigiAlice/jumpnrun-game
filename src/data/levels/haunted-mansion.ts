@@ -1,595 +1,718 @@
-// Haunted Mansion World - 6 Levels (61-66)
-// Distinct structures: Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Geister-Verfolgung Finale
-// Stone/Brick theme with haunted decorations: cobweb, tombstone, ghost, web
+// Haunted Mansion (ids 61-66) — Phase 9 rebuild
+// Archetypes: 61 Eingangshalle, 62 Spiegelsäle, 63 Geistertreppen,
+// 64 Verlies, 65 Banshee-Horde, 66 Krypta-Finale (Engine-Fallhazards, ID 66).
+// Haunted gravity is 2000: safe rises <=160px, safe same-height gaps <=210px.
+// All levels are authored solvable (ensureSolvable adds nothing).
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import {
+  LevelData, createPlat, createQB, createEnemy, createDeco,
+  createMovingPlat, createSpring, createSpike, createCrumblePlat,
+  createCheckpoint, createKey, createDoor,
+  staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster,
+  zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
+} from './helpers';
+import type { PlatformType } from './index';
 
-// ---- Local helpers ----
-
-const ghostPlatforms = (S: number, startX: number, baseY: number, count: number): any[] => {
-  const plats = [];
-  for (let i = 0; i < count; i++) {
-    const px = (startX + i * 180) * S;
-    const py = baseY - 80 - (i % 4) * 50;
-    const pw = (100 + (i % 3) * 30) * S;
-    const ptype = i % 3 === 0 ? 'platform_easy' : (i % 3 === 1 ? 'platform_medium' : 'platform_hard');
-    plats.push(createPlat(px, py, pw, 28, ptype));
-  }
-  return plats;
-};
-
-const verticalShaft = (S: number, startX: number, baseY: number): any[] => {
-  const plats = [];
-  plats.push(createPlat(startX * S, baseY - 100, 150 * S, 40, 'brick'));
-  plats.push(createPlat((startX + 180) * S, baseY - 180, 120 * S, 28, 'platform_medium'));
-  plats.push(createPlat((startX + 360) * S, baseY - 260, 120 * S, 28, 'platform_hard'));
-  plats.push(createPlat((startX + 540) * S, baseY - 340, 180 * S, 40, 'brick'));
-  plats.push(createPlat((startX + 720) * S, baseY - 280, 120 * S, 28, 'platform_hard'));
-  plats.push(createPlat((startX + 900) * S, baseY - 200, 120 * S, 28, 'platform_medium'));
-  plats.push(createPlat((startX + 1080) * S, baseY - 120, 150 * S, 28, 'platform_easy'));
-  return plats;
-};
-
-const bridgeSection = (S: number, startX: number, baseY: number, length: number): any[] => {
-  const plats = [];
-  for (let i = 0; i < length; i++) {
-    plats.push(createPlat((startX + i * 150) * S, baseY, 140 * S, 40, 'brick'));
-  }
-  return plats;
-};
+// Left-edge based helpers: `ground` = solid hall floor, `ledge` = 24px walkway.
+const ground = (left: number, w: number, top: number, type: PlatformType, h = 40) =>
+  createPlat(left + w / 2, top + h / 2, w, h, type);
+const ledge = (left: number, w: number, top: number, type: PlatformType = 'platform_medium') =>
+  createPlat(left + w / 2, top + 12, w, 24, type);
 
 export const HAUNTED_MANSION_LEVELS: LevelData[] = [
-  // ================== LEVEL 61 – Tutorial – S=0.556 ==================
-  {
-    id: 61, name: "Ghost Hall", width: 12500, height: 600, biome: 'haunted-mansion',
-    platforms: (() => {
-      const S = 0.556; const baseY = 560;
-      const plats: any[] = [];
-      plats.push(...bridgeSection(S, 100, baseY, 50));          // 56 → 4142
-      plats.push(...verticalShaft(S, 7700, baseY));              // 4278 → 4880
-      plats.push(...bridgeSection(S, 9200, baseY, 35));          // 5115 → 7949
-      plats.push(...ghostPlatforms(S, 14800, baseY, 8));         // 8229 → 8929
-      plats.push(...bridgeSection(S, 16800, baseY, 35));         // 9341 → 12176
-      plats.push(createPlat(2000, 460, 140, 24, 'brick'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.556;
-      return [
-        createCoin(400 * S, 500),  createCoin(900 * S, 500),
-        createCoin(1500 * S, 490), createCoin(2500 * S, 450),
-        createCoin(4500 * S, 200), // vertical shaft peak
-        createCoin(6000 * S, 500), createCoin(7500 * S, 500),
-        createCoin(8800 * S, 400), // ghost platform area
-        createCoin(10000 * S, 500), createCoin(11500 * S, 490),
-        createCoin(1970, 430), createCoin(2000, 430), createCoin(2030, 430), createCoin(2060, 430), createCoin(2090, 430),
-        // Coin arc above the tutorial spring
-        createCoin(349, 460), createCoin(389, 420), createCoin(429, 460),
-      ];
-    })(),
-    questionBlocks: (() => {
-      const S = 0.556;
-      return [
-        createQB(600 * S, 440, 'mushroom'),
-        createQB(2200 * S, 420, 'flower'),
-        createQB(5000 * S, 420, 'star'),
-        createQB(7000 * S, 440, 'mushroom'),
-        createQB(10000 * S, 440, 'coin'),
-        createQB(2000, 410, 'coin'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.556;
-      return [
-        createEnemy(1500 * S, 520, 'ghost'),
-        createEnemy(3500 * S, 520, 'ghost'),
-        createEnemy(6500 * S, 520, 'boo'),
-        createEnemy(10500 * S, 520, 'ghost'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.556;
-      return [
-        createDeco(300 * S, 480, 'cobweb'),   createDeco(1200 * S, 480, 'tombstone'),
-        createDeco(2600 * S, 470, 'web'),       createDeco(5600 * S, 480, 'ghost_decor'),
-        createDeco(6400 * S, 470, 'cobweb'),    createDeco(8300 * S, 400, 'tombstone'),
-        createDeco(9800 * S, 480, 'web'),       createDeco(11000 * S, 480, 'ghost_decor'),
-      ];
-    })(),
-    playerStart: { x: 83, y: 510 },
-    goal: { x: 11800, y: 538 },
-    timeBonus: 150,
-    // Discovery-Spring on the entry bridge (bridge top edge = 540)
-    springs: [createSpring(389, 540)],
-    movingPlatforms: [
-      createMovingPlat(5000, 440, 120, 24, 'platform_medium', 'horizontal', 200, 18),
-      createMovingPlat(8700, 460, 100, 22, 'platform_easy', 'horizontal', 160, 22),
-    ],
-  },
+  // ============================================================
+  // Level 61 (Eingangshalle): grosse Halle mit Empore und
+  // Spiegel-Sälen. Geheimkammer über brick_secret-Stufen im
+  // Treppenhaus, Feder zum Münz-Balkon, vertikaler Aufzug,
+  // Grube mit Rändern. 2 Spikes, 2 Federn, 1-UP im Geheimraum.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(ground(0, 1000, 720, 'castle'));
+    // Geheimkammer (brick_secret) über dem Treppenhaus
+    platforms.push(createPlat(1100, 632, 160, 24, 'platform_medium'));
+    platforms.push(createPlat(1300, 512, 140, 24, 'platform_medium'));
+    platforms.push(createPlat(1520, 392, 180, 24, 'brick_secret'));
+    platforms.push(ground(1140, 620, 720, 'castle'));
+    platforms.push(...staircase(1760, 720, 3, 70, 140, 40, 'castle'));
+    platforms.push(ground(2300, 500, 480, 'castle'));
+    platforms.push(ground(2875, 450, 460, 'castle'));
+    platforms.push(createPlat(3400, 420, 200, 24, 'platform_hard'));
+    platforms.push(ground(3450, 700, 720, 'castle'));
+    platforms.push(...pitWithLedges(4150, 720, 440, 140, 60, 'stone'));
+    platforms.push(ground(4560, 680, 720, 'castle'));
+    platforms.push(...overhangSection(5240, 720, 900, 5740, 180, 'castle'));
+    platforms.push(ground(6300, 800, 720, 'castle'));
+    platforms.push(ground(7200, 500, 640, 'castle'));
 
-  // ================== LEVEL 62 – Gap-Strecke – S=0.526 ==================
-  {
-    id: 62, name: "Phantom Foyer", width: 16800, height: 600, biome: 'haunted-mansion',
-    platforms: (() => {
-      const S = 0.526; const baseY = 560;
-      const plats: any[] = [];
-      plats.push(...bridgeSection(S, 100, baseY, 33));            // 53 → 2614
-      plats.push(...gapWithPlatforms(S, 4700, baseY, 2500, 3));   // 2751 → 3501
-      plats.push(...bridgeSection(S, 7200, baseY, 23));            // 3713 → 5559
-      plats.push(...gapWithPlatforms(S, 10500, baseY, 2800, 4));   // 5768 → 6751
-      plats.push(...bridgeSection(S, 13300, baseY, 23));           // 6959 → 8768
-      plats.push(...gapWithPlatforms(S, 16600, baseY, 2400, 4));   // 8934 → 9792
-      plats.push(...bridgeSection(S, 19200, baseY, 31));           // 10058 → 12503
-      plats.push(...gapWithPlatforms(S, 23600, baseY, 2400, 4));   // 12616 → 13474
-      plats.push(...bridgeSection(S, 26000, baseY, 35));           // 13639 → 16359
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.526;
-      return [
-        createCoin(300 * S, 500),  createCoin(800 * S, 500),
-        createCoin(1800 * S, 490), createCoin(3100 * S, 425), // over gap 1
-        createCoin(4500 * S, 500), createCoin(5500 * S, 490),
-        createCoin(6200 * S, 400), // over gap 2
-        createCoin(7500 * S, 500), createCoin(8600 * S, 490),
-        createCoin(9400 * S, 380), // over gap 3
-        createCoin(11000 * S, 500), createCoin(12500 * S, 490),
-        createCoin(13100 * S, 440), // over gap 4
-        createCoin(14500 * S, 500), createCoin(15500 * S, 490),
-        // Coin arcs above the gap springs
-        createCoin(2180 * S, 460), createCoin(2200 * S, 420), createCoin(2220 * S, 460),
-        createCoin(10330 * S, 460), createCoin(10350 * S, 420), createCoin(10370 * S, 460),
-      ];
-    })(),
-    questionBlocks: (() => {
-      const S = 0.526;
-      return [
-        createQB(600 * S, 440, 'mushroom'),
-        createQB(4000 * S, 420, 'flower'),
-        createQB(5500 * S, 360, 'star'),
-        createQB(8000 * S, 440, 'mushroom'),
-        createQB(11500 * S, 440, 'coin'),
-        createQB(15000 * S, 440, 'flower'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.526;
-      return [
-        createEnemy(1000 * S, 520, 'ghost'),
-        createEnemy(4000 * S, 520, 'goomba'),
-        createEnemy(6000 * S, 520, 'boo'),
-        createEnemy(8500 * S, 520, 'ghost'),
-        createEnemy(11000 * S, 520, 'goomba'),
-        createEnemy(15000 * S, 520, 'ghost'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.526;
-      return [
-        createDeco(200 * S, 480, 'cobweb'),    createDeco(1200 * S, 480, 'tombstone'),
-        createDeco(3000 * S, 430, 'ghost_decor'),     createDeco(5000 * S, 480, 'web'),
-        createDeco(6500 * S, 410, 'cobweb'),    createDeco(8200 * S, 480, 'tombstone'),
-        createDeco(9800 * S, 390, 'web'),       createDeco(11500 * S, 480, 'ghost_decor'),
-        createDeco(13200 * S, 450, 'tombstone'), createDeco(15500 * S, 480, 'cobweb'),
-      ];
-    })(),
-    playerStart: { x: 79, y: 510 },
-    goal: { x: 16300, y: 538 },
-    timeBonus: 170,
-    // Rescue springs before the big gaps (bridge top edge = 540)
-    springs: [createSpring(1157.2, 540), createSpring(5444.1, 540)],
-    // Gruf-fallen on the safe bridge ground, well clear of QBs and gaps
-    spikes: [createSpike(447.1, 532), createSpike(4023.9, 532)],
-    movingPlatforms: [
-      createMovingPlat(5100, 420, 120, 24, 'platform_medium', 'horizontal', 220, 20),
-      createMovingPlat(8900, 390, 120, 24, 'platform_medium', 'vertical', 160, 22),
-      createMovingPlat(12300, 440, 120, 24, 'platform_medium', 'horizontal', 200, 24),
-    ],
-  },
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 640, 900, 640, 5));
+    coins.push(...coinTrail(1200, 640, 1700, 640, 3));
+    coins.push(...coinDiamond(1520, 320, 60));
+    coins.push(...coinArc(2280, 420, 5, 70, 80));
+    coins.push(...coinTrail(2450, 400, 2700, 400, 3));
+    coins.push(...coinDiamond(3700, 380, 60));
+    coins.push(...coinLadder(3700, 620, 480, 5));
+    coins.push(...coinArc(4150, 780, 5, 80, 80));
+    coins.push(...coinTrail(4700, 640, 5100, 640, 3));
+    coins.push(...coinTrail(6400, 640, 7000, 640, 4));
+    coins.push(...coinArc(7000, 560, 5, 70, 80));
 
-  // ================== LEVEL 63 – Röhren-Labyrinth – S=0.5 ==================
-  {
-    id: 63, name: "Spooky Stairs", width: 25000, height: 620, biome: 'haunted-mansion',
-    platforms: (() => {
-      const S = 0.5; const baseY = 580;
-      const plats: any[] = [];
-      plats.push(...bridgeSection(S, 100, baseY, 22));            // 50 → 1625
-      plats.push(...pipeSection(S, 3200, baseY, 5));              // 1750 → 2450
-      plats.push(...bridgeSection(S, 5300, baseY, 22));           // 2650 → 4225
-      plats.push(...pipeSection(S, 8400, baseY, 6));              // 4350 → 5225
-      // Upper row of pipes
-      plats.push(...pipeSection(S, 8800, baseY - 100, 4));        // 4550 → 5075 (at y=480)
-      plats.push(...bridgeSection(S, 10600, baseY, 23));          // 5300 → 7100
-      plats.push(...pipeSection(S, 14000, baseY, 5));             // 7150 → 7850
-      plats.push(...bridgeSection(S, 16200, baseY, 20));          // 8100 → 9525
-      plats.push(...pipeSection(S, 19000, baseY, 4));             // 9650 → 10175
-      plats.push(...bridgeSection(S, 20800, baseY, 26));          // 10365 → 12275
-      plats.push(...pipeSection(S, 24600, baseY, 6));             // 12450 → 13325
-      plats.push(...bridgeSection(S, 27200, baseY, 25));          // 13600 → 15400
-      // Lower pipe section near goal
-      plats.push(...pipeSection(S, 31000, baseY, 4));             // 15650 → 16175
-      plats.push(...bridgeSection(S, 32500, baseY, 30));          // 16215 → 18425
-      plats.push(...pipeSection(S, 37200, baseY, 3));             // 18750 → 19100
-      plats.push(...bridgeSection(S, 38800, baseY, 22));          // 19400 → 20975
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.5;
-      return [
-        createCoin(300 * S, 520),  createCoin(700 * S, 520),
-        createCoin(1200 * S, 510), createCoin(2100 * S, 470), // pipe top
-        createCoin(3200 * S, 520), createCoin(4000 * S, 510),
-        createCoin(4800 * S, 460), createCoin(5200 * S, 410), // upper pipes
-        createCoin(6000 * S, 520), createCoin(7300 * S, 450), // pipe
-        createCoin(8500 * S, 520), createCoin(9500 * S, 520),
-        createCoin(10000 * S, 470), // pipe
-        createCoin(11000 * S, 520), createCoin(12500 * S, 460),
-        createCoin(14000 * S, 520), createCoin(16000 * S, 500), // pipe
-        createCoin(17500 * S, 520), createCoin(19000 * S, 520),
-        // Coin arcs above the pipe-maze springs
-        createCoin(2610, 480), createCoin(2650, 440), createCoin(2690, 480),
-        createCoin(6085, 480), createCoin(6125, 440), createCoin(6165, 480),
-      ];
-    })(),
-    questionBlocks: (() => {
-      const S = 0.5;
-      return [
-        createQB(500 * S, 460, 'mushroom'),
-        createQB(2800 * S, 440, 'flower'),
-        createQB(4500 * S, 400, 'star'),
-        createQB(6500 * S, 460, 'mushroom'),
-        createQB(9000 * S, 460, 'coin'),
-        createQB(12500 * S, 400, 'flower'),
-        createQB(15000 * S, 460, 'star'),
-        createQB(18000 * S, 460, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.5;
-      return [
-        createEnemy(800 * S, 540, 'ghost'),
-        createEnemy(2100 * S, 540, 'piranha'),   // pipe 1
-        createEnemy(3800 * S, 540, 'goomba'),
-        createEnemy(4800 * S, 540, 'piranha'),    // pipe 2
-        createEnemy(5100 * S, 440, 'piranha'),    // upper pipe
-        createEnemy(6200 * S, 540, 'boo'),
-        createEnemy(7400 * S, 540, 'piranha'),    // pipe 3
-        createEnemy(8800 * S, 540, 'ghost'),
-        createEnemy(10000 * S, 540, 'piranha'),   // pipe 4
-        createEnemy(11500 * S, 540, 'goomba'),
-        createEnemy(12700 * S, 540, 'piranha'),   // pipe 5
-        createEnemy(15000 * S, 540, 'boo'),
-        createEnemy(15900 * S, 540, 'piranha'),   // pipe 6
-        createEnemy(19000 * S, 540, 'piranha'),   // pipe 7
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.5;
-      return [
-        createDeco(150 * S, 500, 'cobweb'),     createDeco(1000 * S, 500, 'tombstone'),
-        createDeco(2000 * S, 480, 'web'),        createDeco(3500 * S, 500, 'ghost_decor'),
-        createDeco(4600 * S, 440, 'cobweb'),     createDeco(6000 * S, 500, 'tombstone'),
-        createDeco(7200 * S, 480, 'web'),        createDeco(9000 * S, 500, 'ghost_decor'),
-        createDeco(9800 * S, 480, 'cobweb'),     createDeco(11500 * S, 500, 'tombstone'),
-        createDeco(12800 * S, 480, 'web'),       createDeco(15000 * S, 500, 'ghost_decor'),
-        createDeco(17000 * S, 500, 'tombstone'), createDeco(19000 * S, 500, 'cobweb'),
-      ];
-    })(),
-    playerStart: { x: 75, y: 530 },
-    goal: { x: 19600, y: 558 },
-    timeBonus: 190,
-    // Springs on the connector bridges between pipe sections (bridge top edge = 560)
-    springs: [createSpring(2650, 560), createSpring(6125, 560)],
-    // Spike passages between the pipe sections (never on pipe tops)
-    spikes: [createSpike(500, 552), createSpike(8475, 552), createSpike(14050, 552)],
-    movingPlatforms: [
-      createMovingPlat(4000, 480, 120, 24, 'platform_medium', 'horizontal', 200, 20),
-      createMovingPlat(8200, 430, 120, 24, 'platform_medium', 'vertical', 140, 18),
-      createMovingPlat(13800, 460, 120, 24, 'platform_medium', 'horizontal', 250, 22),
-      createMovingPlat(18400, 500, 120, 24, 'platform_medium', 'horizontal', 180, 20),
-    ],
-  },
+    return {
+      id: 61, name: 'Eingangshalle', width: 7600, height: 950, biome: 'haunted-mansion',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3700, 560, 110, 24, 'platform_easy', 'vertical', 90, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(400, 600, 'mushroom'),
+        createQB(800, 600, 'coin'),
+        createQB(1520, 300, 'oneup'),
+        createQB(3350, 600, 'flower'),
+        createQB(5000, 600, 'star'),
+      ],
+      enemies: [
+        createEnemy(1600, 600, 'ghost'),
+        createEnemy(2700, 420, 'boo'),
+        createEnemy(3800, 680, 'goomba'),
+        createEnemy(4900, 640, 'ghost'),
+        createEnemy(5400, 680, 'robot'),
+        createEnemy(5700, 620, 'ghost'),
+        createEnemy(6700, 680, 'koopa'),
+        createEnemy(7350, 580, 'boo'),
+      ],
+      decorations: [
+        createDeco(200, 670, 'torch'),
+        createDeco(500, 420, 'cobweb'),
+        createDeco(1200, 668, 'pillar'),
+        createDeco(2400, 438, 'skull'),
+        createDeco(3100, 418, 'statue'),
+        createDeco(4300, 560, 'ghost_decor'),
+        createDeco(5400, 680, 'torch'),
+        createDeco(6600, 678, 'tombstone'),
+        createDeco(6900, 420, 'cobweb'),
+        createDeco(7500, 600, 'skull'),
+        createDeco(2650, 380, 'bat'),
+        createDeco(350, 700, 'web'),
+      ],
+      playerStart: { x: 180, y: 696 },
+      goal: { x: 7500, y: 632 },
+      timeBonus: 130,
+      springs: [createSpring(350, 720), createSpring(3600, 720)],
+      spikes: [createSpike(1650, 712), createSpike(6950, 712)],
+    };
+  })(),
 
-  // ================== LEVEL 64 – Vertikal-Kletterer – S=0.476 ==================
-  {
-    id: 64, name: "Curse Corridor", width: 12000, height: 700, biome: 'haunted-mansion',
-    platforms: (() => {
-      const S = 0.476; const baseY = 640;
-      const plats: any[] = [];
-      plats.push(...bridgeSection(S, 100, baseY, 20));            // 48 → 1392
-      plats.push(...verticalClimb(S, 3200, baseY, 'stone'));      // 1523 → 2372
-      plats.push(...bridgeSection(S, 5200, baseY, 15));           // 2475 → 3494
-      plats.push(...verticalClimb(S, 7800, baseY, 'brick'));      // 3713 → 4561
-      plats.push(...bridgeSection(S, 9800, baseY, 15));           // 4665 → 5683
-      plats.push(...verticalClimb(S, 12800, baseY, 'stone'));     // 6093 → 6941
-      plats.push(...bridgeSection(S, 14800, baseY, 20));          // 7045 → 8433
-      plats.push(...verticalClimb(S, 17800, baseY, 'brick'));     // 8473 → 9217
-      plats.push(...bridgeSection(S, 20000, baseY, 22));          // 9520 → 11006
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.476;
-      return [
-        createCoin(300 * S, 580),  createCoin(700 * S, 580),
-        createCoin(1200 * S, 570),  // pre-climb 1
-        createCoin(1800 * S, 530), createCoin(2100 * S, 430), // climb 1 mid
-        createCoin(2300 * S, 310), // climb 1 top
-        createCoin(3000 * S, 580), createCoin(3800 * S, 570),
-        createCoin(4200 * S, 500), createCoin(4500 * S, 380), // climb 2
-        createCoin(5200 * S, 580), createCoin(5800 * S, 570),
-        createCoin(6300 * S, 500), createCoin(6800 * S, 380), // climb 3
-        createCoin(7500 * S, 580), createCoin(8300 * S, 570),
-        createCoin(8800 * S, 530), createCoin(9100 * S, 430), // climb 4
-        createCoin(10000 * S, 580), createCoin(10800 * S, 570),
-        // Coin arcs above the vertical shortcut springs
-        createCoin(2935, 540), createCoin(2975, 500), createCoin(3015, 540),
-        createCoin(7647, 540), createCoin(7687, 500), createCoin(7727, 540),
-      ];
-    })(),
-    questionBlocks: (() => {
-      const S = 0.476;
-      return [
-        createQB(500 * S, 520, 'mushroom'),
-        createQB(1800 * S, 430, 'flower'),
-        createQB(2500 * S, 440, 'star'),
-        createQB(4200 * S, 400, 'mushroom'),
-        createQB(5500 * S, 520, 'coin'),
-        createQB(6500 * S, 400, 'flower'),
-        createQB(8000 * S, 520, 'star'),
-        createQB(9000 * S, 400, 'mushroom'),
-        createQB(10500 * S, 520, 'coin'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.476;
-      return [
-        createEnemy(1000 * S, 600, 'ghost'),
-        createEnemy(2000 * S, 560, 'boo'),
-        createEnemy(3400 * S, 600, 'goomba'),
-        createEnemy(4300 * S, 400, 'ghost'),  // on climb 2 top
-        createEnemy(5500 * S, 600, 'boo'),
-        createEnemy(6500 * S, 400, 'ghost'),  // on climb 3 top
-        createEnemy(7800 * S, 600, 'goomba'),
-        createEnemy(8800 * S, 400, 'ghost'),  // on climb 4 top
-        createEnemy(10200 * S, 600, 'boo'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.476;
-      return [
-        createDeco(200 * S, 560, 'cobweb'),     createDeco(800 * S, 560, 'tombstone'),
-        createDeco(1600 * S, 520, 'web'),        createDeco(2000 * S, 440, 'ghost_decor'),
-        createDeco(2800 * S, 560, 'cobweb'),     createDeco(3800 * S, 520, 'tombstone'),
-        createDeco(4400 * S, 420, 'web'),        createDeco(5000 * S, 560, 'ghost_decor'),
-        createDeco(6200 * S, 520, 'cobweb'),     createDeco(6800 * S, 420, 'tombstone'),
-        createDeco(7800 * S, 560, 'web'),        createDeco(8600 * S, 520, 'ghost_decor'),
-        createDeco(10000 * S, 560, 'cobweb'),
-      ];
-    })(),
-    playerStart: { x: 71, y: 590 },
-    goal: { x: 11000, y: 618 },
-    timeBonus: 200,
-    // Spring shortcuts on the connector bridges (bridge top edge = 620)
-    springs: [createSpring(2975, 620), createSpring(7687, 620)],
-    // Gruf-fallen guarding the bridge passages
-    spikes: [createSpike(404.6, 612), createSpike(10234, 612)],
-    coinGoal: 17,
-    movingPlatforms: [
-      createMovingPlat(2600, 540, 120, 24, 'platform_medium', 'vertical', 180, 20),
-      createMovingPlat(5400, 500, 120, 24, 'platform_medium', 'horizontal', 200, 22),
-      createMovingPlat(8000, 540, 120, 24, 'platform_medium', 'vertical', 160, 20),
-      createMovingPlat(10000, 500, 120, 24, 'platform_medium', 'horizontal', 220, 24),
-    ],
-  },
+  // ============================================================
+  // Level 62 (Spiegelsäle): gespiegelte Zwei-Ebenen-Säle mit
+  // Doppel-Empore, Zickzack-Kletterer, versteckter Spiegelwand
+  // (hidden) + brick_multi, Schlüssel auf dem Hochbalkon und
+  // Tür zur Schatzkammer (nie Pflichtweg). Vertikal-Aufzug,
+  // Kreis-Plattform, 2 Checkpoints. 2 Spikes, 2 Federn.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(ground(0, 800, 760, 'castle'));
+    platforms.push(...twoTierSection(880, 760, 1200, 'castle', 'wood'));
+    platforms.push(...twoTierSection(2080, 760, 1200, 'castle', 'wood'));
+    platforms.push(ground(3400, 600, 640, 'castle'));
+    platforms.push(...zigzagClimb(4150, 760, 4, 90, 110, 130, 'platform_medium'));
+    platforms.push(ground(4100, 600, 360, 'castle'));
+    platforms.push(ledge(4800, 200, 340, 'wood'));
+    platforms.push(ground(5170, 730, 640, 'castle'));
+    platforms.push(ledge(5400, 220, 400, 'platform_hard'));
+    platforms.push(...overhangSection(6000, 640, 1000, 6500, 200, 'castle'));
+    platforms.push(ground(7100, 700, 640, 'castle'));
+    platforms.push(ledge(7200, 160, 560, 'wood'));
+    platforms.push(createPlat(7450, 460, 140, 24, 'hidden'));
+    platforms.push(createPlat(7650, 500, 120, 24, 'brick_multi'));
+    platforms.push(ground(7900, 600, 640, 'castle'));
+    platforms.push(ground(8650, 500, 560, 'wood'));
+    platforms.push(ground(9300, 900, 560, 'castle'));
+    platforms.push(ground(8650, 1550, 880, 'stone'));
+    platforms.push(...staircase(10150, 880, 4, 80, 120, 40, 'stone'));
+    platforms.push(ground(10800, 900, 560, 'castle'));
+    platforms.push(ground(11750, 550, 700, 'stone'));
+    platforms.push(ground(11850, 700, 560, 'castle'));
+    platforms.push(ground(12650, 600, 480, 'castle'));
 
-  // ================== LEVEL 65 – Gegner-Horde – S=0.455 ==================
-  {
-    id: 65, name: "Banshee Barracks", width: 13800, height: 650, biome: 'haunted-mansion',
-    platforms: (() => {
-      const S = 0.455; const baseY = 600;
-      const plats: any[] = [];
-      plats.push(...bridgeSection(S, 100, baseY, 40));            // 46 → 2740
-      plats.push(...verticalShaft(S, 6300, baseY));               // 2867 → 3345
-      plats.push(...bridgeSection(S, 7700, baseY, 30));           // 3504 → 5584
-      plats.push(createPlat(12540 * S, 570, 50, 24, 'platform_easy')); // stepping to ghost platforms
-      plats.push(...ghostPlatforms(S, 13000, baseY, 15));         // 5915 → 7038
-      plats.push(...bridgeSection(S, 15800, baseY, 35));          // 7189 → 9827
-      plats.push(createPlat(21450 * S, 560, 50, 24, 'platform_easy')); // stepping to vertical shaft
-      plats.push(...verticalShaft(S, 22000, baseY));              // 10010 → 10489
-      plats.push(...bridgeSection(S, 23400, baseY, 30));          // 10647 → 12626
-      plats.push(...ghostPlatforms(S, 28000, baseY, 12));         // 12740 → 13676
-      plats.push(...bridgeSection(S, 30500, baseY, 25));          // 13878 → 15487
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.455;
-      return [
-        createCoin(300 * S, 540),  createCoin(700 * S, 540),
-        createCoin(1200 * S, 530), createCoin(2000 * S, 540),
-        createCoin(3000 * S, 200), // vertical shaft peak
-        createCoin(4000 * S, 540), createCoin(5000 * S, 530),
-        createCoin(6200 * S, 430), // ghost platforms
-        createCoin(7500 * S, 540), createCoin(8500 * S, 530),
-        createCoin(10200 * S, 230), // vertical shaft 2
-        createCoin(11500 * S, 540), createCoin(12500 * S, 530),
-        createCoin(13000 * S, 430), // ghost platforms 2
-        createCoin(14200 * S, 540), createCoin(15000 * S, 530),
-        // Coin arcs above the horde springs
-        createCoin(551, 500), createCoin(591.5, 460), createCoin(631.5, 500),
-        createCoin(8172, 520), createCoin(8212, 480), createCoin(8252, 520),
-      ];
-    })(),
-    questionBlocks: (() => {
-      const S = 0.455;
-      return [
-        createQB(500 * S, 480, 'mushroom'),
-        createQB(2500 * S, 460, 'flower'),
-        createQB(3500 * S, 480, 'star'),
-        createQB(6000 * S, 480, 'mushroom'),
-        createQB(8000 * S, 480, 'coin'),
-        createQB(10800 * S, 480, 'flower'),
-        createQB(12800 * S, 480, 'star'),
-        createQB(14500 * S, 480, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.455;
-      return [
-        createEnemy(800 * S, 560, 'ghost'),
-        createEnemy(1400 * S, 560, 'boo'),
-        createEnemy(2000 * S, 560, 'goomba'),
-        createEnemy(2600 * S, 560, 'ghost'),
-        createEnemy(3800 * S, 560, 'boo'),
-        createEnemy(4400 * S, 560, 'ghost'),
-        createEnemy(5000 * S, 560, 'goomba'),
-        createEnemy(5500 * S, 560, 'boo'),
-        createEnemy(6300 * S, 560, 'ghost'),   // near ghost platforms
-        createEnemy(6800 * S, 560, 'goomba'),
-        createEnemy(7500 * S, 560, 'boo'),
-        createEnemy(8200 * S, 560, 'ghost'),
-        createEnemy(8800 * S, 560, 'goomba'),
-        createEnemy(9400 * S, 560, 'boo'),
-        createEnemy(11000 * S, 560, 'ghost'),
-        createEnemy(11800 * S, 560, 'boo'),
-        createEnemy(12500 * S, 560, 'goomba'),
-        createEnemy(13300 * S, 560, 'ghost'),
-        createEnemy(14200 * S, 560, 'boo'),
-        createEnemy(15000 * S, 560, 'ghost'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.455;
-      return [
-        createDeco(200 * S, 520, 'cobweb'),     createDeco(1000 * S, 520, 'tombstone'),
-        createDeco(1800 * S, 520, 'web'),        createDeco(2400 * S, 520, 'ghost_decor'),
-        createDeco(2900 * S, 240, 'cobweb'),     createDeco(4200 * S, 520, 'tombstone'),
-        createDeco(5500 * S, 520, 'web'),        createDeco(6100 * S, 440, 'ghost_decor'),
-        createDeco(7200 * S, 520, 'cobweb'),     createDeco(8200 * S, 520, 'tombstone'),
-        createDeco(9500 * S, 520, 'web'),        createDeco(10100 * S, 240, 'ghost_decor'),
-        createDeco(11500 * S, 520, 'cobweb'),    createDeco(12800 * S, 440, 'tombstone'),
-        createDeco(14000 * S, 520, 'web'),       createDeco(14800 * S, 520, 'ghost_decor'),
-      ];
-    })(),
-    playerStart: { x: 68, y: 550 },
-    goal: { x: 14200, y: 578 },
-    timeBonus: 210,
-    // Springs as escape hatches in the horde gauntlet (bridge top edge = 580)
-    springs: [createSpring(591.5, 580), createSpring(8212.75, 580)],
-    // Spike alley through the horde ground (bridge top edge = 580)
-    spikes: [createSpike(1410.5, 572), createSpike(4186, 572), createSpike(11466, 572)],
-    coinGoal: 14,
-    movingPlatforms: [
-      createMovingPlat(5200, 500, 120, 24, 'platform_medium', 'horizontal', 220, 20),
-      createMovingPlat(7500, 460, 120, 24, 'platform_medium', 'vertical', 150, 18),
-      createMovingPlat(11600, 500, 120, 24, 'platform_medium', 'horizontal', 250, 22),
-      createMovingPlat(13600, 460, 120, 24, 'platform_medium', 'vertical', 160, 24),
-    ],
-  },
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(100, 680, 700, 680, 4));
+    coins.push(...coinArc(1500, 520, 5, 70, 80));
+    coins.push(...coinTrail(2200, 540, 3000, 540, 4));
+    coins.push(...coinDiamond(4600, 300, 70));
+    coins.push(...coinTrail(5300, 560, 5800, 560, 3));
+    coins.push(...coinTrail(6100, 560, 6400, 560, 2));
+    coins.push(...coinLadder(7450, 560, 500, 4));
+    coins.push(...coinTrail(9200, 480, 10100, 480, 4));
+    coins.push(...coinDiamond(8750, 820, 60));
+    coins.push(...coinTrail(10900, 480, 11600, 480, 4));
+    coins.push(...coinDiamond(12250, 640, 50));
+    coins.push(...coinArc(12600, 400, 5, 70, 80));
 
-  // ================== LEVEL 66 – Geister-Verfolgung Finale – S=0.435 ==================
-  {
-    id: 66, name: "Crypt Keeper", width: 16200, height: 700, biome: 'haunted-mansion',
-    platforms: (() => {
-      const S = 0.435; const baseY = 640;
-      const plats: any[] = [];
-      plats.push(...bridgeSection(S, 100, baseY, 25));            // 44 → 1607
-      plats.push(...ghostPlatforms(S, 4000, baseY, 14));          // 1740 → 2727
-      plats.push(...verticalShaft(S, 6800, baseY));               // 2958 → 3416
-      plats.push(...bridgeSection(S, 8200, baseY, 20));           // 3567 → 4798
-      plats.push(createPlat(11540 * S, 570, 50, 24, 'platform_easy')); // stepping to ghost platforms
-      plats.push(...ghostPlatforms(S, 12000, baseY, 16));         // 5220 → 6359
-      plats.push(...bridgeSection(S, 15200, baseY, 15));          // 6612 → 7530
-      plats.push(...verticalShaft(S, 17800, baseY));              // 7743 → 8201
-      plats.push(...ghostPlatforms(S, 19200, baseY, 18));         // 8352 → 9671
-      plats.push(...bridgeSection(S, 22800, baseY, 20));          // 9918 → 11149
-      plats.push(...verticalShaft(S, 26000, baseY));              // 11310 → 11768
-      plats.push(...bridgeSection(S, 27400, baseY, 25));          // 11919 → 13454
-      plats.push(...ghostPlatforms(S, 31000, baseY, 12));         // 13485 → 14360
-      plats.push(createPlat(33500 * S, 540, 50, 24, 'platform_easy')); // stepping to bridge section
-      plats.push(...bridgeSection(S, 34000, baseY, 20));          // 14790 → 16021
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.435;
-      return [
-        createCoin(300 * S, 580),  createCoin(700 * S, 580),
-        createCoin(1400 * S, 570), createCoin(2100 * S, 460), // ghost platforms
-        createCoin(3100 * S, 280), // vertical shaft
-        createCoin(4000 * S, 580), createCoin(4800 * S, 570),
-        createCoin(5400 * S, 460), createCoin(6000 * S, 380), // ghost platforms 2
-        createCoin(7000 * S, 580), createCoin(7800 * S, 280), // vertical shaft 2
-        createCoin(8500 * S, 460), createCoin(9200 * S, 380), // ghost platforms 3
-        createCoin(10500 * S, 580), createCoin(11600 * S, 280), // vertical shaft 3
-        createCoin(12500 * S, 580), createCoin(13500 * S, 460), // ghost platforms 4
-        createCoin(15000 * S, 580), createCoin(15500 * S, 570),
-        // Coin arcs above the finale springs (spring launch reaches them)
-        createCoin(1260 * S, 480), createCoin(1300 * S, 440), createCoin(1340 * S, 480),
-        createCoin(16210 * S, 480), createCoin(16250 * S, 440), createCoin(16290 * S, 480),
-      ];
-    })(),
-    questionBlocks: (() => {
-      const S = 0.435;
-      return [
-        createQB(600 * S, 520, 'mushroom'),
-        createQB(2200 * S, 400, 'flower'),
-        createQB(3800 * S, 520, 'star'),
-        createQB(5600 * S, 400, 'mushroom'),
-        createQB(7500 * S, 520, 'coin'),
-        createQB(8800 * S, 400, 'flower'),
-        createQB(10800 * S, 520, 'star'),
-        createQB(12500 * S, 520, 'mushroom'),
-        createQB(14200 * S, 400, 'coin'),
-        createQB(15500 * S, 520, 'flower'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.435;
-      return [
-        createEnemy(800 * S, 600, 'boo'),
-        createEnemy(1500 * S, 600, 'ghost'),
-        createEnemy(2100 * S, 600, 'boo'),      // ghost platforms 1
-        createEnemy(2600 * S, 600, 'boo'),
-        createEnemy(3400 * S, 600, 'ghost'),
-        createEnemy(4400 * S, 600, 'boo'),
-        createEnemy(5400 * S, 600, 'boo'),       // ghost platforms 2
-        createEnemy(6100 * S, 600, 'ghost'),
-        createEnemy(7000 * S, 600, 'boo'),
-        createEnemy(8200 * S, 600, 'boo'),       // ghost platforms 3
-        createEnemy(9000 * S, 600, 'ghost'),
-        createEnemy(10500 * S, 600, 'boo'),
-        createEnemy(12200 * S, 600, 'ghost'),
-        createEnemy(13600 * S, 600, 'boo'),      // ghost platforms 4
-        createEnemy(14200 * S, 600, 'boo'),
-        createEnemy(15000 * S, 600, 'ghost'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.435;
-      return [
-        createDeco(200 * S, 560, 'cobweb'),      createDeco(1000 * S, 560, 'tombstone'),
-        createDeco(1800 * S, 480, 'web'),         createDeco(2400 * S, 440, 'ghost_decor'),
-        createDeco(3000 * S, 260, 'cobweb'),      createDeco(4200 * S, 560, 'tombstone'),
-        createDeco(5400 * S, 480, 'web'),         createDeco(6200 * S, 440, 'ghost_decor'),
-        createDeco(7800 * S, 260, 'cobweb'),      createDeco(8600 * S, 440, 'tombstone'),
-        createDeco(9800 * S, 480, 'web'),         createDeco(10500 * S, 560, 'ghost_decor'),
-        createDeco(11400 * S, 260, 'cobweb'),     createDeco(12600 * S, 560, 'tombstone'),
-        createDeco(13800 * S, 480, 'web'),        createDeco(14800 * S, 560, 'ghost_decor'),
-        createDeco(15600 * S, 560, 'cobweb'),
-      ];
-    })(),
-    playerStart: { x: 65, y: 590 },
-    goal: { x: 15800, y: 618 },
-    timeBonus: 220,
-    // Springs as compensation against the falling-hazard finale (bridge top edge = 620)
-    springs: [createSpring(565.5, 620), createSpring(7068.75, 620)],
-    // Max 2 gruf-fallen in the finale, only on brick bridges (never on crumble/ghost platforms)
-    spikes: [createSpike(4219.5, 612), createSpike(12702, 612)],
-    movingPlatforms: [
-      createMovingPlat(3600, 500, 120, 24, 'platform_medium', 'horizontal', 220, 22),
-      createMovingPlat(6400, 460, 120, 24, 'platform_medium', 'vertical', 160, 20),
-      createMovingPlat(8200, 520, 120, 24, 'platform_medium', 'horizontal', 200, 24),
-      createMovingPlat(11000, 500, 120, 24, 'platform_medium', 'vertical', 180, 22),
-      createMovingPlat(14200, 480, 120, 24, 'platform_medium', 'horizontal', 250, 24),
-    ],
-  },
+    return {
+      id: 62, name: 'Spiegelsäle', width: 15200, height: 1000, biome: 'haunted-mansion',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(5500, 560, 110, 24, 'platform_easy', 'vertical', 80, 18),
+        createMovingPlat(9600, 760, 110, 24, 'platform_medium', 'circular', 90, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(600, 680, 'mushroom'),
+        createQB(1600, 540, 'coin'),
+        createQB(3600, 560, 'flower'),
+        createQB(6000, 560, 'star'),
+        createQB(9800, 480, 'oneup'),
+      ],
+      enemies: [
+        createEnemy(1000, 720, 'goomba'),
+        createEnemy(1300, 540, 'boo'),
+        createEnemy(1650, 540, 'ghost'),
+        createEnemy(2200, 720, 'koopa'),
+        createEnemy(2600, 520, 'boo'),
+        createEnemy(3100, 540, 'ghost'),
+        createEnemy(3700, 600, 'robot'),
+        createEnemy(4400, 300, 'ghost'),
+        createEnemy(5300, 560, 'boo'),
+        createEnemy(6300, 560, 'ghost'),
+        createEnemy(6800, 560, 'ghost'),
+        createEnemy(7600, 560, 'boo'),
+        createEnemy(8000, 560, 'ghost'),
+        createEnemy(9100, 520, 'goomba'),
+        createEnemy(9600, 480, 'boo'),
+        createEnemy(9900, 520, 'crab'),
+        createEnemy(11000, 480, 'ghost'),
+        createEnemy(11400, 480, 'boo'),
+        createEnemy(12600, 400, 'ghost'),
+      ],
+      decorations: [
+        createDeco(200, 710, 'torch'),
+        createDeco(700, 440, 'cobweb'),
+        createDeco(1500, 660, 'pillar'),
+        createDeco(2500, 660, 'statue'),
+        createDeco(3500, 590, 'skull'),
+        createDeco(4300, 560, 'ghost_decor'),
+        createDeco(5200, 540, 'web'),
+        createDeco(6100, 590, 'torch'),
+        createDeco(7000, 590, 'skull'),
+        createDeco(7500, 400, 'cobweb'),
+        createDeco(8700, 830, 'tombstone'),
+        createDeco(9400, 510, 'statue'),
+        createDeco(10500, 420, 'bat'),
+        createDeco(12800, 430, 'pillar'),
+      ],
+      playerStart: { x: 120, y: 736 },
+      goal: { x: 13000, y: 472 },
+      timeBonus: 190,
+      checkpoints: [
+        createCheckpoint(3400, 616),
+        createCheckpoint(8900, 536),
+      ],
+      springs: [createSpring(300, 760), createSpring(8300, 640)],
+      spikes: [createSpike(400, 752), createSpike(11100, 552)],
+      keys: [createKey(4500, 330)],
+      doors: [createDoor(12100, 620, 80, 160)],
+    };
+  })(),
+
+  // ============================================================
+  // Level 63 (Geistertreppen): zwei Zickzack-Treppentürme,
+  // schwebende Galerie, vertikaler Aufzug zum Münz-Loft,
+  // morsche Bröckel-Dielen über der Grube mit sicherer
+  // Bodenroute, 3 Checkpoints. Kreis-Plattform, 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(ground(0, 900, 800, 'castle'));
+    platforms.push(...staircase(900, 800, 4, 70, 130, 40, 'castle'));
+    platforms.push(ground(1580, 500, 520, 'castle'));
+    platforms.push(...zigzagClimb(2200, 520, 3, 90, 110, 130, 'platform_medium'));
+    platforms.push(ground(2450, 600, 220, 'castle'));
+    platforms.push(...overhangSection(3250, 800, 1000, 3750, 200, 'castle'));
+    platforms.push(ground(4450, 700, 800, 'castle'));
+    platforms.push(ledge(4650, 300, 480, 'platform_hard'));
+    platforms.push(ground(5300, 800, 800, 'castle'));
+    platforms.push(...zigzagClimb(6200, 800, 4, 90, 110, 130, 'platform_medium'));
+    platforms.push(ground(6200, 800, 400, 'castle'));
+    platforms.push(...overhangSection(7150, 760, 900, 7600, 180, 'castle'));
+    platforms.push(ground(8200, 800, 760, 'castle'));
+    platforms.push(createCrumblePlat(9250, 772, 140, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(9420, 772, 140, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(9590, 772, 140, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(9760, 772, 140, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(9930, 772, 140, 24, 'platform_medium'));
+    platforms.push(ground(9100, 1000, 920, 'stone'));
+    platforms.push(ground(10050, 750, 760, 'castle'));
+    platforms.push(...staircase(10800, 760, 3, 70, 140, 40, 'castle'));
+    platforms.push(ground(11350, 700, 550, 'castle'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 720, 800, 720, 4));
+    coins.push(...coinArc(950, 660, 5, 70, 80));
+    coins.push(...coinTrail(1650, 440, 2000, 440, 3));
+    coins.push(...coinLadder(2330, 460, 300, 4));
+    coins.push(...coinArc(3250, 720, 5, 70, 80));
+    coins.push(...coinLadder(4800, 720, 500, 5));
+    coins.push(...coinTrail(5400, 720, 6000, 720, 4));
+    coins.push(...coinDiamond(6350, 540, 70));
+    coins.push(...coinTrail(8300, 680, 8900, 680, 4));
+    coins.push(...coinArc(9450, 700, 5, 70, 80));
+    coins.push(...coinTrail(10100, 680, 10700, 680, 4));
+    coins.push(...coinTrail(11400, 470, 11950, 470, 4));
+
+    return {
+      id: 63, name: 'Geistertreppen', width: 17200, height: 1100, biome: 'haunted-mansion',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(4600, 660, 110, 24, 'platform_easy', 'vertical', 80, 18),
+        createMovingPlat(5750, 640, 110, 24, 'platform_medium', 'circular', 90, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(300, 700, 'mushroom'),
+        createQB(1400, 680, 'coin'),
+        createQB(3600, 700, 'flower'),
+        createQB(5500, 700, 'star'),
+        createQB(11500, 470, 'oneup'),
+      ],
+      enemies: [
+        createEnemy(700, 420, 'thwomp'),
+        createEnemy(1800, 460, 'ghost'),
+        createEnemy(2500, 180, 'boo'),
+        createEnemy(3500, 700, 'ghost'),
+        createEnemy(4300, 700, 'boo'),
+        createEnemy(5700, 700, 'ghost'),
+        createEnemy(6600, 200, 'thwomp'),
+        createEnemy(6500, 340, 'boo'),
+        createEnemy(7500, 660, 'ghost'),
+        createEnemy(8600, 660, 'boo'),
+        createEnemy(5800, 760, 'robot'),
+        createEnemy(8600, 720, 'goomba'),
+        createEnemy(9500, 860, 'ghost'),
+        createEnemy(10500, 660, 'boo'),
+        createEnemy(10500, 720, 'spiny'),
+      ],
+      decorations: [
+        createDeco(250, 750, 'torch'),
+        createDeco(1200, 420, 'cobweb'),
+        createDeco(1700, 470, 'pillar'),
+        createDeco(2600, 170, 'statue'),
+        createDeco(4200, 750, 'tombstone'),
+        createDeco(4900, 420, 'skull'),
+        createDeco(5600, 750, 'ghost_decor'),
+        createDeco(6600, 340, 'cobweb'),
+        createDeco(7300, 710, 'torch'),
+        createDeco(8500, 710, 'web'),
+        createDeco(10400, 710, 'skull'),
+        createDeco(11700, 500, 'pillar'),
+        createDeco(3000, 180, 'bat'),
+      ],
+      playerStart: { x: 100, y: 776 },
+      goal: { x: 11600, y: 542 },
+      timeBonus: 230,
+      checkpoints: [
+        createCheckpoint(2000, 496),
+        createCheckpoint(6700, 376),
+        createCheckpoint(10300, 736),
+      ],
+      springs: [createSpring(4800, 800), createSpring(10400, 760)],
+      spikes: [createSpike(500, 792), createSpike(5800, 792)],
+    };
+  })(),
+
+  // ============================================================
+  // Level 64 (Verlies): Gruben mit Rändern, Zwei-Ebenen-Kerker,
+  // Überhang-Korridore, Schatzkammer hinter Schlüssel + Tür
+  // (nie Pflichtweg), Vertikal-Aufzug zum Münz-Balkon. 2 Spikes,
+  // 2 Federn, 3 Checkpoints.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(ground(0, 900, 780, 'stone'));
+    platforms.push(...pitWithLedges(950, 780, 420, 140, 60, 'stone'));
+    platforms.push(ground(1200, 700, 780, 'stone'));
+    platforms.push(...staircase(1900, 780, 3, 70, 130, 40, 'stone'));
+    platforms.push(ground(2400, 500, 570, 'stone'));
+    platforms.push(...twoTierSection(2950, 640, 900, 'stone', 'brick'));
+    platforms.push(...overhangSection(3950, 640, 900, 4400, 180, 'stone'));
+    platforms.push(ground(4000, 800, 880, 'stone'));
+    platforms.push(ledge(4050, 140, 800, 'stone'));
+    platforms.push(...staircase(4800, 880, 3, 80, 120, 40, 'stone'));
+    platforms.push(ground(5300, 800, 640, 'stone'));
+    platforms.push(...overhangSection(6200, 640, 1000, 6700, 200, 'stone'));
+    platforms.push(...pitWithLedges(7300, 640, 420, 160, 60, 'stone'));
+    platforms.push(ground(7550, 700, 640, 'stone'));
+    platforms.push(...plateauSection(8350, 640, [
+      { dx: 0, dy: 0, w: 350, h: 40, type: 'stone' },
+      { dx: 390, dy: 80, w: 300, h: 40, type: 'stone' },
+      { dx: 730, dy: 160, w: 350, h: 40, type: 'stone' },
+      { dx: 1120, dy: 240, w: 300, h: 40, type: 'stone' },
+      { dx: 1470, dy: 160, w: 320, h: 40, type: 'stone' },
+    ]));
+    platforms.push(ledge(4700, 200, 420, 'platform_hard'));
+    platforms.push(ground(10250, 800, 480, 'stone'));
+    platforms.push(ground(11150, 600, 400, 'stone'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 700, 800, 700, 4));
+    coins.push(...coinArc(950, 860, 5, 70, 80));
+    coins.push(...coinTrail(1300, 700, 1800, 700, 4));
+    coins.push(...coinLadder(3450, 620, 500, 4));
+    coins.push(...coinArc(4200, 560, 5, 70, 80));
+    coins.push(...coinDiamond(4000, 820, 50));
+    coins.push(...coinDiamond(4480, 820, 50));
+    coins.push(...coinLadder(5000, 620, 430, 4));
+    coins.push(...coinTrail(5400, 560, 6000, 560, 4));
+    coins.push(...coinTrail(6300, 560, 6600, 560, 2));
+    coins.push(...coinArc(7300, 740, 5, 70, 80));
+    coins.push(...coinTrail(8500, 560, 8900, 560, 3));
+    coins.push(...coinTrail(9200, 420, 9400, 420, 3));
+    coins.push(...coinTrail(10300, 400, 10900, 400, 4));
+    coins.push(...coinDiamond(11450, 340, 60));
+
+    return {
+      id: 64, name: 'Verlies', width: 14200, height: 1050, biome: 'haunted-mansion',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(5000, 500, 110, 24, 'platform_easy', 'vertical', 90, 18),
+        createMovingPlat(10400, 340, 110, 24, 'platform_medium', 'circular', 90, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(300, 700, 'mushroom'),
+        createQB(2600, 490, 'coin'),
+        createQB(8600, 560, 'flower'),
+        createQB(9400, 400, 'star'),
+        createQB(10700, 400, 'oneup'),
+      ],
+      enemies: [
+        createEnemy(1500, 700, 'ghost'),
+        createEnemy(2000, 480, 'boo'),
+        createEnemy(2700, 500, 'ghost'),
+        createEnemy(3300, 420, 'boo'),
+        createEnemy(4100, 820, 'ghost'),
+        createEnemy(4700, 600, 'boo'),
+        createEnemy(5500, 560, 'ghost'),
+        createEnemy(5600, 600, 'goomba'),
+        createEnemy(6400, 560, 'boo'),
+        createEnemy(7400, 560, 'ghost'),
+        createEnemy(7600, 600, 'robot'),
+        createEnemy(7800, 560, 'boo'),
+        createEnemy(8700, 480, 'ghost'),
+        createEnemy(9000, 440, 'spiny'),
+        createEnemy(9300, 380, 'boo'),
+        createEnemy(9900, 440, 'ghost'),
+        createEnemy(10400, 440, 'crab'),
+        createEnemy(10500, 400, 'boo'),
+      ],
+      decorations: [
+        createDeco(200, 730, 'torch'),
+        createDeco(700, 460, 'cobweb'),
+        createDeco(1300, 730, 'pillar'),
+        createDeco(2500, 520, 'skull'),
+        createDeco(3400, 400, 'statue'),
+        createDeco(4300, 830, 'tombstone'),
+        createDeco(5300, 590, 'ghost_decor'),
+        createDeco(6500, 590, 'cobweb'),
+        createDeco(7100, 750, 'skull'),
+        createDeco(8400, 590, 'tombstone'),
+        createDeco(9600, 440, 'web'),
+        createDeco(11300, 350, 'statue'),
+        createDeco(6200, 400, 'bat'),
+      ],
+      playerStart: { x: 120, y: 756 },
+      goal: { x: 11400, y: 392 },
+      timeBonus: 200,
+      checkpoints: [
+        createCheckpoint(2400, 546),
+        createCheckpoint(7550, 616),
+        createCheckpoint(10250, 456),
+      ],
+      springs: [createSpring(700, 780), createSpring(7700, 640)],
+      spikes: [createSpike(600, 772), createSpike(8000, 632)],
+      keys: [createKey(3450, 440)],
+      doors: [createDoor(4330, 800, 80, 160)],
+    };
+  })(),
+
+  // ============================================================
+  // Level 65 (Banshee-Horde): Kampf-Arenen mit Boo/Geister-
+  // Wellen, Insel-Cluster, Zickzack-Kletterer zum Ballsaal,
+  // Horden-Arena mit 3 Spikes und Doppel-Plattformen.
+  // Vertikal-Aufzug, Kreis-Plattform, 3 Checkpoints.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(ground(0, 1000, 800, 'castle'));
+    platforms.push(...twoTierSection(1080, 800, 1200, 'castle', 'wood'));
+    platforms.push(...islandCluster(2400, 800, [
+      { dx: 0, dy: 0, w: 200, type: 'castle' },
+      { dx: 280, dy: 90, w: 160, type: 'platform_medium' },
+      { dx: 520, dy: 180, w: 180, type: 'platform_hard' },
+      { dx: 780, dy: 90, w: 160, type: 'platform_medium' },
+    ]));
+    platforms.push(ground(3420, 900, 800, 'castle'));
+    platforms.push(...zigzagClimb(4450, 800, 4, 90, 110, 130, 'platform_medium'));
+    platforms.push(ground(4550, 1000, 400, 'castle'));
+    platforms.push(...overhangSection(5650, 800, 1000, 6150, 200, 'castle'));
+    platforms.push(ground(6750, 900, 800, 'castle'));
+    platforms.push(...pitWithLedges(7750, 800, 420, 140, 60, 'stone'));
+    platforms.push(ground(8000, 800, 800, 'castle'));
+    platforms.push(ground(8900, 1400, 800, 'castle'));
+    platforms.push(...staircase(10300, 800, 3, 70, 140, 40, 'castle'));
+    platforms.push(ground(10850, 700, 590, 'castle'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 720, 900, 720, 4));
+    coins.push(...coinArc(1080, 720, 5, 70, 80));
+    coins.push(...coinDiamond(1680, 560, 70));
+    coins.push(...coinTrail(2450, 720, 2550, 720, 2));
+    coins.push(...coinTrail(2700, 630, 2820, 630, 2));
+    coins.push(...coinDiamond(3010, 540, 60));
+    coins.push(...coinTrail(3200, 630, 3300, 630, 2));
+    coins.push(...coinTrail(3500, 720, 4200, 720, 4));
+    coins.push(...coinLadder(4650, 720, 480, 5));
+    coins.push(...coinArc(6250, 720, 5, 70, 80));
+    coins.push(...coinTrail(6800, 720, 7500, 720, 3));
+    coins.push(...coinArc(7750, 860, 5, 70, 80));
+    coins.push(...coinTrail(8100, 720, 8700, 720, 4));
+    coins.push(...coinTrail(9000, 720, 10200, 720, 5));
+    coins.push(...coinArc(10300, 700, 5, 70, 80));
+    coins.push(...coinTrail(10900, 510, 11450, 510, 4));
+
+    return {
+      id: 65, name: 'Banshee-Horde', width: 14800, height: 1000, biome: 'haunted-mansion',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(5750, 600, 110, 24, 'platform_easy', 'vertical', 80, 18),
+        createMovingPlat(9500, 660, 110, 24, 'platform_medium', 'circular', 50, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(300, 700, 'mushroom'),
+        createQB(3600, 700, 'coin'),
+        createQB(6000, 700, 'flower'),
+        createQB(9600, 700, 'star'),
+        createQB(11050, 510, 'oneup'),
+      ],
+      enemies: [
+        createEnemy(1300, 560, 'boo'),
+        createEnemy(1600, 700, 'ghost'),
+        createEnemy(1900, 520, 'boo'),
+        createEnemy(2500, 700, 'ghost'),
+        createEnemy(2900, 560, 'boo'),
+        createEnemy(3300, 700, 'ghost'),
+        createEnemy(3700, 640, 'boo'),
+        createEnemy(4100, 700, 'ghost'),
+        createEnemy(4800, 320, 'boo'),
+        createEnemy(5100, 320, 'ghost'),
+        createEnemy(5400, 320, 'boo'),
+        createEnemy(5900, 700, 'ghost'),
+        createEnemy(6300, 700, 'boo'),
+        createEnemy(6900, 700, 'ghost'),
+        createEnemy(7300, 700, 'boo'),
+        createEnemy(7700, 880, 'ghost'),
+        createEnemy(8400, 700, 'boo'),
+        createEnemy(9000, 700, 'ghost'),
+        createEnemy(9400, 700, 'boo'),
+        createEnemy(9900, 700, 'ghost'),
+        createEnemy(10200, 620, 'boo'),
+        createEnemy(1500, 760, 'robot'),
+        createEnemy(2600, 760, 'spiny'),
+        createEnemy(3000, 760, 'crab'),
+        createEnemy(3600, 760, 'robot'),
+        createEnemy(3900, 760, 'spiny'),
+        createEnemy(4600, 360, 'crab'),
+        createEnemy(6900, 760, 'robot'),
+        createEnemy(10000, 760, 'crab'),
+      ],
+      decorations: [
+        createDeco(250, 750, 'torch'),
+        createDeco(700, 440, 'cobweb'),
+        createDeco(1400, 750, 'tombstone'),
+        createDeco(2200, 750, 'skull'),
+        createDeco(3050, 580, 'statue'),
+        createDeco(3700, 750, 'pillar'),
+        createDeco(4700, 360, 'ghost_decor'),
+        createDeco(6000, 750, 'torch'),
+        createDeco(7000, 750, 'tombstone'),
+        createDeco(8300, 750, 'web'),
+        createDeco(9200, 750, 'skull'),
+        createDeco(10600, 540, 'statue'),
+        createDeco(11600, 540, 'pillar'),
+        createDeco(2800, 480, 'bat'),
+      ],
+      playerStart: { x: 120, y: 776 },
+      goal: { x: 11200, y: 582 },
+      timeBonus: 170,
+      checkpoints: [
+        createCheckpoint(2000, 776),
+        createCheckpoint(7000, 776),
+        createCheckpoint(11100, 566),
+      ],
+      springs: [createSpring(500, 800), createSpring(9000, 800)],
+      spikes: [
+        createSpike(9200, 792),
+        createSpike(9800, 792),
+        createSpike(10100, 792),
+      ],
+    };
+  })(),
+
+  // ============================================================
+  // Level 66 (Krypta-Finale): Gewölbe-Hallen gegen fallende
+  // Engine-Hindernisse (ID 66) — jedes Stockwerk hat ein
+  // Deckengewölbe, die sichere Bodenroute führt unter den
+  // Dächern. Über die Schlucht führen morsche Bröckel-Dielen,
+  // unten wartet die sichere Alternativroute. Thwomps, 3
+  // Checkpoints, 1-UP vor dem Altar. 2 Spikes, 3 Federn.
+  // ============================================================
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(ground(0, 800, 820, 'castle'));
+    platforms.push(...staircase(800, 820, 3, 66, 130, 40, 'castle'));
+    platforms.push(ground(900, 1100, 900, 'stone'));
+    platforms.push(ground(1330, 670, 622, 'castle'));
+    platforms.push(ground(2120, 1200, 900, 'stone'));
+    platforms.push(...staircase(2120, 900, 4, 70, 130, 40, 'castle'));
+    platforms.push(ground(2700, 620, 620, 'castle'));
+    platforms.push(...pitWithLedges(3440, 900, 420, 140, 60, 'stone'));
+    platforms.push(ground(3780, 1100, 900, 'stone'));
+    platforms.push(...staircase(3780, 900, 4, 70, 130, 40, 'castle'));
+    platforms.push(ground(4360, 520, 620, 'castle'));
+    platforms.push(ground(5000, 900, 900, 'stone'));
+    platforms.push(...staircase(5000, 900, 4, 70, 130, 40, 'castle'));
+    platforms.push(ground(5580, 320, 620, 'castle'));
+    platforms.push(ground(6000, 1300, 1040, 'stone'));
+    platforms.push(createCrumblePlat(6055, 912, 150, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(6295, 912, 150, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(6535, 912, 150, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(6775, 912, 150, 24, 'platform_medium'));
+    platforms.push(ground(6100, 800, 620, 'castle'));
+    platforms.push(ground(6900, 1000, 900, 'stone'));
+    platforms.push(ground(6940, 860, 620, 'castle'));
+    platforms.push(ground(8020, 1100, 900, 'stone'));
+    platforms.push(...staircase(8020, 900, 4, 70, 130, 40, 'castle'));
+    platforms.push(ground(8600, 520, 620, 'castle'));
+    platforms.push(ground(9240, 1000, 900, 'stone'));
+    platforms.push(...staircase(9240, 900, 4, 70, 130, 40, 'castle'));
+    platforms.push(ground(9820, 420, 620, 'castle'));
+    platforms.push(ground(10360, 1400, 900, 'stone'));
+    platforms.push(ground(10700, 1060, 600, 'castle'));
+    platforms.push(ledge(10300, 240, 720, 'castle'));
+    platforms.push(ground(11880, 1200, 900, 'stone'));
+    platforms.push(ground(11880, 1200, 600, 'castle'));
+    platforms.push(ground(13200, 1200, 900, 'stone'));
+    platforms.push(ground(13200, 1200, 620, 'castle'));
+    platforms.push(...staircase(14400, 900, 5, 70, 130, 40, 'castle'));
+    platforms.push(ground(15300, 1400, 550, 'castle'));
+    platforms.push(ledge(15400, 180, 430, 'wood'));
+    platforms.push(ledge(15720, 180, 310, 'wood'));
+    platforms.push(ground(15940, 500, 300, 'castle'));
+    platforms.push(ground(16800, 1100, 550, 'stone'));
+    platforms.push(ground(17300, 450, 470, 'castle'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 740, 750, 740, 4));
+    coins.push(...coinArc(900, 820, 5, 70, 80));
+    coins.push(...coinTrail(1000, 820, 1950, 820, 4));
+    coins.push(...coinLadder(3400, 1000, 840, 4));
+    coins.push(...coinTrail(3900, 820, 4700, 820, 4));
+    coins.push(...coinDiamond(4620, 560, 60));
+    coins.push(...coinTrail(5100, 820, 5800, 820, 4));
+    coins.push(...coinArc(6150, 980, 5, 70, 80));
+    coins.push(...coinTrail(6250, 540, 6850, 540, 3));
+    coins.push(...coinTrail(7000, 820, 7800, 820, 3));
+    coins.push(...coinTrail(8100, 820, 9000, 820, 4));
+    coins.push(...coinDiamond(9600, 540, 60));
+    coins.push(...coinTrail(10400, 820, 11600, 820, 4));
+    coins.push(...coinTrail(12000, 820, 12900, 820, 4));
+    coins.push(...coinTrail(12100, 540, 13000, 540, 4));
+    coins.push(...coinArc(13500, 820, 5, 70, 80));
+    coins.push(...coinLadder(14600, 820, 600, 5));
+    coins.push(...coinTrail(15400, 490, 16000, 490, 3));
+    coins.push(...coinTrail(16000, 240, 16350, 240, 3));
+    coins.push(...coinTrail(16900, 490, 17200, 490, 2));
+    coins.push(...coinDiamond(17500, 400, 60));
+
+    return {
+      id: 66, name: 'Krypta-Finale', width: 18200, height: 1150, biome: 'haunted-mansion',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3400, 760, 110, 24, 'platform_easy', 'vertical', 140, 18),
+        createMovingPlat(11600, 800, 110, 24, 'platform_medium', 'circular', 60, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(300, 740, 'mushroom'),
+        createQB(4600, 800, 'coin'),
+        createQB(8700, 800, 'flower'),
+        createQB(11000, 800, 'star'),
+        createQB(16500, 470, 'oneup'),
+      ],
+      enemies: [
+        createEnemy(3440, 300, 'thwomp'),
+        createEnemy(9600, 300, 'thwomp'),
+        createEnemy(11000, 200, 'thwomp'),
+        createEnemy(1500, 860, 'ghost'),
+        createEnemy(2400, 820, 'boo'),
+        createEnemy(3000, 860, 'ghost'),
+        createEnemy(4200, 820, 'boo'),
+        createEnemy(5300, 820, 'ghost'),
+        createEnemy(5700, 860, 'robot'),
+        createEnemy(6500, 1000, 'boo'),
+        createEnemy(7500, 820, 'ghost'),
+        createEnemy(8300, 860, 'spiny'),
+        createEnemy(8500, 820, 'boo'),
+        createEnemy(9600, 820, 'ghost'),
+        createEnemy(10800, 820, 'boo'),
+        createEnemy(11100, 860, 'crab'),
+        createEnemy(12000, 820, 'ghost'),
+        createEnemy(12500, 860, 'robot'),
+        createEnemy(13200, 820, 'boo'),
+        createEnemy(14200, 820, 'ghost'),
+        createEnemy(15100, 860, 'crab'),
+        createEnemy(15200, 500, 'boo'),
+        createEnemy(16200, 500, 'ghost'),
+      ],
+      decorations: [
+        createDeco(200, 770, 'torch'),
+        createDeco(600, 460, 'cobweb'),
+        createDeco(1200, 850, 'pillar'),
+        createDeco(1800, 850, 'tombstone'),
+        createDeco(2400, 850, 'skull'),
+        createDeco(2900, 570, 'statue'),
+        createDeco(4000, 850, 'ghost_decor'),
+        createDeco(4600, 850, 'tombstone'),
+        createDeco(5600, 850, 'skull'),
+        createDeco(6400, 990, 'web'),
+        createDeco(7200, 850, 'torch'),
+        createDeco(8200, 850, 'pillar'),
+        createDeco(8800, 570, 'cobweb'),
+        createDeco(9800, 850, 'tombstone'),
+        createDeco(11200, 850, 'skull'),
+        createDeco(12200, 850, 'ghost_decor'),
+        createDeco(13600, 850, 'torch'),
+        createDeco(14700, 850, 'web'),
+        createDeco(15600, 500, 'statue'),
+        createDeco(16200, 250, 'cobweb'),
+        createDeco(17000, 500, 'pillar'),
+        createDeco(17500, 420, 'skull'),
+        createDeco(3000, 200, 'bat'),
+        createDeco(10500, 200, 'bat'),
+      ],
+      playerStart: { x: 120, y: 796 },
+      goal: { x: 17500, y: 462 },
+      timeBonus: 280,
+      checkpoints: [
+        createCheckpoint(5000, 876),
+        createCheckpoint(10800, 876),
+        createCheckpoint(13300, 876),
+      ],
+      springs: [createSpring(400, 820), createSpring(7000, 900), createSpring(13600, 900)],
+      spikes: [createSpike(2600, 892), createSpike(10000, 892)],
+    };
+  })(),
 ];

@@ -1,759 +1,684 @@
-// Water World - 6 Levels (13-18)
-// Tutorial → Gap-Strecke → Röhren-Labyrinth → Vertikal-Kletterer → Gegner-Horde → Tiefsee-Finale
+// Water World — 6 Level, 6 Archetypen (IDs 13-18), Phase-9-Neubau
+// L13 Lagunenpfad   (Oberflaeche + ueberflutete Korallengrotte, waterZone)
+// L14 Tiden-Tunnel  (komplett unter Wasser: Graeben, zwei Ebenen, Hallen)
+// L15 Korallen-Labyrinth (Terrassen + Flutkammer + Schluessel/Tuer-Bonusraum)
+// L16 Tauchgang     (versunkener Tempel: Pflicht-Tauchbecken, coinGoal)
+// L17 Tiefsee-Horde (grosse Arenen tief unten, ~25 Gegner, coinGoal)
+// L18 Mariana-Finale (steigendes Wasser: Flucht nach oben/rechts, Checkpoints)
+//
+// Wasser-Mechanik: Schwimmen greift biome-weit ab body.y > 500 (Gravity 600,
+// Up = -250, Drift 0.95). Ausgaenge aus dem Wasser liegen daher immer auf
+// einer 500er-Oberkante (Spielerzentrum 484 = trocken, normaler Sprung).
+// waterZones (L13/L15/L16) liegen oberhalb der 500er-Linie und haben ihren
+// Ausgang exakt auf der Zonen-Oberkante. Kein Math.random, keine Pflichtwege
+// ueber Solver-unbekannte Elemente (crumble/keys/doors/moving sind Bonus).
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import {
+  LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat,
+  createSpring, createSpike, createCheckpoint, createWaterZone, createKey, createDoor,
+  createCrumblePlat, staircase, plateauSection, pitWithLedges, twoTierSection,
+  islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
+} from './helpers';
+
+type PlatType = Parameters<typeof createPlat>[4];
+
+/** Plattform aus linker/rechter Kante + Oberkante (top = y - h/2). */
+const seg = (l: number, r: number, top: number, h: number, type: PlatType) =>
+  createPlat((l + r) / 2, top + h / 2, r - l, h, type);
 
 export const WATER_LEVELS: LevelData[] = [
-  // ============================================================
-  // LEVEL 13 (Tutorial) - Einfacher Unterwasser-Pfad
-  // ============================================================
+  // ==========================================================================
+  // L13 "Aqua Lagoon" — Lagunenpfad (width 7000)
+  // Oberflaechenpfad -> Lagunenbecken mit Inselsteinen -> zwei Ebenen ->
+  // ueberflutete Korallengrotte (waterZone 300..600) -> Treppe auf die Klippe.
+  // ==========================================================================
   {
-    id: 13, name: "Aqua Depths", width: 8000, height: 600, biome: 'water',
-    platforms: (() => {
-      const S = 0.65;
-      const plats: any[] = [];
-      // Start ground
-      plats.push(createPlat(100 * S, 500, 1200 * S, 40, 'water'));
-      // Small bridge upward
-      plats.push(createPlat(1150 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(1350 * S, 370, 80, 24, 'platform_medium'));
-      // Second ground
-      plats.push(createPlat(2200 * S, 500, 1200 * S, 40, 'water'));
-      // Pipe section (moved closer to ground)
-      plats.push(...pipeSection(S, 2900, 500, 2));
-      // Bridge after pipes
-      plats.push(createPlat(3800 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(4500 * S, 500, 1200 * S, 40, 'water'));
-      // Small gap
-      plats.push(...gapWithPlatforms(S, 5400, 500, 400, 2));
-      // Final ground + goal
-      plats.push(createPlat(6500 * S, 500, 1500 * S, 40, 'water'));
-      // Secret room: underwater cave alcove
-      plats.push(createPlat(3200, 570, 140, 24, 'water'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.65;
-      const coins: any[] = [];
-      for (let x = 300; x < 1300; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 2300; x < 3400; x += 200) coins.push(createCoin(x * S, 450));
-      coins.push(createCoin(1400 * S, 380), createCoin(1700 * S, 310));
-      for (let x = 4600; x < 5800; x += 200) coins.push(createCoin(x * S, 450));
-      coins.push(createCoin(3140, 555), createCoin(3200, 555), createCoin(3260, 555), createCoin(3320, 555));
-      // Discovery moment: bonus coin arc above the tutorial spring
-      coins.push(createCoin(260, 390), createCoin(300, 350), createCoin(340, 390));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.65;
-      return [
-        createQB(500 * S, 430, 'mushroom'),
-        createQB(2500 * S, 430, 'flower'),
-        createQB(4800 * S, 430, 'star'),
-        createQB(7000 * S, 430, 'mushroom'),
-        createQB(3200, 530, 'flower'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.65;
-      return [
-        createEnemy(800 * S, 480, 'squid'),
-        createEnemy(3000 * S, 470, 'piranha'),
-        createEnemy(3700 * S, 470, 'piranha'),
-        createEnemy(6000 * S, 470, 'squid'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.65;
-      return [
-        createDeco(400 * S, 460, 'seaweed'),
-        createDeco(1200 * S, 420, 'bubble'),
-        createDeco(2600 * S, 460, 'coral'),
-        createDeco(4000 * S, 420, 'shell'),
-        createDeco(5300 * S, 460, 'seaweed'),
-        createDeco(7200 * S, 460, 'bubble'),
-      ];
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.65;
-      return [
-        createMovingPlat(6000 * S, 460, 100, 24, 'water', 'horizontal', 200, 20),
-      ];
-    })(),
-    playerStart: { x: 150, y: 460 },
-    goal: { x: 4225, y: 478 },
-    timeBonus: 120,
-    springs: [createSpring(300, 480)],
+    id: 13, name: 'Aqua Lagoon', width: 7000, height: 700, biome: 'water',
+    platforms: [
+      seg(0, 760, 500, 40, 'water'),
+      seg(800, 1000, 450, 24, 'platform_easy'),
+      seg(1040, 1240, 410, 24, 'platform_medium'),
+      seg(1280, 2140, 580, 40, 'sand'),
+      seg(1350, 1490, 520, 24, 'bubble'),
+      seg(1700, 1800, 560, 24, 'bubble'),
+      seg(1950, 2080, 520, 24, 'bubble'),
+      seg(2180, 2540, 500, 40, 'water'),
+      seg(2580, 2920, 460, 24, 'platform_easy'),
+      seg(2960, 3560, 500, 40, 'stone'),
+      seg(2980, 3200, 380, 24, 'platform_hard'),
+      seg(3240, 3460, 380, 24, 'platform_hard'),
+      seg(3600, 3820, 300, 40, 'stone'),
+      seg(3860, 4340, 560, 40, 'cave'),
+      seg(4020, 4180, 460, 24, 'bubble'),
+      seg(4380, 4660, 300, 40, 'stone'),
+      seg(4700, 5260, 500, 40, 'water'),
+      seg(5300, 5640, 440, 24, 'platform_medium'),
+      ...staircase(5680, 440, 3, 60, 180, 40, 'platform_easy'),
+      seg(6340, 6900, 200, 40, 'water'),
+    ],
+    movingPlatforms: [
+      createMovingPlat(1700, 480, 120, 24, 'platform_easy', 'horizontal', 200, 22),
+      createMovingPlat(4300, 470, 120, 24, 'platform_medium', 'vertical', 60, 20),
+    ],
+    coins: [
+      ...coinArc(1000, 400, 5, 90, 80),
+      ...coinTrail(1300, 470, 2100, 470, 6),
+      ...coinTrail(3900, 500, 4300, 500, 3),
+      ...coinDiamond(4500, 480, 100),
+      ...coinTrail(3000, 330, 3440, 330, 4),
+      ...coinLadder(6000, 300, 200, 4),
+      ...coinTrail(6450, 150, 6850, 150, 3),
+    ],
+    questionBlocks: [
+      createQB(500, 430, 'mushroom'),
+      createQB(1150, 340, 'flower'),
+      createQB(2820, 390, 'star'),
+      createQB(4100, 390, 'oneup'),
+      createQB(5500, 370, 'coin'),
+      createQB(6500, 130, 'mushroom'),
+    ],
+    enemies: [
+      createEnemy(1500, 520, 'squid'),
+      createEnemy(2400, 494, 'crab'),
+      createEnemy(3300, 440, 'squid'),
+      createEnemy(4100, 480, 'squid'),
+      createEnemy(4900, 494, 'crab'),
+      createEnemy(5500, 434, 'robot'),
+      createEnemy(6700, 194, 'robot'),
+    ],
+    decorations: [
+      createDeco(300, 470, 'seaweed'), createDeco(600, 450, 'bubble'),
+      createDeco(900, 420, 'coral'), createDeco(1250, 380, 'shell'),
+      createDeco(1400, 540, 'seaweed'), createDeco(1750, 520, 'coral'),
+      createDeco(2050, 500, 'bubble'), createDeco(2400, 460, 'seaweed'),
+      createDeco(2700, 420, 'coral'), createDeco(3150, 350, 'shell'),
+      createDeco(3700, 270, 'coral'), createDeco(4000, 420, 'bubble'),
+      createDeco(4200, 500, 'seaweed'), createDeco(4500, 270, 'coral'),
+      createDeco(4900, 460, 'bubble'), createDeco(5400, 400, 'shell'),
+      createDeco(5800, 370, 'seaweed'), createDeco(6500, 160, 'coral'),
+      createDeco(6800, 170, 'bubble'),
+    ],
+    playerStart: { x: 140, y: 480 },
+    goal: { x: 6650, y: 200 },
+    timeBonus: 150,
+    springs: [createSpring(2700, 460)],
+    spikes: [createSpike(3300, 492), createSpike(4900, 492)],
+    waterZones: [createWaterZone(3600, 300, 1060, 300)],
   },
 
-  // ============================================================
-  // LEVEL 14 (Gap-Strecke) - Viele Lücken mit beweglichen Plattformen
-  // ============================================================
+  // ==========================================================================
+  // L14 "Tidal Tunnels" — Tiden-Tunnel (width 9000, komplett unter Wasser)
+  // Boden/Main-Path durchgehend unter y=500 (Tops 500-780): Ueberhang mit
+  // Unterweg, Graben, Zwei-Ebenen-Halle, tiefer Bonus-Graben, Auftauch-Shelf.
+  // ==========================================================================
   {
-    id: 14, name: "Tidal Tunnels", width: 10000, height: 600, biome: 'water',
-    platforms: (() => {
-      const S = 0.625;
-      const plats: any[] = [];
-      // Start ground
-      plats.push(createPlat(200 * S, 500, 600 * S, 40, 'water'));
-      // Gap 1 - reduced startX from 1100 to 500 to close gap
-      plats.push(...gapWithPlatforms(S, 500, 500, 300, 4));
-      // Ground 2
-      plats.push(createPlat(1200 * S, 500, 600 * S, 40, 'water'));
-      // Gap 2 - reduced startX from 2600 to 1500
-      plats.push(...gapWithPlatforms(S, 1500, 500, 400, 4));
-      // Ground 3
-      plats.push(createPlat(2300 * S, 500, 600 * S, 40, 'water'));
-      // Gap 3 - reduced startX from 4200 to 2600
-      plats.push(...gapWithPlatforms(S, 2600, 500, 350, 4));
-      // Ground 4
-      plats.push(createPlat(3400 * S, 500, 600 * S, 40, 'water'));
-      // Gap 4 - reduced startX from 5700 to 3800
-      plats.push(...gapWithPlatforms(S, 3800, 500, 400, 4));
-      // Ground 5
-      plats.push(createPlat(4900 * S, 500, 600 * S, 40, 'water'));
-      // Gap 5 - reduced startX from 7300 to 5200
-      plats.push(...gapWithPlatforms(S, 5200, 500, 350, 3));
-      // Final ground + goal
-      plats.push(createPlat(6000 * S, 500, 800 * S, 40, 'water'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.625;
-      const coins: any[] = [];
-      for (let x = 300; x < 900; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 1900; x < 2500; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 3500; x < 4100; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 5000; x < 5600; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 6600; x < 7200; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 8000; x < 9000; x += 200) coins.push(createCoin(x * S, 450));
-      // Coin arcs above the two gap-section springs
-      coins.push(createCoin(710, 400), createCoin(750, 360), createCoin(790, 400));
-      coins.push(createCoin(2085, 400), createCoin(2125, 360), createCoin(2165, 400));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.625;
-      return [
-        createQB(400 * S, 430, 'mushroom'),
-        createQB(1400, 430, 'flower'),     // over gap 1
-        createQB(2100 * S, 430, 'star'),
-        createQB(3700 * S, 430, 'mushroom'),
-        createQB(4600, 430, 'flower'),     // over gap 3
-        createQB(5200 * S, 430, 'star'),
-        createQB(8500 * S, 430, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.625;
-      return [
-        createEnemy(500 * S, 480, 'squid'),
-        createEnemy(2000 * S, 480, 'crab'),
-        createEnemy(3600 * S, 480, 'squid'),
-        createEnemy(5200 * S, 480, 'robot'),
-        createEnemy(6800 * S, 480, 'crab'),
-        createEnemy(8300 * S, 480, 'squid'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.625;
-      return [
-        createDeco(300 * S, 460, 'seaweed'),
-        createDeco(1300, 420, 'bubble'),
-        createDeco(2200 * S, 460, 'coral'),
-        createDeco(3800 * S, 420, 'shell'),
-        createDeco(5400 * S, 460, 'seaweed'),
-        createDeco(7000 * S, 420, 'bubble'),
-        createDeco(8400 * S, 460, 'coral'),
-      ];
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.625;
-      return [
-        createMovingPlat(1288, 470, 100, 24, 'water', 'horizontal', 260, 22),
-        createMovingPlat(2750, 460, 100, 24, 'water', 'horizontal', 300, 20),
-        createMovingPlat(4350, 450, 100, 24, 'water', 'horizontal', 280, 22),
-        createMovingPlat(5850, 460, 100, 24, 'water', 'horizontal', 320, 20),
-        // Vertical helper lifting players over the middle ground
-        createMovingPlat(1437.5, 460, 100, 24, 'water', 'vertical', 140, 18),
-      ];
-    })(),
-    playerStart: { x: 150, y: 460 },
-    goal: { x: 3750, y: 478 },  // 6000 * 0.625
-    timeBonus: 140,
-    springs: [createSpring(750, 480), createSpring(2125, 480)],
+    id: 14, name: 'Tidal Tunnels', width: 9000, height: 800, biome: 'water',
+    platforms: [
+      seg(0, 700, 620, 40, 'water'),
+      seg(740, 940, 560, 24, 'platform_medium'),
+      ...overhangSection(980, 620, 900, 1400, 200, 'cave'),
+      ...pitWithLedges(1400, 620, 200, 160, 60, 'cave'),
+      seg(1920, 2500, 660, 40, 'water'),
+      ...twoTierSection(2540, 660, 900, 'water', 'platform_hard'),
+      seg(3480, 3780, 580, 24, 'platform_medium'),
+      seg(3820, 4060, 660, 40, 'cave'),
+      seg(4100, 4340, 580, 24, 'platform_hard'),
+      seg(4380, 4740, 660, 40, 'water'),
+      seg(4780, 5060, 580, 24, 'platform_easy'),
+      seg(5100, 5520, 640, 40, 'stone'),
+      seg(5560, 5840, 560, 24, 'platform_medium'),
+      seg(5880, 6300, 760, 40, 'cave'),
+      seg(6340, 6640, 620, 24, 'platform_hard'),
+      seg(6680, 6960, 560, 24, 'platform_medium'),
+      seg(7000, 7240, 500, 24, 'platform_easy'),
+      seg(7280, 7660, 500, 40, 'water'),
+      seg(7700, 8900, 500, 40, 'water'),
+    ],
+    movingPlatforms: [
+      createMovingPlat(1500, 640, 120, 24, 'platform_medium', 'vertical', 100, 20),
+      createMovingPlat(2500, 560, 120, 24, 'platform_easy', 'horizontal', 200, 22),
+    ],
+    coins: [
+      ...coinTrail(300, 560, 600, 560, 3),
+      ...coinArc(900, 480, 5, 80, 70),
+      ...coinTrail(1440, 620, 1560, 620, 3),
+      ...coinTrail(2050, 610, 2400, 610, 4),
+      ...coinTrail(2650, 610, 3350, 610, 5),
+      ...coinTrail(2650, 450, 3330, 450, 4),
+      ...coinArc(3560, 480, 5, 80, 70),
+      ...coinTrail(3900, 620, 4020, 620, 3),
+      ...coinTrail(4450, 600, 4680, 600, 3),
+      ...coinTrail(4850, 520, 5000, 520, 3),
+      ...coinTrail(5300, 580, 5450, 580, 3),
+      ...coinTrail(5620, 500, 5780, 500, 3),
+      ...coinTrail(5950, 700, 6250, 700, 3),
+      ...coinTrail(6400, 520, 6900, 520, 5),
+      ...coinLadder(7150, 470, 330, 4),
+      ...coinArc(7500, 340, 5, 90, 80),
+      ...coinTrail(7800, 440, 8800, 440, 5),
+    ],
+    questionBlocks: [
+      createQB(500, 550, 'mushroom'),
+      createQB(2200, 590, 'flower'),
+      createQB(3000, 630, 'star'),
+      createQB(5500, 570, 'coin'),
+      createQB(6500, 550, 'flower'),
+      createQB(8000, 430, 'oneup'),
+    ],
+    enemies: [
+      createEnemy(1150, 520, 'squid'),
+      createEnemy(2200, 654, 'crab'),
+      createEnemy(2450, 600, 'squid'),
+      createEnemy(4000, 654, 'robot'),
+      createEnemy(4600, 560, 'squid'),
+      createEnemy(5300, 634, 'crab'),
+      createEnemy(6100, 660, 'squid'),
+      createEnemy(6600, 614, 'robot'),
+      createEnemy(7450, 450, 'squid'),
+      createEnemy(7900, 494, 'crab'),
+    ],
+    decorations: [
+      createDeco(200, 580, 'seaweed'), createDeco(500, 560, 'coral'),
+      createDeco(850, 520, 'bubble'), createDeco(1100, 560, 'shell'),
+      createDeco(1300, 700, 'seaweed'), createDeco(1700, 560, 'coral'),
+      createDeco(2000, 600, 'bubble'), createDeco(2300, 620, 'seaweed'),
+      createDeco(2900, 600, 'coral'), createDeco(3550, 520, 'shell'),
+      createDeco(3950, 600, 'seaweed'), createDeco(4200, 520, 'coral'),
+      createDeco(4550, 600, 'bubble'), createDeco(4900, 520, 'shell'),
+      createDeco(5250, 580, 'seaweed'), createDeco(5700, 500, 'coral'),
+      createDeco(6050, 700, 'bubble'), createDeco(6450, 560, 'seaweed'),
+      createDeco(6800, 500, 'shell'), createDeco(7100, 440, 'coral'),
+      createDeco(7450, 460, 'bubble'), createDeco(8100, 440, 'seaweed'),
+      createDeco(8600, 460, 'coral'),
+    ],
+    playerStart: { x: 140, y: 600 },
+    goal: { x: 8500, y: 500 },
+    timeBonus: 170,
+    springs: [createSpring(7500, 500)],
+    spikes: [createSpike(2320, 652), createSpike(5350, 632)],
   },
-
-  // ============================================================
-  // LEVEL 15 (Röhren-Labyrinth) - 7 Pipe-Sektionen mit Piranhas
-  // ============================================================
+  // ==========================================================================
+  // L15 "Coral Labyrinth" — Korallen-Labyrinth (width 10000)
+  // Terrassen -> Unterweg -> Pflicht-Flutkammer (waterZone 360..680) ->
+  // Tauchgrube mit 500er-Ausstiegsstufen (waterZone 500..680) -> Schluessel +
+  // Tuer-Bonusraum (Sackgasse, nie Pflichtweg) -> Steg-Finale.
+  // ==========================================================================
   {
-    id: 15, name: "Coral Abyss", width: 16000, height: 600, biome: 'water',
-    platforms: (() => {
-      const S = 0.6;
-      const plats: any[] = [];
-      // Start ground
-      plats.push(createPlat(100 * S, 500, 600 * S, 40, 'water'));
-      // Stepping stone to first pipe section
-      plats.push(createPlat(370, 440, 100, 24, 'platform_medium'));
-      // Pipe section 1 (3 pipes)
-      plats.push(...pipeSection(S, 600, 500, 3));
-      // Bridge - reduced startX from 2200 to 1300
-      plats.push(...gapWithPlatforms(S, 1300, 440, 300, 4));
-      plats.push(createPlat(1900 * S, 500, 400 * S, 40, 'water'));
-      // Pipe section 2 (4 pipes)
-      plats.push(...pipeSection(S, 2200, 500, 4));
-      // Bridge - reduced startX from 4900 to 3200
-      plats.push(...gapWithPlatforms(S, 3200, 440, 300, 4));
-      plats.push(createPlat(3800 * S, 500, 400 * S, 40, 'water'));
-      // Pipe section 3 (3 pipes)
-      plats.push(...pipeSection(S, 4100, 500, 3));
-      // Bridge - reduced startX from 7300 to 5300
-      plats.push(...gapWithPlatforms(S, 5300, 440, 300, 4));
-      plats.push(createPlat(5900 * S, 500, 400 * S, 40, 'water'));
-      // Pipe section 4 (4 pipes)
-      plats.push(...pipeSection(S, 6200, 500, 4));
-      // Bridge - reduced startX from 10000 to 7500
-      plats.push(...gapWithPlatforms(S, 7500, 440, 300, 4));
-      plats.push(createPlat(8100 * S, 500, 400 * S, 40, 'water'));
-      // Pipe section 5 (3 pipes) - reduced from 10900 to 8500
-      plats.push(...pipeSection(S, 8500, 500, 3));
-      // Bridge - reduced startX from 12400 to 9700
-      plats.push(...gapWithPlatforms(S, 9700, 440, 300, 4));
-      plats.push(createPlat(10300 * S, 500, 400 * S, 40, 'water'));
-      // Breakable brick bonus wall — hangs above the ground connector (never
-      // load-bearing: the ground below stays the main path). Big Mario can
-      // smash it from below for the coins on top.
-      plats.push(createPlat(6180, 400, 96, 24, 'brick'));
-      // Pipe section 6 (4 pipes) - reduced from 13400 to 10600
-      plats.push(...pipeSection(S, 10600, 500, 4));
-      // Bridge - reduced startX from 15100 to 11800
-      plats.push(...gapWithPlatforms(S, 11800, 440, 300, 4));
-      plats.push(createPlat(12400 * S, 500, 400 * S, 40, 'water'));
-      // Pipe section 7 (3 pipes) - reduced from 16000 to 12700
-      plats.push(...pipeSection(S, 12700, 500, 3));
-      // Final bridge - reduced from 17500 to 14200
-      plats.push(...gapWithPlatforms(S, 14200, 440, 300, 4));
-      plats.push(createPlat(15000 * S, 500, 1000 * S, 40, 'water'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.6;
-      const coins: any[] = [];
-      for (let x = 300; x < 700; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 2800; x < 3300; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 5500; x < 6000; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 7900; x < 8400; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 10600; x < 11100; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 13000; x < 13500; x += 200) coins.push(createCoin(x * S, 450));
-      for (let x = 18100; x < 19200; x += 200) coins.push(createCoin(x * S, 450));
-      // Brick-bonus coins (above the breakable brick)
-      coins.push(createCoin(6140, 340), createCoin(6180, 320), createCoin(6220, 340));
-      // Coin arcs above the two springs on the ground connectors
-      coins.push(createCoin(1100, 400), createCoin(1140, 360), createCoin(1180, 400));
-      coins.push(createCoin(7400, 400), createCoin(7440, 360), createCoin(7480, 400));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.6;
-      return [
-        createQB(400 * S, 430, 'mushroom'),
-        createQB(1200 * S, 430, 'flower'),
-        createQB(3000 * S, 430, 'star'),
-        createQB(3700 * S, 430, 'mushroom'),
-        createQB(4900 * S, 430, 'flower'),
-        createQB(5700 * S, 430, 'mushroom'),
-        createQB(6400 * S, 430, 'star'),
-        createQB(8100 * S, 430, 'flower'),
-        createQB(8800 * S, 430, 'mushroom'),
-        createQB(10700 * S, 430, 'star'),
-        createQB(13800 * S, 430, 'mushroom'),
-        createQB(18400 * S, 430, 'flower'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.6;
-      return [
-        // Pipe section 1
-        createEnemy(1300 * S, 470, 'piranha'),
-        createEnemy(1650 * S, 470, 'piranha'),
-        createEnemy(2000 * S, 470, 'piranha'),
-        // Pipe section 2
-        createEnemy(3700 * S, 470, 'piranha'),
-        createEnemy(4050 * S, 470, 'piranha'),
-        createEnemy(4400 * S, 470, 'piranha'),
-        createEnemy(4750 * S, 470, 'piranha'),
-        // Pipe section 3
-        createEnemy(6400 * S, 470, 'piranha'),
-        createEnemy(6750 * S, 470, 'piranha'),
-        createEnemy(7100 * S, 470, 'piranha'),
-        // Pipe section 4
-        createEnemy(8800 * S, 470, 'piranha'),
-        createEnemy(9150 * S, 470, 'piranha'),
-        createEnemy(9500 * S, 470, 'piranha'),
-        createEnemy(9850 * S, 470, 'piranha'),
-        // Pipe section 5
-        createEnemy(11500 * S, 470, 'piranha'),
-        createEnemy(11850 * S, 470, 'piranha'),
-        createEnemy(12200 * S, 470, 'piranha'),
-        // Pipe section 6
-        createEnemy(13900 * S, 470, 'piranha'),
-        createEnemy(14250 * S, 470, 'piranha'),
-        createEnemy(14600 * S, 470, 'piranha'),
-        createEnemy(14950 * S, 470, 'piranha'),
-        // Pipe section 7
-        createEnemy(16600 * S, 470, 'piranha'),
-        createEnemy(16950 * S, 470, 'piranha'),
-        createEnemy(17300 * S, 470, 'piranha'),
-        // Squids on ground sections
-        createEnemy(500 * S, 480, 'squid'),
-        createEnemy(2900 * S, 480, 'squid'),
-        createEnemy(5600 * S, 480, 'squid'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.6;
-      const decos: any[] = [];
-      for (let x = 200; x < 19000; x += 800) {
-        const type = x % 3200 === 200 ? 'seaweed' : (x % 3200 === 1000 ? 'coral' : (x % 3200 === 1800 ? 'shell' : 'bubble'));
-        decos.push(createDeco(x * S, x % 3200 === 200 ? 460 : 460, type));
-      }
-      return decos;
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.6;
-      return [
-        createMovingPlat(5020 * S, 440, 100, 24, 'water', 'horizontal', 220, 22),
-        createMovingPlat(10100 * S, 450, 100, 24, 'water', 'vertical', 160, 20),
-      ];
-    })(),
-    playerStart: { x: 150, y: 460 },
-    goal: { x: 9000, y: 478 },
+    id: 15, name: 'Coral Labyrinth', width: 10000, height: 800, biome: 'water',
+    platforms: [
+      seg(0, 620, 500, 40, 'water'),
+      ...plateauSection(660, 500, [
+        { dx: 0, dy: 0, w: 260, type: 'stone' },
+        { dx: 300, dy: 60, w: 200, type: 'bubble' },
+        { dx: 540, dy: 150, w: 280, type: 'stone' },
+      ]),
+      ...overhangSection(1520, 350, 700, 1860, 180, 'cave'),
+      seg(1860, 2040, 500, 24, 'bubble'),
+      seg(2260, 2500, 460, 24, 'platform_easy'),
+      seg(2540, 3500, 620, 40, 'cave'),
+      seg(2700, 2920, 520, 24, 'bubble'),
+      seg(3050, 3250, 440, 24, 'bubble'),
+      seg(3540, 3780, 360, 40, 'stone'),
+      seg(3820, 4060, 300, 24, 'platform_medium'),
+      seg(4100, 4300, 240, 24, 'platform_hard'),
+      seg(4340, 4620, 300, 40, 'stone'),
+      seg(4660, 4900, 240, 24, 'platform_medium'),
+      seg(4940, 5260, 300, 40, 'water'),
+      seg(5300, 5700, 300, 40, 'water'),
+      seg(5700, 5900, 620, 40, 'cave'),
+      seg(5700, 5780, 500, 24, 'bubble'),
+      seg(5820, 5900, 500, 24, 'bubble'),
+      seg(5940, 6340, 300, 40, 'water'),
+      seg(6380, 6620, 360, 24, 'platform_medium'),
+      seg(6660, 7100, 420, 40, 'stone'),
+      seg(7140, 7600, 420, 40, 'stone'),
+      seg(7160, 7540, 300, 40, 'stone'),
+      seg(7640, 8000, 460, 24, 'platform_easy'),
+      seg(8040, 8500, 380, 24, 'platform_medium'),
+      seg(8540, 8900, 300, 24, 'platform_hard'),
+      seg(8940, 9700, 240, 40, 'water'),
+    ],
+    movingPlatforms: [
+      createMovingPlat(3380, 480, 120, 24, 'platform_medium', 'vertical', 100, 20),
+      createMovingPlat(5240, 220, 120, 24, 'platform_easy', 'horizontal', 180, 22),
+    ],
+    coins: [
+      ...coinArc(960, 400, 5, 90, 70),
+      ...coinTrail(1300, 290, 1460, 290, 3),
+      ...coinTrail(1900, 440, 2020, 440, 3),
+      ...coinDiamond(3150, 545, 100),
+      ...coinTrail(3580, 300, 3740, 300, 3),
+      ...coinTrail(4400, 260, 4600, 260, 3),
+      ...coinTrail(5700, 580, 5880, 580, 3),
+      ...coinTrail(6400, 300, 6600, 300, 3),
+      ...coinTrail(7250, 380, 7480, 380, 4),
+      ...coinArc(8300, 240, 5, 90, 80),
+      ...coinTrail(9000, 180, 9400, 180, 4),
+    ],
+    questionBlocks: [
+      createQB(300, 430, 'mushroom'),
+      createQB(1060, 370, 'flower'),
+      createQB(2400, 390, 'coin'),
+      createQB(3000, 550, 'star'),
+      createQB(5500, 230, 'flower'),
+      createQB(7400, 350, 'oneup'),
+      createQB(9200, 170, 'star'),
+    ],
+    enemies: [
+      createEnemy(800, 494, 'crab'),
+      createEnemy(1300, 380, 'squid'),
+      createEnemy(1950, 494, 'robot'),
+      createEnemy(3000, 460, 'squid'),
+      createEnemy(5600, 294, 'crab'),
+      createEnemy(5800, 540, 'squid'),
+      createEnemy(6500, 354, 'robot'),
+      createEnemy(6900, 414, 'crab'),
+      createEnemy(7300, 380, 'squid'),
+      createEnemy(8200, 374, 'crab'),
+      createEnemy(9100, 234, 'robot'),
+    ],
+    decorations: [
+      createDeco(250, 470, 'seaweed'), createDeco(700, 470, 'coral'),
+      createDeco(1000, 400, 'bubble'), createDeco(1350, 300, 'shell'),
+      createDeco(1650, 310, 'coral'), createDeco(1950, 460, 'seaweed'),
+      createDeco(2400, 420, 'bubble'), createDeco(2750, 580, 'coral'),
+      createDeco(3150, 400, 'shell'), createDeco(3600, 320, 'seaweed'),
+      createDeco(3900, 260, 'coral'), createDeco(4450, 260, 'bubble'),
+      createDeco(4750, 200, 'shell'), createDeco(5400, 260, 'coral'),
+      createDeco(5750, 580, 'seaweed'), createDeco(6000, 260, 'bubble'),
+      createDeco(6450, 320, 'coral'), createDeco(6900, 380, 'shell'),
+      createDeco(7350, 350, 'seaweed'), createDeco(7700, 420, 'bubble'),
+      createDeco(8200, 340, 'coral'), createDeco(8700, 260, 'shell'),
+      createDeco(9300, 200, 'seaweed'),
+    ],
+    playerStart: { x: 140, y: 480 },
+    goal: { x: 9400, y: 240 },
     timeBonus: 160,
-    springs: [createSpring(1140, 480), createSpring(7440, 480)],
-    // Spikes on the pipe-base ground connectors (well clear of QBs, goal and player start)
-    spikes: [createSpike(1200, 472), createSpike(2340, 472), createSpike(3540, 472)],
+    springs: [createSpring(8300, 380)],
+    spikes: [createSpike(2000, 492), createSpike(5200, 292)],
+    keys: [createKey(6560, 300)],
+    doors: [createDoor(7180, 380, 40, 80)],
+    waterZones: [
+      createWaterZone(2540, 360, 960, 320),
+      createWaterZone(5700, 500, 200, 180),
+    ],
   },
 
-  // ============================================================
-  // LEVEL 16 (Vertikal-Kletterer) - 4 Vertical Climb Sektionen
-  // ============================================================
+  // ==========================================================================
+  // L16 "Sunken Temple" — Tauchgang (width 10500, coinGoal 30)
+  // Abstieg in den versunkenen Tempel, Pflicht-Fluthalle (waterZone 380..760)
+  // mit Ausgang auf der Zonenoberkante, Terrassenaufstieg, Pflicht-Tauchbecken
+  // (waterZone 500..680) mit 500er-Ausstiegsstufe, Zwei-Ebenen-Dach, Gipfelziel.
+  // ==========================================================================
   {
-    id: 16, name: "Sunken Ruins", width: 18000, height: 650, biome: 'water',
-    platforms: (() => {
-      const S = 0.556;
-      const plats: any[] = [];
-      // Start ground
-      plats.push(createPlat(100 * S, 600, 800 * S, 40, 'water'));
-      // Vertical climb 1 - moved closer (800 -> 600)
-      plats.push(...verticalClimb(S, 600, 600));
-      // Bridge after climb 1 - MUCH more platforms (4 -> 8)
-      plats.push(...gapWithPlatforms(S, 2200, 600, 400, 8));
-      // Ground after climb 1
-      plats.push(createPlat(3200 * S, 600, 600 * S, 40, 'water'));
-      // Gap section - MORE platforms (3 -> 6)
-      plats.push(...gapWithPlatforms(S, 3600, 600, 350, 6));
-      // Ground
-      plats.push(createPlat(4500 * S, 600, 600 * S, 40, 'water'));
-      // Vertical climb 2 - moved closer (5400 -> 4800)
-      plats.push(...verticalClimb(S, 4800, 600));
-      // Bridge after climb 2 - MORE platforms (4 -> 8)
-      plats.push(...gapWithPlatforms(S, 6400, 540, 400, 8));
-      plats.push(createPlat(7400 * S, 600, 600 * S, 40, 'water'));
-      // Pipe section - moved closer (9000 -> 7600)
-      plats.push(...pipeSection(S, 7600, 600, 3));
-      // Bridge after pipes - MORE platforms (4 -> 8)
-      plats.push(...gapWithPlatforms(S, 8600, 540, 400, 8));
-      plats.push(createPlat(9600 * S, 600, 600 * S, 40, 'water'));
-      // Vertical climb 3 - moved closer (11300 -> 10000)
-      plats.push(...verticalClimb(S, 10000, 600));
-      // Bridge after climb 3 - MORE platforms (3 -> 6)
-      plats.push(...gapWithPlatforms(S, 12000, 600, 350, 6));
-      // Ground after climb 3
-      plats.push(createPlat(12800 * S, 600, 600 * S, 40, 'water'));
-      // Gap - MORE platforms (3 -> 6)
-      plats.push(...gapWithPlatforms(S, 13200, 600, 350, 6));
-      // Ground
-      plats.push(createPlat(14200 * S, 600, 600 * S, 40, 'water'));
-      // Vertical climb 4 - moved closer (16000 -> 14600)
-      plats.push(...verticalClimb(S, 14600, 600));
-      // Final ground + goal - moved closer
-      plats.push(createPlat(16500 * S, 600, 800 * S, 40, 'water'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.556;
-      const coins: any[] = [];
-      for (let x = 300; x < 1000; x += 200) coins.push(createCoin(x * S, 550));
-      // Coins on vertical climb 1
-      coins.push(createCoin(1400 * S, 480), createCoin(1700 * S, 400), createCoin(2000 * S, 320));
-      coins.push(createCoin(2300 * S, 240), createCoin(2600 * S, 320), createCoin(2900 * S, 400));
-      coins.push(createCoin(3200 * S, 480));
-      for (let x = 3900; x < 4700; x += 200) coins.push(createCoin(x * S, 550));
-      // Coins on vertical climb 2
-      coins.push(createCoin(6600 * S, 480), createCoin(6900 * S, 400), createCoin(7200 * S, 320));
-      coins.push(createCoin(7500 * S, 240), createCoin(7800 * S, 320), createCoin(8100 * S, 400));
-      coins.push(createCoin(8400 * S, 480));
-      for (let x = 9100; x < 9700; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 11400; x < 12400; x += 200) coins.push(createCoin(x * S, 550));
-      // Coins on vertical climb 3
-      coins.push(createCoin(12500 * S, 480), createCoin(12800 * S, 400), createCoin(13100 * S, 320));
-      coins.push(createCoin(13400 * S, 240), createCoin(13700 * S, 320), createCoin(14000 * S, 400));
-      coins.push(createCoin(14300 * S, 480));
-      for (let x = 15000; x < 15600; x += 200) coins.push(createCoin(x * S, 550));
-      // Coins on vertical climb 4
-      coins.push(createCoin(17500 * S, 480), createCoin(17800 * S, 400), createCoin(18100 * S, 320));
-      coins.push(createCoin(18400 * S, 240), createCoin(18700 * S, 320), createCoin(19000 * S, 400));
-      coins.push(createCoin(19300 * S, 480));
-      for (let x = 20000; x < 21000; x += 200) coins.push(createCoin(x * S, 550));
-      // Coin ladder up from the spring shortcut after climb 1
-      coins.push(createCoin(1779, 500), createCoin(1779, 430), createCoin(1779, 360));
-      // Coin arc above the spring on the last ground stretch
-      coins.push(createCoin(7855, 500), createCoin(7895, 460), createCoin(7935, 500));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.556;
-      return [
-        createQB(500 * S, 530, 'mushroom'),
-        createQB(2300 * S, 170, 'flower'),
-        createQB(4100 * S, 530, 'star'),
-        createQB(7500 * S, 170, 'mushroom'),
-        createQB(9300 * S, 530, 'flower'),
-        createQB(10100 * S, 530, 'star'),
-        createQB(11700 * S, 530, 'mushroom'),
-        createQB(13400 * S, 170, 'flower'),
-        createQB(15200 * S, 530, 'star'),
-        createQB(18400 * S, 170, 'mushroom'),
-        createQB(20500 * S, 530, 'flower'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.556;
-      return [
-        createEnemy(600 * S, 580, 'squid'),
-        createEnemy(2500 * S, 580, 'squid'),
-        createEnemy(4000 * S, 580, 'crab'),
-        createEnemy(5800 * S, 580, 'robot'),
-        createEnemy(10000 * S, 570, 'piranha'),
-        createEnemy(10350 * S, 570, 'piranha'),
-        createEnemy(10700 * S, 570, 'piranha'),
-        createEnemy(11600 * S, 580, 'squid'),
-        createEnemy(13000 * S, 580, 'crab'),
-        createEnemy(15000 * S, 580, 'robot'),
-        createEnemy(16800 * S, 580, 'squid'),
-        createEnemy(18000 * S, 580, 'crab'),
-        createEnemy(20500 * S, 580, 'squid'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.556;
-      const decos: any[] = [];
-      for (let x = 300; x < 21000; x += 900) {
-        const t = x % 3600 === 300 ? 'seaweed' : (x % 3600 === 1200 ? 'bubble' : (x % 3600 === 2100 ? 'coral' : 'shell'));
-        decos.push(createDeco(x * S, 560, t));
-      }
-      return decos;
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.556;
-      return [
-        createMovingPlat(10800 * S, 560, 100, 24, 'water', 'horizontal', 200, 20),
-        createMovingPlat(16200, 560, 100, 24, 'water', 'horizontal', 380, 20),
-      ];
-    })(),
-    playerStart: { x: 150, y: 560 },
-    goal: { x: 9180, y: 578 },  // 16500 * 0.556
+    id: 16, name: 'Sunken Temple', width: 10500, height: 800, biome: 'water',
+    platforms: [
+      seg(0, 640, 500, 40, 'water'),
+      seg(680, 940, 440, 24, 'platform_easy'),
+      seg(980, 1220, 380, 24, 'platform_medium'),
+      seg(1260, 1700, 380, 40, 'ruins'),
+      seg(1740, 2100, 560, 40, 'cave'),
+      seg(2140, 2500, 680, 40, 'cave'),
+      seg(2500, 4200, 700, 40, 'cave'),
+      seg(2800, 3050, 600, 24, 'ruins'),
+      seg(3250, 3500, 540, 24, 'ruins'),
+      seg(3700, 3950, 600, 24, 'ruins'),
+      seg(4240, 4600, 380, 40, 'ruins'),
+      seg(4640, 4880, 320, 24, 'platform_medium'),
+      seg(4920, 5140, 260, 24, 'platform_hard'),
+      seg(5180, 5460, 320, 40, 'ruins'),
+      seg(5500, 5740, 260, 24, 'platform_medium'),
+      seg(5780, 6100, 320, 40, 'water'),
+      seg(6100, 6500, 640, 40, 'cave'),
+      seg(6420, 6500, 500, 24, 'bubble'),
+      seg(6540, 6820, 320, 40, 'ruins'),
+      ...plateauSection(6860, 320, [
+        { dx: 0, dy: 0, w: 240, type: 'ruins' },
+        { dx: 280, dy: 60, w: 200 },
+        { dx: 520, dy: 20, w: 280, type: 'ruins' },
+      ]),
+      ...twoTierSection(7700, 300, 800, 'water', 'platform_hard'),
+      seg(8540, 9000, 240, 24, 'platform_easy'),
+      seg(9040, 9400, 180, 24, 'platform_medium'),
+      seg(9440, 10200, 180, 40, 'ruins'),
+    ],
+    movingPlatforms: [
+      createMovingPlat(4100, 560, 120, 24, 'platform_medium', 'vertical', 120, 20),
+      createMovingPlat(6300, 420, 120, 24, 'platform_easy', 'horizontal', 160, 22),
+    ],
+    coins: [
+      ...coinArc(830, 380, 5, 80, 70),
+      ...coinTrail(1300, 320, 1660, 320, 4),
+      ...coinTrail(1800, 500, 2050, 500, 3),
+      ...coinTrail(2600, 640, 4100, 640, 6),
+      ...coinDiamond(3600, 490, 120),
+      ...coinTrail(4300, 320, 4560, 320, 3),
+      ...coinLadder(5000, 240, 140, 4),
+      ...coinTrail(5550, 200, 5700, 200, 3),
+      ...coinTrail(6150, 580, 6450, 580, 3),
+      ...coinArc(6700, 240, 5, 80, 70),
+      ...coinTrail(7750, 240, 8400, 240, 4),
+      ...coinTrail(9100, 120, 9300, 120, 3),
+    ],
+    questionBlocks: [
+      createQB(400, 430, 'mushroom'),
+      createQB(1100, 310, 'flower'),
+      createQB(1500, 310, 'star'),
+      createQB(2900, 530, 'coin'),
+      createQB(4400, 310, 'flower'),
+      createQB(5600, 190, 'star'),
+      createQB(8000, 230, 'mushroom'),
+      createQB(9700, 110, 'oneup'),
+    ],
+    enemies: [
+      createEnemy(1900, 554, 'crab'),
+      createEnemy(2300, 600, 'squid'),
+      createEnemy(2900, 500, 'squid'),
+      createEnemy(3400, 440, 'squid'),
+      createEnemy(3800, 594, 'crab'),
+      createEnemy(4300, 374, 'robot'),
+      createEnemy(5600, 254, 'crab'),
+      createEnemy(6300, 634, 'robot'),
+      createEnemy(6900, 314, 'crab'),
+      createEnemy(8300, 294, 'robot'),
+      createEnemy(9200, 174, 'crab'),
+    ],
+    decorations: [
+      createDeco(300, 470, 'seaweed'), createDeco(700, 400, 'coral'),
+      createDeco(1050, 340, 'bubble'), createDeco(1450, 350, 'shell'),
+      createDeco(1850, 520, 'coral'), createDeco(2300, 640, 'seaweed'),
+      createDeco(2700, 680, 'bubble'), createDeco(3100, 500, 'coral'),
+      createDeco(3500, 480, 'shell'), createDeco(3900, 560, 'seaweed'),
+      createDeco(4400, 340, 'coral'), createDeco(4750, 280, 'bubble'),
+      createDeco(5050, 220, 'shell'), createDeco(5450, 200, 'coral'),
+      createDeco(5850, 280, 'seaweed'), createDeco(6250, 580, 'bubble'),
+      createDeco(6650, 280, 'coral'), createDeco(6950, 280, 'shell'),
+      createDeco(7300, 280, 'seaweed'), createDeco(8000, 260, 'coral'),
+      createDeco(8600, 200, 'bubble'), createDeco(9150, 150, 'shell'),
+      createDeco(9700, 140, 'coral'),
+    ],
+    playerStart: { x: 140, y: 480 },
+    goal: { x: 9800, y: 180 },
     timeBonus: 180,
-    coinGoal: 36,
-    springs: [createSpring(1779, 580), createSpring(7895, 580)],
+    coinGoal: 30,
+    springs: [createSpring(1500, 380)],
+    spikes: [createSpike(1900, 552), createSpike(5350, 312), createSpike(8400, 292)],
+    waterZones: [
+      createWaterZone(2500, 380, 1700, 380),
+      createWaterZone(6100, 500, 400, 180),
+    ],
   },
-
-  // ============================================================
-  // LEVEL 17 (Gegner-Horde) - 18 Enemies (Crabs, Squids, Robots)
-  // ============================================================
+  // ==========================================================================
+  // L17 "Abyssal Horde" — Tiefsee-Horde (width 14000, coinGoal 34)
+  // Durchgehend tiefe Arenen (Tops 560-780) mit Graeben, Riffboden, Rohren +
+  // Piranhas, ~27 Gegnern; finale Treppe + Zickzack-Kletterer zum Gipfelziel.
+  // ==========================================================================
   {
-    id: 17, name: "Neptune's Depths", width: 20000, height: 650, biome: 'water',
-    platforms: (() => {
-      const S = 0.5;
-      const plats: any[] = [];
-      // Long ground section 1
-      plats.push(createPlat(100 * S, 600, 3000 * S, 40, 'water'));
-      // Gap - 2 stepping stones bridging 275px
-      plats.push(...gapWithPlatforms(S, 1600, 600, 550, 2));
-      // Long ground section 2
-      plats.push(createPlat(3400 * S, 600, 2500 * S, 40, 'water'));
-      // Pipe section - moved closer (5400 -> 4800)
-      plats.push(...pipeSection(S, 4800, 600, 4));
-      // Bridge - MORE platforms (4 -> 8)
-      plats.push(...gapWithPlatforms(S, 6000, 540, 400, 8));
-      plats.push(createPlat(6800 * S, 600, 1500 * S, 40, 'water'));
-      // Gap - MORE platforms (4 -> 8)
-      plats.push(...gapWithPlatforms(S, 7800, 600, 400, 8));
-      // Long ground section 3
-      plats.push(createPlat(9000 * S, 600, 2000 * S, 40, 'water'));
-      // Vertical climb - moved closer (11700 -> 10500)
-      plats.push(...verticalClimb(S, 10500, 600));
-      // Bridge from climb exit to next ground (BFS max ~600px horizontal)
-      plats.push(...gapWithPlatforms(S, 11800, 560, 550, 5));
-      // Ground
-      plats.push(createPlat(13300 * S, 600, 800 * S, 40, 'water'));
-      // Pipe section - moved closer (15100 -> 13700)
-      plats.push(...pipeSection(S, 13700, 600, 3));
-      // Bridge - MORE platforms (4 -> 8)
-      plats.push(...gapWithPlatforms(S, 14800, 540, 400, 8));
-      plats.push(createPlat(15800 * S, 600, 800 * S, 40, 'water'));
-      // Small gap - MORE platforms (3 -> 6)
-      plats.push(...gapWithPlatforms(S, 16400, 600, 300, 6));
-      // Final ground + goal - moved closer
-      plats.push(createPlat(17500 * S, 600, 1200 * S, 40, 'water'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.5;
-      const coins: any[] = [];
-      for (let x = 300; x < 2400; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 3700; x < 5700; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 7700; x < 9300; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 10600; x < 12400; x += 200) coins.push(createCoin(x * S, 550));
-      // Vertical climb coins
-      coins.push(createCoin(12500 * S, 480), createCoin(12800 * S, 400), createCoin(13100 * S, 320));
-      coins.push(createCoin(13400 * S, 240), createCoin(13700 * S, 320), createCoin(14000 * S, 400));
-      coins.push(createCoin(14300 * S, 480));
-      for (let x = 15000; x < 15800; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 17600; x < 18500; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 19300; x < 20600; x += 200) coins.push(createCoin(x * S, 550));
-      // Coin arc above the spring in the third arena
-      coins.push(createCoin(4460, 500), createCoin(4500, 460), createCoin(4540, 500));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.5;
-      return [
-        createQB(800 * S, 530, 'mushroom'),
-        createQB(1800 * S, 530, 'flower'),
-        createQB(4100 * S, 530, 'star'),
-        createQB(5300 * S, 530, 'mushroom'),
-        createQB(6200 * S, 530, 'flower'),
-        createQB(8080 * S, 550, 'star'),
-        createQB(11000 * S, 530, 'mushroom'),
-        createQB(11700 * S, 530, 'flower'),
-        createQB(13400 * S, 170, 'star'),
-        createQB(15200 * S, 530, 'mushroom'),
-        createQB(16300 * S, 530, 'flower'),
-        createQB(17800 * S, 530, 'star'),
-        createQB(19700 * S, 530, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.5;
-      return [
-        // Ground section 1: crabs + squids
-        createEnemy(500 * S, 580, 'crab'),
-        createEnemy(900 * S, 580, 'squid'),
-        createEnemy(1300 * S, 580, 'robot'),
-        createEnemy(1700 * S, 580, 'squid'),
-        createEnemy(2100 * S, 580, 'crab'),
-        // Ground section 2: robots + squids
-        createEnemy(3800 * S, 580, 'robot'),
-        createEnemy(4300 * S, 580, 'squid'),
-        createEnemy(4800 * S, 580, 'crab'),
-        createEnemy(5300 * S, 580, 'robot'),
-        // Pipes: piranhas
-        createEnemy(6100 * S, 570, 'piranha'),
-        createEnemy(6450 * S, 570, 'piranha'),
-        createEnemy(6800 * S, 570, 'piranha'),
-        createEnemy(7150 * S, 570, 'piranha'),
-        // Ground section 3: squids + robots
-        createEnemy(7800 * S, 580, 'squid'),
-        createEnemy(8400 * S, 580, 'crab'),
-        createEnemy(10900 * S, 580, 'robot'),
-        createEnemy(11500 * S, 580, 'squid'),
-        // Ground after climb: crabs
-        createEnemy(15100 * S, 580, 'crab'),
-        createEnemy(15500 * S, 580, 'robot'),
-        // Pipes
-        createEnemy(16300 * S, 570, 'piranha'),
-        createEnemy(16650 * S, 570, 'piranha'),
-        createEnemy(17000 * S, 570, 'piranha'),
-        // Final ground
-        createEnemy(17700 * S, 580, 'squid'),
-        createEnemy(18200 * S, 580, 'crab'),
-        createEnemy(19600 * S, 580, 'robot'),
-        createEnemy(20100 * S, 580, 'squid'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.5;
-      const decos: any[] = [];
-      for (let x = 300; x < 21000; x += 700) {
-        const t = x % 2800 === 300 ? 'seaweed' : (x % 2800 === 1000 ? 'bubble' : (x % 2800 === 1700 ? 'coral' : 'shell'));
-        decos.push(createDeco(x * S, 560, t));
-      }
-      return decos;
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.5;
-      return [
-        createMovingPlat(7200 * S, 540, 100, 24, 'water', 'horizontal', 220, 22),
-        createMovingPlat(15400 * S, 520, 120, 24, 'water', 'vertical', 180, 20),
-      ];
-    })(),
-    playerStart: { x: 150, y: 560 },
-    goal: { x: 8750, y: 578 },
+    id: 17, name: 'Abyssal Horde', width: 14000, height: 800, biome: 'water',
+    platforms: [
+      seg(0, 720, 640, 40, 'water'),
+      seg(760, 1100, 580, 24, 'platform_medium'),
+      seg(1140, 1900, 680, 40, 'cave'),
+      seg(1940, 2200, 600, 24, 'platform_hard'),
+      seg(2240, 2820, 700, 40, 'water'),
+      seg(2860, 3120, 780, 40, 'cave'),
+      seg(3160, 3600, 700, 40, 'water'),
+      seg(3640, 3900, 620, 24, 'platform_easy'),
+      seg(3940, 4800, 680, 40, 'water'),
+      seg(4268, 4332, 616, 64, 'pipe'),
+      seg(4260, 4340, 592, 24, 'pipe_top'),
+      seg(4840, 5100, 620, 24, 'platform_medium'),
+      seg(5140, 5800, 680, 40, 'cave'),
+      seg(5840, 6100, 600, 24, 'platform_hard'),
+      seg(6140, 6800, 700, 40, 'water'),
+      seg(6840, 7100, 620, 24, 'platform_easy'),
+      seg(7140, 7800, 680, 40, 'water'),
+      seg(7368, 7432, 616, 64, 'pipe'),
+      seg(7360, 7440, 592, 24, 'pipe_top'),
+      seg(7840, 8100, 600, 24, 'platform_medium'),
+      seg(8140, 8600, 560, 40, 'cave'),
+      ...staircase(8640, 560, 5, 60, 160, 40, 'platform_medium'),
+      seg(9640, 10200, 260, 40, 'ruins'),
+      seg(10240, 10700, 620, 40, 'cave'),
+      seg(10740, 10860, 500, 24, 'bubble'),
+      seg(10900, 11500, 260, 40, 'ruins'),
+      ...zigzagClimb(11700, 260, 4, 50, 120, 130, 'platform_medium'),
+      seg(11890, 13300, 60, 40, 'water'),
+    ],
+    movingPlatforms: [
+      createMovingPlat(2000, 510, 120, 24, 'platform_medium', 'vertical', 60, 20),
+      createMovingPlat(6000, 540, 120, 24, 'platform_easy', 'horizontal', 180, 22),
+    ],
+    coins: [
+      ...coinTrail(300, 580, 650, 580, 3),
+      ...coinArc(950, 520, 5, 80, 70),
+      ...coinTrail(1200, 620, 1850, 620, 4),
+      ...coinTrail(2300, 640, 2780, 640, 4),
+      ...coinTrail(2900, 720, 3100, 720, 3),
+      ...coinTrail(3200, 640, 3560, 640, 4),
+      ...coinTrail(4000, 620, 4760, 620, 5),
+      ...coinTrail(5200, 620, 5760, 620, 4),
+      ...coinTrail(6200, 640, 6760, 640, 5),
+      ...coinTrail(7200, 620, 7760, 620, 5),
+      ...coinTrail(8200, 500, 8560, 500, 4),
+      ...coinLadder(8700, 470, 280, 5),
+      ...coinTrail(9700, 200, 10180, 200, 4),
+      ...coinTrail(10300, 560, 10660, 560, 4),
+      ...coinDiamond(11200, 420, 120),
+      ...coinTrail(11700, 180, 12000, 180, 3),
+      ...coinTrail(12000, 40, 13000, 40, 5),
+    ],
+    questionBlocks: [
+      createQB(500, 570, 'mushroom'),
+      createQB(1700, 610, 'flower'),
+      createQB(2400, 630, 'star'),
+      createQB(4000, 610, 'coin'),
+      createQB(5300, 610, 'flower'),
+      createQB(6300, 630, 'star'),
+      createQB(7300, 610, 'oneup'),
+      createQB(8300, 490, 'mushroom'),
+      createQB(9900, 190, 'flower'),
+      createQB(11400, 190, 'star'),
+    ],
+    enemies: [
+      createEnemy(900, 634, 'crab'),
+      createEnemy(1300, 600, 'squid'),
+      createEnemy(1600, 674, 'robot'),
+      createEnemy(2100, 594, 'crab'),
+      createEnemy(2500, 660, 'squid'),
+      createEnemy(2900, 740, 'squid'),
+      createEnemy(3300, 694, 'robot'),
+      createEnemy(3750, 614, 'crab'),
+      createEnemy(4100, 640, 'squid'),
+      createEnemy(4300, 604, 'piranha'),
+      createEnemy(4400, 674, 'crab'),
+      createEnemy(4900, 614, 'robot'),
+      createEnemy(5300, 660, 'squid'),
+      createEnemy(5500, 674, 'crab'),
+      createEnemy(5900, 594, 'robot'),
+      createEnemy(6300, 640, 'squid'),
+      createEnemy(6500, 694, 'crab'),
+      createEnemy(6900, 614, 'robot'),
+      createEnemy(7300, 640, 'squid'),
+      createEnemy(7400, 604, 'piranha'),
+      createEnemy(7500, 674, 'crab'),
+      createEnemy(7900, 594, 'robot'),
+      createEnemy(8300, 554, 'crab'),
+      createEnemy(9500, 254, 'robot'),
+      createEnemy(10500, 614, 'crab'),
+      createEnemy(11200, 254, 'robot'),
+      createEnemy(12100, 54, 'crab'),
+    ],
+    decorations: [
+      createDeco(300, 600, 'seaweed'), createDeco(650, 560, 'coral'),
+      createDeco(1000, 560, 'bubble'), createDeco(1400, 620, 'shell'),
+      createDeco(1800, 620, 'coral'), createDeco(2300, 660, 'seaweed'),
+      createDeco(2700, 660, 'bubble'), createDeco(3000, 740, 'coral'),
+      createDeco(3400, 660, 'shell'), createDeco(3800, 600, 'seaweed'),
+      createDeco(4500, 640, 'coral'), createDeco(5000, 600, 'bubble'),
+      createDeco(5600, 640, 'shell'), createDeco(6000, 580, 'seaweed'),
+      createDeco(6600, 660, 'coral'), createDeco(7000, 600, 'bubble'),
+      createDeco(7600, 640, 'shell'), createDeco(8000, 580, 'seaweed'),
+      createDeco(8400, 540, 'coral'), createDeco(9200, 240, 'bubble'),
+      createDeco(10000, 240, 'shell'), createDeco(10500, 600, 'coral'),
+      createDeco(11100, 240, 'seaweed'), createDeco(12200, 40, 'coral'),
+      createDeco(13000, 40, 'bubble'),
+    ],
+    playerStart: { x: 140, y: 620 },
+    goal: { x: 12600, y: 60 },
     timeBonus: 200,
-    coinGoal: 40,
-    // Horde spring bonus — no spikes here: the deep (>500px) arena grounds are
-    // swim zones, where spikes would be unfair-unausweichlich
-    springs: [createSpring(4500, 580)],
+    coinGoal: 34,
+    springs: [createSpring(8400, 560)],
+    spikes: [
+      createSpike(1500, 672),
+      createSpike(4500, 672),
+      createSpike(7600, 672),
+      createSpike(8500, 552),
+    ],
+    checkpoints: [
+      createCheckpoint(2000, 560),
+      createCheckpoint(4300, 640),
+      createCheckpoint(6500, 660),
+      createCheckpoint(9900, 220),
+      createCheckpoint(11200, 220),
+    ],
   },
 
-  // ============================================================
-  // LEVEL 18 (Tiefsee-Finale) - Absteigende Level-Struktur
-  // ============================================================
+  // ==========================================================================
+  // L18 "The Mariana Trench" — Mariana-Finale (width 12600, steigendes Wasser)
+  // Engine: ab Level-ID 18 schiesst eine Wasserwand (lava) hinter dem Spieler
+  // hoch (Abstand ~360px). Route: Abstieg in den Graben, langer Aufstieg mit
+  // 7 Checkpoints, Crumble-Abkuerzung als Risiko-Route, Finale auf dem Grat.
+  // ==========================================================================
   {
-    id: 18, name: "The Mariana Trench", width: 22000, height: 800, biome: 'water',
-    platforms: (() => {
-      const S = 0.45;
-      const plats: any[] = [];
-      // Start at shallow depth (y=400)
-      plats.push(createPlat(100 * S, 400, 800 * S, 40, 'water'));
-      // Step down level 1
-      plats.push(createPlat(1000 * S, 440, 100, 24, 'platform_easy'));
-      plats.push(createPlat(1300 * S, 480, 800 * S, 40, 'water'));
-      // Step down level 2
-      plats.push(createPlat(2200 * S, 520, 100, 24, 'platform_easy'));
-      plats.push(createPlat(2500 * S, 560, 600 * S, 40, 'water'));
-      // Step down level 3 via gap
-      plats.push(...gapWithPlatforms(S, 3300, 560, 450, 3));
-      plats.push(createPlat(4000 * S, 600, 800 * S, 40, 'water'));
-      // Stepping stone to pipe section
-      plats.push(createPlat(4750 * S, 590, 200 * S, 24, 'platform_easy'));
-      // Pipe section at depth
-      plats.push(...pipeSection(S, 4850, 600, 4));
-      // Stepping stone to bridge
-      plats.push(createPlat(6400 * S, 560, 200 * S, 24, 'platform_easy'));
-      // Bridge
-      plats.push(...gapWithPlatforms(S, 6600, 540, 600, 4));
-      plats.push(createPlat(6900 * S, 600, 600 * S, 40, 'water'));
-      // Step down level 4
-      plats.push(createPlat(7600 * S, 620, 100, 24, 'platform_easy'));
-      plats.push(createPlat(7900 * S, 640, 400 * S, 40, 'water'));
-      // Gap to step down further
-      plats.push(...gapWithPlatforms(S, 8500, 640, 500, 4));
-      plats.push(createPlat(9400 * S, 660, 600 * S, 40, 'water'));
-      // Stepping stone from water to vertical climb
-      plats.push(createPlat(9900 * S, 620, 200 * S, 24, 'platform_easy'));
-      // Vertical climb
-      plats.push(...verticalClimb(S, 10300, 660));
-      // Stepping stone from vertical climb to deepest water
-      plats.push(createPlat(11900 * S, 660, 200 * S, 24, 'platform_easy'));
-      // Deepest section
-      plats.push(createPlat(12700 * S, 700, 800 * S, 40, 'water'));
-      // Stepping stone to deepest pipes
-      plats.push(createPlat(13450 * S, 685, 200 * S, 24, 'platform_easy'));
-      // Final challenge: pipes at deepest
-      plats.push(...pipeSection(S, 13550, 700, 5));
-      // Bridge
-      plats.push(...gapWithPlatforms(S, 15600, 640, 600, 4));
-      plats.push(createPlat(15900 * S, 700, 600 * S, 40, 'water'));
-      // Final gap
-      plats.push(...gapWithPlatforms(S, 16700, 700, 500, 4));
-      // Goal platform
-      plats.push(createPlat(17600 * S, 720, 1500 * S, 40, 'water'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.45;
-      const coins: any[] = [];
-      for (let x = 300; x < 900; x += 200) coins.push(createCoin(x * S, 350));
-      for (let x = 1400; x < 2100; x += 200) coins.push(createCoin(x * S, 430));
-      for (let x = 2600; x < 3100; x += 200) coins.push(createCoin(x * S, 510));
-      for (let x = 4100; x < 4900; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 7000; x < 7500; x += 200) coins.push(createCoin(x * S, 550));
-      for (let x = 8000; x < 8400; x += 200) coins.push(createCoin(x * S, 590));
-      for (let x = 9500; x < 10200; x += 200) coins.push(createCoin(x * S, 610));
-      // Vertical climb coins
-      coins.push(createCoin(10300 * S, 540), createCoin(10600 * S, 460), createCoin(10900 * S, 380));
-      coins.push(createCoin(11200 * S, 300), createCoin(11500 * S, 380), createCoin(11800 * S, 460));
-      coins.push(createCoin(12100 * S, 540));
-      for (let x = 12800; x < 13600; x += 200) coins.push(createCoin(x * S, 650));
-      for (let x = 16000; x < 16600; x += 200) coins.push(createCoin(x * S, 650));
-      for (let x = 17700; x < 19000; x += 200) coins.push(createCoin(x * S, 670));
-      // Bonus coins above the two rescue springs (rising-water compensation)
-      coins.push(createCoin(180, 300), createCoin(220, 260), createCoin(260, 300));
-      coins.push(createCoin(2840, 470), createCoin(2880, 430), createCoin(2920, 470));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.45;
-      return [
-        createQB(500 * S, 330, 'mushroom'),
-        createQB(1500 * S, 410, 'flower'),
-        createQB(2700 * S, 490, 'star'),
-        createQB(4300 * S, 530, 'mushroom'),
-        createQB(5300 * S, 530, 'flower'),
-        createQB(7200 * S, 530, 'star'),
-        createQB(8200 * S, 570, 'mushroom'),
-        createQB(10000 * S, 590, 'flower'),
-        createQB(11200 * S, 230, 'star'),
-        createQB(13000 * S, 630, 'mushroom'),
-        createQB(14000 * S, 630, 'flower'),
-        createQB(15000 * S, 630, 'star'),
-        createQB(16300 * S, 630, 'mushroom'),
-        createQB(18200 * S, 650, 'flower'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.45;
-      return [
-        createEnemy(500 * S, 380, 'squid'),
-        createEnemy(1600 * S, 460, 'crab'),
-        createEnemy(2800 * S, 540, 'robot'),
-        createEnemy(4400 * S, 580, 'squid'),
-        // Pipes at depth
-        createEnemy(5300 * S, 570, 'piranha'),
-        createEnemy(5650 * S, 570, 'piranha'),
-        createEnemy(6000 * S, 570, 'piranha'),
-        createEnemy(6350 * S, 570, 'piranha'),
-        createEnemy(7200 * S, 580, 'crab'),
-        createEnemy(8300 * S, 620, 'squid'),
-        createEnemy(9700 * S, 640, 'robot'),
-        createEnemy(13000 * S, 680, 'squid'),
-        // Deep pipes
-        createEnemy(14000 * S, 670, 'piranha'),
-        createEnemy(14350 * S, 670, 'piranha'),
-        createEnemy(14700 * S, 670, 'piranha'),
-        createEnemy(15050 * S, 670, 'piranha'),
-        createEnemy(15400 * S, 670, 'piranha'),
-        createEnemy(16100 * S, 680, 'crab'),
-        createEnemy(18000 * S, 700, 'robot'),
-        createEnemy(18700 * S, 700, 'squid'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.45;
-      const decos: any[] = [];
-      for (let x = 200; x < 19000; x += 700) {
-        const t = x % 2800 === 200 ? 'seaweed' : (x % 2800 === 900 ? 'bubble' : (x % 2800 === 1600 ? 'coral' : 'shell'));
-        decos.push(createDeco(x * S, x < 3000 ? x * 0.13 + 340 : (x < 7000 ? x * 0.04 + 370 : x * 0.015 + 460), t));
-      }
-      return decos;
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.45;
-      return [
-        createMovingPlat(3800 * S, 540, 100, 24, 'water', 'horizontal', 200, 22),
-        createMovingPlat(9000, 600, 100, 24, 'water', 'horizontal', 340, 20),
-        createMovingPlat(15300 * S, 640, 120, 24, 'water', 'vertical', 140, 20),
-      ];
-    })(),
-    playerStart: { x: 150, y: 360 },
-    goal: { x: 7920, y: 698 },
+    id: 18, name: 'The Mariana Trench', width: 12600, height: 800, biome: 'water',
+    platforms: [
+      seg(0, 700, 500, 40, 'water'),
+      seg(760, 1080, 460, 24, 'platform_medium'),
+      seg(1140, 1400, 420, 24, 'platform_hard'),
+      seg(1460, 2000, 560, 40, 'cave'),
+      seg(2060, 2500, 640, 40, 'cave'),
+      seg(2560, 3100, 760, 40, 'cave'),
+      ...islandCluster(3140, 760, [
+        { dx: 0, dy: 100, w: 240, type: 'bubble' },
+        { dx: 290, dy: 140, w: 120, type: 'bubble' },
+      ]),
+      seg(3440, 4000, 760, 40, 'cave'),
+      seg(4040, 4600, 700, 40, 'cave'),
+      ...islandCluster(4640, 760, [{ dx: 0, dy: 140, w: 260, type: 'bubble' }]),
+      seg(4940, 5500, 560, 40, 'stone'),
+      seg(5540, 5720, 500, 24, 'bubble'),
+      seg(5760, 6100, 500, 40, 'water'),
+      seg(6140, 6400, 440, 24, 'platform_medium'),
+      seg(6440, 6700, 380, 24, 'platform_hard'),
+      seg(6740, 7300, 340, 40, 'stone'),
+      seg(7300, 7600, 540, 40, 'cave'),
+      seg(7300, 7420, 500, 24, 'bubble'),
+      seg(7480, 7600, 500, 24, 'bubble'),
+      seg(7640, 8200, 340, 40, 'water'),
+      seg(8240, 8500, 300, 24, 'platform_medium'),
+      seg(8540, 8800, 260, 24, 'platform_easy'),
+      seg(8840, 9400, 220, 40, 'stone'),
+      seg(9440, 9800, 180, 24, 'platform_hard'),
+      createCrumblePlat(10000, 192, 300, 24, 'platform_medium'),
+      seg(9880, 10280, 260, 24, 'platform_medium'),
+      seg(10260, 10800, 180, 40, 'water'),
+      seg(10840, 11100, 140, 24, 'platform_medium'),
+      seg(11140, 11400, 100, 24, 'platform_easy'),
+      seg(11440, 12300, 100, 40, 'water'),
+    ],
+    movingPlatforms: [
+      createMovingPlat(3900, 620, 120, 24, 'platform_medium', 'circular', 100, 20),
+      createMovingPlat(8300, 240, 120, 24, 'platform_easy', 'horizontal', 120, 22),
+    ],
+    coins: [
+      ...coinArc(950, 400, 5, 90, 80),
+      ...coinTrail(1500, 490, 1900, 490, 4),
+      ...coinTrail(2100, 570, 2450, 570, 3),
+      ...coinTrail(2600, 680, 3050, 680, 4),
+      ...coinTrail(3150, 590, 3380, 590, 3),
+      ...coinTrail(3500, 680, 3950, 680, 4),
+      ...coinTrail(4100, 620, 4550, 620, 4),
+      ...coinDiamond(4750, 520, 120),
+      ...coinTrail(5000, 480, 5400, 480, 4),
+      ...coinArc(5600, 400, 5, 80, 70),
+      ...coinTrail(5850, 420, 6050, 420, 3),
+      ...coinTrail(6200, 360, 6350, 360, 3),
+      ...coinTrail(6500, 300, 6650, 300, 3),
+      ...coinTrail(6900, 240, 7250, 240, 4),
+      ...coinTrail(7350, 470, 7550, 470, 3),
+      ...coinTrail(7700, 260, 8100, 260, 4),
+      ...coinArc(8600, 180, 5, 80, 70),
+      ...coinTrail(8900, 160, 9300, 160, 4),
+      ...coinTrail(9500, 100, 9750, 100, 3),
+      ...coinTrail(10900, 60, 11300, 60, 4),
+      ...coinTrail(11500, 40, 12200, 40, 5),
+    ],
+    questionBlocks: [
+      createQB(400, 430, 'mushroom'),
+      createQB(900, 390, 'flower'),
+      createQB(2700, 690, 'star'),
+      createQB(5300, 490, 'coin'),
+      createQB(7000, 270, 'flower'),
+      createQB(9200, 150, 'star'),
+      createQB(10600, 110, 'oneup'),
+      createQB(11800, 30, 'mushroom'),
+    ],
+    enemies: [
+      createEnemy(700, 440, 'squid'),
+      createEnemy(1250, 380, 'squid'),
+      createEnemy(1750, 500, 'squid'),
+      createEnemy(2300, 600, 'squid'),
+      createEnemy(2800, 700, 'squid'),
+      createEnemy(3250, 654, 'crab'),
+      createEnemy(3700, 700, 'squid'),
+      createEnemy(4300, 694, 'robot'),
+      createEnemy(4750, 614, 'crab'),
+      createEnemy(5200, 554, 'crab'),
+      createEnemy(6250, 434, 'robot'),
+      createEnemy(6550, 374, 'crab'),
+      createEnemy(6950, 334, 'robot'),
+      createEnemy(7450, 520, 'squid'),
+      createEnemy(7800, 334, 'crab'),
+      createEnemy(8650, 254, 'crab'),
+      createEnemy(9100, 214, 'robot'),
+      createEnemy(10050, 254, 'crab'),
+      createEnemy(10900, 134, 'robot'),
+      createEnemy(12100, 94, 'crab'),
+    ],
+    decorations: [
+      createDeco(300, 470, 'seaweed'), createDeco(700, 420, 'coral'),
+      createDeco(1050, 380, 'bubble'), createDeco(1500, 520, 'shell'),
+      createDeco(1900, 520, 'coral'), createDeco(2350, 600, 'seaweed'),
+      createDeco(2800, 720, 'bubble'), createDeco(3300, 620, 'coral'),
+      createDeco(3800, 720, 'shell'), createDeco(4400, 660, 'seaweed'),
+      createDeco(4800, 580, 'coral'), createDeco(5250, 520, 'bubble'),
+      createDeco(5650, 460, 'shell'), createDeco(5950, 460, 'seaweed'),
+      createDeco(6300, 400, 'coral'), createDeco(6600, 340, 'bubble'),
+      createDeco(7000, 300, 'shell'), createDeco(7500, 500, 'seaweed'),
+      createDeco(7900, 300, 'coral'), createDeco(8350, 260, 'bubble'),
+      createDeco(8700, 220, 'shell'), createDeco(9100, 180, 'seaweed'),
+      createDeco(9700, 140, 'coral'), createDeco(10400, 140, 'bubble'),
+      createDeco(11000, 100, 'shell'), createDeco(11800, 60, 'coral'),
+      createDeco(12200, 60, 'seaweed'),
+    ],
+    playerStart: { x: 140, y: 480 },
+    goal: { x: 11900, y: 100 },
     timeBonus: 220,
-    // Rescue springs high up — rising water compensation (launch clears the
-    // flood zone). Spikes (max 2) sit high up, far from the flooded passages.
-    springs: [createSpring(220, 380), createSpring(2880, 548)],
-    spikes: [createSpike(550, 452), createSpike(4878, 458)],
+    springs: [createSpring(5850, 500), createSpring(6850, 340)],
+    spikes: [
+      createSpike(2900, 752),
+      createSpike(7150, 332),
+      createSpike(9000, 212),
+    ],
+    checkpoints: [
+      createCheckpoint(1700, 520),
+      createCheckpoint(2800, 720),
+      createCheckpoint(5150, 520),
+      createCheckpoint(6000, 460),
+      createCheckpoint(7250, 300),
+      createCheckpoint(8900, 180),
+      createCheckpoint(10500, 140),
+    ],
   },
 ];

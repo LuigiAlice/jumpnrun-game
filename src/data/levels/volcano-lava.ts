@@ -1,1132 +1,913 @@
-// Volcano Lava World - 6 Levels (55-60)
-// S-Factors: 0.556, 0.526, 0.5, 0.476, 0.455, 0.435
+// Volcano Lava World (ids 55-60) — Phase 9 rebuild
+// Archetypes:
+//   L55 "Lavasteg"         - Lavasteg (Tutorial: Terrassen, Lava-Fluss mit Trittsteinen)
+//   L56 "Magmasprünge"     - Magmasprünge (grosse Lavaseen, Fahr-/Kreis-/Vertikalplattformen)
+//   L57 "Obsidianröhren"   - Obsidianröhren (Pipes + Piranhas, Schluessel/Tuer-Lavahöhle)
+//   L58 "Kraterkletterer"  - Kraterkletterer (Zickzack-Aufstieg, Zwei-Etagen-Galerie)
+//   L59 "Aschesturm-Horde" - Aschesturm-Horde (Kampf-Arenen, Waechter, Muenz-Tor)
+//   L60 "Eruptions-Finale" - Eruptions-Finale (steigende Lava, Fluchtroute mit Checkpoints)
+//
+// Volcano gravity is 2200: sichere Aufstiege <=140px, sichere Spruenge <=190px horizontal.
+// Alle Level sind as-authored loesbar — ensureSolvable() darf keine Plattform ergaenzen.
+// Die Lava ist toedlich und liegt unter der Route; die solide Route kommt ohne sie aus.
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import {
+  LevelData, createPlat, createQB, createEnemy, createDeco, createMovingPlat,
+  createSpring, createSpike, createCrumblePlat, createCheckpoint, createKey, createDoor,
+  staircase, plateauSection, pitWithLedges, twoTierSection, zigzagClimb, islandCluster,
+  gapWithPlatforms, coinArc, coinDiamond, coinTrail, coinLadder,
+} from './helpers';
+
+type PType = LevelData['platforms'][number]['type'];
+type Plat = LevelData['platforms'][number];
+
+/** Solider Boden von x1 bis x2 mit Oberkante topY. */
+const ground = (x1: number, x2: number, topY: number, type: PType = 'stone'): Plat =>
+  createPlat((x1 + x2) / 2, topY + 20, x2 - x1, 40, type);
+
+/** Schwebende Trittplatte (24px hoch), y = Zentrum. */
+const slab = (cx: number, topY: number, w: number, type: PType = 'platform_medium'): Plat =>
+  createPlat(cx, topY + 12, w, 24, type);
+
+/** Toedlicher Lava-See (60px hoch), y = Zentrum. */
+const lavaPool = (x1: number, x2: number, topY = 760): Plat =>
+  createPlat((x1 + x2) / 2, topY + 30, x2 - x1, 60, 'lava');
+
+/** Obsidianroehre auf einer Flaeche mit Oberkante topY. */
+const pipePair = (x: number, topY: number): Plat[] => [
+  createPlat(x, topY - 32, 64, 64, 'pipe'),
+  createPlat(x, topY - 76, 80, 24, 'pipe_top'),
+];
 
 export const VOLCANO_LAVA_LEVELS: LevelData[] = [
-    // ============================================================
-    // LEVEL 55: Tutorial — stone ground, few lava gaps, few enemies
-    // S=0.556, width=22000, height=620
-    // ============================================================
-    {
-        id: 55,
-        name: "Einfuehrung",
-        width: 22000,
-        height: 620,
-        biome: 'volcano-lava',
-        platforms: (() => {
-            const S = 0.556;
-            const plats: any[] = [];
-
-            // Stone ground segments at design_x = n*1800, w=1200, plus lava + helpers
-            const segCount = 12;
-            for (let n = 0; n < segCount; n++) {
-                const baseX = n * 1800;
-                plats.push(createPlat(baseX * S, 530, 1200 * S, 100, 'stone'));
-                if (n < segCount - 1) {
-                    plats.push(createPlat((baseX + 1200) * S, 530, 200 * S, 100, 'lava'));
-                    plats.push(createPlat(Math.round((baseX + 1075) * S), 440, 100 * S, 24, 'platform_easy'));
-                    plats.push(createPlat((baseX + 1500) * S, 440, 100 * S, 24, 'platform_easy'));
-                }
-                // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut)
-                if (n >= 1 && n <= 10 && n < segCount - 1) {
-                    plats.push(createPlat(Math.round((baseX + 2420) * S), 440, 100 * S, 24, 'platform_easy'));
-                }
-            }
-
-            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
-            // Stein1(→1334) → Bridge(1460) → Helper(1571) — jede Hufe ≤221px
-            plats.push(createPlat(1460, 440, 100, 24, 'platform_easy'));
-
-            // Brick towers for decoration
-            plats.push(createPlat(1200 * S, 400, 80 * S, 130, 'brick'));
-            plats.push(createPlat(5400 * S, 390, 80 * S, 140, 'brick'));
-            plats.push(createPlat(9600 * S, 400, 80 * S, 130, 'brick'));
-            plats.push(createPlat(15000 * S, 390, 80 * S, 140, 'brick'));
-
-            // Mid-height platforms for variety
-            plats.push(createPlat(3200 * S, 360, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(7000 * S, 350, 100 * S, 24, 'platform_hard'));
-            plats.push(createPlat(11500 * S, 360, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(17500 * S, 350, 100 * S, 24, 'platform_hard'));
-            plats.push(createPlat(600, 300, 140, 24, 'brick'));
-
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.556;
-            const cs: any[] = [];
-            for (let x = 200; x < 1100; x += 200) cs.push(createCoin(x * S, 480));
-            for (let x = 2200; x < 3000; x += 200) cs.push(createCoin(x * S, 480));
-            cs.push(createCoin(3200 * S, 310));
-            cs.push(createCoin(3300 * S, 310));
-            for (let x = 4000; x < 4800; x += 200) cs.push(createCoin(x * S, 480));
-            cs.push(createCoin(7000 * S, 300));
-            cs.push(createCoin(7100 * S, 300));
-            for (let x = 5800; x < 6600; x += 200) cs.push(createCoin(x * S, 480));
-            for (let x = 7600; x < 8400; x += 200) cs.push(createCoin(x * S, 480));
-            cs.push(createCoin(11600 * S, 310));
-            for (let x = 9400; x < 10200; x += 200) cs.push(createCoin(x * S, 480));
-            for (let x = 11200; x < 12000; x += 200) cs.push(createCoin(x * S, 480));
-            for (let x = 13000; x < 13800; x += 200) cs.push(createCoin(x * S, 480));
-            for (let x = 14800; x < 15600; x += 200) cs.push(createCoin(x * S, 480));
-            cs.push(createCoin(17600 * S, 300));
-            for (let x = 16600; x < 17400; x += 200) cs.push(createCoin(x * S, 480));
-            for (let x = 18400; x < 19200; x += 200) cs.push(createCoin(x * S, 480));
-            cs.push(createCoin(570, 270), createCoin(600, 270), createCoin(630, 270));
-            return cs;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.556;
-            return [
-                createQB(600 * S, 460, 'mushroom'),
-                createQB(3300 * S, 300, 'coin'),
-                createQB(7100 * S, 290, 'flower'),
-                createQB(11600 * S, 300, 'star'),
-                createQB(17600 * S, 290, 'mushroom'),
-                createQB(600, 250, 'mushroom'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.556;
-            return [
-                createEnemy(800 * S, 490, 'goomba'),
-                createEnemy(4500 * S, 490, 'fireball'),
-                createEnemy(10000 * S, 490, 'goomba'),
-                createEnemy(15500 * S, 490, 'crab'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.556;
-            return [
-                createDeco(300 * S, 460, 'fire'),
-                createDeco(1400 * S, 460, 'ember'),
-                createDeco(2100 * S, 400, 'lava-rock'),
-                createDeco(3800 * S, 460, 'rock'),
-                createDeco(5000 * S, 460, 'fire'),
-                createDeco(5600 * S, 400, 'ember'),
-                createDeco(6600 * S, 460, 'lava-rock'),
-                createDeco(8000 * S, 460, 'fire'),
-                createDeco(9400 * S, 460, 'ember'),
-                createDeco(10500 * S, 400, 'rock'),
-                createDeco(11000 * S, 460, 'lava-rock'),
-                createDeco(12400 * S, 460, 'fire'),
-                createDeco(14000 * S, 460, 'ember'),
-                createDeco(15600 * S, 400, 'lava-rock'),
-                createDeco(16800 * S, 460, 'rock'),
-                createDeco(18000 * S, 460, 'fire'),
-            ];
-        })(),
-        playerStart: { x: 100, y: 464 },
-        goal: { x: 11287, y: 478 },
-        timeBonus: 180,
-        movingPlatforms: [
-            createMovingPlat(3100, 300, 110, 24, 'platform_medium', 'horizontal', 180, 20),
-            createMovingPlat(12500, 310, 120, 24, 'platform_hard', 'horizontal', 200, 22),
-        ],
-        // Tutorial: 1 Discovery-Spring (nicht pflicht, zeigt Mechanik)
-        // y = Plattform-Oberkante (p.y - p.h/2 = 530-50 = 480)
-        springs: (() => {
-            const S = 0.556;
-            return [createSpring(400 * S, 480)];
-        })(),
-    },
-
-    // ============================================================
-    // LEVEL 56: Gap-Strecke — many lava gaps with moving platforms
-    // S=0.526, width=24000, height=640
-    // ============================================================
-    {
-        id: 56,
-        name: "Lava-Spruenge",
-        width: 24000,
-        height: 640,
-        biome: 'volcano-lava',
-        platforms: (() => {
-            const S = 0.526;
-            const plats: any[] = [];
-
-            // Stone ground segments with gaps
-            const segCount = 13;
-            for (let n = 0; n < segCount; n++) {
-                const baseX = n * 1800;
-                plats.push(createPlat(baseX * S, 550, 1200 * S, 100, 'stone'));
-                if (n < segCount - 1) {
-                    plats.push(createPlat((baseX + 1200) * S, 550, 200 * S, 100, 'lava'));
-                    // More stepping platforms for larger gaps - use 3 platforms for 600px gap
-                    const hY = n % 3 === 0 ? 460 : (n % 3 === 1 ? 430 : 450);
-                    plats.push(createPlat((baseX + 1400) * S, hY, 100 * S, 24, 'platform_easy'));
-                    plats.push(createPlat((baseX + 1550) * S, 480, 100 * S, 24, 'platform_easy'));
-                }
-                // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut)
-                if (n >= 1 && n <= 11 && n < segCount - 1) {
-                    plats.push(createPlat(Math.round((baseX + 1024) * S), 520, Math.round(134 * S), 24, 'platform_easy'));
-                }
-            }
-
-            // Extra gapWithPlatforms sections - increase platforms for larger gaps
-            plats.push(...gapWithPlatforms(S, 4500, 550, 1600, 8));
-
-            // Brick towers
-            plats.push(createPlat(1000 * S, 420, 80 * S, 130, 'brick'));
-            plats.push(createPlat(6400 * S, 400, 80 * S, 150, 'brick'));
-            plats.push(createPlat(12000 * S, 420, 80 * S, 130, 'brick'));
-            plats.push(createPlat(17500 * S, 400, 80 * S, 150, 'brick'));
-
-            // Additional floating platforms
-            plats.push(createPlat(2800 * S, 380, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(8200 * S, 370, 100 * S, 24, 'platform_hard'));
-            plats.push(createPlat(14000 * S, 380, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(19500 * S, 370, 100 * S, 24, 'platform_hard'));
-
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.526;
-            const cs: any[] = [];
-            for (let x = 200; x < 1100; x += 200) cs.push(createCoin(x * S, 500));
-            cs.push(createCoin(2800 * S, 330));
-            cs.push(createCoin(2900 * S, 330));
-            for (let x = 2200; x < 4000; x += 300) cs.push(createCoin(x * S, 500));
-            for (let x = 5000; x < 6000; x += 200) cs.push(createCoin(x * S, 500));
-            cs.push(createCoin(8200 * S, 320));
-            cs.push(createCoin(8300 * S, 320));
-            for (let x = 6800; x < 7600; x += 200) cs.push(createCoin(x * S, 500));
-            for (let x = 8600; x < 9400; x += 200) cs.push(createCoin(x * S, 500));
-            for (let x = 10400; x < 11200; x += 200) cs.push(createCoin(x * S, 500));
-            cs.push(createCoin(14000 * S, 330));
-            for (let x = 12200; x < 13000; x += 200) cs.push(createCoin(x * S, 500));
-            for (let x = 14000; x < 14800; x += 200) cs.push(createCoin(x * S, 500));
-            cs.push(createCoin(19500 * S, 320));
-            for (let x = 15800; x < 16600; x += 200) cs.push(createCoin(x * S, 500));
-            for (let x = 17600; x < 18400; x += 200) cs.push(createCoin(x * S, 500));
-            for (let x = 19400; x < 20200; x += 200) cs.push(createCoin(x * S, 500));
-            return cs;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.526;
-            return [
-                createQB(400 * S, 480, 'mushroom'),
-                createQB(2900 * S, 320, 'flower'),
-                createQB(6400 * S, 340, 'star'),
-                createQB(8300 * S, 310, 'coin'),
-                createQB(14000 * S, 320, 'mushroom'),
-                createQB(19500 * S, 310, 'flower'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.526;
-            return [
-                createEnemy(600 * S, 510, 'goomba'),
-                createEnemy(3000 * S, 510, 'fireball'),
-                createEnemy(5000 * S, 510, 'crab'),
-                createEnemy(7200 * S, 510, 'goomba'),
-                createEnemy(9000 * S, 510, 'koopa'),
-                createEnemy(11000 * S, 510, 'fireball'),
-                createEnemy(13500 * S, 510, 'crab'),
-                createEnemy(15500 * S, 510, 'goomba'),
-                createEnemy(17000 * S, 510, 'koopa'),
-                createEnemy(19000 * S, 510, 'fireball'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.526;
-            return [
-                createDeco(300 * S, 480, 'fire'),
-                createDeco(1100 * S, 480, 'ember'),
-                createDeco(2200 * S, 420, 'lava-rock'),
-                createDeco(3400 * S, 480, 'rock'),
-                createDeco(5200 * S, 480, 'fire'),
-                createDeco(6200 * S, 420, 'ember'),
-                createDeco(7400 * S, 480, 'lava-rock'),
-                createDeco(8800 * S, 480, 'fire'),
-                createDeco(10000 * S, 420, 'ember'),
-                createDeco(11600 * S, 480, 'rock'),
-                createDeco(12800 * S, 480, 'lava-rock'),
-                createDeco(15000 * S, 480, 'fire'),
-                createDeco(16200 * S, 420, 'ember'),
-                createDeco(17800 * S, 480, 'rock'),
-                createDeco(18800 * S, 480, 'lava-rock'),
-                createDeco(20000 * S, 480, 'fire'),
-            ];
-        })(),
-        playerStart: { x: 100, y: 484 },
-        goal: { x: 11625, y: 498 },
-        timeBonus: 180,
-        movingPlatforms: [
-            createMovingPlat(3800, 360, 110, 24, 'platform_medium', 'horizontal', 220, 20),
-            createMovingPlat(7800, 350, 120, 24, 'platform_hard', 'vertical', 140, 18),
-            createMovingPlat(11800, 360, 110, 24, 'platform_medium', 'horizontal', 240, 22),
-            createMovingPlat(16200, 350, 120, 24, 'platform_hard', 'horizontal', 200, 20),
-            createMovingPlat(20200, 360, 110, 24, 'platform_medium', 'horizontal', 220, 22),
-        ],
-        // Gap-Level: 2 Springs als Bonus-Helfer über weiten Sprüngen
-        // (je mittig auf Stein-Segmenten, ≥200px von Lava-Kanten; Oberkante = 550-50 = 500)
-        springs: (() => {
-            const S = 0.526;
-            return [
-                createSpring(500 * S, 500),
-                createSpring(14800 * S, 500),
-            ];
-        })(),
-    },
-
-    // ============================================================
-    // LEVEL 57: Röhren-Labyrinth — 6 pipe sections with piranhas over lava
-    // S=0.5, width=26000, height=650
-    // ============================================================
-    {
-        id: 57,
-        name: "Roehrenpfad",
-        width: 26000,
-        height: 650,
-        biome: 'volcano-lava',
-        platforms: (() => {
-            const S = 0.5;
-            const plats: any[] = [];
-
-            // Start ground
-            plats.push(createPlat(0 * S, 560, 1500 * S, 100, 'stone'));
-
-            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
-            // Stein(→2000) → A(2180) → B(2480) → Pipe1 — jede Hufe ≤221px
-            plats.push(createPlat(2180, 540, 100, 24, 'platform_easy'));
-            plats.push(createPlat(2480, 520, 100, 24, 'platform_easy'));
-
-            // Pipe section 1 (3 pipes) at gap
-            plats.push(...pipeSection(S, 1800, 560, 3));
-            // Ground segment
-            plats.push(createPlat(3400 * S, 560, 1200 * S, 100, 'stone'));
-            plats.push(createPlat((3400 + 1200) * S, 560, 200 * S, 100, 'lava'));
-
-            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
-            // Stein(→3700) → A(3850) → B(4110) → Pipe(4310) — jede Hufe ≤221px
-            plats.push(createPlat(3850, 540, 100, 24, 'platform_easy'));
-            plats.push(createPlat(4110, 520, 100, 24, 'platform_easy'));
-
-            // Pipe section 2 (4 pipes)
-            plats.push(...pipeSection(S, 5000, 560, 4));
-
-            // Ground segment
-            plats.push(createPlat(6800 * S, 560, 1200 * S, 100, 'stone'));
-            plats.push(createPlat((6800 + 1200) * S, 560, 200 * S, 100, 'lava'));
-
-            // Pipe section 3 (5 pipes)
-            plats.push(...pipeSection(S, 8400, 560, 5));
-
-            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
-            // Stein2(→5800) → A(5920) → B(6230) → Pipe(6410) — jede Hufe ≤221px
-            plats.push(createPlat(5920, 540, 100, 24, 'platform_easy'));
-            plats.push(createPlat(6230, 520, 100, 24, 'platform_easy'));
-
-            // Ground segment
-            plats.push(createPlat(11000 * S, 560, 1200 * S, 100, 'stone'));
-            plats.push(createPlat((11000 + 1200) * S, 560, 200 * S, 100, 'lava'));
-
-            // Pipe section 4 (4 pipes)
-            plats.push(...pipeSection(S, 12600, 560, 4));
-
-            // Ground segment
-            plats.push(createPlat(14400 * S, 560, 1200 * S, 100, 'stone'));
-            plats.push(createPlat((14400 + 1200) * S, 560, 200 * S, 100, 'lava'));
-
-            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
-            // Stein3(→7500) → A(7660) → B(7960) → Pipe5(8110) — jede Hufe ≤221px
-            plats.push(createPlat(7660, 540, 100, 24, 'platform_easy'));
-            plats.push(createPlat(7960, 520, 100, 24, 'platform_easy'));
-
-            // Pipe section 5 (5 pipes)
-            plats.push(...pipeSection(S, 16000, 560, 5));
-
-            // Ground segment
-            plats.push(createPlat(18200 * S, 560, 1200 * S, 100, 'stone'));
-            plats.push(createPlat((18200 + 1200) * S, 560, 200 * S, 100, 'lava'));
-
-            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
-            // Lava6(→9750) → A(9870) → Pipe6(10010) — jede Hufe ≤221px
-            plats.push(createPlat(9870, 540, 100, 24, 'platform_easy'));
-
-            // Pipe section 6 (3 pipes)
-            plats.push(...pipeSection(S, 19800, 560, 3));
-
-            // Final ground to goal
-            plats.push(createPlat(21400 * S, 560, 1600 * S, 100, 'stone'));
-
-            // Brick towers for decoration
-            plats.push(createPlat(1000 * S, 430, 80 * S, 130, 'brick'));
-            plats.push(createPlat(7400 * S, 420, 80 * S, 140, 'brick'));
-            plats.push(createPlat(11800 * S, 430, 80 * S, 130, 'brick'));
-            plats.push(createPlat(15600 * S, 420, 80 * S, 140, 'brick'));
-            plats.push(createPlat(22000 * S, 430, 80 * S, 130, 'brick'));
-
-            // Helper platforms between pipe sections
-            plats.push(createPlat(3800 * S, 450, 100 * S, 24, 'platform_easy'));
-            plats.push(createPlat(7500 * S, 440, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(11600 * S, 450, 100 * S, 24, 'platform_easy'));
-            plats.push(createPlat(15300 * S, 440, 100 * S, 24, 'platform_medium'));
-      plats.push(createPlat(19000 * S, 450, 100 * S, 24, 'platform_easy'));
-
-      // Bridge platforms to close BFS gaps
-      plats.push(createPlat(761.0, 370, 100, 24, 'platform_easy'));
-      plats.push(createPlat(2087.5, 390, 100, 24, 'platform_easy'));
-
-      // Breakable-Brick-Bonus: freistehendes Regal über dem Zielpfad
-      // (Big Mario zerbricht es von unten, +50; nie load-bearing)
-      plats.push(createPlat(21600 * S, 380, 100 * S, 24, 'brick'));
-
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.5;
-      const cs: any[] = [];
-      for (let x = 200; x < 1400; x += 250) cs.push(createCoin(x * S, 510));
-            // Pipes 1
-            for (let x = 2050; x < 2900; x += 350) cs.push(createCoin(x * S, 470));
-            for (let x = 3400; x < 4600; x += 250) cs.push(createCoin(x * S, 510));
-            // Pipes 2
-            for (let x = 5250; x < 6600; x += 350) cs.push(createCoin(x * S, 450));
-            for (let x = 6800; x < 8000; x += 250) cs.push(createCoin(x * S, 510));
-            // Pipes 3
-            for (let x = 8650; x < 10600; x += 350) cs.push(createCoin(x * S, 450));
-            for (let x = 11000; x < 12200; x += 250) cs.push(createCoin(x * S, 510));
-            // Pipes 4
-            for (let x = 12850; x < 14200; x += 350) cs.push(createCoin(x * S, 470));
-            for (let x = 14400; x < 15600; x += 250) cs.push(createCoin(x * S, 510));
-            // Pipes 5
-            for (let x = 16250; x < 18000; x += 350) cs.push(createCoin(x * S, 450));
-            for (let x = 18200; x < 19400; x += 250) cs.push(createCoin(x * S, 510));
-            // Pipes 6
-            for (let x = 20050; x < 21200; x += 350) cs.push(createCoin(x * S, 470));
-            for (let x = 21500; x < 22800; x += 200) cs.push(createCoin(x * S, 510));
-            return cs;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.5;
-            return [
-                createQB(600 * S, 490, 'mushroom'),
-                createQB(2150 * S, 470, 'coin'),
-                createQB(5350 * S, 430, 'flower'),
-                createQB(8750 * S, 430, 'star'),
-                createQB(12950 * S, 470, 'mushroom'),
-                createQB(16350 * S, 430, 'coin'),
-                createQB(20150 * S, 470, 'flower'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.5;
-            return [
-                // Piranhas on pipe sections
-                createEnemy(2050 * S, 500, 'piranha'),
-                createEnemy(2400 * S, 500, 'piranha'),
-                createEnemy(2750 * S, 500, 'piranha'),
-                createEnemy(5250 * S, 500, 'piranha'),
-                createEnemy(5600 * S, 500, 'piranha'),
-                createEnemy(5950 * S, 500, 'piranha'),
-                createEnemy(6300 * S, 500, 'piranha'),
-                createEnemy(8650 * S, 500, 'piranha'),
-                createEnemy(9000 * S, 500, 'piranha'),
-                createEnemy(9350 * S, 500, 'piranha'),
-                createEnemy(9700 * S, 500, 'piranha'),
-                createEnemy(10050 * S, 500, 'piranha'),
-                createEnemy(12850 * S, 500, 'piranha'),
-                createEnemy(13200 * S, 500, 'piranha'),
-                createEnemy(13550 * S, 500, 'piranha'),
-                createEnemy(13900 * S, 500, 'piranha'),
-                createEnemy(16250 * S, 500, 'piranha'),
-                createEnemy(16600 * S, 500, 'piranha'),
-                createEnemy(16950 * S, 500, 'piranha'),
-                createEnemy(17300 * S, 500, 'piranha'),
-                createEnemy(17650 * S, 500, 'piranha'),
-                createEnemy(20050 * S, 500, 'piranha'),
-                createEnemy(20400 * S, 500, 'piranha'),
-                createEnemy(20750 * S, 500, 'piranha'),
-                // Other enemies on ground
-                createEnemy(900 * S, 520, 'goomba'),
-                createEnemy(4000 * S, 520, 'fireball'),
-                createEnemy(7500 * S, 520, 'crab'),
-                createEnemy(11600 * S, 520, 'goomba'),
-                createEnemy(15400 * S, 520, 'fireball'),
-                createEnemy(19000 * S, 520, 'goomba'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.5;
-            return [
-                createDeco(300 * S, 490, 'fire'),
-                createDeco(1200 * S, 490, 'ember'),
-                createDeco(2400 * S, 430, 'lava-rock'),
-                createDeco(3800 * S, 490, 'fire'),
-                createDeco(5600 * S, 430, 'rock'),
-                createDeco(6400 * S, 490, 'ember'),
-                createDeco(7600 * S, 490, 'lava-rock'),
-                createDeco(9000 * S, 430, 'fire'),
-                createDeco(10000 * S, 490, 'ember'),
-                createDeco(11800 * S, 490, 'rock'),
-                createDeco(13400 * S, 430, 'lava-rock'),
-                createDeco(14600 * S, 490, 'fire'),
-                createDeco(16400 * S, 430, 'ember'),
-                createDeco(17600 * S, 490, 'rock'),
-                createDeco(19000 * S, 490, 'lava-rock'),
-                createDeco(20600 * S, 430, 'fire'),
-                createDeco(21800 * S, 490, 'ember'),
-                createDeco(22400 * S, 490, 'rock'),
-            ];
-        })(),
-        playerStart: { x: 100, y: 494 },
-        goal: { x: 11050, y: 508 },
-        timeBonus: 200,
-        movingPlatforms: [
-            createMovingPlat(3200, 380, 110, 24, 'platform_easy', 'horizontal', 200, 20),
-            createMovingPlat(7000, 370, 120, 24, 'platform_medium', 'vertical', 150, 18),
-            createMovingPlat(11200, 380, 110, 24, 'platform_easy', 'horizontal', 220, 22),
-            createMovingPlat(15000, 370, 120, 24, 'platform_medium', 'horizontal', 200, 20),
-            createMovingPlat(18800, 380, 110, 24, 'platform_easy', 'vertical', 140, 18),
-        ],
-        // Tunnel: Spike-Passagen auf breiten Steinböden, mittig im Segment
-        // (≥450px von Lava-Kanten; Oberkante = 560-50 = 510 → y = 502)
-        spikes: (() => {
-            const S = 0.5;
-            return [
-                createSpike(3520 * S, 502),
-                createSpike(3800 * S, 502),
-                createSpike(11200 * S, 502),
-                createSpike(18300 * S, 502),
-            ];
-        })(),
-        // Breakable-Brick-Bonus: freistehende Bricks als Big-Mario-Bonuspfad
-        // (Basis für Bricks ist das bestehende Deko-Turm-Element)
-    },
-
-    // ============================================================
-    // LEVEL 58: Vertikal-Kletterer — 4 verticalClimb sections with brick towers
-    // S=0.476, width=26000, height=700
-    // ============================================================
-    {
-        id: 58,
-        name: "Aufstieg",
-        width: 26000,
-        height: 700,
-        biome: 'volcano-lava',
-        platforms: (() => {
-            const S = 0.476;
-            const plats: any[] = [];
-
-            // Start ground
-            plats.push(createPlat(0 * S, 580, 1500 * S, 100, 'stone'));
-
-            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
-            // Climb1-Ende(→1395) → Bridge(1530) → Stein2(1666) — jede Hufe ≤221px
-            plats.push(createPlat(1530, 540, 100, 24, 'platform_easy'));
-
-            // Vertical climb 1
-            plats.push(...verticalClimb(S, 1800, 580, 'stone'));
-
-            // Ground after climb 1
-            plats.push(createPlat(4100 * S, 580, 1200 * S, 100, 'stone'));
-            plats.push(createPlat(5300 * S, 580, 200 * S, 100, 'lava'));
-
-            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
-            // Climb2-Ende(→3251) → Bridge(3390) → Stein3(3522) — jede Hufe ≤221px
-            plats.push(createPlat(3390, 540, 100, 24, 'platform_easy'));
-
-            // Vertical climb 2
-            plats.push(...verticalClimb(S, 5700, 580, 'stone'));
-
-            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut)
-            plats.push(createPlat(8995, 478, 147, 24, 'platform_easy'));
-            plats.push(createPlat(12888, 478, 147, 24, 'platform_easy'));
-            plats.push(createPlat(14883, 478, 142, 24, 'platform_easy'));
-
-            // Ground after climb 2
-            plats.push(createPlat(8000 * S, 580, 1200 * S, 100, 'stone'));
-            plats.push(createPlat(9200 * S, 580, 200 * S, 100, 'lava'));
-
-            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
-            // Stein3(→4094) → A(4210) → B(4440) → Climb3(4546) — jede Hufe ≤221px
-            plats.push(createPlat(4210, 540, 100, 24, 'platform_easy'));
-            plats.push(createPlat(4440, 480, 100, 24, 'platform_easy'));
-
-            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
-            // Climb3-Ende(→5107) → Bridge(5245) → Stein4(5379) — jede Hufe ≤221px
-            plats.push(createPlat(5245, 540, 100, 24, 'platform_easy'));
-
-            // Vertical climb 3
-            plats.push(...verticalClimb(S, 9600, 580, 'stone'));
-
-            // Ground after climb 3
-            plats.push(createPlat(11900 * S, 580, 1200 * S, 100, 'stone'));
-            plats.push(createPlat(13100 * S, 580, 200 * S, 100, 'lava'));
-
-            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
-            // Stein4(→5950) → A(6050) → B(6290) → Climb4(6402) — jede Hufe ≤221px
-            plats.push(createPlat(6050, 540, 100, 24, 'platform_easy'));
-            plats.push(createPlat(6290, 480, 100, 24, 'platform_easy'));
-
-            // Vertical climb 4
-            plats.push(...verticalClimb(S, 13500, 580, 'stone'));
-
-            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
-            // Climb4-Ende(→6964) → Bridge(7080) → Stein5(7236) — jede Hufe ≤221px
-            plats.push(createPlat(7080, 540, 100, 24, 'platform_easy'));
-
-            // Ground after climb 4
-            plats.push(createPlat(15800 * S, 580, 1200 * S, 100, 'stone'));
-            plats.push(createPlat(17000 * S, 580, 200 * S, 100, 'lava'));
-
-            // Scattered high platforms for variety
-            plats.push(createPlat(17500 * S, 480, 100 * S, 28, 'platform_easy'));
-            plats.push(createPlat(17800 * S, 400, 100 * S, 28, 'platform_medium'));
-            plats.push(createPlat(18100 * S, 320, 100 * S, 28, 'platform_hard'));
-            plats.push(createPlat(18400 * S, 250, 140 * S, 40, 'stone'));
-            plats.push(createPlat(18800 * S, 320, 100 * S, 28, 'platform_hard'));
-            plats.push(createPlat(19100 * S, 400, 100 * S, 28, 'platform_medium'));
-            plats.push(createPlat(19400 * S, 480, 100 * S, 28, 'platform_easy'));
-
-            // Final ground to goal
-            plats.push(createPlat(20000 * S, 580, 1600 * S, 100, 'stone'));
-
-            // Brick towers
-            plats.push(createPlat(800 * S, 450, 80 * S, 130, 'brick'));
-            plats.push(createPlat(4200 * S, 440, 80 * S, 140, 'brick'));
-            plats.push(createPlat(12400 * S, 450, 80 * S, 130, 'brick'));
-            plats.push(createPlat(16200 * S, 440, 80 * S, 140, 'brick'));
-            plats.push(createPlat(20500 * S, 450, 80 * S, 130, 'brick'));
-
-            // Helper platforms between climb sections
-            plats.push(createPlat(2400 * S, 440, 100 * S, 24, 'platform_easy'));
-            plats.push(createPlat(6200 * S, 430, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(10100 * S, 440, 100 * S, 24, 'platform_easy'));
-            plats.push(createPlat(14000 * S, 430, 100 * S, 24, 'platform_medium'));
-
-            // Bridge platforms to close BFS gaps
-            plats.push(createPlat(614.0, 390, 100, 24, 'platform_easy'));
-            plats.push(createPlat(2246.7, 380, 100, 24, 'platform_easy'));
-            plats.push(createPlat(7887.3, 380, 100, 24, 'platform_easy'));
-
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.476;
-            const cs: any[] = [];
-            for (let x = 200; x < 1400; x += 200) cs.push(createCoin(x * S, 530));
-            // Climb 1 top
-            cs.push(createCoin(2600 * S, 220));
-            cs.push(createCoin(2700 * S, 220));
-            cs.push(createCoin(2800 * S, 220));
-            for (let x = 4100; x < 5200; x += 200) cs.push(createCoin(x * S, 530));
-            // Climb 2 top
-            cs.push(createCoin(6500 * S, 220));
-            cs.push(createCoin(6600 * S, 220));
-            for (let x = 8000; x < 9000; x += 200) cs.push(createCoin(x * S, 530));
-            // Climb 3 top
-            cs.push(createCoin(10400 * S, 220));
-            cs.push(createCoin(10500 * S, 220));
-            cs.push(createCoin(10600 * S, 220));
-            for (let x = 11900; x < 13000; x += 200) cs.push(createCoin(x * S, 530));
-            // Climb 4 top
-            cs.push(createCoin(14300 * S, 220));
-            cs.push(createCoin(14400 * S, 220));
-            for (let x = 15800; x < 16800; x += 200) cs.push(createCoin(x * S, 530));
-            // High scattered
-            cs.push(createCoin(18400 * S, 200));
-            cs.push(createCoin(18500 * S, 200));
-            for (let x = 20000; x < 21400; x += 200) cs.push(createCoin(x * S, 530));
-            return cs;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.476;
-            return [
-                createQB(400 * S, 510, 'mushroom'),
-                createQB(2700 * S, 200, 'star'),
-                createQB(4300 * S, 390, 'flower'),
-                createQB(6600 * S, 200, 'coin'),
-                createQB(10500 * S, 200, 'mushroom'),
-                createQB(12400 * S, 390, 'flower'),
-                createQB(14400 * S, 200, 'star'),
-                createQB(20600 * S, 390, 'coin'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.476;
-            return [
-                createEnemy(500 * S, 540, 'goomba'),
-                createEnemy(2800 * S, 380, 'goomba'),
-                createEnemy(4400 * S, 540, 'fireball'),
-                createEnemy(6800 * S, 380, 'crab'),
-                createEnemy(8500 * S, 540, 'goomba'),
-                createEnemy(10800 * S, 380, 'koopa'),
-                createEnemy(12200 * S, 540, 'fireball'),
-                createEnemy(14700 * S, 380, 'goomba'),
-                createEnemy(16000 * S, 540, 'crab'),
-                createEnemy(17700 * S, 440, 'spiny'),
-                createEnemy(18400 * S, 200, 'goomba'),
-                createEnemy(20400 * S, 540, 'fireball'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.476;
-            return [
-                createDeco(300 * S, 510, 'fire'),
-                createDeco(1100 * S, 510, 'ember'),
-                createDeco(2200 * S, 400, 'lava-rock'),
-                createDeco(2700 * S, 230, 'fire'),
-                createDeco(3800 * S, 510, 'ember'),
-                createDeco(5000 * S, 510, 'lava-rock'),
-                createDeco(6200 * S, 400, 'rock'),
-                createDeco(6500 * S, 230, 'fire'),
-                createDeco(7600 * S, 510, 'ember'),
-                createDeco(8800 * S, 510, 'lava-rock'),
-                createDeco(10000 * S, 400, 'rock'),
-                createDeco(10400 * S, 230, 'fire'),
-                createDeco(11500 * S, 510, 'ember'),
-                createDeco(12800 * S, 510, 'lava-rock'),
-                createDeco(14000 * S, 400, 'rock'),
-                createDeco(14300 * S, 230, 'fire'),
-                createDeco(15500 * S, 510, 'ember'),
-                createDeco(16800 * S, 510, 'lava-rock'),
-                createDeco(18000 * S, 400, 'rock'),
-                createDeco(18600 * S, 230, 'fire'),
-                createDeco(19800 * S, 510, 'ember'),
-                createDeco(21000 * S, 510, 'lava-rock'),
-            ];
-        })(),
-        playerStart: { x: 100, y: 514 },
-        goal: { x: 9853, y: 528 },
-        timeBonus: 200,
-        movingPlatforms: [
-            createMovingPlat(3400, 380, 110, 24, 'platform_easy', 'horizontal', 200, 20),
-            createMovingPlat(7400, 370, 120, 24, 'platform_medium', 'vertical', 160, 22),
-            createMovingPlat(11600, 380, 110, 24, 'platform_easy', 'horizontal', 220, 20),
-            createMovingPlat(15600, 370, 120, 24, 'platform_medium', 'horizontal', 240, 24),
-        ],
-        // Vertikal: Coin-Leiter — Goal erst mit 32/47 Coins (68%) offen
-        coinGoal: 32,
-        // Bonus-Feder mittig auf dem Start-Boden (Oberkante = 580-50 = 530), weit weg von QB/Lava
-        springs: (() => {
-            const S = 0.476;
-            return [createSpring(600 * S, 530)];
-        })(),
-    },
-
-    // ============================================================
-    // LEVEL 59: Gegner-Horde — 18 enemies (fireballs, goombas, crabs, etc.)
-    // S=0.455, width=26000, height=650
-    // ============================================================
-    {
-        id: 59,
-        name: "Asche-Sturm",
-        width: 26000,
-        height: 650,
-        biome: 'volcano-lava',
-        platforms: (() => {
-            const S = 0.455;
-            const plats: any[] = [];
-
-            // Stone ground segments
-            const segCount = 14;
-            for (let n = 0; n < segCount; n++) {
-                const baseX = n * 1800;
-                plats.push(createPlat(baseX * S, 560, 1200 * S, 100, 'stone'));
-                if (n < segCount - 1) {
-                    plats.push(createPlat((baseX + 1200) * S, 560, 200 * S, 100, 'lava'));
-                    plats.push(createPlat((baseX + 1500) * S, 450, 100 * S, 24, 'platform_easy'));
-                }
-                // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
-                // Stein(→+600) → Bridge(über Lava-Streifen) → Stein(+1800) — jede Hufe ≤170px
-                if (n < segCount - 1) {
-                    plats.push(createPlat(Math.round((baseX + 1050) * S), 408, Math.round(154 * S), 24, 'platform_easy'));
-                }
-            }
-
-            // Brick towers
-            plats.push(createPlat(1400 * S, 430, 80 * S, 130, 'brick'));
-            plats.push(createPlat(5000 * S, 420, 80 * S, 140, 'brick'));
-            plats.push(createPlat(8600 * S, 430, 80 * S, 130, 'brick'));
-            plats.push(createPlat(12200 * S, 420, 80 * S, 140, 'brick'));
-            plats.push(createPlat(15800 * S, 430, 80 * S, 130, 'brick'));
-            plats.push(createPlat(21200 * S, 420, 80 * S, 140, 'brick'));
-
-            // Mid-height platforms for combat variety
-            plats.push(createPlat(2800 * S, 370, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(4000 * S, 380, 100 * S, 24, 'platform_hard'));
-            plats.push(createPlat(6800 * S, 370, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(10200 * S, 380, 100 * S, 24, 'platform_hard'));
-            plats.push(createPlat(13800 * S, 370, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(17800 * S, 380, 100 * S, 24, 'platform_hard'));
-            plats.push(createPlat(19500 * S, 370, 100 * S, 24, 'platform_medium'));
-            plats.push(createPlat(23000 * S, 380, 100 * S, 24, 'platform_hard'));
-
-            return plats;
-        })(),
-        coins: (() => {
-            const S = 0.455;
-            const cs: any[] = [];
-            for (let x = 200; x < 1100; x += 200) cs.push(createCoin(x * S, 510));
-            cs.push(createCoin(2800 * S, 320));
-            cs.push(createCoin(2900 * S, 320));
-            for (let x = 2200; x < 3800; x += 250) cs.push(createCoin(x * S, 510));
-            cs.push(createCoin(4000 * S, 330));
-            cs.push(createCoin(4100 * S, 330));
-            for (let x = 4000; x < 7200; x += 250) cs.push(createCoin(x * S, 510));
-            cs.push(createCoin(6800 * S, 320));
-            for (let x = 7200; x < 8300; x += 250) cs.push(createCoin(x * S, 510));
-            for (let x = 9000; x < 10100; x += 250) cs.push(createCoin(x * S, 510));
-            cs.push(createCoin(10200 * S, 330));
-            cs.push(createCoin(10300 * S, 330));
-            for (let x = 10800; x < 11900; x += 250) cs.push(createCoin(x * S, 510));
-            for (let x = 12600; x < 13700; x += 250) cs.push(createCoin(x * S, 510));
-            cs.push(createCoin(13800 * S, 320));
-            for (let x = 14400; x < 15500; x += 250) cs.push(createCoin(x * S, 510));
-            for (let x = 16200; x < 17300; x += 250) cs.push(createCoin(x * S, 510));
-            cs.push(createCoin(17800 * S, 330));
-            for (let x = 18000; x < 19100; x += 250) cs.push(createCoin(x * S, 510));
-            cs.push(createCoin(19600 * S, 320));
-            for (let x = 19800; x < 20900; x += 250) cs.push(createCoin(x * S, 510));
-            for (let x = 21600; x < 22700; x += 250) cs.push(createCoin(x * S, 510));
-            cs.push(createCoin(23000 * S, 330));
-            for (let x = 23400; x < 24600; x += 250) cs.push(createCoin(x * S, 510));
-            return cs;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.455;
-            return [
-                createQB(600 * S, 490, 'mushroom'),
-                createQB(2900 * S, 310, 'flower'),
-                createQB(4100 * S, 320, 'star'),
-                createQB(6900 * S, 310, 'coin'),
-                createQB(10300 * S, 320, 'mushroom'),
-                createQB(13900 * S, 310, 'flower'),
-                createQB(17900 * S, 320, 'star'),
-                createQB(23100 * S, 320, 'coin'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.455;
-            return [
-                // 20 enemies — horde of fireballs, goombas, crabs, etc.
-                createEnemy(400 * S, 520, 'goomba'),
-                createEnemy(1000 * S, 520, 'fireball'),
-                createEnemy(1600 * S, 520, 'goomba'),
-                createEnemy(2800 * S, 330, 'crab'),
-                createEnemy(3400 * S, 520, 'fireball'),
-                createEnemy(4100 * S, 340, 'koopa'),
-                createEnemy(4800 * S, 520, 'goomba'),
-                createEnemy(5400 * S, 520, 'fireball'),
-                createEnemy(6200 * S, 520, 'crab'),
-                createEnemy(7000 * S, 330, 'goomba'),
-                createEnemy(7600 * S, 520, 'robot'),
-                createEnemy(8200 * S, 520, 'fireball'),
-                createEnemy(9000 * S, 520, 'koopa'),
-                createEnemy(9800 * S, 520, 'goomba'),
-                createEnemy(10300 * S, 340, 'crab'),
-                createEnemy(11000 * S, 520, 'fireball'),
-                createEnemy(11800 * S, 520, 'goomba'),
-                createEnemy(12400 * S, 520, 'robot'),
-                createEnemy(13000 * S, 520, 'fireball'),
-                createEnemy(13900 * S, 330, 'spiny'),
-                createEnemy(14600 * S, 520, 'crab'),
-                createEnemy(15200 * S, 520, 'koopa'),
-                createEnemy(15800 * S, 520, 'fireball'),
-                createEnemy(16600 * S, 520, 'goomba'),
-                createEnemy(17400 * S, 520, 'fireball'),
-                createEnemy(18000 * S, 340, 'crab'),
-                createEnemy(18600 * S, 520, 'goomba'),
-                createEnemy(19600 * S, 330, 'robot'),
-                createEnemy(20400 * S, 520, 'fireball'),
-                createEnemy(21000 * S, 520, 'koopa'),
-                createEnemy(21800 * S, 520, 'goomba'),
-                createEnemy(22600 * S, 520, 'fireball'),
-                createEnemy(23100 * S, 340, 'crab'),
-                createEnemy(23600 * S, 520, 'goomba'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.455;
-            return [
-                createDeco(300 * S, 490, 'fire'),
-                createDeco(900 * S, 490, 'ember'),
-                createDeco(2000 * S, 490, 'lava-rock'),
-                createDeco(2600 * S, 490, 'rock'),
-                createDeco(3600 * S, 490, 'fire'),
-                createDeco(4600 * S, 490, 'ember'),
-                createDeco(5200 * S, 490, 'lava-rock'),
-                createDeco(6000 * S, 490, 'fire'),
-                createDeco(7200 * S, 490, 'rock'),
-                createDeco(8000 * S, 490, 'ember'),
-                createDeco(8800 * S, 490, 'lava-rock'),
-                createDeco(10000 * S, 490, 'fire'),
-                createDeco(10800 * S, 490, 'ember'),
-                createDeco(11600 * S, 490, 'rock'),
-                createDeco(12800 * S, 490, 'lava-rock'),
-                createDeco(13400 * S, 490, 'fire'),
-                createDeco(14400 * S, 490, 'ember'),
-                createDeco(15400 * S, 490, 'rock'),
-                createDeco(16400 * S, 490, 'lava-rock'),
-                createDeco(17000 * S, 490, 'fire'),
-                createDeco(18200 * S, 490, 'ember'),
-                createDeco(19000 * S, 490, 'lava-rock'),
-                createDeco(20000 * S, 490, 'rock'),
-                createDeco(21200 * S, 490, 'fire'),
-                createDeco(22000 * S, 490, 'ember'),
-                createDeco(23200 * S, 490, 'lava-rock'),
-            ];
-        })(),
-        playerStart: { x: 100, y: 494 },
-        goal: { x: 10875, y: 508 },
-        timeBonus: 210,
-        movingPlatforms: [
-            createMovingPlat(2500, 320, 110, 24, 'platform_easy', 'horizontal', 200, 20),
-            createMovingPlat(6600, 310, 120, 24, 'platform_medium', 'vertical', 140, 18),
-            createMovingPlat(9800, 320, 110, 24, 'platform_easy', 'horizontal', 240, 22),
-            createMovingPlat(13600, 310, 120, 24, 'platform_medium', 'horizontal', 220, 20),
-            createMovingPlat(17000, 320, 110, 24, 'platform_easy', 'circular', 100, 18),
-            createMovingPlat(20600, 310, 120, 24, 'platform_medium', 'vertical', 160, 22),
-        ],
-        // Horde: Spike-Gasse auf breiten Steinböden, mittig im Segment
-        // (≥170px von Lava-Kanten; Oberkante = 560-50 = 510 → y = 502)
-        spikes: (() => {
-            const S = 0.455;
-            return [
-                createSpike(3700 * S, 502),
-                createSpike(3875 * S, 502),
-                createSpike(9400 * S, 502),
-                createSpike(14800 * S, 502),
-            ];
-        })(),
-        // Horde: Goal erst mit 55/86 Coins (64%) offen
-        coinGoal: 55,
-    },
-
-    // ============================================================
-    // LEVEL 60: Eruption-Finale — ascending structure, lava below, player must climb
-    // S=0.435, width=28000, height=750
-    // ============================================================
-    {
-        id: 60,
-        name: "Krater-Finale",
-        width: 28000,
-        height: 750,
-        biome: 'volcano-lava',
-        platforms: (() => {
-            const S = 0.435;
-            const plats: any[] = [];
-
-            // Stage 1: Start at ground level
-            plats.push(createPlat(0 * S, 580, 1500 * S, 100, 'stone'));
-            plats.push(createPlat(1500 * S, 580, 200 * S, 100, 'lava'));
-
-            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut)
-            plats.push(createPlat(400, 530, 70, 24, 'platform_easy'));
-
-            // Ascent 1: step up via platforms (ground → y=500 → y=420 → y=340)
-            plats.push(createPlat(1900 * S, 500, 120 * S, 28, 'platform_easy'));
-            plats.push(createPlat(2200 * S, 420, 120 * S, 28, 'platform_medium'));
-            plats.push(createPlat(2500 * S, 340, 120 * S, 28, 'platform_hard'));
-            plats.push(createPlat(2800 * S, 340, 1200 * S, 100, 'stone'));
-            plats.push(createPlat(4000 * S, 340, 200 * S, 100, 'lava'));
-
-            // Ascent 2: step higher (y=340 → y=260 → y=180)
-            plats.push(createPlat(4400 * S, 260, 120 * S, 28, 'platform_easy'));
-            plats.push(createPlat(4700 * S, 180, 120 * S, 28, 'platform_medium'));
-            plats.push(createPlat(5000 * S, 180, 1200 * S, 100, 'stone'));
-            plats.push(createPlat(6200 * S, 180, 200 * S, 100, 'lava'));
-
-            // Ascent 3: step higher (y=180 → y=100 → y=20)
-            plats.push(createPlat(6600 * S, 100, 120 * S, 28, 'platform_easy'));
-            plats.push(createPlat(6900 * S, 20, 120 * S, 28, 'platform_medium'));
-            plats.push(createPlat(7200 * S, 20, 1200 * S, 100, 'stone'));
-            plats.push(createPlat(8400 * S, 20, 200 * S, 100, 'lava'));
-
-            // Mid-level plateau
-            plats.push(createPlat(8800 * S, 20, 1500 * S, 100, 'stone'));
-            plats.push(createPlat(10300 * S, 20, 200 * S, 100, 'lava'));
-
-            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
-            // Mid-Plateau(→4154) → A(4340) → B(4600) → Descent-Helper(4629)
-            plats.push(createPlat(4340, -60, 100, 24, 'platform_easy'));
-            plats.push(createPlat(4600, -60, 100, 24, 'platform_easy'));
-
-            // Descent phase: step down
-            plats.push(createPlat(10700 * S, 100, 120 * S, 28, 'platform_hard'));
-            plats.push(createPlat(11000 * S, 180, 120 * S, 28, 'platform_medium'));
-            plats.push(createPlat(11300 * S, 260, 1200 * S, 100, 'stone'));
-            plats.push(createPlat(12500 * S, 260, 200 * S, 100, 'lava'));
-
-            // Ascent 4: climb to final goal (y=260 → y=180 → y=100)
-            plats.push(createPlat(12900 * S, 180, 120 * S, 28, 'platform_easy'));
-            plats.push(createPlat(13200 * S, 100, 120 * S, 28, 'platform_medium'));
-            plats.push(createPlat(13500 * S, 100, 1500 * S, 100, 'stone'));
-            plats.push(createPlat(15000 * S, 100, 200 * S, 100, 'lava'));
-
-            // Final plateau to goal
-            plats.push(createPlat(15400 * S, 100, 1500 * S, 100, 'stone'));
-            plats.push(createPlat(16900 * S, 100, 200 * S, 100, 'lava'));
-
-            // Goal approach — long stone segment
-            plats.push(createPlat(17300 * S, 100, 2000 * S, 100, 'stone'));
-
-            // Lava at bottom (y=620) spanning the entire level
-            const lavaYs = [1500, 4000, 6200, 8400, 10300, 12500, 15000, 16900];
-            for (const lx of lavaYs) {
-                plats.push(createPlat(lx * S, 620, 200 * S, 100, 'lava'));
-            }
-
-            // Brick towers at various elevations
-            plats.push(createPlat(600 * S, 450, 80 * S, 130, 'brick'));
-            plats.push(createPlat(3200 * S, 210, 80 * S, 130, 'brick'));
-            plats.push(createPlat(5500 * S, 50, 80 * S, 130, 'brick'));
-            plats.push(createPlat(9200 * S, -110, 80 * S, 130, 'brick'));
-            plats.push(createPlat(11700 * S, 130, 80 * S, 130, 'brick'));
-            plats.push(createPlat(14000 * S, -30, 80 * S, 130, 'brick'));
-            plats.push(createPlat(15800 * S, -30, 80 * S, 130, 'brick'));
-            plats.push(createPlat(18200 * S, -30, 80 * S, 130, 'brick'));
-
-            // Additional helper platforms along the ascent
-            plats.push(createPlat(1800 * S, 440, 80 * S, 24, 'platform_easy'));
-            plats.push(createPlat(4300 * S, 200, 80 * S, 24, 'platform_medium'));
-            plats.push(createPlat(6500 * S, 50, 80 * S, 24, 'platform_hard'));
-            plats.push(createPlat(10800 * S, 50, 80 * S, 24, 'platform_easy'));
-            plats.push(createPlat(12800 * S, 120, 80 * S, 24, 'platform_medium'));
-            plats.push(createPlat(15200 * S, 50, 80 * S, 24, 'platform_hard'));
-      plats.push(createPlat(17800 * S, 50, 80 * S, 24, 'platform_easy'));
-
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.435;
-      const cs: any[] = [];
-      for (let x = 200; x < 1400; x += 200) cs.push(createCoin(x * S, 530));
-            // Ascent 1
-            cs.push(createCoin(2000 * S, 450));
-            cs.push(createCoin(2100 * S, 370));
-            cs.push(createCoin(2300 * S, 370));
-            for (let x = 2800; x < 3800; x += 200) cs.push(createCoin(x * S, 290));
-            // Ascent 2
-            cs.push(createCoin(4500 * S, 210));
-            cs.push(createCoin(4600 * S, 130));
-            cs.push(createCoin(4800 * S, 130));
-            for (let x = 5000; x < 6000; x += 200) cs.push(createCoin(x * S, 130));
-            // Ascent 3
-            cs.push(createCoin(6700 * S, 50));
-            cs.push(createCoin(6800 * S, -30));
-            for (let x = 7200; x < 8200; x += 200) cs.push(createCoin(x * S, -30));
-            // Mid plateau
-            for (let x = 8800; x < 10100; x += 200) cs.push(createCoin(x * S, -30));
-            // Descent
-            cs.push(createCoin(10800 * S, 50));
-            cs.push(createCoin(10900 * S, 130));
-            for (let x = 11300; x < 12300; x += 200) cs.push(createCoin(x * S, 210));
-            // Ascent 4
-            cs.push(createCoin(13000 * S, 130));
-            cs.push(createCoin(13100 * S, 50));
-            for (let x = 13500; x < 14800; x += 200) cs.push(createCoin(x * S, 50));
-            // Final plateau
-            for (let x = 15400; x < 16700; x += 200) cs.push(createCoin(x * S, 50));
-            for (let x = 17400; x < 19000; x += 200) cs.push(createCoin(x * S, 50));
-            return cs;
-        })(),
-        questionBlocks: (() => {
-            const S = 0.435;
-            return [
-                createQB(400 * S, 510, 'mushroom'),
-                createQB(2100 * S, 360, 'flower'),
-                createQB(4600 * S, 120, 'star'),
-                createQB(6800 * S, -50, 'coin'),
-                createQB(9200 * S, -120, 'mushroom'),
-                createQB(10900 * S, 120, 'flower'),
-                createQB(13100 * S, 40, 'star'),
-                createQB(16000 * S, -100, 'coin'),
-                createQB(17800 * S, -50, 'mushroom'),
-                createQB(18500 * S, -50, 'flower'),
-            ];
-        })(),
-        enemies: (() => {
-            const S = 0.435;
-            return [
-                createEnemy(500 * S, 540, 'goomba'),
-                createEnemy(1200 * S, 540, 'fireball'),
-                createEnemy(3000 * S, 300, 'crab'),
-                createEnemy(3400 * S, 300, 'koopa'),
-                createEnemy(4500 * S, 220, 'goomba'),
-                createEnemy(5200 * S, 140, 'fireball'),
-                createEnemy(5800 * S, 140, 'crab'),
-                createEnemy(6800 * S, 60, 'spiny'),
-                createEnemy(7500 * S, -20, 'goomba'),
-                createEnemy(8000 * S, -20, 'fireball'),
-                createEnemy(9200 * S, -20, 'robot'),
-                createEnemy(9600 * S, -20, 'fireball'),
-                createEnemy(10900 * S, 140, 'goomba'),
-                createEnemy(11500 * S, 220, 'crab'),
-                createEnemy(12000 * S, 220, 'fireball'),
-                createEnemy(13000 * S, 140, 'koopa'),
-                createEnemy(13800 * S, 60, 'goomba'),
-                createEnemy(14400 * S, 60, 'fireball'),
-                createEnemy(15700 * S, 60, 'crab'),
-                createEnemy(16200 * S, 60, 'robot'),
-                createEnemy(17700 * S, 60, 'goomba'),
-                createEnemy(18300 * S, 60, 'fireball'),
-            ];
-        })(),
-        decorations: (() => {
-            const S = 0.435;
-            return [
-                createDeco(300 * S, 510, 'fire'),
-                createDeco(1000 * S, 510, 'ember'),
-                createDeco(2000 * S, 460, 'lava-rock'),
-                createDeco(2400 * S, 340, 'rock'),
-                createDeco(3300 * S, 290, 'fire'),
-                createDeco(4500 * S, 220, 'ember'),
-                createDeco(5400 * S, 130, 'lava-rock'),
-                createDeco(6000 * S, 130, 'rock'),
-                createDeco(7000 * S, 20, 'fire'),
-                createDeco(7800 * S, 20, 'ember'),
-                createDeco(8700 * S, -10, 'lava-rock'),
-                createDeco(9500 * S, -10, 'rock'),
-                createDeco(10000 * S, -10, 'fire'),
-                createDeco(11100 * S, 130, 'ember'),
-                createDeco(11800 * S, 210, 'lava-rock'),
-                createDeco(12600 * S, 210, 'rock'),
-                createDeco(13400 * S, 50, 'fire'),
-                createDeco(14200 * S, 50, 'ember'),
-                createDeco(14800 * S, 50, 'lava-rock'),
-                createDeco(15600 * S, 50, 'rock'),
-                createDeco(16600 * S, 50, 'fire'),
-                createDeco(17600 * S, 50, 'ember'),
-                createDeco(18400 * S, 50, 'lava-rock'),
-            ];
-        })(),
-        playerStart: { x: 100, y: 514 },
-        goal: { x: 7917, y: 48 },
-        timeBonus: 220,
-        movingPlatforms: [
-            createMovingPlat(2600, 280, 110, 24, 'platform_medium', 'vertical', 140, 20),
-            createMovingPlat(4800, 120, 120, 24, 'platform_hard', 'horizontal', 180, 22),
-            createMovingPlat(7000, -20, 110, 24, 'platform_medium', 'horizontal', 200, 20),
-            createMovingPlat(9000, -80, 120, 24, 'platform_hard', 'circular', 100, 18),
-            createMovingPlat(11200, 200, 110, 24, 'platform_medium', 'horizontal', 220, 22),
-            createMovingPlat(13400, 40, 120, 24, 'platform_hard', 'vertical', 120, 20),
-            createMovingPlat(15600, 20, 110, 24, 'platform_medium', 'horizontal', 240, 22),
-            createMovingPlat(17800, 30, 120, 24, 'platform_hard', 'horizontal', 200, 20),
-        ],
-        // Eruption-Finale: steigende Lava flutet untere Passagen —
-        // KEINE Spikes unten; max 2 Spikes auf den obersten Plateaus
-        // (Plattform-Oberkante = p.y - p.h/2), fern von QBs (≥100px) und Coins
-        spikes: (() => {
-            const S = 0.435;
-            return [
-                createSpike(3170, -38),
-                createSpike(7400, 42),
-            ];
-        })(),
-        // Springs oben als Flucht-/Rettungs-Element Richtung nächste Etage
-        // (je mittig auf Stein-Plateaus, fern von QBs/Coins)
-        springs: (() => {
-            const S = 0.435;
-            return [
-                createSpring(9000 * S, -30),
-                createSpring(14000 * S, 50),
-                createSpring(17300 * S, 50),
-            ];
-        })(),
-    },
+  // ============================================================
+  // Level 55 (Lavasteg): sanfter Einstieg. Terrassen, ein erster
+  // Lava-Fluss mit Trittsteinen, eine vertikale Plattform, eine
+  // broeckelige Obsidian-Abkuerzung, ein Sprungfeder-Bonus und
+  // zwei breite Arenen vor dem Zielplateau. 1 Spring, 1 Spike.
+  // ============================================================
+  (() => {
+    const platforms = [] as Plat[];
+    platforms.push(ground(0, 1200, 620));                              // top 620  [0,1200]
+    platforms.push(...staircase(1200, 620, 3, 70, 140, 40, 'stone'));  // tops 550/480/410
+    platforms.push(...plateauSection(1800, 410, [                        // Plateau top 410
+      { dx: 0, dy: 0, w: 700, h: 40 },
+      { dx: 2020, dy: 150, w: 160, h: 24, type: 'platform_hard' },       // Feder-Bonus top 260
+    ]));
+    platforms.push(lavaPool(2500, 3100, 740));                         // Lava-Fluss 1
+    platforms.push(slab(2595, 395, 90, 'platform_easy'));              // Tritt 1 top 395
+    platforms.push(slab(2780, 380, 80, 'platform_hard'));              // Tritt 2 top 380
+    platforms.push(slab(2965, 395, 90, 'platform_medium'));            // Tritt 3 top 395
+    platforms.push(ground(3100, 3800, 410));                           // top 410  [3100,3800]
+    platforms.push(lavaPool(3800, 4300, 740));                         // Lava-Fluss 2
+    platforms.push(ground(4300, 5000, 340));                           // top 340  [4300,5000]
+    platforms.push(lavaPool(5000, 5560, 740));                         // Lava-Fluss 3
+    platforms.push(createCrumblePlat(5280, 262, 360, 24, 'platform_medium')); // Obsidian-Abkuerzung top 250
+    platforms.push(slab(5095, 330, 90, 'platform_easy'));              // sichere Tritte 330/315/330
+    platforms.push(slab(5280, 315, 80, 'platform_hard'));
+    platforms.push(slab(5470, 330, 100, 'platform_medium'));
+    platforms.push(ground(5560, 6300, 300));                           // top 300  [5560,6300]
+    platforms.push(...staircase(6300, 300, 2, 70, 140, 40, 'stone'));  // tops 230/160
+    platforms.push(ground(6620, 7520, 160));                           // top 160  [6620,7520]
+    platforms.push(lavaPool(7520, 8180, 740));                         // Lava-Fluss 4
+    platforms.push(slab(7615, 140, 90, 'platform_hard'));
+    platforms.push(slab(7800, 125, 80, 'platform_easy'));
+    platforms.push(slab(7985, 140, 90, 'platform_medium'));
+    platforms.push(ground(8180, 8980, 160));                           // top 160  [8180,8980]
+    platforms.push(lavaPool(8980, 9900, 740));                         // grosser Lava-See
+    platforms.push(slab(9150, 170, 100, 'platform_easy'));             // Tritt top 170
+    platforms.push(ground(9740, 10500, 380));                          // top 380  [9740,10500]
+    platforms.push(lavaPool(10500, 11000, 740));                       // Lava-Fluss 5
+    platforms.push(ground(11000, 11800, 360));                         // top 360  [11000,11800]
+    platforms.push(...staircase(11800, 360, 2, 80, 140, 40, 'stone')); // tops 280/200
+    platforms.push(ground(12120, 13080, 200));                         // top 200  [12120,13080]
+    platforms.push(lavaPool(13080, 13600, 740));                       // Lava-Fluss 6
+    platforms.push(slab(13180, 180, 90, 'platform_easy'));
+    platforms.push(slab(13380, 165, 80, 'platform_hard'));
+    platforms.push(slab(13560, 178, 90, 'platform_medium'));
+    platforms.push(ground(13660, 14540, 200));                         // Ziel-Plateau top 200
+    platforms.push(ground(14540, 15460, 240));                         // Absatz top 240
+    platforms.push(lavaPool(15460, 16000, 740));                       // Lava-Fluss 7
+    platforms.push(slab(15555, 220, 90, 'platform_easy'));
+    platforms.push(slab(15750, 205, 80, 'platform_hard'));
+    platforms.push(ground(15820, 16580, 220));                         // Ausklang top 220
+    platforms.push(slab(16100, 120, 140, 'platform_medium'));          // Muenz-Perch top 120
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 570, 1100, 570, 5));
+    coins.push(...coinArc(2150, 330, 5, 150, 70));
+    coins.push(...coinArc(2780, 310, 5, 140, 60));
+    coins.push(...coinDiamond(3900, 210, 60));
+    coins.push(...coinTrail(4400, 300, 4900, 300, 4));
+    coins.push(...coinTrail(5120, 200, 5440, 200, 3));
+    coins.push(...coinArc(5930, 230, 5, 180, 60));
+    coins.push(...coinTrail(6700, 120, 7450, 120, 5));
+    coins.push(...coinArc(7850, 90, 5, 150, 50));
+    coins.push(...coinTrail(8250, 120, 8900, 120, 5));
+    coins.push(...coinArc(9460, 220, 5, 120, 60));
+    coins.push(...coinTrail(9800, 340, 10450, 340, 5));
+    coins.push(...coinArc(10750, 290, 5, 130, 60));
+    coins.push(...coinTrail(11100, 320, 11700, 320, 5));
+    coins.push(...coinLadder(12150, 240, 120, 4));
+    coins.push(...coinTrail(12250, 160, 13000, 160, 5));
+    coins.push(...coinArc(13340, 140, 5, 130, 60));
+    coins.push(...coinTrail(13700, 160, 14500, 160, 5));
+    coins.push(...coinDiamond(15000, 180, 70));
+    coins.push(...coinArc(16180, 170, 5, 130, 60));
+    coins.push(...coinDiamond(16100, 60, 60));
+
+    return {
+      id: 55, name: 'Lavasteg', width: 16800, height: 800, biome: 'volcano-lava',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(4050, 460, 120, 24, 'platform_medium', 'vertical', 120, 20),
+        createMovingPlat(9460, 300, 110, 24, 'platform_hard', 'circular', 90, 22),
+        createMovingPlat(10750, 340, 120, 24, 'platform_easy', 'horizontal', 150, 24),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(2050, 320, 'mushroom'),
+        createQB(5900, 210, 'oneup'),
+        createQB(12400, 110, 'star'),
+      ],
+      enemies: [
+        createEnemy(3300, 402, 'goomba'),
+        createEnemy(3620, 402, 'spiny'),
+        createEnemy(4500, 332, 'robot'),
+        createEnemy(4850, 332, 'goomba'),
+        createEnemy(5750, 292, 'spiny'),
+        createEnemy(6100, 292, 'koopa'),
+        createEnemy(7250, 152, 'robot'),
+        createEnemy(8400, 152, 'spiny'),
+        createEnemy(8800, 152, 'goomba'),
+        createEnemy(9900, 372, 'robot'),
+        createEnemy(11300, 352, 'spiny'),
+        createEnemy(12550, 192, 'spiny'),
+        createEnemy(12800, 192, 'robot'),
+        createEnemy(14000, 192, 'spiny'),
+        createEnemy(15000, 232, 'goomba'),
+        createEnemy(16250, 212, 'robot'),
+      ],
+      decorations: [
+        createDeco(300, 580, 'fire'),
+        createDeco(900, 560, 'ember'),
+        createDeco(1500, 470, 'lava-rock'),
+        createDeco(2100, 350, 'rock'),
+        createDeco(2700, 700, 'fire'),
+        createDeco(3400, 340, 'ember'),
+        createDeco(3900, 500, 'lava-rock'),
+        createDeco(4600, 280, 'fire'),
+        createDeco(5350, 700, 'ember'),
+        createDeco(5800, 240, 'lava-rock'),
+        createDeco(6500, 560, 'fire'),
+        createDeco(7100, 100, 'ember'),
+        createDeco(7900, 700, 'lava-rock'),
+        createDeco(8600, 100, 'rock'),
+        createDeco(9500, 700, 'fire'),
+        createDeco(10200, 320, 'ember'),
+        createDeco(11400, 300, 'lava-rock'),
+        createDeco(12500, 140, 'fire'),
+        createDeco(13300, 700, 'ember'),
+        createDeco(14200, 140, 'lava-rock'),
+        createDeco(15000, 200, 'fire'),
+        createDeco(16000, 700, 'ember'),
+        createDeco(16300, 160, 'rock'),
+      ],
+      playerStart: { x: 180, y: 588 },
+      goal: { x: 14200, y: 190 },
+      timeBonus: 150,
+      springs: [createSpring(3700, 410)],
+      spikes: [createSpike(13900, 192)],
+      checkpoints: [
+        createCheckpoint(4700, 324),
+        createCheckpoint(6900, 144),
+        createCheckpoint(12300, 184),
+      ],
+    };
+  })(),
+  // ============================================================
+  // Level 56 (Magmasprünge): grosse Lavaseen, die mit horizontalen,
+  // vertikalen und kreisenden Plattformen ueberquert werden. Dazu
+  // Insel-Cluster, ein Feder-Rescue, Abstieg ueber breite Buehnen
+  // und eine broeckelige Abkuerzung. 2 Springs, 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as Plat[];
+    platforms.push(ground(0, 1100, 640));                              // top 640  [0,1100]
+    platforms.push(...gapWithPlatforms(1, 1100, 652, 480, 2, {         // tops 608/588
+      widths: [90, 80], dy: [32, 52], types: ['platform_easy', 'platform_hard'],
+    }));
+    platforms.push(ground(1580, 2400, 640));                           // top 640  [1580,2400]
+    platforms.push(lavaPool(2400, 3600, 740));                         // grosser See 1
+    platforms.push(ground(3600, 4400, 620));                           // top 620  [3600,4400]
+    platforms.push(lavaPool(4400, 4900, 740));                         // See 2
+    platforms.push(ground(4900, 5700, 520));                           // top 520  [4900,5700]
+    platforms.push(lavaPool(5700, 6300, 740));                         // See 3
+    platforms.push(...islandCluster(5700, 520, [
+      { dx: 70, dy: 20, w: 100 }, { dx: 250, dy: 55, w: 90 },
+    ]));                                                               // tops 500/465
+    platforms.push(ground(6350, 7200, 470));                           // top 470  [6350,7200]
+    platforms.push(lavaPool(7200, 8000, 740));                         // See 4
+    platforms.push(...islandCluster(7700, 470, [{ dx: 0, dy: 50, w: 100 }])); // top 420
+    platforms.push(ground(8100, 8900, 430));                           // top 430  [8100,8900]
+    platforms.push(ground(8900, 9800, 520));                           // top 520  [8900,9800]
+    platforms.push(lavaPool(9800, 10400, 740));                        // See 5
+    platforms.push(...islandCluster(9800, 520, [
+      { dx: 60, dy: 20, w: 100 }, { dx: 210, dy: 45, w: 90 }, { dx: 360, dy: 70, w: 90 },
+    ]));                                                               // tops 500/475/450
+    platforms.push(ground(10400, 11200, 450));                         // top 450  [10400,11200]
+    platforms.push(lavaPool(11200, 11800, 740));                       // See 6
+    platforms.push(ground(11800, 12600, 470));                         // top 470  [11800,12600]
+    platforms.push(slab(12650, 330, 200, 'platform_hard'));            // Feder-Bonus top 330
+    platforms.push(lavaPool(12600, 13200, 740));                       // See 7
+    platforms.push(createCrumblePlat(12900, 342, 380, 24, 'platform_hard')); // Obsidian-Abkuerzung top 330
+    platforms.push(slab(12730, 460, 90, 'platform_easy'));             // sichere Tritte
+    platforms.push(slab(12930, 445, 80, 'platform_hard'));
+    platforms.push(slab(13120, 460, 90, 'platform_medium'));
+    platforms.push(ground(13200, 14000, 470));                         // top 470  [13200,14000]
+    platforms.push(...staircase(14000, 470, 3, 70, 140, 40, 'stone')); // tops 400/330/260
+    platforms.push(ground(14500, 15300, 260));                         // top 260  [14500,15300]
+    platforms.push(lavaPool(15300, 15900, 740));                       // See 8
+    platforms.push(...islandCluster(15300, 260, [
+      { dx: 70, dy: 25, w: 90 }, { dx: 240, dy: 50, w: 80 }, { dx: 400, dy: 15, w: 100 },
+    ]));                                                               // tops 235/210/245
+    platforms.push(ground(15900, 16600, 230));                         // top 230  [15900,16600]
+    platforms.push(ground(16600, 17200, 300));                         // Ausklang top 300
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 570, 1000, 570, 5));
+    coins.push(...coinArc(1340, 540, 5, 150, 60));
+    coins.push(...coinTrail(1700, 570, 2300, 570, 5));
+    coins.push(...coinArc(3000, 480, 7, 260, 80));
+    coins.push(...coinTrail(3700, 550, 4300, 550, 4));
+    coins.push(...coinLadder(4700, 560, 300, 4));
+    coins.push(...coinTrail(5000, 450, 5600, 450, 4));
+    coins.push(...coinArc(6000, 400, 5, 160, 60));
+    coins.push(...coinDiamond(6775, 400, 70));
+    coins.push(...coinArc(7600, 380, 7, 260, 80));
+    coins.push(...coinTrail(8200, 380, 8800, 380, 4));
+    coins.push(...coinDiamond(9350, 450, 80));
+    coins.push(...coinArc(10100, 430, 7, 260, 60));
+    coins.push(...coinTrail(10450, 400, 11100, 400, 4));
+    coins.push(...coinArc(11500, 490, 5, 150, 60));
+    coins.push(...coinDiamond(12200, 400, 70));
+    coins.push(...coinTrail(12680, 280, 13080, 280, 3));
+    coins.push(...coinDiamond(13600, 390, 70));
+    coins.push(...coinTrail(14050, 340, 14450, 340, 4));
+    coins.push(...coinArc(14900, 190, 5, 180, 60));
+    coins.push(...coinArc(15600, 170, 7, 240, 60));
+    coins.push(...coinDiamond(16250, 150, 70));
+    coins.push(...coinTrail(16650, 250, 17100, 250, 4));
+
+    return {
+      id: 56, name: 'Magmasprünge', width: 17200, height: 800, biome: 'volcano-lava',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3000, 560, 140, 24, 'platform_medium', 'horizontal', 340, 30),
+        createMovingPlat(4650, 590, 120, 24, 'platform_hard', 'vertical', 80, 20),
+        createMovingPlat(6150, 470, 110, 24, 'platform_medium', 'circular', 80, 22),
+        createMovingPlat(7450, 480, 120, 24, 'platform_medium', 'vertical', 120, 22),
+        createMovingPlat(7950, 450, 110, 24, 'platform_hard', 'circular', 80, 24),
+        createMovingPlat(11500, 560, 130, 24, 'platform_hard', 'horizontal', 160, 26),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(1800, 550, 'flower'),
+        createQB(5500, 430, 'oneup'),
+        createQB(6900, 380, 'star'),
+        createQB(8200, 340, 'flower'),
+        createQB(13300, 380, 'star'),
+      ],
+      enemies: [
+        createEnemy(1750, 632, 'goomba'),
+        createEnemy(2150, 632, 'spiny'),
+        createEnemy(3700, 612, 'robot'),
+        createEnemy(4200, 612, 'spiny'),
+        createEnemy(5250, 512, 'robot'),
+        createEnemy(7000, 462, 'robot'),
+        createEnemy(7100, 462, 'spiny'),
+        createEnemy(8400, 422, 'robot'),
+        createEnemy(8800, 422, 'spiny'),
+        createEnemy(9200, 512, 'spiny'),
+        createEnemy(9600, 512, 'robot'),
+        createEnemy(10600, 442, 'robot'),
+        createEnemy(11000, 442, 'goomba'),
+        createEnemy(12000, 462, 'robot'),
+        createEnemy(12300, 462, 'spiny'),
+        createEnemy(13800, 462, 'robot'),
+        createEnemy(14700, 252, 'spiny'),
+        createEnemy(15100, 252, 'robot'),
+        createEnemy(16100, 222, 'spiny'),
+        createEnemy(16800, 292, 'goomba'),
+      ],
+      decorations: [
+        createDeco(300, 580, 'fire'),
+        createDeco(900, 560, 'ember'),
+        createDeco(1400, 480, 'lava-rock'),
+        createDeco(2000, 360, 'rock'),
+        createDeco(2800, 700, 'fire'),
+        createDeco(3500, 340, 'ember'),
+        createDeco(4200, 500, 'lava-rock'),
+        createDeco(4700, 700, 'fire'),
+        createDeco(5400, 300, 'ember'),
+        createDeco(6200, 700, 'lava-rock'),
+        createDeco(6800, 400, 'rock'),
+        createDeco(7600, 700, 'fire'),
+        createDeco(8400, 120, 'ember'),
+        createDeco(9400, 700, 'lava-rock'),
+        createDeco(10200, 400, 'fire'),
+        createDeco(11000, 120, 'ember'),
+        createDeco(11900, 700, 'lava-rock'),
+        createDeco(12600, 250, 'rock'),
+        createDeco(13500, 400, 'fire'),
+        createDeco(14300, 700, 'ember'),
+        createDeco(15000, 200, 'lava-rock'),
+        createDeco(15700, 700, 'fire'),
+        createDeco(16600, 200, 'ember'),
+      ],
+      playerStart: { x: 170, y: 608 },
+      goal: { x: 16300, y: 220 },
+      timeBonus: 170,
+      springs: [createSpring(2300, 640), createSpring(12450, 470)],
+      spikes: [createSpike(8700, 422), createSpike(13500, 462)],
+      checkpoints: [
+        createCheckpoint(3800, 604),
+        createCheckpoint(6600, 454),
+        createCheckpoint(8300, 414),
+        createCheckpoint(10700, 434),
+      ],
+    };
+  })(),
+  // ============================================================
+  // Level 57 (Obsidianröhren): Röhren-Gassen mit Piranhas ueber
+  // Lava, vertikale und kreisende Plattformen, eine Lavagrube und
+  // eine Lavahöhle als Bonusraum (Schluessel + Tuer, 1-UP).
+  // 2 Springs, 1 Spike.
+  // ============================================================
+  (() => {
+    const platforms = [] as Plat[];
+    platforms.push(ground(0, 1200, 640));                              // top 640  [0,1200]
+    platforms.push(ground(1200, 2200, 620));                           // top 620  [1200,2200]
+    platforms.push(...pipePair(1420, 620));
+    platforms.push(...pipePair(1850, 620));
+    platforms.push(lavaPool(2200, 2800, 740));                         // Lava-Fluss 1
+    platforms.push(slab(2340, 610, 90, 'platform_easy'));
+    platforms.push(slab(2540, 595, 80, 'platform_hard'));
+    platforms.push(slab(2720, 610, 90, 'platform_medium'));
+    platforms.push(ground(2800, 3600, 620));                           // top 620  [2800,3600]
+    platforms.push(...pipePair(3050, 620));
+    platforms.push(...pipePair(3450, 620));
+    platforms.push(lavaPool(3600, 4380, 740));                         // Lava-Fluss 2
+    platforms.push(slab(4150, 500, 100, 'platform_hard'));             // Tritt top 500
+    platforms.push(ground(4380, 5300, 620));                           // top 620  [4380,5300]
+    platforms.push(...pipePair(4600, 620));
+    platforms.push(...pipePair(5050, 620));
+    platforms.push(lavaPool(5300, 5900, 740));                         // Lava-Fluss 3
+    platforms.push(ground(5900, 6800, 620));                           // top 620  [5900,6800]
+    platforms.push(...pitWithLedges(6800, 620, 700, 160, 60, 'lava')); // Lavagrube top 780
+    platforms.push(slab(6900, 610, 100, 'platform_medium'));
+    platforms.push(slab(7080, 600, 90, 'platform_easy'));
+    platforms.push(slab(7260, 615, 80, 'platform_hard'));
+    platforms.push(ground(7350, 8200, 620));                           // top 620  [7350,8200]
+    platforms.push(...pipePair(7600, 620));
+    platforms.push(ground(8300, 8900, 520));                           // Lavahöhle top 520
+    platforms.push(lavaPool(8200, 8900, 740));                         // Lava unter der Höhle
+    platforms.push(slab(8340, 610, 90, 'platform_medium'));
+    platforms.push(slab(8540, 600, 80, 'platform_easy'));
+    platforms.push(slab(8740, 610, 90, 'platform_hard'));
+    platforms.push(ground(8900, 9800, 620));                           // top 620  [8900,9800]
+    platforms.push(...pipePair(9250, 620));
+    platforms.push(lavaPool(9800, 10400, 740));                        // Lava-Fluss 4
+    platforms.push(slab(9940, 610, 90, 'platform_easy'));
+    platforms.push(slab(10140, 600, 80, 'platform_hard'));
+    platforms.push(slab(10320, 615, 90, 'platform_medium'));
+    platforms.push(ground(10400, 11300, 620));                         // top 620  [10400,11300]
+    platforms.push(...pipePair(10600, 620));
+    platforms.push(...pipePair(11050, 620));
+    platforms.push(lavaPool(11300, 11900, 740));                       // Lava-Fluss 5
+    platforms.push(ground(11900, 12800, 620));                         // top 620  [11900,12800]
+    platforms.push(...staircase(12800, 620, 4, 70, 140, 40, 'stone')); // tops 550/480/410/340
+    platforms.push(ground(13480, 14300, 340));                         // top 340  [13480,14300]
+    platforms.push(lavaPool(14300, 14900, 740));                       // Lava-Fluss 6
+    platforms.push(...islandCluster(14300, 340, [
+      { dx: 60, dy: 20, w: 110 }, { dx: 230, dy: 45, w: 90 }, { dx: 390, dy: 15, w: 100 },
+    ]));                                                               // tops 320/295/325
+    platforms.push(ground(14900, 15800, 340));                         // top 340  [14900,15800]
+    platforms.push(ground(15800, 16400, 400));                         // Ausklang top 400
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 570, 1100, 570, 5));
+    coins.push(...coinTrail(1300, 550, 2100, 550, 5));
+    coins.push(...coinArc(2500, 540, 5, 150, 60));
+    coins.push(...coinTrail(2900, 540, 3500, 540, 5));
+    coins.push(...coinArc(4000, 480, 7, 200, 70));
+    coins.push(...coinDiamond(4150, 430, 60));
+    coins.push(...coinTrail(4500, 540, 5200, 540, 5));
+    coins.push(...coinArc(5600, 440, 5, 90, 50));
+    coins.push(...coinTrail(6000, 540, 6700, 540, 5));
+    coins.push(...coinArc(7160, 540, 5, 150, 60));
+    coins.push(...coinDiamond(7775, 540, 60));
+    coins.push(...coinTrail(8350, 550, 8850, 550, 5));
+    coins.push(...coinTrail(8700, 480, 8850, 480, 3));
+    coins.push(...coinArc(9350, 540, 5, 200, 60));
+    coins.push(...coinTrail(9950, 550, 10400, 550, 4));
+    coins.push(...coinTrail(10500, 540, 11200, 540, 5));
+    coins.push(...coinArc(11600, 540, 5, 130, 60));
+    coins.push(...coinTrail(12000, 540, 12700, 540, 5));
+    coins.push(...coinLadder(12880, 560, 360, 4));
+    coins.push(...coinTrail(13500, 300, 14250, 300, 5));
+    coins.push(...coinDiamond(13890, 280, 60));
+    coins.push(...coinArc(14600, 250, 5, 150, 60));
+    coins.push(...coinTrail(14950, 300, 15750, 300, 5));
+    coins.push(...coinArc(15350, 280, 5, 160, 60));
+    coins.push(...coinDiamond(16000, 340, 60));
+    coins.push(...coinTrail(15900, 360, 16350, 360, 4));
+
+    return {
+      id: 57, name: 'Obsidianröhren', width: 16400, height: 800, biome: 'volcano-lava',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3850, 560, 120, 24, 'platform_medium', 'vertical', 110, 20),
+        createMovingPlat(5600, 560, 110, 24, 'platform_hard', 'circular', 80, 24),
+        createMovingPlat(11600, 600, 140, 24, 'platform_medium', 'horizontal', 160, 26),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(2100, 530, 'coin'),
+        createQB(6200, 530, 'oneup'),
+        createQB(8750, 430, 'flower'),
+        createQB(9650, 530, 'mushroom'),
+        createQB(13700, 250, 'star'),
+      ],
+      enemies: [
+        createEnemy(900, 632, 'goomba'),
+        createEnemy(1420, 588, 'piranha'),
+        createEnemy(1850, 588, 'piranha'),
+        createEnemy(3050, 588, 'piranha'),
+        createEnemy(3450, 588, 'piranha'),
+        createEnemy(4600, 588, 'piranha'),
+        createEnemy(5050, 588, 'piranha'),
+        createEnemy(6000, 612, 'robot'),
+        createEnemy(6500, 612, 'spiny'),
+        createEnemy(6700, 612, 'goomba'),
+        createEnemy(7600, 588, 'piranha'),
+        createEnemy(9000, 612, 'robot'),
+        createEnemy(9250, 588, 'piranha'),
+        createEnemy(9550, 612, 'spiny'),
+        createEnemy(10600, 588, 'piranha'),
+        createEnemy(11050, 588, 'piranha'),
+        createEnemy(12000, 612, 'robot'),
+        createEnemy(12400, 612, 'spiny'),
+        createEnemy(14100, 332, 'spiny'),
+        createEnemy(15200, 332, 'robot'),
+        createEnemy(16100, 392, 'goomba'),
+      ],
+      decorations: [
+        createDeco(300, 580, 'fire'),
+        createDeco(900, 560, 'ember'),
+        createDeco(1600, 440, 'lava-rock'),
+        createDeco(2300, 700, 'fire'),
+        createDeco(3000, 560, 'ember'),
+        createDeco(3900, 700, 'lava-rock'),
+        createDeco(4700, 560, 'rock'),
+        createDeco(5500, 700, 'fire'),
+        createDeco(6300, 560, 'ember'),
+        createDeco(7100, 700, 'lava-rock'),
+        createDeco(7800, 560, 'fire'),
+        createDeco(8600, 440, 'ember'),
+        createDeco(9300, 560, 'lava-rock'),
+        createDeco(10100, 700, 'rock'),
+        createDeco(10900, 560, 'fire'),
+        createDeco(11600, 700, 'ember'),
+        createDeco(12300, 560, 'lava-rock'),
+        createDeco(13100, 480, 'fire'),
+        createDeco(14000, 280, 'ember'),
+        createDeco(14600, 700, 'lava-rock'),
+        createDeco(15400, 280, 'fire'),
+        createDeco(16100, 340, 'ember'),
+      ],
+      playerStart: { x: 170, y: 608 },
+      goal: { x: 15400, y: 330 },
+      timeBonus: 180,
+      springs: [createSpring(8100, 620), createSpring(12550, 620)],
+      spikes: [createSpike(12600, 612)],
+      checkpoints: [
+        createCheckpoint(2000, 604),
+        createCheckpoint(5250, 604),
+        createCheckpoint(8000, 604),
+        createCheckpoint(14100, 324),
+      ],
+      keys: [createKey(7900, 570)],
+      doors: [createDoor(8400, 410, 40, 220)],
+    };
+  })(),
+  // ============================================================
+  // Level 58 (Kraterkletterer): Abstieg in eine Grube, Zickzack-
+  // Aufstieg, Zwei-Etagen-Galerie, Kraterrand in luftiger Hoehe und
+  // zwei Lavaseen mit alternativen Vertikal-/Kreisplattformen.
+  // 2 Springs, 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as Plat[];
+    platforms.push(ground(0, 1200, 660));                              // top 660  [0,1200]
+    platforms.push(...pitWithLedges(1200, 660, 500, 100, 60, 'stone')); // Grubenboden top 760
+    platforms.push(slab(1320, 630, 90, 'platform_easy'));              // Gruben-Tritt top 630
+    platforms.push(slab(1520, 610, 80, 'platform_medium'));            // Gruben-Tritt top 610
+    platforms.push(ground(1700, 2600, 640));                           // top 640  [1700,2600]
+    platforms.push(...zigzagClimb(2650, 640, 4, 120, 110, 130, 'platform_medium')); // tops 520/400/280/160
+    platforms.push(slab(2800, 140, 120, 'platform_hard'));             // Uebergang top 140
+    platforms.push(ground(2900, 3700, 120));                           // Kraterrand top 120
+    platforms.push(...twoTierSection(3700, 320, 900, 'stone', 'platform_hard')); // Galerie unten 320 / oben 160
+    platforms.push(ground(4600, 5400, 280));                           // top 280  [4600,5400]
+    platforms.push(slab(4700, 140, 120, 'platform_medium'));           // obere Bonusroute top 140
+    platforms.push(slab(4950, 110, 160, 'platform_hard'));             // Bonus top 110
+    platforms.push(ground(5400, 5900, 280));                           // top 280  [5400,5900]
+    platforms.push(...zigzagClimb(5900, 280, 3, 65, 110, 130, 'platform_medium')); // tops 215/150/85
+    platforms.push(ground(6150, 6900, 100));                           // Kraterrand 2 top 100
+    platforms.push(ground(6900, 7700, 220));                           // top 220  [6900,7700]
+    platforms.push(lavaPool(7700, 8300, 740));                         // Lavasee 1
+    platforms.push(slab(7840, 210, 90, 'platform_easy'));
+    platforms.push(slab(8040, 195, 80, 'platform_hard'));
+    platforms.push(slab(8220, 210, 90, 'platform_medium'));
+    platforms.push(ground(8300, 9200, 220));                           // top 220  [8300,9200]
+    platforms.push(lavaPool(9200, 9800, 740));                         // Lavasee 2
+    platforms.push(createCrumblePlat(9500, 100, 480, 24, 'platform_medium')); // Obsidian-Abkuerzung top 100
+    platforms.push(slab(9340, 210, 90, 'platform_easy'));
+    platforms.push(slab(9540, 195, 80, 'platform_hard'));
+    platforms.push(slab(9720, 210, 90, 'platform_medium'));
+    platforms.push(ground(9800, 10700, 220));                          // top 220  [9800,10700]
+    platforms.push(...staircase(10700, 220, 3, 50, 140, 40, 'stone')); // tops 170/120/70
+    platforms.push(ground(11200, 12100, 70));                          // Ziel-Plateau top 70
+    platforms.push(ground(12100, 12800, 140));                         // Ausklang top 140
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 590, 1100, 590, 5));
+    coins.push(...coinArc(1440, 700, 5, 170, 70));
+    coins.push(...coinTrail(1750, 570, 2450, 570, 4));
+    coins.push(...coinLadder(2520, 480, 240, 4));
+    coins.push(...coinArc(2650, 440, 5, 160, 90));
+    coins.push(...coinDiamond(3300, 40, 70));
+    coins.push(...coinTrail(3760, 120, 4540, 120, 4));
+    coins.push(...coinArc(4150, 240, 5, 180, 70));
+    coins.push(...coinTrail(4640, 100, 5030, 70, 3));
+    coins.push(...coinDiamond(4950, 60, 60));
+    coins.push(...coinArc(5650, 220, 5, 160, 70));
+    coins.push(...coinLadder(6030, 220, 120, 4));
+    coins.push(...coinArc(6525, 60, 5, 150, 50));
+    coins.push(...coinTrail(7000, 180, 7600, 180, 4));
+    coins.push(...coinArc(8000, 170, 5, 170, 70));
+    coins.push(...coinDiamond(8750, 180, 70));
+    coins.push(...coinArc(9500, 160, 5, 130, 60));
+    coins.push(...coinTrail(9850, 180, 10600, 180, 5));
+    coins.push(...coinDiamond(10250, 160, 70));
+    coins.push(...coinTrail(10800, 130, 11150, 100, 3));
+    coins.push(...coinArc(11650, 40, 5, 150, 50));
+    coins.push(...coinTrail(12200, 110, 12700, 110, 4));
+
+    return {
+      id: 58, name: 'Kraterkletterer', width: 12800, height: 800, biome: 'volcano-lava',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(8000, 400, 110, 24, 'platform_hard', 'vertical', 100, 22),
+        createMovingPlat(9500, 300, 110, 24, 'platform_medium', 'circular', 100, 24),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(900, 570, 'mushroom'),
+        createQB(3100, 30, 'star'),
+        createQB(4900, 230, 'oneup'),
+        createQB(6300, 30, 'coin'),
+      ],
+      enemies: [
+        createEnemy(900, 652, 'goomba'),
+        createEnemy(1900, 632, 'robot'),
+        createEnemy(2300, 420, 'thwomp'),
+        createEnemy(3600, 112, 'spiny'),
+        createEnemy(4000, 312, 'robot'),
+        createEnemy(4800, 272, 'spiny'),
+        createEnemy(5500, 272, 'spiny'),
+        createEnemy(6700, 92, 'spiny'),
+        createEnemy(7300, 212, 'robot'),
+        createEnemy(8500, 212, 'spiny'),
+        createEnemy(10000, 212, 'robot'),
+        createEnemy(11500, 62, 'spiny'),
+        createEnemy(12400, 132, 'goomba'),
+      ],
+      decorations: [
+        createDeco(300, 600, 'fire'),
+        createDeco(1000, 580, 'ember'),
+        createDeco(1450, 720, 'lava-rock'),
+        createDeco(2000, 580, 'rock'),
+        createDeco(2600, 480, 'fire'),
+        createDeco(3300, 80, 'ember'),
+        createDeco(3900, 280, 'lava-rock'),
+        createDeco(4700, 100, 'fire'),
+        createDeco(5500, 240, 'ember'),
+        createDeco(6200, 60, 'lava-rock'),
+        createDeco(7000, 180, 'rock'),
+        createDeco(7800, 720, 'fire'),
+        createDeco(8700, 180, 'ember'),
+        createDeco(9300, 720, 'lava-rock'),
+        createDeco(10100, 180, 'fire'),
+        createDeco(10900, 120, 'ember'),
+        createDeco(11700, 40, 'lava-rock'),
+        createDeco(12500, 100, 'fire'),
+      ],
+      playerStart: { x: 170, y: 628 },
+      goal: { x: 11700, y: 60 },
+      timeBonus: 200,
+      springs: [createSpring(2200, 640), createSpring(8800, 220)],
+      spikes: [createSpike(5150, 272), createSpike(10300, 212)],
+      checkpoints: [
+        createCheckpoint(2500, 624),
+        createCheckpoint(3200, 104),
+        createCheckpoint(6600, 84),
+        createCheckpoint(10400, 204),
+      ],
+    };
+  })(),
+  // ============================================================
+  // Level 59 (Aschesturm-Horde): breite Kampf-Arenen, Waechter
+  // (Robot, Spiny, Thwomp), Gruben und Lavagraeben, Insel-
+  // Muenzcluster und ein Muenz-Tor (coinGoal 30). 2 Springs, 3 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as Plat[];
+    platforms.push(ground(0, 1600, 640));                              // Arena 1 top 640 [0,1600]
+    platforms.push(lavaPool(1600, 2100, 740));                         // Lavagraben 1
+    platforms.push(slab(1740, 630, 100, 'platform_medium'));
+    platforms.push(slab(1950, 615, 90, 'platform_hard'));
+    platforms.push(ground(2100, 3400, 620));                           // Arena 2 top 620 [2100,3400]
+    platforms.push(lavaPool(3400, 4000, 740));                         // Lavagraben 2
+    platforms.push(ground(4000, 5300, 560));                           // Arena 3 top 560 [4000,5300]
+    platforms.push(...pitWithLedges(5300, 560, 500, 160, 60, 'lava')); // Lavagrube top 720
+    platforms.push(slab(5420, 550, 90, 'platform_easy'));
+    platforms.push(slab(5620, 535, 80, 'platform_hard'));
+    platforms.push(ground(5800, 7100, 540));                           // Arena 4 top 540 [5800,7100]
+    platforms.push(lavaPool(7100, 7700, 740));                         // Lavagraben 3
+    platforms.push(ground(7700, 9000, 520));                           // Arena 5 top 520 [7700,9000]
+    platforms.push(lavaPool(9000, 9600, 740));                         // Lavagraben 4
+    platforms.push(slab(9120, 510, 90, 'platform_easy'));
+    platforms.push(slab(9320, 495, 100, 'platform_medium'));
+    platforms.push(slab(9500, 510, 90, 'platform_hard'));
+    platforms.push(ground(9600, 11000, 510));                          // Arena 6 top 510 [9600,11000]
+    platforms.push(...staircase(11000, 510, 4, 70, 140, 40, 'stone')); // tops 440/370/300/230
+    platforms.push(ground(11680, 12500, 200));                         // Hochplateau top 200
+    platforms.push(lavaPool(12500, 13100, 740));                       // Lavagraben 5
+    platforms.push(...islandCluster(12500, 200, [
+      { dx: 60, dy: 20, w: 100 }, { dx: 230, dy: 45, w: 90 }, { dx: 390, dy: 20, w: 100 },
+    ]));                                                               // tops 180/155/180
+    platforms.push(ground(13100, 14000, 200));                         // Arena 7 top 200 [13100,14000]
+    platforms.push(lavaPool(14000, 14400, 740));                       // Lavagraben 6
+    platforms.push(ground(14400, 15300, 520));                         // Abstieg top 520 [14400,15300]
+    platforms.push(...staircase(15300, 520, 2, 70, 140, 40, 'stone')); // tops 450/380
+    platforms.push(...plateauSection(15620, 360, [                     // Ziel-Arena top 360
+      { dx: 0, dy: 0, w: 780, h: 40 },
+      { dx: 780, dy: -60, w: 600, h: 40 },                             // Ausklang top 420
+    ]));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 570, 1500, 570, 6));
+    coins.push(...coinArc(1850, 560, 5, 160, 60));
+    coins.push(...coinTrail(2200, 550, 3300, 550, 6));
+    coins.push(...coinArc(3700, 500, 5, 170, 60));
+    coins.push(...coinTrail(4100, 490, 5200, 490, 6));
+    coins.push(...coinArc(5550, 470, 5, 150, 60));
+    coins.push(...coinDiamond(6450, 460, 70));
+    coins.push(...coinArc(7400, 400, 5, 100, 60));
+    coins.push(...coinTrail(7800, 440, 8900, 440, 6));
+    coins.push(...coinArc(9300, 430, 5, 130, 60));
+    coins.push(...coinTrail(9700, 430, 10900, 430, 6));
+    coins.push(...coinLadder(11150, 480, 240, 4));
+    coins.push(...coinTrail(11750, 140, 12450, 140, 5));
+    coins.push(...coinArc(12800, 120, 5, 160, 50));
+    coins.push(...coinTrail(13150, 140, 13950, 140, 5));
+    coins.push(...coinDiamond(13550, 130, 70));
+    coins.push(...coinArc(14200, 140, 5, 80, 60));
+    coins.push(...coinTrail(14450, 460, 15250, 460, 5));
+    coins.push(...coinArc(15800, 300, 5, 160, 60));
+    coins.push(...coinTrail(16000, 300, 16350, 300, 4));
+    coins.push(...coinDiamond(16700, 380, 70));
+
+    return {
+      id: 59, name: 'Aschesturm-Horde', width: 17000, height: 800, biome: 'volcano-lava',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3700, 580, 140, 24, 'platform_medium', 'horizontal', 150, 28),
+        createMovingPlat(7400, 480, 110, 24, 'platform_hard', 'circular', 80, 24),
+        createMovingPlat(14200, 400, 120, 24, 'platform_medium', 'vertical', 160, 24),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(500, 550, 'mushroom'),
+        createQB(3200, 530, 'flower'),
+        createQB(4250, 470, 'star'),
+        createQB(6100, 450, 'oneup'),
+        createQB(8800, 430, 'coin'),
+        createQB(9900, 420, 'flower'),
+        createQB(12100, 110, 'star'),
+        createQB(13300, 110, 'mushroom'),
+      ],
+      enemies: [
+        createEnemy(700, 632, 'goomba'),
+        createEnemy(1000, 632, 'spiny'),
+        createEnemy(1300, 632, 'robot'),
+        createEnemy(2300, 612, 'robot'),
+        createEnemy(2600, 612, 'spiny'),
+        createEnemy(2850, 612, 'goomba'),
+        createEnemy(4400, 340, 'thwomp'),
+        createEnemy(4600, 552, 'robot'),
+        createEnemy(4900, 552, 'spiny'),
+        createEnemy(5150, 552, 'goomba'),
+        createEnemy(5950, 532, 'spiny'),
+        createEnemy(6200, 532, 'robot'),
+        createEnemy(6450, 532, 'goomba'),
+        createEnemy(6700, 532, 'spiny'),
+        createEnemy(6950, 532, 'robot'),
+        createEnemy(7900, 512, 'robot'),
+        createEnemy(8600, 300, 'thwomp'),
+        createEnemy(9750, 502, 'spiny'),
+        createEnemy(10050, 502, 'robot'),
+        createEnemy(10550, 502, 'goomba'),
+        createEnemy(10850, 502, 'spiny'),
+        createEnemy(11800, 192, 'spiny'),
+        createEnemy(12300, 192, 'robot'),
+        createEnemy(13400, 192, 'robot'),
+        createEnemy(13900, 192, 'spiny'),
+        createEnemy(14700, 512, 'robot'),
+        createEnemy(15100, 512, 'spiny'),
+        createEnemy(15800, 372, 'goomba'),
+      ],
+      decorations: [
+        createDeco(300, 580, 'fire'),
+        createDeco(1000, 560, 'ember'),
+        createDeco(1700, 700, 'lava-rock'),
+        createDeco(2500, 400, 'rock'),
+        createDeco(3300, 700, 'fire'),
+        createDeco(4200, 480, 'ember'),
+        createDeco(5000, 400, 'lava-rock'),
+        createDeco(5600, 700, 'rock'),
+        createDeco(6300, 460, 'fire'),
+        createDeco(7200, 700, 'ember'),
+        createDeco(8000, 400, 'lava-rock'),
+        createDeco(8900, 700, 'rock'),
+        createDeco(9700, 400, 'fire'),
+        createDeco(10500, 300, 'ember'),
+        createDeco(11300, 700, 'lava-rock'),
+        createDeco(12100, 80, 'rock'),
+        createDeco(12900, 700, 'fire'),
+        createDeco(13700, 120, 'ember'),
+        createDeco(14500, 460, 'lava-rock'),
+        createDeco(15500, 300, 'rock'),
+        createDeco(16400, 300, 'fire'),
+      ],
+      playerStart: { x: 170, y: 608 },
+      goal: { x: 16050, y: 350 },
+      timeBonus: 210,
+      coinGoal: 30,
+      springs: [createSpring(4500, 560), createSpring(11800, 200)],
+      spikes: [
+        createSpike(8450, 512),
+        createSpike(10450, 502),
+        createSpike(13700, 192),
+      ],
+      checkpoints: [
+        createCheckpoint(3000, 604),
+        createCheckpoint(6300, 524),
+        createCheckpoint(10400, 494),
+        createCheckpoint(14600, 504),
+      ],
+    };
+  })(),
+  // ============================================================
+  // Level 60 (Eruptions-Finale): steigende Lava (Engine-ID 60 ->
+  // Chase-Mechanik). Die Fluchtroute steigt monoton nach rechts:
+  // Lavabecken, Insel-Cluster und Vertikal-/Kreisplattformen wechseln
+  // sich ab, Checkpoints sichern den Aufstieg, Federn helfen beim
+  // Ausweichen. 2 Springs, 2 Spikes.
+  // ============================================================
+  (() => {
+    const platforms = [] as Plat[];
+    platforms.push(ground(0, 1600, 680));                              // Start top 680 [0,1600]
+    platforms.push(lavaPool(1600, 2000, 760));                         // Lavabecken 1
+    platforms.push(slab(1700, 670, 100, 'platform_easy'));
+    platforms.push(...staircase(1850, 680, 3, 70, 150, 40, 'stone'));  // tops 610/540/470
+    platforms.push(ground(2380, 3200, 470));                           // Plateaustufe top 470
+    platforms.push(lavaPool(3200, 3800, 760));                         // Lavabecken 2
+    platforms.push(...islandCluster(3200, 470, [
+      { dx: 60, dy: 20, w: 100 }, { dx: 230, dy: 45, w: 90 }, { dx: 390, dy: 20, w: 100 },
+    ]));                                                               // tops 450/425/450
+    platforms.push(ground(3800, 4800, 430));                           // Plateau top 430 [3800,4800]
+    platforms.push(ground(4850, 5350, 300));                           // Hochstufe top 300 [4850,5350]
+    platforms.push(ground(5450, 6400, 280));                           // Plateau top 280 [5450,6400]
+    platforms.push(lavaPool(6400, 6900, 760));                         // Lavabecken 3
+    platforms.push(ground(6900, 7800, 260));                           // Plateau top 260 [6900,7800]
+    platforms.push(...staircase(7800, 260, 2, 50, 150, 40, 'stone'));  // tops 210/160
+    platforms.push(ground(8140, 9000, 160));                           // Hochplateau top 160 [8140,9000]
+    platforms.push(lavaPool(9000, 9600, 760));                         // Lavabecken 4
+    platforms.push(ground(9600, 10600, 240));                          // Plateau top 240 [9600,10600]
+    platforms.push(lavaPool(10600, 11200, 760));                       // Lavabecken 5
+    platforms.push(...islandCluster(10600, 240, [
+      { dx: 60, dy: 20, w: 100 }, { dx: 230, dy: 45, w: 90 }, { dx: 390, dy: 20, w: 100 },
+    ]));                                                               // tops 220/195/220
+    platforms.push(ground(11200, 12200, 220));                         // Plateau top 220 [11200,12200]
+    platforms.push(...staircase(12200, 220, 2, 50, 150, 40, 'stone')); // tops 170/120
+    platforms.push(ground(12540, 13600, 120));                         // Ziel-Plateau top 120
+    platforms.push(ground(13600, 14500, 180));                         // Ausklang top 180
+    platforms.push(ground(14500, 15400, 120));                         // Nachziel-Rim top 120
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(150, 610, 1500, 610, 6));
+    coins.push(...coinArc(1800, 610, 5, 150, 60));
+    coins.push(...coinTrail(2450, 400, 3100, 400, 5));
+    coins.push(...coinArc(3500, 370, 7, 260, 70));
+    coins.push(...coinTrail(3900, 370, 4700, 370, 5));
+    coins.push(...coinDiamond(5100, 240, 70));
+    coins.push(...coinArc(5950, 220, 5, 200, 60));
+    coins.push(...coinDiamond(6650, 300, 70));
+    coins.push(...coinTrail(7000, 200, 7700, 200, 5));
+    coins.push(...coinArc(8500, 90, 5, 220, 60));
+    coins.push(...coinLadder(9050, 200, 80, 4));
+    coins.push(...coinArc(9300, 200, 7, 240, 60));
+    coins.push(...coinDiamond(10200, 170, 70));
+    coins.push(...coinArc(10900, 160, 5, 200, 60));
+    coins.push(...coinTrail(11300, 160, 12100, 160, 5));
+    coins.push(...coinArc(12500, 60, 5, 200, 50));
+    coins.push(...coinTrail(12700, 60, 13500, 60, 5));
+    coins.push(...coinArc(13800, 120, 5, 150, 50));
+    coins.push(...coinTrail(14600, 60, 15300, 60, 5));
+
+    return {
+      id: 60, name: 'Eruptions-Finale', width: 15600, height: 800, biome: 'volcano-lava',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(6650, 380, 120, 24, 'platform_medium', 'vertical', 100, 24),
+        createMovingPlat(9300, 300, 110, 24, 'platform_hard', 'circular', 90, 26),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(600, 590, 'mushroom'),
+        createQB(2950, 380, 'flower'),
+        createQB(3900, 340, 'star'),
+        createQB(8400, 70, 'coin'),
+        createQB(9600, 150, 'oneup'),
+        createQB(11400, 130, 'flower'),
+      ],
+      enemies: [
+        createEnemy(1000, 672, 'goomba'),
+        createEnemy(2600, 462, 'spiny'),
+        createEnemy(2850, 462, 'robot'),
+        createEnemy(4600, 230, 'thwomp'),
+        createEnemy(4500, 422, 'robot'),
+        createEnemy(5750, 272, 'spiny'),
+        createEnemy(6100, 272, 'spiny'),
+        createEnemy(7100, 252, 'robot'),
+        createEnemy(7500, 252, 'goomba'),
+        createEnemy(8200, 152, 'robot'),
+        createEnemy(8800, 152, 'spiny'),
+        createEnemy(9700, 232, 'spiny'),
+        createEnemy(10300, 232, 'robot'),
+        createEnemy(11300, 212, 'robot'),
+        createEnemy(11900, 212, 'spiny'),
+        createEnemy(12800, 112, 'spiny'),
+        createEnemy(13400, 112, 'goomba'),
+        createEnemy(14000, 172, 'robot'),
+      ],
+      decorations: [
+        createDeco(300, 620, 'fire'),
+        createDeco(1000, 600, 'ember'),
+        createDeco(1700, 720, 'lava-rock'),
+        createDeco(2500, 400, 'rock'),
+        createDeco(3300, 720, 'fire'),
+        createDeco(4200, 380, 'ember'),
+        createDeco(5000, 240, 'lava-rock'),
+        createDeco(5700, 240, 'rock'),
+        createDeco(6500, 720, 'fire'),
+        createDeco(7200, 200, 'ember'),
+        createDeco(8200, 100, 'lava-rock'),
+        createDeco(8900, 720, 'rock'),
+        createDeco(9500, 200, 'fire'),
+        createDeco(10200, 180, 'ember'),
+        createDeco(10900, 720, 'lava-rock'),
+        createDeco(11500, 160, 'rock'),
+        createDeco(12300, 160, 'fire'),
+        createDeco(13000, 60, 'ember'),
+        createDeco(14000, 120, 'lava-rock'),
+        createDeco(15000, 60, 'rock'),
+      ],
+      playerStart: { x: 170, y: 648 },
+      goal: { x: 13100, y: 110 },
+      timeBonus: 240,
+      springs: [createSpring(4350, 430), createSpring(11350, 220)],
+      spikes: [createSpike(8700, 152), createSpike(10000, 232)],
+      checkpoints: [
+        createCheckpoint(2500, 454),
+        createCheckpoint(4100, 414),
+        createCheckpoint(5600, 264),
+        createCheckpoint(8300, 144),
+        createCheckpoint(11500, 204),
+      ],
+    };
+  })(),
 ];
+

@@ -193,6 +193,7 @@ test.describe('Pilot elements runtime verification', () => {
       const stompable = ['goomba', 'koopa', 'spiny', 'robot', 'crab', 'ghost', 'squid', 'ufo'];
       const target = scene.enemies.getChildren().find(e => stompable.includes(getType(e)));
       if (!target) return { error: 'no stompable enemy in level' };
+      target.setData('e2eTarget', true);
       scene.livesAtStompStart = scene.lives;
       const scoreBefore = scene.score;
       scene.isPlayerBig = false;
@@ -213,16 +214,17 @@ test.describe('Pilot elements runtime verification', () => {
       await page.waitForTimeout(10);
       result = await inGame(page, `
         const p = scene.player;
-        const remaining = scene.enemies.getChildren().length;
+        const targetAlive = scene.enemies.getChildren().some(e => e.getData('e2eTarget'));
         const vy = p ? p.body.velocity.y : null;
-        return { remaining, score: scene.score, vy, isDead: scene.isDead, lives: scene.lives };
+        return { targetAlive, score: scene.score, vy, isDead: scene.isDead, lives: scene.lives };
       `);
       if (typeof result.vy === 'number' && result.vy < minVy) minVy = result.vy;
-      if (result.remaining === 0) break;
+      if (!result.targetAlive) break;
     }
     expect(result, 'poll produced no result').not.toBeNull();
-    expect(result.remaining, `goomba was not destroyed within 3s (score=${result.score}, isDead=${result.isDead})`).toBe(0);
-    expect(result.score, `expected stomp +500, got score=${result.score} (before=${setup.scoreBefore})`).toBe(setup.scoreBefore + 500);
+    expect(result.targetAlive, `target enemy was not destroyed within 3s (score=${result.score}, isDead=${result.isDead})`).toBe(false);
+    // Coins collected during the fall may add score on top of the +500 stomp.
+    expect(result.score, `expected at least +500 for stomp, got score=${result.score} (before=${setup.scoreBefore})`).toBeGreaterThanOrEqual(setup.scoreBefore + 500);
     expect(result.isDead, 'player died instead of stomping').toBe(false);
     expect(result.lives, 'player lives must be unchanged after stomp').toBe(setup.lives);
     // Bounce -400: Aufwaerts-Geschwindigkeit kurz nach Stomp (Poll-Intervall 10ms;

@@ -25,7 +25,7 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 - Tests run from `tests/**/*.test.ts`
 - Run single test: `npm test -- LevelSolvability.test.ts`
 - TypeScript Fehler müssen vor test/build behoben werden
-- 197 Tests in 11 Dateien (Physics, LevelInvariant, LevelSolvability, GameLogic, AssetCoverage, NewElements, PilotElements, Music, RequirementsCoverage, StompMechanics, ElementMix)
+- 235 Tests in 13 Dateien (Physics, LevelInvariant, LevelSolvability, GameLogic, AssetCoverage, NewElements, PilotElements, Music, RequirementsCoverage, StompMechanics, ElementMix, Phase9Features, BiomeAudit). Phase9Features + BiomeAudit sichern die Level-Vielfalt ab; BiomeAudit läuft scoped via `BIOME=<biom> npx vitest run tests/BiomeAudit.test.ts` (ohne ENV 10 skipped).
 - E2E: 12 Playwright-Tests in `e2e/**/*.test.ts` (game.test.ts 6 + elements.test.ts 6: Springs/Spikes/Bricks/Coin-Gate/Stomp via `window.__game`; benötigt `npx playwright install chromium`)
 - **Traceability**: `REQUIREMENTS.md` listet alle Anforderungen mit IDs (R-001 ff.); `tests/RequirementsCoverage.test.ts` prüft, dass jedes Mapping auf eine existierende Test-Datei + Testnamen-Teilstring zeigt (Gaps `—` max. 8)
 
@@ -38,8 +38,9 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 - **MusicPlayer**: `src/audio/musicPlayer.ts` – Lookahead-Scheduler (25ms-Poll, 0.12s Schedule-Ahead, exakte `ctx.currentTime`-Timeline, kein Drift). Instrumente: Lead (Song-Waveform + 6-cent-Detune-Zweitosc + LFO-Vibrato ab 60% + Delay-Send), Bass (triangle+Sub-Sine, Lowpass 480Hz), Arp (square, root-5-oct-5 16tel), Kick (180→45Hz + Click), Snare (Bandpass-Noise 1800Hz + 200Hz-Körper), HiHat (highpass 7kHz). GameScene: `startBgm()` erzeugt ctx/master/delay (SFX-Pfad unverändert), erstellt `MusicPlayer` und startet Song; alle Stop-Punkte rufen `stopMusic()`.
 - **Konstanten**: `src/config.ts` – `PHYSICS.GRAVITY: 2000`, `JUMP_SPEED: 900`, `HORIZONTAL_SPEED: 300`, `MAX_JUMP_DISTANCE: 800`, `SPRING_VELOCITY: -1350` (Sprungfeder, Sprunghöhe ~455px bei g=2000)
 Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinGoal?: number`): Springs (y = Plattform-Oberkante, Launch via `SPRING_VELOCITY` + Squash-Tween, GameScene ~774; Body-Hinweis: nach `refreshBody()` muss `setSize(28,12)` + `setOffset(2,-6)` gesetzt werden, sonst liegt die Body-Oberkante exakt auf der Plattform-Oberkante → 0 Overlap → Launch triggert nie, da Solid-Separation zuerst läuft), Spikes (y = Oberkante − 8, Overlap → `die()`, GameScene ~786), Zerstörbare Bricks (Big Mario zerstört 'brick' von unten via `canBreakBrick()`, load-bearing Bricks → Wobble-Schutz via `isBrickLoadBearing()` — GameScene:622 übergibt `{x, y, type: platType}` als Plain-Object, NICHT den Sprite (dessen `type` ist 'Sprite' → Match schlägt immer fehl → Schutz wirkungslos), +50 Punkte, GameScene ~616), Münz-Tor (`coinGoal` sperrt Goal bis X Coins, HUD-Hint, GameScene ~568/964/1516). Runtime-E2E-Verifikation aller 4 Elemente: `e2e/elements.test.ts` (Headless-Browser, Zugriffe via `window.__game`). Helper: `createSpring`, `createSpike` in helpers.ts (re-exportiert in levels/index.ts). Solver kennt neue Elemente NICHT — Elemente dürfen nie Pflicht sein. Rollout: Pilot grasslands/desert (1-12) + Phase 6b space-star (79-84) & castle-final (85-90, L90-Bossarena elementefrei; space: Feder-Hub ~910px bei g=1000 → sparsam, Sternen-Konstellations-Coin-Cluster, langsame Circular-Bahnen; castle: coinGoal L89 = 33). Tests: `tests/NewElements.test.ts` (Invariante „keine neuen Felder" gilt für alle Nicht-Upgrade-Level, Boundary i>=78), `tests/PilotElements.test.ts`.
+- **Phase 9 Level-Elemente** (alle datengetrieben, solver-agnostisch, nie Pflichtweg): `Platform.crumble` (800ms/3s, data-driven statt Level-ID; Legacy-Fallback L30/72/78/84 greift nur ohne explizite Flags), `Platform.conveyor` (px/s Laufkraft, GameScene `getGroundPlatform()`), PlatformType `ice` (Rutsch ×0.96, nur ice-snow), `checkpoints` (Respawn nach Tod via `respawnPoint`, `scene.restart({respawn})`), `windZones`/`waterZones` (Rechtecke; Wasser aktiviert Schwimm-Physik), `keys`/`doors` (alle Keys → Türen öffnen, nur Bonusräume), `cannons` (Projektile in `fallingHazards`), `timeGate` (Goal erst nach X Sekunden), `goals` (Multi-Goal-Zusatzflaggen, `reachGoal(bonus)`), QB-Inhalt `oneup` (+1 Leben), `hidden`/`brick_secret`/`brick_multi`. Rising Lava/Flut (L60/L18/L48) chaset den Spieler (Abstand 560px). Helfer v2 in `helpers.ts`: `staircase`, `plateauSection`, `pitWithLedges`, `twoTierSection`, `islandCluster`, `zigzagClimb`, `overhangSection`, `coinArc/Diamond/Trail/Ladder`, `createCrumblePlat`, `createConveyorPlat`, `createIcePlat`, `createCheckpoint`, `createWindZone`, `createWaterZone`, `createKey`, `createDoor`, `createCannon`, `gapWithPlatforms(..., opts)`. Tests: `tests/Phase9Features.test.ts` (28) + `tests/BiomeAudit.test.ts`.
 - **Biome Gravity**: `BIOME_GRAVITY` in `config.ts` (space-star: 1000, water: 1200, sky-clouds/beach-island: 1500, volcano-lava: 2200)
-- **Level Auto-Fixer**: `src/data/levels/index.ts` → `ensureSolvable()` (exportiert) fügt bei `getLevel()` automatisch Trittplattformen hinzu, falls biome-bewusste Max-Sprungweite überschritten wird. Typ: 'platform_easy'. QB-Clearance: platY wird auf das MINIMUM der minPlatY-Werte aller betroffenen Question Blocks gehoben; nach dem Loop wird per `console.warn` gewarnt, falls das Level nicht vollständig lösbar gemacht werden konnte. Exportiert: `ALL_LEVELS`, `ensureSolvable`, `getLevel`, `getLevelCount`, `getBiome`. Invariant-Tests: `tests/LevelInvariant.test.ts`.
+- **Level Auto-Fixer**: `src/data/levels/index.ts` → `ensureSolvable()` (exportiert) fügt bei `getLevel()` automatisch Trittplattformen hinzu, falls biome-bewusste Max-Sprungweite überschritten wird. Typ: 'platform_easy'. QB-Clearance: platY wird auf das MINIMUM der minPlatY-Werte aller betroffenen Question Blocks gehoben; nach dem Loop wird per `console.warn` gewarnt, falls das Level nicht vollständig lösbar gemacht werden konnte. Exportiert: `ALL_LEVELS`, `ensureSolvable`, `getLevel`, `getLevelCount`, `getBiome`. Invariant-Tests: `tests/LevelInvariant.test.ts`. **Seit Phase 9 sind alle 90 Level as-authored lösbar — `ensureSolvable` ergänzt in keinem Level mehr eine Plattform** (Test: `Phase9Features.test.ts` → "no ensureSolvable patchwork").
 - **Level Data**: 90 levels across 15 biomes in `src/data/levels/`
 
 ## Key Config
@@ -48,7 +49,7 @@ Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinG
 - TypeScript: strict mode, ESNext modules
 
 ## Key Types
-- PlatformType: grass, stone, brick, pipe, pipe_top, cloud, platform_easy/medium/hard, lava, wood, sand, snow, ruins, space, water, bubble, ground, cave, castle, metal, sandstone
+- PlatformType: grass, stone, brick, brick_secret, brick_multi, pipe, pipe_top, cloud, platform_easy/medium/hard, lava, wood, sand, snow, ice, ruins, space, water, bubble, ground, cave, castle, metal, sandstone, hidden
 - SOLID_TYPES: alles ausser lava, pipe, pipe_top, platform_* (lava ist in `this.platforms`, nicht solid)
 - EnemyType: goomba, koopa, piranha, spiny, boo, thwomp, lakitu, bullet_bill, fireball, crab, robot, ghost, squid, ufo, boss
 - Stompbare Gegner: goomba, koopa, spiny, robot, crab, ghost, squid, ufo
@@ -75,10 +76,10 @@ Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinG
 - **L48 (beach-island)**: Steigende Flut
 - **L54 (factory)**: Fallende Hindernisse
 - **L60 (volcano-lava)**: Steigende Lava (0.4px/Frame)
-- **L66 (canyon-base)**: Fallende Felsen
+- **L66 (haunted-mansion)**: Fallende Hindernisse
 - **L72 (ruins)**: Bröckel-Plattformen (800ms Standzeit, 3s Respawn)
-- **L78 (space-star)**: Bröckel-Plattformen
-- **L84 (haunted-mansion)**: Bröckel-Plattformen
+- **L78 (canyon-base)**: Bröckel-Plattformen
+- **L84 (space-star)**: Bröckel-Plattformen
 - **L90 (castle-final)**: Bosskampf mit HP-Bar, Arena-Wänden, Boss-Projektilen
 
 ## Biome Gravity (`BIOME_GRAVITY`)

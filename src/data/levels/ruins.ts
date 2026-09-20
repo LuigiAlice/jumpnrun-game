@@ -1,660 +1,767 @@
-// Ruins World - 6 Levels (IDs 67-72) - Distinct Structure Designs
-// 67: Tutorial, 68: Gap-Strecke, 69: Röhren-Labyrinth, 70: Vertikal-Kletterer, 71: Gegner-Horde, 72: Fallende-Tempel Finale
-// Biome-aware jump distances (gravity from config.ts BIOME_GRAVITY)
-// MAX_JUMP_UP = 350, MAX_FALL_DOWN = 1000
+// Ruins World (ids 67-72) — Phase 9 rebuild
+// Archetypes: 67 Ausgrabung, 68 Tempelbrücken, 69 Säulengänge,
+// 70 Stufenpyramide, 71 Wächter-Horde, 72 Fallender Tempel
+// (Abstieg von Hochterrasse y≈500 auf Boden y≈800, Engine-ID 72 bröckelt).
+// Ruins gravity is 2000: safe rises <=160px, safe same-height gaps <=210px.
+// Crumble platforms are bonus shortcuts — a solid non-crumble route always exists.
+// Keys/doors and hidden/secret bricks are bonus content, never the critical path.
+// All levels are authored solvable (ensureSolvable adds nothing).
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import {
+  LevelData, createPlat, createQB, createEnemy, createDeco,
+  createMovingPlat, createSpring, createSpike, createCrumblePlat,
+  createCheckpoint, createKey, createDoor,
+  staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster,
+  overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
+  gapWithPlatforms,
+} from './helpers';
 
 export const RUINS_LEVELS: LevelData[] = [
   // ============================================================
-  // LEVEL 67 - Tutorial (S=0.625)
-  // Simple ruins path: start → pipes(2) → ruins → gap(2) → goal
+  // Level 67 (Ausgrabung): Grabungsfeld mit offener Grube,
+  // Gerüst-Aufstieg, Geheim-Brick über der Grube, vertikalem
+  // Grabungsaufzug zur Schatzterrasse und zerbrochener Brücke.
+  // 2 Spikes, 2 Federn, 1-UP-Block.
   // ============================================================
-  {
-    id: 67, name: "Vergessener Pfad", width: 4000, height: 600, biome: 'ruins',
-    timeBonus: 80,
-    platforms: (() => {
-      const S = 0.625;
-      const plats: any[] = [];
-      // Ruins start: left=-125, right=625 (top=525)
-      plats.push(createPlat(400 * S, 550, 1200 * S, 50, 'ruins'));
-      // Stepping platform bridging gap to pipes
-      plats.push(createPlat(1360 * S, 545, 64, 24, 'platform_easy'));
-      // Pipes(2)
-      plats.push(...pipeSection(S, 1500, 550, 2));
-      // Ruins mid
-      plats.push(createPlat(2700 * S, 550, 800 * S, 50, 'ruins'));
-      // Gap(2): float0 left≈2148 (gap from 1937.5=210)
-      plats.push(...gapWithPlatforms(S, 3400, 550, 350, 2));
-      // Ruins goal: left=2312.5, right=3062.5 (top=525)
-      plats.push(createPlat(4300 * S, 550, 1200 * S, 50, 'ruins'));
-      // Secret room: treasure chamber below ruins mid section
-      plats.push(createPlat(1650, 610, 160, 24, 'ruins'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.625;
-      const coins: any[] = [];
-      for (let x = 500; x < 1200; x += 120) coins.push(createCoin(x * S, 500));
-      for (let x = 1600; x < 2300; x += 100) coins.push(createCoin(x * S, 500));
-      for (let x = 2800; x < 3300; x += 120) coins.push(createCoin(x * S, 500));
-      for (let x = 3500; x < 3800; x += 100) coins.push(createCoin(x * S, 480));
-      for (let x = 4400; x < 5300; x += 120) coins.push(createCoin(x * S, 500));
-      coins.push(createCoin(1610, 590), createCoin(1650, 590), createCoin(1690, 590), createCoin(1730, 590));
-      // Coin arc above the tutorial spring
-      coins.push(createCoin(1660, 465), createCoin(1700, 425), createCoin(1740, 465));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.625;
-      return [
-        createQB(900 * S, 480, 'mushroom'),
-        createQB(1800 * S, 480, 'flower'),
-        createQB(3000 * S, 480, 'star'),
-        createQB(4600 * S, 480, 'mushroom'),
-        createQB(1650, 570, 'star'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.625;
-      return [
-        createEnemy(700 * S, 510, 'goomba'),
-        createEnemy(1600 * S, 515, 'piranha'),
-        createEnemy(2900 * S, 510, 'goomba'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.625;
-      return [
-        createDeco(400 * S, 510, 'pillar'),
-        createDeco(1100 * S, 510, 'moss'),
-        createDeco(1600 * S, 510, 'statue'),
-        createDeco(2300 * S, 510, 'vine'),
-        createDeco(3500 * S, 470, 'pillar'),
-        createDeco(4400 * S, 510, 'moss'),
-      ];
-    })(),
-    movingPlatforms: [
-      createMovingPlat(3900 * 0.625, 480, 100, 24, 'ruins', 'horizontal', 150, 18),
-    ],
-    playerStart: { x: 150, y: 500 },
-    goal: { x: 4300 * 0.625, y: 523 },
-    // Discovery-Spring on the mid ruins section (top edge = 525)
-    springs: [createSpring(1700, 525)],
-  },
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(600, 760, 1000, 48, 'ruins'));
+    platforms.push(...pitWithLedges(1100, 736, 240, 140, 60, 'sandstone'));
+    // Geheim-Brick über dem Grubenrand (nur mit Sprung erreichbar)
+    platforms.push(createPlat(1300, 600, 140, 24, 'brick_secret'));
+    platforms.push(createPlat(1800, 760, 800, 48, 'ruins'));
+    // Gerüst-Aufstieg über dem Grabungsfeld
+    platforms.push(createPlat(1600, 660, 140, 24, 'platform_easy'));
+    platforms.push(createPlat(1850, 560, 130, 24, 'platform_medium'));
+    platforms.push(createPlat(2100, 470, 200, 24, 'platform_hard'));
+    platforms.push(createPlat(2450, 400, 220, 24, 'sandstone'));
+    platforms.push(createPlat(2900, 760, 700, 48, 'ruins'));
+    // Ausgegrabene Tempelterrassen
+    platforms.push(...plateauSection(3300, 736, [
+      { dx: 0, dy: 0, w: 320, h: 48, type: 'ruins' },
+      { dx: 360, dy: 100, w: 280, h: 48, type: 'sandstone' },
+      { dx: 680, dy: 200, w: 300, h: 48, type: 'ruins' },
+      { dx: 1020, dy: 100, w: 260, h: 48, type: 'stone' },
+    ]));
+    // Schatzterrasse (über dem Grabungsaufzug)
+    platforms.push(createPlat(4900, 420, 240, 24, 'sandstone'));
+    platforms.push(createPlat(5450, 760, 800, 48, 'ruins'));
+    // Zerbrochene Brücke
+    platforms.push(...gapWithPlatforms(1, 5850, 748, 520, 2, {
+      widths: [120, 130], dy: [0, 50], types: ['platform_easy', 'platform_medium'],
+    }));
+    platforms.push(createPlat(6800, 760, 900, 48, 'ruins'));
+    // Treppe zum Ausgrabungsausgang
+    platforms.push(...staircase(7300, 736, 3, 70, 140, 40, 'sandstone'));
+    platforms.push(createPlat(8100, 760, 600, 48, 'ruins'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 700, 1000, 700, 4));
+    coins.push(...coinArc(1220, 780, 5, 70, 80));
+    coins.push(...coinTrail(1450, 700, 1750, 700, 3));
+    coins.push(...coinLadder(1850, 620, 480, 5));
+    coins.push(...coinDiamond(2450, 300, 70));
+    coins.push(...coinArc(2950, 660, 5, 70, 80));
+    coins.push(...coinTrail(3350, 660, 3580, 660, 3));
+    coins.push(...coinTrail(3700, 560, 3920, 560, 3));
+    coins.push(...coinTrail(4000, 480, 4260, 480, 3));
+    coins.push(...coinTrail(4350, 560, 4560, 560, 3));
+    coins.push(...coinLadder(4650, 500, 380, 4));
+    coins.push(...coinDiamond(4900, 330, 60));
+    coins.push(...coinArc(6020, 660, 5, 70, 80));
+    coins.push(...coinTrail(6400, 660, 7200, 660, 4));
+    coins.push(...coinTrail(7350, 620, 7700, 620, 4));
+    coins.push(...coinTrail(7850, 660, 8350, 660, 4));
+
+    return {
+      id: 67, name: 'Ausgrabung', width: 8800, height: 950, biome: 'ruins',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(4650, 540, 120, 24, 'platform_medium', 'vertical', 100, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(400, 676, 'mushroom'),
+        createQB(2800, 676, 'coin'),
+        createQB(5500, 676, 'flower'),
+        createQB(6900, 676, 'oneup'),
+        createQB(8150, 676, 'coin'),
+      ],
+      enemies: [
+        createEnemy(900, 716, 'goomba'),
+        createEnemy(1600, 716, 'koopa'),
+        createEnemy(2000, 716, 'spiny'),
+        createEnemy(3000, 716, 'robot'),
+        createEnemy(4130, 516, 'crab'),
+        createEnemy(5600, 716, 'goomba'),
+        createEnemy(6600, 716, 'koopa'),
+        createEnemy(7550, 576, 'robot'),
+        createEnemy(8000, 716, 'spiny'),
+      ],
+      decorations: [
+        createDeco(300, 716, 'pillar'),
+        createDeco(700, 716, 'rock'),
+        createDeco(1200, 856, 'skull'),
+        createDeco(1500, 716, 'statue'),
+        createDeco(2300, 716, 'moss'),
+        createDeco(2700, 716, 'tombstone'),
+        createDeco(3500, 716, 'pillar'),
+        createDeco(4100, 516, 'statue'),
+        createDeco(4700, 716, 'moss'),
+        createDeco(5400, 716, 'rock'),
+        createDeco(6300, 716, 'tombstone'),
+        createDeco(7000, 716, 'pillar'),
+        createDeco(7900, 716, 'moss'),
+      ],
+      playerStart: { x: 200, y: 712 },
+      goal: { x: 8250, y: 728 },
+      timeBonus: 130,
+      springs: [createSpring(900, 736), createSpring(5150, 736)],
+      spikes: [createSpike(2650, 728), createSpike(6500, 728)],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 68 - Gap-Strecke (S=0.6)
-  // 4 gap sections bridging ruins platforms with moving platforms
-  // Gaps verified ≤ 498 static-to-static, moving platform bridges at 800 limit
+  // Level 68 (Tempelbrücken): Brückenpfad über versunkenen
+  // Tempelterrassen. Crumble-Brücke als High-Risk-Variante über
+  // der sicheren Trittstein-Route, Schatzgrube mit Tür + Schlüssel,
+  // Insel-Cluster über der Grabkammer, vertikaler Aufzug.
+  // 2 Spikes, 2 Federn, 1-UP-Block.
   // ============================================================
-  {
-    id: 68, name: "Säulen-Sprünge", width: 6800, height: 600, biome: 'ruins',
-    timeBonus: 100,
-    platforms: (() => {
-      const S = 0.6;
-      const plats: any[] = [];
-      // Ruins start: left=-60, right=540, top=525
-      plats.push(createPlat(400 * S, 550, 1000 * S, 50, 'ruins'));
-      // Stepping stones bridging gap to first gapWithPlatforms (437px → sub-gaps ~100+117)
-      plats.push(createPlat(1140 * S, 550, 100, 24, 'ruins'));
-      plats.push(createPlat(1350 * S, 550, 100, 24, 'ruins'));
-      // Gap 1(3): float0 left≈978 (gap from stepping stones ≈118)
-      plats.push(...gapWithPlatforms(S, 1600, 550, 450, 3));
-      // Ruins 2: left=1380, right=1740 (gap from float2 right≈1213=167)
-      plats.push(createPlat(2600 * S, 550, 600 * S, 50, 'ruins'));
-      // Gap 2(3): float0 left≈2238 (gap from 1740=498)
-      plats.push(...gapWithPlatforms(S, 3700, 550, 450, 3));
-      // Ruins 3: left=2640, right=3000 (gap from float2 right≈2473=167)
-      plats.push(createPlat(4700 * S, 550, 600 * S, 50, 'ruins'));
-      // Gap 3(3): float0 left≈3498 (gap from 3000=498)
-      plats.push(...gapWithPlatforms(S, 5800, 550, 450, 3));
-      // Ruins 4: left=3900, right=4260 (gap from float2 right≈3733=167)
-      plats.push(createPlat(6800 * S, 550, 600 * S, 50, 'ruins'));
-      // Gap 4(3): float0 left≈4758 (gap from 4260=498)
-      plats.push(...gapWithPlatforms(S, 7900, 550, 450, 3));
-      // Ruins goal: left=5040, right=5640 (gap from float2 right≈4993=47)
-      plats.push(createPlat(8900 * S, 550, 1000 * S, 50, 'ruins'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.6;
-      const coins: any[] = [];
-      for (let x = 500; x < 1500; x += 130) coins.push(createCoin(x * S, 500));
-      for (let x = 1700; x < 2100; x += 80) coins.push(createCoin(x * S, 480));
-      for (let x = 2800; x < 3600; x += 130) coins.push(createCoin(x * S, 500));
-      for (let x = 3800; x < 4200; x += 80) coins.push(createCoin(x * S, 480));
-      for (let x = 4900; x < 5700; x += 130) coins.push(createCoin(x * S, 500));
-      for (let x = 5900; x < 6300; x += 80) coins.push(createCoin(x * S, 480));
-      for (let x = 7000; x < 7800; x += 130) coins.push(createCoin(x * S, 500));
-      for (let x = 9000; x < 9600; x += 120) coins.push(createCoin(x * S, 500));
-      // Coin arcs above the gap springs
-      coins.push(createCoin(1510, 455), createCoin(1550, 415), createCoin(1590, 455));
-      coins.push(createCoin(4030, 455), createCoin(4070, 415), createCoin(4110, 455));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.6;
-      return [
-        createQB(800 * S, 480, 'mushroom'),
-        createQB(1900 * S, 460, 'flower'),
-        createQB(2900 * S, 480, 'star'),
-        createQB(4100 * S, 460, 'mushroom'),
-        createQB(5000 * S, 480, 'flower'),
-        createQB(7100 * S, 480, 'star'),
-        createQB(9200 * S, 480, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.6;
-      return [
-        createEnemy(700 * S, 510, 'goomba'),
-        createEnemy(2800 * S, 510, 'koopa'),
-        createEnemy(4900 * S, 510, 'goomba'),
-        createEnemy(7000 * S, 510, 'spiny'),
-        createEnemy(9200 * S, 510, 'koopa'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.6;
-      return [
-        createDeco(400 * S, 510, 'pillar'),
-        createDeco(1500 * S, 510, 'vine'),
-        createDeco(2000 * S, 460, 'moss'),
-        createDeco(2700 * S, 510, 'statue'),
-        createDeco(3800 * S, 460, 'pillar'),
-        createDeco(4800 * S, 510, 'vine'),
-        createDeco(5900 * S, 460, 'moss'),
-        createDeco(6900 * S, 510, 'statue'),
-        createDeco(9000 * S, 510, 'pillar'),
-      ];
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.6;
-      return [
-        createMovingPlat(2300 * S, 480, 120, 24, 'ruins', 'horizontal', 200, 20),
-        createMovingPlat(4400 * S, 480, 120, 24, 'ruins', 'horizontal', 200, 20),
-        createMovingPlat(6500 * S, 480, 120, 24, 'ruins', 'horizontal', 200, 20),
-        createMovingPlat(8600 * S, 480, 120, 24, 'ruins', 'horizontal', 200, 20),
-      ];
-    })(),
-    playerStart: { x: 150, y: 500 },
-    goal: { x: 8900 * 0.6, y: 523 },
-    // Rescue springs on the mid ruins sections (top edge = 525)
-    springs: [createSpring(1550, 525), createSpring(4070, 525)],
-    // Spike traps on safe ruins ground, clear of QBs and gaps
-    spikes: [createSpike(320, 517), createSpike(2820, 517)],
-  },
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(600, 760, 1000, 48, 'ruins'));
+    platforms.push(...gapWithPlatforms(1, 1100, 748, 500, 3, {
+      widths: [130, 110, 150], dy: [0, 40, 80], types: ['platform_medium', 'platform_easy', 'sandstone'],
+    }));
+    platforms.push(createPlat(1900, 760, 800, 48, 'ruins'));
+    // Sichere Trittstein-Route
+    platforms.push(createPlat(2500, 700, 140, 24, 'platform_easy'));
+    platforms.push(createPlat(2700, 660, 130, 24, 'platform_medium'));
+    platforms.push(createPlat(3200, 760, 700, 48, 'ruins'));
+    // Crumble-Brücke (Bonus-Route, sichere Route darunter)
+    platforms.push(createCrumblePlat(2450, 540, 130, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(2650, 500, 130, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(2850, 540, 130, 24, 'platform_medium'));
+    platforms.push(createPlat(3700, 760, 300, 48, 'sandstone'));
+    // Schatzgrube unter der Hauptroute (Tür + Schlüssel = Bonus, nie Pflichtweg)
+    platforms.push(createPlat(4200, 860, 400, 48, 'sandstone'));
+    platforms.push(createPlat(4500, 780, 200, 24, 'brick_secret'));
+    platforms.push(createPlat(4450, 760, 800, 48, 'ruins'));
+    platforms.push(...twoTierSection(4900, 736, 900, 'stone', 'sandstone'));
+    platforms.push(createPlat(6400, 760, 900, 48, 'ruins'));
+    platforms.push(...pitWithLedges(6900, 736, 280, 150, 60, 'sandstone'));
+    // Insel-Cluster über der Grabkammer
+    platforms.push(...islandCluster(6900, 736, [
+      { dx: 0, dy: 150, w: 120, type: 'platform_easy' },
+      { dx: 200, dy: 190, w: 100, type: 'platform_medium' },
+      { dx: 380, dy: 150, w: 130, type: 'platform_hard' },
+    ]));
+    platforms.push(createPlat(7800, 760, 900, 48, 'ruins'));
+    platforms.push(...gapWithPlatforms(1, 8250, 748, 600, 3, {
+      widths: [120, 140, 120], dy: [0, 60, 20], types: ['platform_easy', 'platform_hard', 'platform_medium'],
+    }));
+    platforms.push(createPlat(9300, 760, 900, 48, 'ruins'));
+    platforms.push(createPlat(10050, 420, 260, 24, 'sandstone'));
+    platforms.push(createPlat(10550, 760, 700, 48, 'ruins'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 700, 1000, 700, 4));
+    coins.push(...coinArc(1225, 690, 5, 70, 80));
+    coins.push(...coinTrail(1550, 700, 2250, 700, 3));
+    coins.push(...coinLadder(2450, 620, 540, 4));
+    coins.push(...coinTrail(2900, 660, 3300, 660, 3));
+    coins.push(...coinDiamond(4500, 700, 60));
+    coins.push(...coinTrail(4150, 700, 4750, 700, 3));
+    coins.push(...coinDiamond(5350, 470, 70));
+    coins.push(...coinArc(6300, 660, 5, 70, 80));
+    coins.push(...coinTrail(6450, 660, 6800, 660, 3));
+    coins.push(...coinDiamond(6960, 480, 80));
+    coins.push(...coinTrail(7100, 420, 7300, 420, 3));
+    coins.push(...coinTrail(6950, 840, 7130, 840, 3));
+    coins.push(...coinArc(7450, 660, 5, 70, 80));
+    coins.push(...coinTrail(8850, 660, 9700, 660, 4));
+    coins.push(...coinLadder(9850, 620, 480, 4));
+    coins.push(...coinDiamond(10050, 330, 60));
+    coins.push(...coinTrail(10250, 660, 10850, 660, 4));
+
+    return {
+      id: 68, name: 'Tempelbrücken', width: 11200, height: 950, biome: 'ruins',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(9850, 560, 120, 24, 'platform_easy', 'vertical', 96, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(450, 676, 'mushroom'),
+        createQB(2100, 676, 'coin'),
+        createQB(3300, 676, 'flower'),
+        createQB(4700, 676, 'oneup'),
+        createQB(6500, 676, 'coin'),
+        createQB(9500, 676, 'star'),
+      ],
+      enemies: [
+        createEnemy(800, 716, 'goomba'),
+        createEnemy(1800, 716, 'koopa'),
+        createEnemy(3100, 716, 'spiny'),
+        createEnemy(4300, 716, 'robot'),
+        createEnemy(5300, 716, 'crab'),
+        createEnemy(6050, 650, 'ghost'),
+        createEnemy(7000, 866, 'goomba'),
+        createEnemy(7900, 716, 'robot'),
+        createEnemy(9400, 716, 'spiny'),
+        createEnemy(10400, 716, 'koopa'),
+      ],
+      decorations: [
+        createDeco(300, 716, 'statue'),
+        createDeco(700, 716, 'rock'),
+        createDeco(1400, 716, 'pillar'),
+        createDeco(2000, 716, 'moss'),
+        createDeco(2750, 850, 'tombstone'),
+        createDeco(3400, 716, 'skull'),
+        createDeco(3750, 716, 'pillar'),
+        createDeco(4200, 816, 'moss'),
+        createDeco(5100, 716, 'rock'),
+        createDeco(6100, 716, 'statue'),
+        createDeco(6600, 716, 'pillar'),
+        createDeco(7250, 850, 'tombstone'),
+        createDeco(8000, 716, 'moss'),
+        createDeco(9000, 716, 'rock'),
+        createDeco(10300, 716, 'pillar'),
+      ],
+      playerStart: { x: 200, y: 712 },
+      goal: { x: 10700, y: 728 },
+      timeBonus: 160,
+      springs: [createSpring(1900, 736), createSpring(7800, 736)],
+      spikes: [createSpike(3050, 728), createSpike(6700, 728)],
+      keys: [createKey(3400, 690)],
+      doors: [createDoor(4080, 756, 60, 160)],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 69 - Röhren-Labyrinth (S=0.556)
-  // 5 pipe sections with piranhas, all gaps ≤ 508 static-to-static
-  // Structure: ruins → pipes(2) → ruins → pipes(2) → ruins → pipes(2) → ruins → pipes(2) → ruins → pipes(2) → ruins(goal)
+  // Level 69 (Säulengänge): Kolonnaden aus hohen Steinblöcken,
+  // kreisender Aufzug zur Hochterrasse, eingestürzte Decken-
+  // passage, Aufstieg zum Heiligtum, versteckte Kammer über der
+  // höchsten Säule, Treppen zum Ausgang. 2 Spikes, 2 Federn.
   // ============================================================
-  {
-    id: 69, name: "Röhren-Ruinen", width: 7500, height: 650, biome: 'ruins',
-    timeBonus: 140,
-    platforms: (() => {
-      const S = 0.556;
-      const plats: any[] = [];
-      // Ruins start: left=-56, right=612 (top=575)
-      plats.push(createPlat(500 * S, 600, 1200 * S, 50, 'ruins'));
-      // Stepping stones bridging gap to first pipe section (516px → sub-gaps ~117+121)
-      plats.push(createPlat(1400 * S, 590, 100, 24, 'ruins'));
-      plats.push(createPlat(1720 * S, 590, 100, 24, 'ruins'));
-      // Pipes 1(2): pipe0 left≈1120 (gap from stepping stones ≈121)
-      plats.push(...pipeSection(S, 1800, 600, 2));
-      // Ruins bridge 1: left≈1307, right≈1807 (gap from pipe1 right≈1394 = -87 overlap)
-      plats.push(createPlat(2800 * S, 600, 900 * S, 50, 'ruins'));
-      // Pipes 2(2): pipe0 left≈2287 (gap from 1807=480)
-      plats.push(...pipeSection(S, 3900, 600, 2));
-      // Ruins bridge 2: left≈2530, right≈3030
-      plats.push(createPlat(5000 * S, 600, 900 * S, 50, 'ruins'));
-      // Pipes 3(2): pipe0 left≈3510 (gap from 3030=480)
-      plats.push(...pipeSection(S, 6100, 600, 2));
-      // Ruins bridge 3: left≈3753, right≈4253
-      plats.push(createPlat(7200 * S, 600, 900 * S, 50, 'ruins'));
-      // Pipes 4(2): pipe0 left≈4734 (gap from 4253=480)
-      plats.push(...pipeSection(S, 8300, 600, 2));
-      // Ruins bridge 4: left≈4976, right≈5477
-      plats.push(createPlat(9400 * S, 600, 900 * S, 50, 'ruins'));
-      // Pipes 5(2): pipe0 left≈5957 (gap from 5477=480)
-      plats.push(...pipeSection(S, 10500, 600, 2));
-      // Ruins goal: left≈6227, right≈6894 (top=575)
-      plats.push(createPlat(11800 * S, 600, 1200 * S, 50, 'ruins'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.556;
-      const coins: any[] = [];
-      for (let x = 600; x < 1700; x += 130) coins.push(createCoin(x * S, 550));
-      for (let x = 1900; x < 2500; x += 100) coins.push(createCoin(x * S, 550));
-      for (let x = 2900; x < 3800; x += 130) coins.push(createCoin(x * S, 550));
-      for (let x = 4000; x < 4700; x += 100) coins.push(createCoin(x * S, 550));
-      for (let x = 5100; x < 6000; x += 130) coins.push(createCoin(x * S, 550));
-      for (let x = 6200; x < 6900; x += 100) coins.push(createCoin(x * S, 550));
-      for (let x = 7300; x < 8200; x += 130) coins.push(createCoin(x * S, 550));
-      for (let x = 8400; x < 9100; x += 100) coins.push(createCoin(x * S, 550));
-      for (let x = 9500; x < 10400; x += 130) coins.push(createCoin(x * S, 550));
-      for (let x = 10600; x < 11200; x += 100) coins.push(createCoin(x * S, 550));
-      for (let x = 11900; x < 12900; x += 120) coins.push(createCoin(x * S, 550));
-      // Coin arcs above the pipe-maze springs
-      coins.push(createCoin(2740, 505), createCoin(2780, 465), createCoin(2820, 505));
-      coins.push(createCoin(5186, 505), createCoin(5226, 465), createCoin(5266, 505));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.556;
-      return [
-        createQB(900 * S, 530, 'mushroom'),
-        createQB(1900 * S, 530, 'flower'),
-        createQB(3000 * S, 530, 'star'),
-        createQB(4000 * S, 530, 'mushroom'),
-        createQB(5200 * S, 530, 'flower'),
-        createQB(6300 * S, 530, 'star'),
-        createQB(7400 * S, 530, 'mushroom'),
-        createQB(8500 * S, 530, 'flower'),
-        createQB(9600 * S, 530, 'star'),
-        createQB(10700 * S, 530, 'mushroom'),
-        createQB(12000 * S, 530, 'flower'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.556;
-      return [
-        createEnemy(800 * S, 560, 'goomba'),
-        createEnemy(1900 * S, 560, 'piranha'), createEnemy(2250 * S, 560, 'piranha'),
-        createEnemy(2900 * S, 560, 'koopa'),
-        createEnemy(4000 * S, 560, 'piranha'), createEnemy(4350 * S, 560, 'piranha'),
-        createEnemy(5100 * S, 560, 'spiny'),
-        createEnemy(6200 * S, 560, 'piranha'), createEnemy(6550 * S, 560, 'piranha'),
-        createEnemy(7300 * S, 560, 'goomba'),
-        createEnemy(8400 * S, 560, 'piranha'), createEnemy(8750 * S, 560, 'piranha'),
-        createEnemy(9500 * S, 560, 'koopa'),
-        createEnemy(10600 * S, 560, 'piranha'), createEnemy(10950 * S, 560, 'piranha'),
-        createEnemy(12000 * S, 560, 'goomba'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.556;
-      return [
-        createDeco(500 * S, 560, 'pillar'), createDeco(1200 * S, 560, 'moss'),
-        createDeco(2000 * S, 560, 'statue'), createDeco(2500 * S, 560, 'vine'),
-        createDeco(2900 * S, 560, 'pillar'), createDeco(3600 * S, 560, 'moss'),
-        createDeco(4100 * S, 560, 'statue'), createDeco(4600 * S, 560, 'vine'),
-        createDeco(5100 * S, 560, 'pillar'), createDeco(5800 * S, 560, 'moss'),
-        createDeco(6300 * S, 560, 'statue'), createDeco(6800 * S, 560, 'vine'),
-        createDeco(7300 * S, 560, 'pillar'), createDeco(8000 * S, 560, 'moss'),
-        createDeco(8500 * S, 560, 'statue'), createDeco(9000 * S, 560, 'vine'),
-        createDeco(9500 * S, 560, 'pillar'), createDeco(10200 * S, 560, 'moss'),
-        createDeco(10700 * S, 560, 'statue'), createDeco(11200 * S, 560, 'vine'),
-        createDeco(12000 * S, 560, 'pillar'), createDeco(12600 * S, 560, 'moss'),
-      ];
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.556;
-      return [
-        createMovingPlat(2300 * S, 510, 120, 24, 'ruins', 'horizontal', 250, 18),
-        createMovingPlat(4400 * S, 510, 120, 24, 'ruins', 'vertical', 150, 16),
-        createMovingPlat(6600 * S, 510, 120, 24, 'ruins', 'horizontal', 250, 18),
-        createMovingPlat(8800 * S, 510, 120, 24, 'ruins', 'vertical', 150, 16),
-        createMovingPlat(11200 * S, 510, 120, 24, 'ruins', 'horizontal', 250, 18),
-      ];
-    })(),
-    playerStart: { x: 150, y: 550 },
-    goal: { x: 11800 * 0.556, y: 573 },
-    // Springs on the ruins bridges between pipe sections (top edge = 575)
-    springs: [createSpring(2780, 575), createSpring(5226, 575)],
-    // Spike passages on the ruins bridges (never on pipes)
-    spikes: [createSpike(400, 567), createSpike(4003, 567), createSpike(5050, 567)],
-  },
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(600, 760, 1000, 48, 'ruins'));
+    // Säulengang mit ansteigenden Steinblöcken
+    platforms.push(...plateauSection(1200, 736, [
+      { dx: 0, dy: 0, w: 300, h: 200, type: 'stone' },
+      { dx: 350, dy: 96, w: 260, h: 200, type: 'stone' },
+      { dx: 700, dy: 192, w: 260, h: 200, type: 'stone' },
+      { dx: 1050, dy: 96, w: 240, h: 200, type: 'stone' },
+    ]));
+    platforms.push(createPlat(2900, 760, 800, 48, 'ruins'));
+    // Hochterrasse über dem kreisenden Aufzug
+    platforms.push(createPlat(3400, 392, 200, 24, 'platform_hard'));
+    platforms.push(createPlat(3500, 640, 120, 24, 'platform_easy'));
+    platforms.push(createPlat(4100, 760, 900, 48, 'ruins'));
+    // Eingestürzte Deckenpassage
+    platforms.push(...overhangSection(4600, 736, 1000, 5000, 200, 'sandstone'));
+    platforms.push(createPlat(6100, 760, 800, 48, 'ruins'));
+    // Aufstieg zum Heiligtum
+    platforms.push(createPlat(6600, 660, 130, 24, 'platform_easy'));
+    platforms.push(createPlat(6800, 570, 120, 24, 'platform_medium'));
+    platforms.push(createPlat(7000, 480, 130, 24, 'platform_hard'));
+    platforms.push(createPlat(7250, 410, 150, 24, 'platform_medium'));
+    platforms.push(createPlat(7800, 600, 600, 48, 'stone'));
+    // Versteckte Kammer über der Heiligtumskante
+    platforms.push(createPlat(7250, 280, 160, 24, 'hidden'));
+    platforms.push(createPlat(8250, 660, 140, 24, 'platform_easy'));
+    platforms.push(createPlat(8800, 760, 900, 48, 'ruins'));
+    platforms.push(...staircase(9350, 736, 2, 80, 140, 40, 'sandstone'));
+    platforms.push(createPlat(10200, 760, 900, 48, 'ruins'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 700, 1000, 700, 4));
+    coins.push(...coinLadder(1300, 700, 560, 5));
+    coins.push(...coinTrail(1600, 600, 1780, 600, 2));
+    coins.push(...coinTrail(1900, 500, 2100, 500, 3));
+    coins.push(...coinTrail(2250, 600, 2400, 600, 2));
+    coins.push(...coinArc(2850, 660, 5, 70, 80));
+    coins.push(...coinDiamond(3400, 300, 80));
+    coins.push(...coinTrail(3700, 660, 4450, 660, 4));
+    coins.push(...coinTrail(4650, 660, 4950, 660, 3));
+    coins.push(...coinArc(5350, 660, 5, 70, 80));
+    coins.push(...coinTrail(5750, 660, 6400, 660, 4));
+    coins.push(...coinArc(6650, 590, 5, 70, 80));
+    coins.push(...coinDiamond(7250, 210, 70));
+    coins.push(...coinTrail(7550, 500, 8050, 500, 4));
+    coins.push(...coinTrail(8400, 660, 9200, 660, 4));
+    coins.push(...coinTrail(9450, 590, 9550, 590, 2));
+    coins.push(...coinTrail(9800, 660, 10600, 660, 4));
+
+    return {
+      id: 69, name: 'Säulengänge', width: 10900, height: 950, biome: 'ruins',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(3100, 520, 110, 24, 'platform_medium', 'circular', 90, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(450, 676, 'mushroom'),
+        createQB(1350, 676, 'coin'),
+        createQB(2800, 676, 'flower'),
+        createQB(4000, 676, 'oneup'),
+        createQB(6400, 676, 'coin'),
+        createQB(9800, 676, 'star'),
+      ],
+      enemies: [
+        createEnemy(800, 716, 'goomba'),
+        createEnemy(1700, 620, 'koopa'),
+        createEnemy(2050, 524, 'spiny'),
+        createEnemy(2350, 620, 'crab'),
+        createEnemy(3000, 716, 'robot'),
+        createEnemy(3900, 716, 'spiny'),
+        createEnemy(5000, 716, 'goomba'),
+        createEnemy(6000, 716, 'koopa'),
+        createEnemy(6700, 628, 'ghost'),
+        createEnemy(7400, 556, 'robot'),
+        createEnemy(8500, 716, 'crab'),
+        createEnemy(9000, 716, 'spiny'),
+        createEnemy(10000, 716, 'robot'),
+      ],
+      decorations: [
+        createDeco(300, 716, 'pillar'),
+        createDeco(750, 716, 'moss'),
+        createDeco(1350, 816, 'statue'),
+        createDeco(1680, 716, 'pillar'),
+        createDeco(2030, 620, 'moss'),
+        createDeco(2370, 716, 'tombstone'),
+        createDeco(3000, 716, 'skull'),
+        createDeco(3900, 716, 'rock'),
+        createDeco(4900, 716, 'pillar'),
+        createDeco(5600, 716, 'moss'),
+        createDeco(6200, 716, 'statue'),
+        createDeco(7000, 456, 'skull'),
+        createDeco(7900, 556, 'pillar'),
+        createDeco(8500, 716, 'rock'),
+        createDeco(9500, 716, 'moss'),
+        createDeco(10400, 716, 'statue'),
+      ],
+      playerStart: { x: 200, y: 712 },
+      goal: { x: 10450, y: 728 },
+      timeBonus: 170,
+      springs: [createSpring(800, 736), createSpring(4000, 736)],
+      spikes: [createSpike(6200, 728), createSpike(8900, 728)],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 70 - Vertikal-Kletterer (S=0.5)
-  // 4 verticalClimb sections among pillars
-  // All gaps verified ≤ 470 static-to-static, ≤ 350 vertical up
+  // Level 70 (Stufenpyramide): Aufstieg über drei Treppen-
+  // generationen bis zum Gipfel, Abstieg auf der Rückseite,
+  // Tal-Terrasse, Zwei-Ebenen-Tempel und Vertikal-Aufzug zur
+  // Schlusstafel. 3 Checkpoints (width >= 16000), 2 Spikes.
   // ============================================================
-  {
-    id: 70, name: "Turmgipfel", width: 9000, height: 680, biome: 'ruins',
-    timeBonus: 140,
-    platforms: (() => {
-      const S = 0.5;
-      const plats: any[] = [];
-      // Ruins start
-      plats.push(createPlat(500 * S, 630, 1200 * S, 50, 'ruins'));
-      // Stepping to bridge gap to climb 1
-      plats.push(createPlat(1420 * S, 615, 64, 24, 'ruins'));
-      // Climb 1
-      plats.push(...verticalClimb(S, 1800, 630, 'ruins'));
-      // Ruins 2
-      plats.push(createPlat(4400 * S, 630, 600 * S, 50, 'ruins'));
-      // Stepping to bridge gap to climb 2
-      plats.push(createPlat(5170 * S, 615, 64, 24, 'ruins'));
-      // Climb 2
-      plats.push(...verticalClimb(S, 5700, 630, 'ruins'));
-      // Ruins 3
-      plats.push(createPlat(8300 * S, 630, 600 * S, 50, 'ruins'));
-      // Stepping to bridge gap to climb 3
-      plats.push(createPlat(9070 * S, 615, 64, 24, 'ruins'));
-      // Climb 3
-      plats.push(...verticalClimb(S, 9600, 630, 'ruins'));
-      // Ruins 4
-      plats.push(createPlat(12200 * S, 630, 600 * S, 50, 'ruins'));
-      // Stepping to bridge gap to climb 4
-      plats.push(createPlat(12970 * S, 615, 64, 24, 'ruins'));
-      // Climb 4
-      plats.push(...verticalClimb(S, 13500, 630, 'ruins'));
-      // Ruins goal: left=7750, right=8350 (top=605)
-      plats.push(createPlat(16100 * S, 630, 1200 * S, 50, 'ruins'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.5;
-      const coins: any[] = [];
-      for (let x = 600; x < 1600; x += 150) coins.push(createCoin(x * S, 580));
-      coins.push(createCoin(1800 * S, 470), createCoin(2100 * S, 390), createCoin(2400 * S, 310));
-      coins.push(createCoin(2700 * S, 270), createCoin(3000 * S, 270), createCoin(3300 * S, 270));
-      coins.push(createCoin(3600 * S, 310), createCoin(3900 * S, 390), createCoin(4200 * S, 470));
-      for (let x = 4500; x < 5400; x += 150) coins.push(createCoin(x * S, 580));
-      coins.push(createCoin(5700 * S, 470), createCoin(6000 * S, 390), createCoin(6300 * S, 310));
-      coins.push(createCoin(6600 * S, 270), createCoin(6900 * S, 270), createCoin(7200 * S, 270));
-      coins.push(createCoin(7500 * S, 310), createCoin(7800 * S, 390), createCoin(8100 * S, 470));
-      for (let x = 8400; x < 9300; x += 150) coins.push(createCoin(x * S, 580));
-      coins.push(createCoin(9600 * S, 470), createCoin(9900 * S, 390), createCoin(10200 * S, 310));
-      coins.push(createCoin(10500 * S, 270), createCoin(10800 * S, 270), createCoin(11100 * S, 270));
-      coins.push(createCoin(11400 * S, 310), createCoin(11700 * S, 390), createCoin(12000 * S, 470));
-      for (let x = 12300; x < 13200; x += 150) coins.push(createCoin(x * S, 580));
-      coins.push(createCoin(13500 * S, 470), createCoin(13800 * S, 390), createCoin(14100 * S, 310));
-      coins.push(createCoin(14400 * S, 270), createCoin(14700 * S, 270), createCoin(15000 * S, 270));
-      coins.push(createCoin(15300 * S, 310), createCoin(15600 * S, 390), createCoin(15900 * S, 470));
-      for (let x = 16200; x < 17200; x += 120) coins.push(createCoin(x * S, 580));
-      // Coin arcs above the spring shortcuts
-      coins.push(createCoin(2160, 535), createCoin(2200, 495), createCoin(2240, 535));
-      coins.push(createCoin(4100, 535), createCoin(4140, 495), createCoin(4180, 535));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.5;
-      return [
-        createQB(1100 * S, 560, 'mushroom'),
-        createQB(2000 * S, 200, 'flower'),
-        createQB(3000 * S, 200, 'star'),
-        createQB(4600 * S, 560, 'mushroom'),
-        createQB(5900 * S, 200, 'flower'),
-        createQB(6900 * S, 200, 'star'),
-        createQB(8500 * S, 560, 'mushroom'),
-        createQB(9800 * S, 200, 'flower'),
-        createQB(10800 * S, 200, 'star'),
-        createQB(12400 * S, 560, 'flower'),
-        createQB(13700 * S, 200, 'star'),
-        createQB(14700 * S, 200, 'mushroom'),
-        createQB(16200 * S, 560, 'star'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.5;
-      return [
-        createEnemy(900 * S, 590, 'goomba'),
-        createEnemy(2200 * S, 270, 'spiny'),
-        createEnemy(4600 * S, 590, 'goomba'),
-        createEnemy(6100 * S, 270, 'koopa'),
-        createEnemy(8500 * S, 590, 'goomba'),
-        createEnemy(9900 * S, 270, 'spiny'),
-        createEnemy(12400 * S, 590, 'koopa'),
-        createEnemy(13800 * S, 270, 'goomba'),
-        createEnemy(16200 * S, 590, 'koopa'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.5;
-      return [
-        createDeco(500 * S, 590, 'pillar'), createDeco(1300 * S, 590, 'moss'),
-        createDeco(1900 * S, 250, 'statue'), createDeco(3100 * S, 250, 'vine'),
-        createDeco(4500 * S, 590, 'pillar'), createDeco(5300 * S, 590, 'moss'),
-        createDeco(5800 * S, 250, 'statue'), createDeco(7000 * S, 250, 'vine'),
-        createDeco(8400 * S, 590, 'pillar'), createDeco(9200 * S, 590, 'moss'),
-        createDeco(9700 * S, 250, 'statue'), createDeco(10900 * S, 250, 'vine'),
-        createDeco(12300 * S, 590, 'pillar'), createDeco(13100 * S, 590, 'moss'),
-        createDeco(13600 * S, 250, 'statue'), createDeco(14800 * S, 250, 'vine'),
-        createDeco(16200 * S, 590, 'pillar'), createDeco(17000 * S, 590, 'moss'),
-      ];
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.5;
-      return [
-        createMovingPlat(3900 * S, 540, 120, 24, 'ruins', 'horizontal', 220, 20),
-        createMovingPlat(7800 * S, 540, 120, 24, 'ruins', 'horizontal', 220, 20),
-        createMovingPlat(11700 * S, 540, 120, 24, 'ruins', 'horizontal', 220, 20),
-      ];
-    })(),
-    playerStart: { x: 150, y: 580 },
-    goal: { x: 16100 * 0.5, y: 603 },
-    // Spring shortcuts on the mid ruins sections (top edge = 605)
-    springs: [createSpring(2200, 605), createSpring(4140, 605)],
-    // Spike traps between the pillar climbs
-    spikes: [createSpike(320, 597), createSpike(6080, 597)],
-    coinGoal: 48,
-  },
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(600, 800, 1000, 48, 'ruins'));
+    platforms.push(createPlat(1400, 760, 300, 48, 'sandstone'));
+    platforms.push(createPlat(1750, 700, 260, 48, 'ruins'));
+    platforms.push(createPlat(2100, 640, 260, 48, 'stone'));
+    platforms.push(createPlat(2900, 800, 1200, 48, 'sandstone'));
+    // Erste Treppengeneration
+    platforms.push(...staircase(3600, 776, 5, 70, 140, 40, 'sandstone'));
+    platforms.push(createPlat(4800, 500, 600, 48, 'ruins'));
+    // Zweite Treppengeneration
+    platforms.push(...staircase(5200, 476, 3, 70, 140, 40, 'stone'));
+    platforms.push(createPlat(6100, 340, 600, 48, 'sandstone'));
+    // Dritte Treppengeneration zum Gipfel
+    platforms.push(...staircase(6500, 316, 3, 70, 140, 40, 'sandstone'));
+    platforms.push(createPlat(7350, 140, 600, 48, 'stone'));
+    // Abstieg auf der Rückseite
+    platforms.push(createPlat(8000, 320, 200, 24, 'platform_medium'));
+    platforms.push(createPlat(8400, 480, 220, 24, 'platform_easy'));
+    platforms.push(createPlat(8750, 640, 240, 24, 'platform_hard'));
+    platforms.push(createPlat(9500, 800, 1200, 48, 'ruins'));
+    platforms.push(createPlat(10500, 760, 500, 48, 'sandstone'));
+    platforms.push(...twoTierSection(10800, 736, 900, 'stone', 'sandstone'));
+    platforms.push(createPlat(12300, 760, 800, 48, 'ruins'));
+    platforms.push(...gapWithPlatforms(1, 12700, 748, 560, 3, {
+      widths: [120, 130, 110], dy: [0, 50, 20], types: ['platform_easy', 'platform_medium', 'platform_hard'],
+    }));
+    platforms.push(createPlat(13700, 760, 900, 48, 'ruins'));
+    // Schlusstafel über dem Vertikal-Aufzug
+    platforms.push(createPlat(14430, 392, 240, 24, 'sandstone'));
+    platforms.push(createPlat(15300, 760, 900, 48, 'ruins'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 740, 1050, 740, 4));
+    coins.push(...coinArc(1400, 680, 5, 70, 80));
+    coins.push(...coinDiamond(1750, 600, 60));
+    coins.push(...coinTrail(2150, 560, 2600, 560, 3));
+    coins.push(...coinLadder(3670, 620, 470, 5));
+    coins.push(...coinDiamond(4800, 370, 70));
+    coins.push(...coinArc(5350, 420, 5, 70, 80));
+    coins.push(...coinDiamond(6100, 210, 70));
+    coins.push(...coinLadder(6570, 400, 150, 5));
+    coins.push(...coinDiamond(7350, 40, 70));
+    coins.push(...coinTrail(7800, 200, 8100, 200, 3));
+    coins.push(...coinTrail(8300, 380, 8700, 380, 4));
+    coins.push(...coinArc(9300, 660, 5, 70, 80));
+    coins.push(...coinTrail(9700, 700, 10000, 700, 3));
+    coins.push(...coinTrail(10300, 660, 10700, 660, 3));
+    coins.push(...coinDiamond(11250, 470, 70));
+    coins.push(...coinArc(12000, 660, 5, 70, 80));
+    coins.push(...coinTrail(12500, 660, 12700, 660, 3));
+    coins.push(...coinLadder(14250, 620, 470, 4));
+    coins.push(...coinDiamond(14430, 300, 60));
+    coins.push(...coinTrail(14850, 660, 15700, 660, 4));
+
+    return {
+      id: 70, name: 'Stufenpyramide', width: 16200, height: 1000, biome: 'ruins',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(14250, 560, 120, 24, 'platform_medium', 'vertical', 96, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(450, 716, 'mushroom'),
+        createQB(1750, 616, 'coin'),
+        createQB(2900, 716, 'flower'),
+        createQB(4800, 416, 'star'),
+        createQB(6100, 256, 'coin'),
+        createQB(9500, 716, 'mushroom'),
+        createQB(12500, 676, 'oneup'),
+        createQB(15450, 676, 'coin'),
+      ],
+      enemies: [
+        createEnemy(800, 756, 'goomba'),
+        createEnemy(1500, 716, 'koopa'),
+        createEnemy(1900, 656, 'spiny'),
+        createEnemy(2600, 756, 'robot'),
+        createEnemy(3850, 616, 'crab'),
+        createEnemy(4600, 456, 'goomba'),
+        createEnemy(5500, 316, 'spiny'),
+        createEnemy(6200, 296, 'robot'),
+        createEnemy(7400, 96, 'koopa'),
+        createEnemy(9000, 756, 'crab'),
+        createEnemy(9800, 690, 'ghost'),
+        createEnemy(11000, 716, 'spiny'),
+        createEnemy(12500, 716, 'robot'),
+        createEnemy(14500, 716, 'koopa'),
+        createEnemy(15200, 716, 'crab'),
+      ],
+      decorations: [
+        createDeco(300, 756, 'pillar'),
+        createDeco(800, 756, 'rock'),
+        createDeco(1450, 716, 'statue'),
+        createDeco(2150, 596, 'moss'),
+        createDeco(2950, 756, 'tombstone'),
+        createDeco(3700, 686, 'skull'),
+        createDeco(4850, 456, 'pillar'),
+        createDeco(5500, 296, 'statue'),
+        createDeco(6150, 296, 'moss'),
+        createDeco(7400, 96, 'pillar'),
+        createDeco(8100, 276, 'rock'),
+        createDeco(9300, 756, 'skull'),
+        createDeco(10550, 716, 'tombstone'),
+        createDeco(11300, 716, 'moss'),
+        createDeco(12400, 716, 'statue'),
+        createDeco(13800, 716, 'pillar'),
+        createDeco(15400, 716, 'rock'),
+      ],
+      playerStart: { x: 200, y: 752 },
+      goal: { x: 15500, y: 728 },
+      timeBonus: 220,
+      checkpoints: [
+        createCheckpoint(4600, 452),
+        createCheckpoint(9500, 752),
+        createCheckpoint(13700, 712),
+      ],
+      springs: [createSpring(1000, 776), createSpring(9500, 776)],
+      spikes: [createSpike(3300, 768), createSpike(12100, 728)],
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 71 - Gegner-Horde (S=0.455)
-  // 18 enemies (goombas, spinys, koopas) on wide ruins platforms
-  // Gaps ≤ 575 static-to-static
+  // Level 71 (Wächter-Horde): Terrassen-Arenen mit vielen
+  // Wächtern, Zwei-Ebenen-Überführung über die Schatzkammer,
+  // Tür + Schlüssel als Bonus (Schatz-Plattformen), Vertikal-
+  // Aufzug zur Münz-Krypta, Münz-Tor. 3 Spikes, 2 Federn.
   // ============================================================
-  {
-    id: 71, name: "Wächter der Ruinen", width: 6400, height: 700, biome: 'ruins',
-    timeBonus: 120,
-    platforms: (() => {
-      const S = 0.455;
-      const plats: any[] = [];
-      // Ruins 1 (long): left=-341, right=1105 (top=625)
-      plats.push(createPlat(840 * S, 650, 3200 * S, 50, 'ruins'));
-      // Stepping stones bridging gap to first gapWithPlatforms (493px → sub-gaps ~114+120)
-      plats.push(createPlat(2800 * S, 640, 100, 24, 'ruins'));
-      plats.push(createPlat(3150 * S, 640, 100, 24, 'ruins'));
-      // Gap(2): float0 left≈1603 (gap from stepping stones ≈120)
-      plats.push(...gapWithPlatforms(S, 3500, 650, 400, 2));
-      // Ruins 2 (long): left≈2172.5, right≈2808.5 (gap from float1 right≈test)
-      plats.push(createPlat(5500 * S, 650, 1400 * S, 50, 'ruins'));
-      // Pipes(2): pipe0 left≈3189 (gap from 2808.5=380.5)
-      plats.push(...pipeSection(S, 6900, 650, 2));
-      // Ruins 3 (long): left≈3169, right≈4221 (gap from pipe1 right≈test)
-      plats.push(createPlat(8100 * S, 650, 1800 * S, 50, 'ruins'));
-      // Gap(2):
-      plats.push(...gapWithPlatforms(S, 9600, 650, 400, 2));
-      // Ruins goal (long): left≈4523, right≈5400 (top=625)
-      plats.push(createPlat(10900 * S, 650, 1600 * S, 50, 'ruins'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.455;
-      const coins: any[] = [];
-      for (let x = 900; x < 3400; x += 100) coins.push(createCoin(x * S, 600));
-      for (let x = 5600; x < 6800; x += 100) coins.push(createCoin(x * S, 600));
-      for (let x = 7000; x < 7400; x += 80) coins.push(createCoin(x * S, 580));
-      for (let x = 8300; x < 9400; x += 100) coins.push(createCoin(x * S, 600));
-      for (let x = 9800; x < 10400; x += 80) coins.push(createCoin(x * S, 580));
-      for (let x = 11000; x < 12400; x += 120) coins.push(createCoin(x * S, 600));
-      // Coin arcs above the horde springs
-      coins.push(createCoin(2410, 555), createCoin(2450, 515), createCoin(2490, 555));
-      coins.push(createCoin(3560, 555), createCoin(3600, 515), createCoin(3640, 555));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.455;
-      return [
-        createQB(1200 * S, 580, 'mushroom'),
-        createQB(2000 * S, 580, 'flower'),
-        createQB(2800 * S, 560, 'star'),
-        createQB(5700 * S, 580, 'mushroom'),
-        createQB(6500 * S, 580, 'flower'),
-        createQB(8300 * S, 580, 'star'),
-        createQB(9100 * S, 580, 'mushroom'),
-        createQB(9900 * S, 560, 'flower'),
-        createQB(11100 * S, 580, 'star'),
-        createQB(12000 * S, 580, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.455;
-      return [
-        createEnemy(1100 * S, 610, 'goomba'),
-        createEnemy(1500 * S, 610, 'spiny'),
-        createEnemy(1900 * S, 610, 'koopa'),
-        createEnemy(2300 * S, 610, 'goomba'),
-        createEnemy(2700 * S, 610, 'spiny'),
-        createEnemy(3100 * S, 610, 'koopa'),
-        createEnemy(5600 * S, 610, 'goomba'),
-        createEnemy(6000 * S, 610, 'spiny'),
-        createEnemy(6400 * S, 610, 'koopa'),
-        createEnemy(7000 * S, 610, 'piranha'),
-        createEnemy(8300 * S, 610, 'goomba'),
-        createEnemy(8700 * S, 610, 'spiny'),
-        createEnemy(9100 * S, 610, 'koopa'),
-        createEnemy(9500 * S, 610, 'goomba'),
-        createEnemy(9800 * S, 610, 'spiny'),
-        createEnemy(11000 * S, 610, 'goomba'),
-        createEnemy(11400 * S, 610, 'koopa'),
-        createEnemy(11800 * S, 610, 'spiny'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.455;
-      return [
-        createDeco(900 * S, 610, 'pillar'), createDeco(1800 * S, 610, 'statue'),
-        createDeco(2500 * S, 610, 'vine'), createDeco(3200 * S, 610, 'moss'),
-        createDeco(5700 * S, 610, 'pillar'), createDeco(6500 * S, 610, 'statue'),
-        createDeco(7000 * S, 610, 'vine'), createDeco(8300 * S, 610, 'moss'),
-        createDeco(9000 * S, 610, 'pillar'), createDeco(9800 * S, 580, 'statue'),
-        createDeco(11100 * S, 610, 'vine'), createDeco(12000 * S, 610, 'moss'),
-      ];
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.455;
-      return [
-        createMovingPlat(3200 * S, 530, 120, 24, 'ruins', 'vertical', 140, 16),
-        createMovingPlat(7800 * S, 560, 120, 24, 'ruins', 'horizontal', 200, 18),
-        createMovingPlat(10600 * S, 560, 120, 24, 'ruins', 'horizontal', 200, 18),
-      ];
-    })(),
-    playerStart: { x: 150, y: 600 },
-    goal: { x: 10900 * 0.455, y: 623 },
-    // Springs as escape hatches in the guardian horde (top edge = 625)
-    springs: [createSpring(2450, 625), createSpring(3600, 625)],
-    // Spike alley through the horde ground (top edge = 625)
-    spikes: [createSpike(350, 617), createSpike(2700, 617), createSpike(4000, 617)],
-    coinGoal: 50,
-  },
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(600, 760, 1100, 48, 'ruins'));
+    // Wächter-Terrassen
+    platforms.push(...plateauSection(1200, 736, [
+      { dx: 0, dy: 0, w: 500, h: 48, type: 'ruins' },
+      { dx: 550, dy: 110, w: 380, h: 48, type: 'stone' },
+      { dx: 980, dy: 0, w: 420, h: 48, type: 'ruins' },
+      { dx: 1450, dy: 150, w: 340, h: 48, type: 'sandstone' },
+    ]));
+    platforms.push(createPlat(3500, 760, 900, 48, 'ruins'));
+    platforms.push(...twoTierSection(4000, 736, 900, 'stone', 'ruins'));
+    // Überführung (Hauptroute) über der Schatzkammer
+    platforms.push(createPlat(4800, 520, 160, 24, 'platform_medium'));
+    platforms.push(createPlat(5150, 480, 160, 24, 'platform_hard'));
+    platforms.push(createPlat(5450, 440, 180, 24, 'platform_medium'));
+    platforms.push(createPlat(5800, 480, 180, 24, 'platform_easy'));
+    platforms.push(createPlat(6200, 560, 200, 24, 'platform_medium'));
+    // Schatzkammer unter der Überführung (Tür + Schlüssel = Bonus)
+    platforms.push(createPlat(5250, 760, 700, 48, 'sandstone'));
+    platforms.push(createPlat(5800, 700, 300, 24, 'brick_secret'));
+    platforms.push(createPlat(6100, 620, 280, 24, 'brick_secret'));
+    platforms.push(createPlat(6350, 560, 200, 24, 'brick_secret'));
+    platforms.push(createPlat(6600, 760, 800, 48, 'ruins'));
+    platforms.push(...gapWithPlatforms(1, 7000, 748, 560, 3, {
+      widths: [130, 110, 140], dy: [0, 60, 30], types: ['platform_medium', 'platform_easy', 'platform_hard'],
+    }));
+    platforms.push(createPlat(8050, 760, 900, 48, 'ruins'));
+    platforms.push(createPlat(9000, 660, 700, 48, 'stone'));
+    platforms.push(createPlat(9700, 760, 700, 48, 'ruins'));
+    platforms.push(createPlat(10300, 620, 600, 48, 'sandstone'));
+    platforms.push(createPlat(11000, 760, 800, 48, 'ruins'));
+    // Münz-Krypta über dem Vertikal-Aufzug
+    platforms.push(createPlat(10500, 240, 200, 24, 'platform_hard'));
+    platforms.push(createPlat(11900, 760, 800, 48, 'ruins'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 700, 1050, 700, 5));
+    coins.push(...coinArc(1450, 680, 5, 70, 80));
+    coins.push(...coinTrail(1750, 586, 2100, 586, 3));
+    coins.push(...coinDiamond(2390, 660, 70));
+    coins.push(...coinLadder(2650, 560, 480, 4));
+    coins.push(...coinTrail(3150, 660, 3900, 660, 4));
+    coins.push(...coinArc(4250, 660, 5, 70, 80));
+    coins.push(...coinTrail(4700, 460, 4900, 460, 3));
+    coins.push(...coinTrail(5100, 420, 5350, 420, 3));
+    coins.push(...coinTrail(5550, 390, 5850, 390, 3));
+    coins.push(...coinTrail(5700, 640, 5900, 640, 3));
+    coins.push(...coinDiamond(6100, 560, 60));
+    coins.push(...coinTrail(6300, 500, 6420, 500, 2));
+    coins.push(...coinArc(7150, 660, 5, 70, 80));
+    coins.push(...coinTrail(7650, 660, 8400, 660, 4));
+    coins.push(...coinTrail(8700, 560, 9250, 560, 4));
+    coins.push(...coinLadder(10200, 540, 450, 4));
+    coins.push(...coinDiamond(10500, 170, 70));
+    coins.push(...coinTrail(10700, 660, 11300, 660, 4));
+    coins.push(...coinTrail(11600, 660, 12200, 660, 4));
+
+    return {
+      id: 71, name: 'Wächter-Horde', width: 12600, height: 950, biome: 'ruins',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(10200, 400, 120, 24, 'platform_medium', 'vertical', 110, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(500, 676, 'mushroom'),
+        createQB(1250, 676, 'coin'),
+        createQB(3500, 676, 'flower'),
+        createQB(6400, 676, 'oneup'),
+        createQB(9700, 676, 'mushroom'),
+        createQB(12050, 676, 'star'),
+      ],
+      enemies: [
+        createEnemy(800, 716, 'goomba'),
+        createEnemy(1300, 716, 'koopa'),
+        createEnemy(1500, 716, 'spiny'),
+        createEnemy(2000, 606, 'goomba'),
+        createEnemy(2350, 716, 'crab'),
+        createEnemy(2700, 566, 'robot'),
+        createEnemy(3250, 716, 'goomba'),
+        createEnemy(3700, 716, 'spiny'),
+        createEnemy(4150, 556, 'robot'),
+        createEnemy(4500, 716, 'crab'),
+        createEnemy(5000, 600, 'ghost'),
+        createEnemy(6500, 716, 'koopa'),
+        createEnemy(7800, 716, 'spiny'),
+        createEnemy(8900, 616, 'robot'),
+        createEnemy(9500, 716, 'goomba'),
+        createEnemy(10900, 716, 'crab'),
+        createEnemy(11700, 716, 'spiny'),
+      ],
+      decorations: [
+        createDeco(300, 716, 'pillar'),
+        createDeco(750, 716, 'skull'),
+        createDeco(1300, 716, 'statue'),
+        createDeco(1800, 606, 'moss'),
+        createDeco(2400, 716, 'tombstone'),
+        createDeco(2800, 566, 'rock'),
+        createDeco(3400, 716, 'pillar'),
+        createDeco(4200, 556, 'statue'),
+        createDeco(4700, 460, 'moss'),
+        createDeco(5300, 716, 'tombstone'),
+        createDeco(5900, 660, 'skull'),
+        createDeco(6700, 716, 'pillar'),
+        createDeco(7900, 716, 'rock'),
+        createDeco(8900, 616, 'moss'),
+        createDeco(9600, 716, 'statue'),
+        createDeco(11000, 716, 'tombstone'),
+        createDeco(12000, 716, 'pillar'),
+      ],
+      playerStart: { x: 200, y: 712 },
+      goal: { x: 12050, y: 728 },
+      timeBonus: 190,
+      springs: [createSpring(1000, 736), createSpring(3500, 736)],
+      spikes: [
+        createSpike(1850, 618),
+        createSpike(9100, 628),
+        createSpike(11150, 728),
+      ],
+      keys: [createKey(4300, 520)],
+      doors: [createDoor(5560, 656, 60, 160)],
+      coinGoal: 40,
+    };
+  })(),
 
   // ============================================================
-  // LEVEL 72 - Fallende-Tempel Finale (S=0.417)
-  // Descending structure: high(500) → mid(420) → lower(340) → deeper(280) → bottom(230) → goal(200)
-  // All vertical descents ≤ 80, horizontal gaps ≤ 450 static-to-static
+  // Level 72 (Fallender Tempel): Abstieg von der Hochterrasse
+  // (y≈500) auf den Tempelboden (y≈800) über eine lange
+  // Crumble-Kette — parallel führt IMMER eine solide, nicht
+  // bröckelnde Terassenroute (Solver kennt Crumble nicht).
+  // Danach Grabkammer, Fallstücke, Vertikal-Aufzug zur Kammer,
+  // Schlusstempel, Münz-Tor, 3 Checkpoints (width >= 16000).
   // ============================================================
-  {
-    id: 72, name: "Fallender Tempel", width: 6000, height: 750, biome: 'ruins',
-    timeBonus: 180,
-    platforms: (() => {
-      const S = 0.417;
-      const plats: any[] = [];
-      // High start (y=500, top=475): left=-42, right=458
-      plats.push(createPlat(500 * S, 500, 1200 * S, 50, 'ruins'));
-      // Mid 1 (y=420, top=400): left=542, right=959 (gap=84, down=75)
-      plats.push(createPlat(1800 * S, 420, 1000 * S, 40, 'ruins'));
-      // Gap(2): float0 left≈1251 (gap from 959=292, down=60)
-      plats.push(...gapWithPlatforms(S, 3000, 420, 350, 2));
-      // Mid 2 (y=340, top=320): left≈1585, right≈1918 (gap from float1 right≈1399=186)
-      plats.push(createPlat(4200 * S, 340, 800 * S, 40, 'ruins'));
-      // Gap(3): float0 left≈2244 (gap from 1918=326)
-      plats.push(...gapWithPlatforms(S, 5400, 340, 400, 3));
-      // Lower (y=280, top=260): left≈2669, right≈3003 (gap from float2 right≈2427=242)
-      plats.push(createPlat(6800 * S, 280, 800 * S, 40, 'ruins'));
-      // Gap(2): float0 left≈3425 (gap from 3003=422)
-      plats.push(...gapWithPlatforms(S, 8200, 280, 400, 2));
-      // Deeper (y=230, top=210): left≈3837, right≈4170 (gap from float1 right≈3581=256)
-      plats.push(createPlat(9600 * S, 230, 800 * S, 40, 'ruins'));
-      // Gap(2): float0 left≈4502 (gap from 4170=332)
-      plats.push(...gapWithPlatforms(S, 10800, 230, 350, 2));
-      // Goal (y=200, top=175): left≈4837, right≈5337 (gap from float1 right≈4651=186)
-      plats.push(createPlat(12200 * S, 200, 1200 * S, 50, 'ruins'));
-      return plats;
-    })(),
-    coins: (() => {
-      const S = 0.417;
-      const coins: any[] = [];
-      for (let x = 600; x < 1500; x += 120) coins.push(createCoin(x * S, 450));
-      for (let x = 1900; x < 2700; x += 100) coins.push(createCoin(x * S, 370));
-      for (let x = 3100; x < 3800; x += 80) coins.push(createCoin(x * S, 330));
-      for (let x = 4400; x < 5000; x += 100) coins.push(createCoin(x * S, 290));
-      for (let x = 5600; x < 6300; x += 80) coins.push(createCoin(x * S, 250));
-      for (let x = 7000; x < 7600; x += 100) coins.push(createCoin(x * S, 230));
-      for (let x = 8300; x < 9000; x += 80) coins.push(createCoin(x * S, 190));
-      for (let x = 9800; x < 10400; x += 100) coins.push(createCoin(x * S, 180));
-      for (let x = 11000; x < 11600; x += 80) coins.push(createCoin(x * S, 150));
-      for (let x = 12300; x < 13300; x += 120) coins.push(createCoin(x * S, 150));
-      // High bonus coins above the finale springs (spring launch reaches them)
-      coins.push(createCoin(400, 340), createCoin(400, 270), createCoin(400, 200));
-      coins.push(createCoin(5260, 100), createCoin(5300, 40), createCoin(5340, 100));
-      return coins;
-    })(),
-    questionBlocks: (() => {
-      const S = 0.417;
-      return [
-        createQB(850 * S, 430, 'mushroom'),
-        createQB(2000 * S, 350, 'flower'),
-        createQB(3100 * S, 310, 'star'),
-        createQB(4500 * S, 270, 'mushroom'),
-        createQB(5600 * S, 230, 'flower'),
-        createQB(7100 * S, 210, 'star'),
-        createQB(8400 * S, 170, 'mushroom'),
-        createQB(9900 * S, 160, 'flower'),
-        createQB(11300 * S, 120, 'star'),
-        createQB(12450 * S, 130, 'mushroom'),
-      ];
-    })(),
-    enemies: (() => {
-      const S = 0.417;
-      return [
-        createEnemy(800 * S, 460, 'goomba'),
-        createEnemy(2000 * S, 370, 'spiny'),
-        createEnemy(4400 * S, 290, 'koopa'),
-        createEnemy(5800 * S, 250, 'goomba'),
-        createEnemy(7100 * S, 230, 'spiny'),
-        createEnemy(8400 * S, 190, 'goomba'),
-        createEnemy(9900 * S, 190, 'koopa'),
-        createEnemy(12400 * S, 160, 'goomba'),
-      ];
-    })(),
-    decorations: (() => {
-      const S = 0.417;
-      return [
-        createDeco(500 * S, 460, 'pillar'), createDeco(1200 * S, 460, 'statue'),
-        createDeco(1800 * S, 370, 'vine'), createDeco(2500 * S, 370, 'moss'),
-        createDeco(3200 * S, 340, 'pillar'), createDeco(4300 * S, 290, 'statue'),
-        createDeco(5100 * S, 250, 'vine'), createDeco(5600 * S, 250, 'moss'),
-        createDeco(6300 * S, 240, 'pillar'), createDeco(6900 * S, 230, 'statue'),
-        createDeco(7700 * S, 190, 'vine'), createDeco(8300 * S, 190, 'moss'),
-        createDeco(9000 * S, 180, 'pillar'), createDeco(9700 * S, 180, 'statue'),
-        createDeco(10500 * S, 150, 'vine'), createDeco(11000 * S, 150, 'moss'),
-        createDeco(11800 * S, 140, 'pillar'), createDeco(12300 * S, 140, 'statue'),
-        createDeco(13000 * S, 140, 'vine'),
-      ];
-    })(),
-    movingPlatforms: (() => {
-      const S = 0.417;
-      return [
-        createMovingPlat(1200 * S, 460, 120, 24, 'ruins', 'vertical', 160, 16),
-        createMovingPlat(3600 * S, 380, 120, 24, 'ruins', 'vertical', 140, 16),
-        createMovingPlat(6100 * S, 290, 120, 24, 'ruins', 'horizontal', 180, 18),
-        createMovingPlat(8800 * S, 230, 120, 24, 'ruins', 'vertical', 140, 16),
-        createMovingPlat(11500 * S, 170, 120, 24, 'ruins', 'horizontal', 180, 18),
-      ];
-    })(),
-    playerStart: { x: 150, y: 450 },
-    goal: { x: 12200 * 0.417, y: 173 },
-    // Springs as compensation against the falling-temple finale (ruins top edges = 475 / 175)
-    springs: [createSpring(400, 475), createSpring(5300, 175)],
-    // Max 2 spike traps in the finale, only on ruins slabs (never on crumble stepping platforms)
-    spikes: [createSpike(1751, 312), createSpike(4003, 202)],
-  },
+  (() => {
+    const platforms = [] as LevelData['platforms'];
+    platforms.push(createPlat(500, 524, 900, 48, 'ruins'));
+    // Solide Abstiegs-Terrassen (sichere Route)
+    platforms.push(createPlat(1150, 584, 300, 48, 'sandstone'));
+    platforms.push(createPlat(1550, 644, 300, 48, 'ruins'));
+    platforms.push(createPlat(1950, 704, 320, 48, 'stone'));
+    platforms.push(createPlat(2500, 764, 400, 48, 'sandstone'));
+    platforms.push(createPlat(3200, 824, 800, 48, 'ruins'));
+    // Crumble-Kette darüber (Bonusroute entlang des Abstiegs)
+    platforms.push(createCrumblePlat(1150, 440, 140, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(1450, 400, 130, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(1680, 440, 130, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(1900, 400, 140, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(2150, 460, 140, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(2400, 520, 150, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(2650, 580, 150, 24, 'platform_medium'));
+    // Grabkammer
+    platforms.push(createPlat(3800, 830, 180, 24, 'platform_easy'));
+    platforms.push(createPlat(4300, 880, 500, 48, 'stone'));
+    platforms.push(createPlat(4800, 880, 160, 24, 'platform_medium'));
+    platforms.push(createPlat(5300, 940, 600, 48, 'ruins'));
+    platforms.push(...gapWithPlatforms(1, 5600, 928, 560, 3, {
+      widths: [120, 130, 110], dy: [0, 50, 20], types: ['platform_easy', 'platform_medium', 'platform_hard'],
+    }));
+    platforms.push(createPlat(6600, 940, 900, 48, 'ruins'));
+    platforms.push(createPlat(7600, 900, 700, 48, 'stone'));
+    platforms.push(...pitWithLedges(8000, 876, 300, 60, 60, 'sandstone'));
+    platforms.push(createPlat(8800, 900, 700, 48, 'ruins'));
+    platforms.push(createPlat(9500, 860, 600, 48, 'sandstone'));
+    // Fallstücke (Crumble) über der sicheren Querung
+    platforms.push(createCrumblePlat(9600, 700, 140, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(9820, 660, 130, 24, 'platform_medium'));
+    platforms.push(createCrumblePlat(9950, 700, 130, 24, 'platform_medium'));
+    platforms.push(createPlat(10120, 800, 160, 24, 'platform_hard'));
+    platforms.push(createPlat(10500, 820, 700, 48, 'ruins'));
+    platforms.push(createPlat(11350, 780, 600, 48, 'stone'));
+    platforms.push(createPlat(12100, 740, 700, 48, 'sandstone'));
+    // Kammer über dem Vertikal-Aufzug
+    platforms.push(createPlat(12850, 352, 200, 24, 'platform_hard'));
+    platforms.push(createPlat(13400, 620, 400, 48, 'ruins'));
+    platforms.push(createPlat(14000, 700, 600, 48, 'stone'));
+    // Schlusstempel-Treppe
+    platforms.push(...staircase(14400, 676, 4, 70, 140, 40, 'sandstone'));
+    platforms.push(createPlat(15550, 420, 600, 48, 'ruins'));
+
+    const coins = [] as LevelData['coins'];
+    coins.push(...coinTrail(200, 460, 900, 460, 4));
+    coins.push(...coinArc(1150, 360, 5, 70, 80));
+    coins.push(...coinTrail(1250, 500, 1380, 500, 2));
+    coins.push(...coinArc(1450, 320, 5, 70, 80));
+    coins.push(...coinTrail(1550, 560, 1680, 560, 2));
+    coins.push(...coinArc(1900, 320, 5, 70, 80));
+    coins.push(...coinTrail(2000, 620, 2100, 620, 2));
+    coins.push(...coinTrail(2400, 440, 2470, 440, 2));
+    coins.push(...coinLadder(2650, 520, 420, 4));
+    coins.push(...coinArc(3200, 720, 5, 70, 80));
+    coins.push(...coinTrail(3700, 740, 3850, 740, 2));
+    coins.push(...coinDiamond(4300, 770, 70));
+    coins.push(...coinTrail(4750, 800, 4850, 800, 2));
+    coins.push(...coinArc(5300, 830, 5, 70, 80));
+    coins.push(...coinTrail(5700, 850, 6050, 850, 3));
+    coins.push(...coinArc(6600, 840, 5, 70, 80));
+    coins.push(...coinArc(7600, 790, 5, 70, 80));
+    coins.push(...coinTrail(8050, 870, 8250, 870, 3));
+    coins.push(...coinArc(8800, 790, 5, 70, 80));
+    coins.push(...coinDiamond(9600, 620, 70));
+    coins.push(...coinArc(10100, 790, 5, 70, 80));
+    coins.push(...coinTrail(10400, 720, 10800, 720, 3));
+    coins.push(...coinArc(11400, 690, 5, 70, 80));
+    coins.push(...coinTrail(11800, 640, 12400, 640, 4));
+    coins.push(...coinLadder(12600, 620, 500, 4));
+    coins.push(...coinDiamond(12850, 270, 70));
+    coins.push(...coinTrail(13300, 530, 13500, 530, 3));
+    coins.push(...coinArc(14000, 610, 5, 70, 80));
+    coins.push(...coinTrail(14450, 550, 15050, 550, 4));
+    coins.push(...coinTrail(15300, 330, 15800, 330, 5));
+
+    return {
+      id: 72, name: 'Fallender Tempel', width: 16200, height: 1000, biome: 'ruins',
+      platforms,
+      movingPlatforms: [
+        createMovingPlat(12600, 560, 120, 24, 'platform_easy', 'vertical', 100, 18),
+      ],
+      coins,
+      questionBlocks: [
+        createQB(450, 440, 'mushroom'),
+        createQB(1700, 560, 'coin'),
+        createQB(3200, 740, 'oneup'),
+        createQB(6600, 856, 'flower'),
+        createQB(9500, 776, 'coin'),
+        createQB(11850, 696, 'star'),
+        createQB(15700, 336, 'mushroom'),
+      ],
+      enemies: [
+        createEnemy(700, 460, 'goomba'),
+        createEnemy(1400, 540, 'koopa'),
+        createEnemy(1800, 660, 'spiny'),
+        createEnemy(2350, 720, 'robot'),
+        createEnemy(3000, 780, 'goomba'),
+        createEnemy(3600, 780, 'crab'),
+        createEnemy(4400, 840, 'spiny'),
+        createEnemy(5400, 900, 'robot'),
+        createEnemy(6300, 900, 'goomba'),
+        createEnemy(7000, 880, 'ghost'),
+        createEnemy(7800, 860, 'koopa'),
+        createEnemy(8600, 840, 'crab'),
+        createEnemy(9200, 820, 'spiny'),
+        createEnemy(10800, 780, 'robot'),
+        createEnemy(11600, 740, 'goomba'),
+        createEnemy(12300, 700, 'thwomp'),
+        createEnemy(13800, 660, 'spiny'),
+        createEnemy(15000, 640, 'crab'),
+      ],
+      decorations: [
+        createDeco(250, 480, 'pillar'),
+        createDeco(1300, 540, 'moss'),
+        createDeco(1650, 600, 'statue'),
+        createDeco(2600, 720, 'tombstone'),
+        createDeco(3400, 780, 'skull'),
+        createDeco(3900, 780, 'rock'),
+        createDeco(4400, 840, 'pillar'),
+        createDeco(5500, 900, 'moss'),
+        createDeco(6700, 900, 'statue'),
+        createDeco(7700, 860, 'tombstone'),
+        createDeco(8900, 840, 'skull'),
+        createDeco(10600, 780, 'pillar'),
+        createDeco(11500, 740, 'moss'),
+        createDeco(12400, 700, 'rock'),
+        createDeco(13600, 580, 'statue'),
+        createDeco(14100, 660, 'tombstone'),
+        createDeco(15600, 380, 'pillar'),
+      ],
+      playerStart: { x: 250, y: 476 },
+      goal: { x: 15700, y: 388 },
+      timeBonus: 250,
+      checkpoints: [
+        createCheckpoint(3200, 776),
+        createCheckpoint(10600, 772),
+        createCheckpoint(14000, 652),
+      ],
+      springs: [createSpring(800, 500), createSpring(3200, 800)],
+      spikes: [createSpike(3400, 792), createSpike(6900, 908), createSpike(11550, 748)],
+      coinGoal: 45,
+    };
+  })(),
 ];

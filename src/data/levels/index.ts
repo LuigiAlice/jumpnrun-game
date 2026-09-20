@@ -1,7 +1,7 @@
 // 100 Levels - 15 Biome (Super Mario inspired)
 
 // Re-export helpers from separate file to avoid circular imports
-export { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, canBreakBrick, isBrickLoadBearing } from './helpers';
+export { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, canBreakBrick, isBrickLoadBearing, createCrumblePlat, createConveyorPlat, createIcePlat, createCheckpoint, createWindZone, createWaterZone, createKey, createDoor, createCannon, staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder } from './helpers';
 
 export type Biome = 
   | 'grasslands' | 'desert' | 'water' | 'ice-snow'
@@ -45,6 +45,10 @@ export interface Platform {
     w: number;
     h: number;
     type: PlatformType;
+    /** Crumbles 800ms after being stood on, respawns after 3s (solver-agnostic bonus route). */
+    crumble?: boolean;
+    /** Conveyor belt force in px/s (positive = right, negative = left). */
+    conveyor?: number;
 }
 
 export interface MovingPlatform {
@@ -90,6 +94,19 @@ export interface LevelData {
     springs?: { x: number; y: number }[];
     spikes?: { x: number; y: number }[];
     coinGoal?: number;
+    /** Respawn points; touching one moves the respawn after death (never required for solvability). */
+    checkpoints?: { x: number; y: number }[];
+    /** Rectangular wind areas: periodic sideways push while the player is inside. */
+    windZones?: { x: number; y: number; w: number; h: number; strength: number; intervalMs?: number }[];
+    /** Rectangular water areas: enables swim physics inside (bonus route). */
+    waterZones?: { x: number; y: number; w: number; h: number }[];
+    /** Collect every key to open all doors (doors must never block the critical path). */
+    keys?: { x: number; y: number }[];
+    doors?: { x: number; y: number; w: number; h: number }[];
+    /** Stationary cannons that fire deadly projectiles in dir (1 = right, -1 = left). */
+    cannons?: { x: number; y: number; dir: 1 | -1; intervalMs?: number; speed?: number }[];
+    /** Zeit-Tor: goal stays locked until this many seconds of the level have elapsed. */
+    timeGate?: number;
     timeBonus: number;
 }
 

@@ -120,6 +120,19 @@ export class GameScene extends Phaser.Scene {
   private coinGateText?: Phaser.GameObjects.Text;
   private coinGateOpen: boolean = false;
 
+  // Phase 9: data-driven elements
+  private checkpointGroup!: Phaser.Physics.Arcade.StaticGroup;
+  private keyGroup!: Phaser.Physics.Arcade.StaticGroup;
+  private doorSprites: Phaser.GameObjects.Sprite[] = [];
+  private extraGoals: Phaser.Physics.Arcade.Sprite[] = [];
+  private respawnPoint?: { x: number; y: number };
+  private keysCollected: number = 0;
+  private totalKeys: number = 0;
+  private totalTime: number = 300;
+  private levelElapsed: number = 0;
+  private timeGateText?: Phaser.GameObjects.Text;
+  private windZoneTimers: Map<number, number> = new Map();
+
   constructor() { super({ key: 'Game' }); }
 
   init(data: any) {
@@ -145,6 +158,12 @@ export class GameScene extends Phaser.Scene {
     this.storedItemType = null;
     if (this.storedItemIcon) { this.storedItemIcon.destroy(); this.storedItemIcon = null; }
     this.lastFired = 0;
+    this.respawnPoint = data.respawn || undefined;
+    this.keysCollected = 0;
+    this.levelElapsed = 0;
+    this.windZoneTimers = new Map();
+    this.doorSprites = [];
+    this.extraGoals = [];
   }
 
   create() {
@@ -155,12 +174,14 @@ export class GameScene extends Phaser.Scene {
     this.isDead = false;
     this.isTransitioning = false;
     this.isQuitting = false;
-    this.timeLeft = 300 + (level.timeBonus || 0);
+    this.totalTime = 300 + (level.timeBonus || 0);
+    this.timeLeft = this.totalTime;
 
     this.setupWorld(level);
     this.createGroups();
     this.spawnEntities(level);
     this.setupPlayer(level);
+    this.spawnPhase9Entities(level);
     this.createUI();
     this.setupCollisions();
     this.updateCoinGate();
@@ -238,6 +259,8 @@ export class GameScene extends Phaser.Scene {
     this.fallingHazards = this.physics.add.group();
     this.springs = this.physics.add.staticGroup();
     this.spikes = this.physics.add.staticGroup();
+    this.checkpointGroup = this.physics.add.staticGroup();
+    this.keyGroup = this.physics.add.staticGroup();
   }
 
   private spawnEntities(level: LevelData) {
@@ -341,6 +364,16 @@ export class GameScene extends Phaser.Scene {
       }
       if (platType === 'hidden') {
         platform.setVisible(false);
+      }
+      if (p.crumble) {
+        platform.setData('crumble', true);
+      }
+      if (p.conveyor !== undefined) {
+        platform.setData('conveyor', p.conveyor);
+        platform.setTexture('conveyor');
+      }
+      if (platType === 'ice') {
+        platform.setTint(0xbfe8ff);
       }
     });
     
@@ -526,24 +559,18 @@ export class GameScene extends Phaser.Scene {
       water.setData('risingLava', true);
     }
     
-    // Level 72: Tag stepping platforms as crumble
-    if (level.id === 72) {
-      this.platforms.getChildren().forEach((p: any) => {
-        const type = p.getData?.('type') || (p as any).platformType;
-        if (type === 'platform_easy' || type === 'platform_medium' || type === 'platform_hard') {
-          p.setData('crumble', true);
-        }
-      });
-    }
-    
-    // Biome finales: tag platforms as crumble for L30, L78, L84
-    if (level.id === 30 || level.id === 78 || level.id === 84) {
-      this.platforms.getChildren().forEach((p: any) => {
+    // Phase 9: crumble is data-driven (p.crumble in level data). Legacy fallback
+    // for levels 30/72/78/84 that have no explicit crumble flags yet.
+    const hasExplicitCrumble = level.platforms.some(p => p.crumble);
+    if (!hasExplicitCrumble && [30, 72, 78, 84].includes(level.id)) {
+      const tag = (p: any) => {
         const type = p.getData?.('type') || (p as any).platformType;
         if (type === 'platform_easy' || type === 'platform_medium' || type === 'platform_hard' || type === 'cloud') {
           p.setData('crumble', true);
         }
-      });
+      };
+      this.platforms.getChildren().forEach(tag);
+      this.solidPlatforms.getChildren().forEach(tag);
     }
     
     // Level 90: Boss HP tracking + arena walls
@@ -571,17 +598,88 @@ export class GameScene extends Phaser.Scene {
     this.goal = this.physics.add.sprite(level.goal.x, level.goal.y, 'flag').setImmovable(true);
     (this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false;
     this.coinGateOpen = false;
-    if (level.coinGoal) {
+    if (level.coinGoal || level.timeGate) {
       this.goal.setAlpha(0.4);
       (this.goal.body as Phaser.Physics.Arcade.Body).enable = false;
     }
+  }
+
+  // Phase 9: checkpoints, keys/doors, cannons, multi-goal, zones
+  private spawnPhase9Entities(level: LevelData) {
+    (level.checkpoints || []).forEach(cp => {
+      const sprite = this.checkpointGroup.create(cp.x, cp.y, 'flag');
+      sprite.setTint(0x55ff88);
+      sprite.setScale(0.6);
+      sprite.setData('active', false);
+    });
+
+    this.totalKeys = (level.keys || []).length;
+    (level.keys || []).forEach(k => {
+      const key = this.keyGroup.create(k.x, k.y, 'star');
+      key.setScale(0.8);
+      key.setTint(0xffd700);
+    });
+
+    (level.doors || []).forEach(d => {
+      const door = this.solidPlatforms.create(d.x, d.y, 'metal');
+      door.setDisplaySize(d.w, d.h).refreshBody();
+      (door as any).platformType = 'door';
+      door.setTint(0x99bbff);
+      this.doorSprites.push(door);
+    });
+    if (this.totalKeys === 0) this.openDoors();
+
+    (level.cannons || []).forEach(c => {
+      const marker = this.add.rectangle(c.x, c.y, 26, 18, 0x444455).setStrokeStyle(2, 0x999999);
+      marker.setDepth(4);
+      this.time.addEvent({
+        delay: c.intervalMs ?? 2500,
+        loop: true,
+        callback: () => {
+          if (this.isDead || this.isTransitioning || this.isQuitting) return;
+          const hazard = this.fallingHazards.create(c.x, c.y, 'fireball');
+          hazard.setVelocity(c.dir * (c.speed ?? 260), 0);
+          hazard.setScale(0.7);
+          (hazard.body as Phaser.Physics.Arcade.Body).setSize(11, 11, true);
+          (hazard.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+          hazard.setData('type', 'cannon_shot');
+        },
+      });
+    });
+
+    (level.goals || []).forEach(g => {
+      const extra = this.physics.add.sprite(g.x, g.y, 'flag').setImmovable(true);
+      (extra.body as Phaser.Physics.Arcade.Body).allowGravity = false;
+      extra.setTint(0xffd700);
+      this.extraGoals.push(extra);
+      this.physics.add.overlap(this.player, extra, () => this.reachGoal(g.points));
+    });
+
+    // Wind zones: translucent markers so the area is readable
+    (level.windZones || []).forEach(z => {
+      this.add.rectangle(z.x + z.w / 2, z.y + z.h / 2, z.w, z.h, 0xffffff, 0.06).setDepth(-50);
+    });
+    // Water zones: translucent blue overlay
+    (level.waterZones || []).forEach(z => {
+      this.add.rectangle(z.x + z.w / 2, z.y + z.h / 2, z.w, z.h, 0x3388ff, 0.18).setDepth(-50);
+    });
+  }
+
+  private openDoors() {
+    this.doorSprites.forEach(door => {
+      if (door.getData('open')) return;
+      door.setData('open', true);
+      this.tweens.add({ targets: door, alpha: 0.2, duration: 300 });
+      this.time.delayedCall(300, () => { (door.body as Phaser.Physics.Arcade.StaticBody).enable = false; });
+    });
   }
 
   private setupPlayer(level: LevelData) {
     let tex = 'player_idle';
     if (this.isPlayerFire) tex = 'player_fire_idle';
     else if (this.isPlayerBig) tex = 'player_big_idle';
-    this.player = this.physics.add.sprite(level.playerStart.x, level.playerStart.y, tex);
+    const start = this.respawnPoint ?? level.playerStart;
+    this.player = this.physics.add.sprite(start.x, start.y, tex);
     this.player.setCollideWorldBounds(false);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     if (this.isPlayerBig || this.isPlayerFire) body.setSize(24, 48);
@@ -744,6 +842,28 @@ export class GameScene extends Phaser.Scene {
     
     this.physics.add.overlap(this.player, this.powerUps, (_p, pu) => this.collectPowerUp(pu as any));
     this.physics.add.overlap(this.player, this.goal, () => this.reachGoal()); // Use the goal variable
+
+    // Phase 9: checkpoints and keys
+    this.physics.add.overlap(this.player, this.checkpointGroup, (_p, cp: any) => {
+      if (cp.getData('active')) return;
+      cp.setData('active', true);
+      cp.setTint(0xffff00);
+      this.respawnPoint = { x: cp.x, y: cp.y - 40 };
+      this.showScorePopup('Checkpoint!', cp.x, cp.y - 30);
+    });
+    this.physics.add.overlap(this.player, this.keyGroup, (_p, key: any) => {
+      key.destroy();
+      this.keysCollected++;
+      this.playCoinSound();
+      this.showScorePopup('Schlüssel!', key.x, key.y - 20);
+      if (this.keysCollected >= this.totalKeys) {
+        this.openDoors();
+        if (this.audioContext) {
+          this.time.delayedCall(100, () => this.playNote(587.33, 'triangle', 0.06, 0.15, 0));
+          this.time.delayedCall(220, () => this.playNote(880, 'triangle', 0.08, 0.25, 0));
+        }
+      }
+    });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.overlap(this.fireballs, this.enemies, (f: any, e: any) => {
       const eType = e.getData('type') || e.texture?.key;
@@ -832,6 +952,14 @@ export class GameScene extends Phaser.Scene {
     this.playBlockSound();
     const content = block.contents;
     if (content === 'coin') { this.addCoin(); }
+    else if (content === 'oneup') {
+      this.lives++;
+      this.showScorePopup('1-UP', block.x, block.y - 30);
+      if (this.audioContext) {
+        this.time.delayedCall(80, () => this.playNote(659.25, 'square', 0.06, 0.15, 0));
+        this.time.delayedCall(200, () => this.playNote(987.77, 'square', 0.08, 0.25, 0));
+      }
+    }
     else { const pu = this.powerUps.create(block.x, block.y - 32, content); pu.setVelocity(-60, -200); pu.setBounce(0.3); (pu as any).type = content; this.score += 200; }
   }
 
@@ -909,6 +1037,7 @@ export class GameScene extends Phaser.Scene {
           coinCount: this.coinCount,
           isPlayerBig: this.isPlayerBig,
           isPlayerFire: this.isPlayerFire,
+          respawn: this.respawnPoint,
         });
       },
     });
@@ -956,7 +1085,7 @@ export class GameScene extends Phaser.Scene {
       strokeThickness: 1
     }).setOrigin(1, 1).setScrollFactor(0).setDepth(1000);
 
-    if (levelData?.coinGoal) {
+    if (levelData?.coinGoal || levelData?.timeGate) {
       this.coinGateText = this.add.text(GAME_WIDTH / 2, 100, '', {
         fontSize: '16px',
         fontFamily: 'Arial',
@@ -968,18 +1097,33 @@ export class GameScene extends Phaser.Scene {
   }
 
   private updateCoinGate() {
-    const goal = this.currentLevelData?.coinGoal;
-    if (!goal || this.coinGateOpen) return;
-    if (this.coinCount < goal) return;
-    this.coinGateOpen = true;
-    (this.goal.body as Phaser.Physics.Arcade.Body).enable = true;
-    this.tweens.add({ targets: this.goal, alpha: 1, duration: 300 });
-    this.tweens.add({ targets: this.goal, scaleX: 1.2, scaleY: 1.2, duration: 200, yoyo: true, ease: 'Sine.easeInOut' });
-    if (this.coinGateText) this.coinGateText.setText('Gate offen!');
-    if (this.audioContext) {
-      this.playNote(523.25, 'triangle', 0.06, 0.15, 0);
-      this.time.delayedCall(120, () => this.playNote(659.25, 'triangle', 0.06, 0.15, 0));
-      this.time.delayedCall(240, () => this.playNote(783.99, 'triangle', 0.08, 0.25, 0));
+    const level = this.currentLevelData;
+    if (!level) return;
+    const coinGoal = level.coinGoal;
+    const timeGate = level.timeGate;
+    if (!coinGoal && !timeGate) return;
+    const coinOk = !coinGoal || this.coinCount >= coinGoal;
+    const timeOk = !timeGate || this.levelElapsed >= timeGate;
+    if (coinOk && timeOk) {
+      if (this.coinGateOpen) return;
+      this.coinGateOpen = true;
+      (this.goal.body as Phaser.Physics.Arcade.Body).enable = true;
+      this.tweens.add({ targets: this.goal, alpha: 1, duration: 300 });
+      this.tweens.add({ targets: this.goal, scaleX: 1.2, scaleY: 1.2, duration: 200, yoyo: true, ease: 'Sine.easeInOut' });
+      if (this.coinGateText) this.coinGateText.setText('Gate offen!');
+      if (this.audioContext) {
+        this.playNote(523.25, 'triangle', 0.06, 0.15, 0);
+        this.time.delayedCall(120, () => this.playNote(659.25, 'triangle', 0.06, 0.15, 0));
+        this.time.delayedCall(240, () => this.playNote(783.99, 'triangle', 0.08, 0.25, 0));
+      }
+      return;
+    }
+    // Still locked
+    (this.goal.body as Phaser.Physics.Arcade.Body).enable = false;
+    this.goal.setAlpha(0.4);
+    if (this.coinGateText) {
+      if (!coinOk) this.coinGateText.setText(`Coins: ${Math.min(this.coinCount, coinGoal!)} / ${coinGoal}`);
+      else if (!timeOk) this.coinGateText.setText(`Zeit-Tor: ${Math.max(0, Math.ceil(timeGate! - this.levelElapsed))}s`);
     }
   }
 
@@ -1074,6 +1218,23 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  private getGroundPlatform(): Phaser.GameObjects.GameObject | null {
+    const body = this.player.body as Phaser.Physics.Arcade.Body;
+    if (!body) return null;
+    const feet = body.y + body.height;
+    const left = body.x;
+    const right = body.x + body.width;
+    let found: any = null;
+    const check = (p: any) => {
+      if (found || !p.body || !p.body.enable) return;
+      const pb = p.body;
+      if (right > pb.x && left < pb.x + pb.width && Math.abs(feet - pb.y) <= 6) found = p;
+    };
+    this.solidPlatforms.getChildren().forEach(check);
+    this.platforms.getChildren().forEach(check);
+    return found;
+  }
+
   update(time: number) {
     if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
       this.quitToTitle();
@@ -1101,10 +1262,13 @@ export class GameScene extends Phaser.Scene {
         body.velocity.x = Math.min(body.velocity.x + ACCEL * dt, PLAYER_SPEED);
       }
     } else {
-      const onIce = body.blocked.down && this.currentLevelData?.biome === 'ice-snow';
-      if (onIce) {
+      const groundPlat = body.blocked.down ? this.getGroundPlatform() : null;
+      const groundType = (groundPlat as any)?.platformType;
+      const onIcePlatform = groundType === 'ice';
+      const onSnowBiome = !!body.blocked.down && this.currentLevelData?.biome === 'ice-snow';
+      if (onIcePlatform || onSnowBiome) {
         if (Math.abs(body.velocity.x) < 5) body.velocity.x = 0;
-        else body.velocity.x *= 0.92;
+        else body.velocity.x *= onIcePlatform ? 0.96 : 0.92;
       } else if (Math.abs(body.velocity.x) < 5) {
         body.velocity.x = 0;
       } else if (body.velocity.x > 0) {
@@ -1157,8 +1321,17 @@ export class GameScene extends Phaser.Scene {
       this.player.setTexture(`${prefix}_idle`);
     }
 
-    // Swimming mechanic for water biome
-    if (this.currentBiome === 'water' && body.y > 500) {
+    // Conveyor belts (Phase 9): shift the player while standing on a belt
+    const standingPlat = body.blocked.down ? this.getGroundPlatform() : null;
+    const beltSpeed = standingPlat ? (standingPlat as any).getData?.('conveyor') : undefined;
+    if (beltSpeed) body.x += beltSpeed * dt;
+
+    // Swimming: water biome below y=500 or inside a water zone (Phase 9)
+    const inWaterZone = (this.currentLevelData?.waterZones || []).some(z =>
+      this.player.x >= z.x && this.player.x <= z.x + z.w &&
+      this.player.y >= z.y && this.player.y <= z.y + z.h
+    );
+    if ((this.currentBiome === 'water' && body.y > 500) || inWaterZone) {
       body.setGravityY(-(this.physics.world.gravity.y - 600));
       if (this.cursors.up.isDown) body.setVelocityY(-250);
       if (Math.abs(body.velocity.x) > 0) body.setVelocityX(body.velocity.x * 0.95);
@@ -1174,38 +1347,40 @@ export class GameScene extends Phaser.Scene {
       this.bgTiles.forEach((t, i) => t.tilePositionX += [0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06][i] || 0);
     }
     
-    // Level 60: Rising lava
-    if (this.levelId === 60) {
-      this.platforms.getChildren().forEach((p: any) => {
-        if (p.getData?.('risingLava')) {
-          p.y -= 0.4;
+    // Rising lava / rising water (Phase 9: data-driven + chase clamp so it never traps the player)
+    this.platforms.getChildren().forEach((p: any) => {
+      if (p.getData?.('risingLava')) {
+        const chaseFloor = this.player.y + 560;
+        if (p.y > chaseFloor) {
+          p.y -= Math.min(0.4, p.y - chaseFloor);
           p.body.updateFromGameObject();
         }
-      });
-    }
+      }
+    });
     
-    // Level 72: Crumble platforms
-    if (this.levelId === 72) {
-      this.platforms.getChildren().forEach((p: any) => {
-        if (!p.getData?.('crumble') || p.getData('crumbled')) return;
-        if (p.body?.touching?.up && this.player.body?.blocked?.down) {
-          const startTime = p.getData('crumbleStart') || 0;
-          if (startTime === 0) p.setData('crumbleStart', time);
-          if (time - startTime > 800) {
-            p.setData('crumbled', true);
-            this.tweens.add({ targets: p, alpha: 0, scaleY: 0, duration: 300, ease: 'Power2',
-              onComplete: () => { p.body.enable = false; this.time.delayedCall(3000, () => {
-                p.setAlpha(1); p.setScale(1); p.body.enable = true; p.setData('crumbleStart', 0); p.setData('crumbled', false);
-              }); }
-            });
-          }
-        } else {
-          p.setData('crumbleStart', 0);
+    // Crumble platforms (Phase 9: data-driven for every level, was hardcoded to L72)
+    const updateCrumble = (p: any) => {
+      if (!p.getData?.('crumble') || p.getData('crumbled')) return;
+      const onIt = p.body?.enable && p.body?.touching?.up && this.player.body?.blocked?.down;
+      if (onIt) {
+        const startTime = p.getData('crumbleStart') || 0;
+        if (startTime === 0) p.setData('crumbleStart', time);
+        if (time - startTime > 800) {
+          p.setData('crumbled', true);
+          this.tweens.add({ targets: p, alpha: 0, scaleY: 0, duration: 300, ease: 'Power2',
+            onComplete: () => { p.body.enable = false; this.time.delayedCall(3000, () => {
+              p.setAlpha(1); p.setScale(1); p.body.enable = true; p.setData('crumbleStart', 0); p.setData('crumbled', false);
+            }); }
+          });
         }
-      });
-    }
+      } else {
+        p.setData('crumbleStart', 0);
+      }
+    };
+    this.platforms.getChildren().forEach(updateCrumble);
+    this.solidPlatforms.getChildren().forEach(updateCrumble);
     
-    // L6, L42: Wind gusts
+    // L6, L42: Wind gusts (legacy, Phase 9 wind zones are preferred)
     if (this.levelId === 6 || this.levelId === 42) {
       this.windTime += 1;
       if (this.windTime % 180 === 0 && this.windTime > 0) {
@@ -1217,6 +1392,24 @@ export class GameScene extends Phaser.Scene {
         }
       }
     }
+
+    // Wind zones (Phase 9): periodic gust while inside the zone
+    (this.currentLevelData?.windZones || []).forEach((z, i) => {
+      const inside = this.player.x >= z.x && this.player.x <= z.x + z.w &&
+        this.player.y >= z.y && this.player.y <= z.y + z.h;
+      if (!inside) return;
+      const last = this.windZoneTimers.get(i) ?? 0;
+      const interval = z.intervalMs ?? 3000;
+      if (time - last >= interval) {
+        this.windZoneTimers.set(i, time);
+        const gust = Phaser.Math.Between(1, 2) === 1 ? -z.strength : z.strength;
+        body.setVelocityX(body.velocity.x + gust);
+      }
+    });
+
+    // Zeit-Tor + Münz-Tor: keep goal locks in sync every frame
+    this.levelElapsed = Math.max(0, this.totalTime - this.timeLeft);
+    this.updateCoinGate();
     
     // Update moving platforms
     let playerCarried = false;
@@ -1501,6 +1694,7 @@ export class GameScene extends Phaser.Scene {
       coinCount: this.coinCount,
       isPlayerBig: this.isPlayerBig,
       isPlayerFire: this.isPlayerFire,
+      respawn: this.respawnPoint,
     });
   }
 
@@ -1517,13 +1711,18 @@ export class GameScene extends Phaser.Scene {
       f.setVelocity(this.player.flipX ? -450 : 450, 200).setBounce(1, 0.8).setCircle(5, 3, 3);
   }
 
-  private reachGoal() {
+  private reachGoal(bonusPoints: number = 0) {
       if (this.isTransitioning) return;
-      if (this.currentLevelData?.coinGoal && this.coinCount < this.currentLevelData.coinGoal) return;
+      const level = this.currentLevelData;
+      if (!level) return;
+      const coinOk = !level.coinGoal || this.coinCount >= level.coinGoal;
+      const timeOk = !level.timeGate || this.levelElapsed >= level.timeGate;
+      if (!coinOk || !timeOk) return;
       this.isTransitioning = true;
       this.playGoalSound();
       this.isMusicPlaying = false;
       this.stopMusic();
+      this.score += bonusPoints;
 
       const body = this.player.body as Phaser.Physics.Arcade.Body;
       body.setVelocity(0, 0);

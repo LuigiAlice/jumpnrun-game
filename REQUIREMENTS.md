@@ -16,14 +16,14 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-002** – Sprungphysik: Sprünge werden aus JUMP_SPEED 900 und der (biome-abhängigen) Gravitation physikalisch berechnet; horizontale Sprungweite hängt von der Höhendifferenz ab.
 - **R-003** – Physik-Limits: MAX_JUMP_DISTANCE = 800, MAX_JUMP_UP = 350, MAX_FALL_DOWN = 1000.
 - **R-004** – Biome-Gravitation: space-star 1000, water 1200, sky-clouds/beach-island 1500, volcano-lava 2200, alle anderen 2000; Solver und Gameplay nutzen `getBiomeGravity`.
-- **R-005** – Biome-Bewegungsmechaniken: Im Biome ice-snow behält der Spieler beim Loslassen horizontale Velocity (×0.92, Eis-Rutsch); im Biome water gilt ab `body.y > 500` Schwimmen (Gravity 600, ↑ → vY −250, horizontaler Drift ×0.95).
+- **R-005** – Biome-Bewegungsmechaniken: Im Biome ice-snow behält der Spieler beim Loslassen horizontale Velocity (×0.92, Eis-Rutsch); der `ice`-Plattformtyp rutscht biome-unabhängig stärker (×0.96). Im Biome water gilt ab `body.y > 500` Schwimmen (Gravity 600, ↑ → vY −250, horizontaler Drift ×0.95); `waterZones` aktivieren dasselbe Schwimmen auch außerhalb des water-Bioms.
 - **R-006** – Fire-Schuss: Fire Mario schießt mit X/Space Feuerbälle, maximal alle 250 ms.
 - **R-007** – ESC-Taste führt aus dem Spiel zurück zum Titelmenü.
 
 ## 2. Spieler-Zustände & Power-ups
 
 - **R-008** – Drei Spieler-Zustände: small (22×32, `player_idle`), big (24×48, `player_big`), fire (24×48, `player_fire`); der Big-Zustand ist Voraussetzung für Brick-Zerstörung und QB-Aktivierung.
-- **R-009** – Question Blocks enthalten coin, mushroom, flower oder star; sie werden von unten aktiviert (Spieler touching.up + Block touching.down), geben Inhalt + Punkte und wechseln zur `question_used`-Textur. Mushroom → Big, Flower → Fire, Star → 5 s Unverwundbarkeit, Coin → +100 Punkte.
+- **R-009** – Question Blocks enthalten coin, mushroom, flower, star oder oneup; sie werden von unten aktiviert (Spieler touching.up + Block touching.down), geben Inhalt + Punkte und wechseln zur `question_used`-Textur. Mushroom → Big, Flower → Fire, Star → 5 s Unverwundbarkeit, Coin → +100 Punkte, oneup → +1 Leben (1-UP).
 - **R-010** – QB-Clearance: Zwischen QB-Oberkante und darüberliegender Plattform liegen mindestens 56 px (Big Mario 48 px + 8 px Buffer); kein QB ist durch Plattformen unerreichbar.
 
 ## 3. Neue Elemente (Pilot-Features)
@@ -82,6 +82,20 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-044** – Alle Plattform-, Dekorations- und Gegner-Typen, die in Leveln verwendet werden, mappen auf gültige (prozedural generierte) Texture-Namen.
 - **R-045** – MIDI-Konvertierung: `midiToFreq(69)` = 440 Hz (A4), `midiToFreq(60)` ≈ 261.63 Hz (C4).
 
+## 10. Level-Vielfalt (Phase 9)
+
+- **R-046** – Helfer v2: deterministische Baukästen `staircase`, `plateauSection`, `pitWithLedges`, `twoTierSection`, `islandCluster`, `zigzagClimb`, `overhangSection` sowie Coin-Muster (`coinArc`, `coinDiamond`, `coinTrail`, `coinLadder`) erzeugen variierte Geometrie ohne Math.random.
+- **R-047** – Geometrie-Vielfalt: Jedes Level hat ≥ 4 verschiedene Oberkanten-y, ≥ 3 verschiedene Plattform-Breiten und keinen (w,h)-Stempel über 65 %; kein Level ist mehr eine flache Ein-Linien-Anordnung.
+- **R-048** – As-authored lösbar: Alle 90 Level sind ohne Auto-Fixer traversierbar; `ensureSolvable` fügt in keinem Level Plattformen hinzu.
+- **R-049** – Crumble-Plattformen sind datengetrieben (`crumble: true`, 800 ms Standzeit, 3 s Respawn) und in den Finale-Biomen sky-clouds, ruins, canyon-base, space-star verbaut; jede Crumble-Stelle hat eine sichere Nicht-Crumble-Route.
+- **R-050** – Eis-Plattformen (`PlatformType 'ice'`) rutschen stärker und kommen ausschließlich im Biom ice-snow vor (≥ 2 Level).
+- **R-051** – Förderbänder (`conveyor`) wirken in factory-Leveln als Laufkraft in beide Richtungen.
+- **R-052** – Checkpoints (`checkpoints`) stehen in langen Leveln (width ≥ 12000) auf Plattformen und verschieben nach dem Tod den Respawn dorthin.
+- **R-053** – Wind-Zonen (`windZones`) gibt es in ≥ 4 windigen Biomen (u. a. grasslands, desert, sky-clouds, village, canyon-base), Wasser-Zonen (`waterZones`) in water und beach-island.
+- **R-054** – Schlüssel/Türen sind immer gepaart, blockieren nie Start oder Goal und öffnen nur Bonusräume; Multi-Goal-Level bieten zusätzliche Zielflaggen mit eigenen Punktwerten.
+- **R-055** – Kanonen (`cannons`) feuern in factory, castle-final und canyon-base tödliche Projektile; Zeit-Tore (`timeGate`) entsperren das Goal erst nach X Sekunden und sind innerhalb des Zeitbonus erreichbar.
+- **R-056** – 1-UP-Blöcke (`oneup`) kommen in mehreren Leveln vor; die Plattformtypen `hidden`, `brick_secret` und `brick_multi` werden in ≥ 3 Biomen für Geheimnisse genutzt.
+
 ---
 
 ## Traceability
@@ -100,7 +114,8 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-003 | Physik-Limits 800/350/1000 | tests/Physics.test.ts | max fall down should be 1000px |
 | R-004 | Biome-Gravitation | tests/LevelInvariant.test.ts | all 90 levels should be fully traversable to goal (biome gravity) |
 | R-004 | Biome-Gravitation | tests/LevelSolvability.test.ts | all levels should be solvable |
-| R-005 | Eis-Rutsch & Schwimmen | — | — |
+| R-005 | Eis-Rutsch & Schwimmen | tests/Phase9Features.test.ts | crumble and conveyor helpers carry their extra data |
+| R-005 | Eis-Rutsch & Schwimmen | tests/Phase9Features.test.ts | water zones appear in water and beach-island |
 | R-006 | Fire-Schuss 250ms | — | — |
 | R-007 | ESC → Titelmenü | e2e/game.test.ts | ESC returns to title screen |
 | R-008 | Spieler-Zustände small/big/fire | tests/GameLogic.test.ts | should break only for big player on breakable brick |
@@ -148,7 +163,7 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-032 | Secret Rooms erreichbar | tests/PilotElements.test.ts | pilot levels keep the grasslands secret room intact and reachable |
 | R-033 | Pilot-Level-Vielfalt | tests/PilotElements.test.ts | each pilot level mixes at least 3 platform types |
 | R-033 | Pilot-Level-Vielfalt | tests/PilotElements.test.ts | desert level 11 keeps a crab/robot/spiny-heavy horde |
-| R-034 | Biome-Finale-Mechaniken | — | — |
+| R-034 | Biome-Finale-Mechaniken | tests/Phase9Features.test.ts | crumble platforms appear in the finale biomes |
 | R-035 | Scoring-Tabelle | e2e/elements.test.ts | big player destroys breakable brick |
 | R-035 | Scoring-Tabelle | e2e/elements.test.ts | stomp |
 | R-036 | Level-Clear +1000+TimeBonus | — | — |
@@ -169,3 +184,22 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-044 | Texturen generiert/gültig | tests/AssetCoverage.test.ts | all platform types in levels should use valid texture names |
 | R-044 | Texturen generiert/gültig | tests/AssetCoverage.test.ts | all decoration types in levels should use valid texture names |
 | R-045 | midiToFreq korrekt | tests/Music.test.ts | midiToFreq converts A4 to 440 Hz and C4 to ~261.63 Hz |
+| R-046 | Helfer v2 & Coin-Muster | tests/Phase9Features.test.ts | staircase rises monotonically and stays jumpable |
+| R-046 | Helfer v2 & Coin-Muster | tests/Phase9Features.test.ts | coin pattern helpers produce distinct deterministic layouts |
+| R-047 | Geometrie-Vielfalt | tests/Phase9Features.test.ts | no level is a flat single-line layout anymore |
+| R-047 | Geometrie-Vielfalt | tests/Phase9Features.test.ts | no level consists of one repeated platform stamp |
+| R-047 | Geometrie-Vielfalt | tests/Phase9Features.test.ts | every level uses at least three distinct platform widths |
+| R-048 | As-authored lösbar | tests/Phase9Features.test.ts | all levels are authored solvable (no ensureSolvable patchwork) |
+| R-048 | As-authored lösbar | tests/BiomeAudit.test.ts | levels are authored solvable (ensureSolvable adds nothing) |
+| R-049 | Crumble datengetrieben | tests/Phase9Features.test.ts | crumble platforms appear in the finale biomes |
+| R-050 | Ice-Plattformen nur ice-snow | tests/Phase9Features.test.ts | ice platforms exist in ice-snow and nowhere else |
+| R-051 | Conveyor-Bänder in factory | tests/Phase9Features.test.ts | conveyor belts exist in factory levels |
+| R-052 | Checkpoints in langen Leveln | tests/Phase9Features.test.ts | checkpoints exist in long levels only |
+| R-053 | Wind- & Wasser-Zonen | tests/Phase9Features.test.ts | wind zones appear in at least four windy biomes |
+| R-053 | Wind- & Wasser-Zonen | tests/Phase9Features.test.ts | water zones appear in water and beach-island |
+| R-054 | Keys/Doors & Multi-Goal | tests/Phase9Features.test.ts | keys and doors are paired and never block start or goal |
+| R-054 | Keys/Doors & Multi-Goal | tests/Phase9Features.test.ts | multi-goal levels offer extra scoring flags |
+| R-055 | Cannons & Zeit-Tor | tests/Phase9Features.test.ts | cannons exist in factory, castle and canyon |
+| R-055 | Cannons & Zeit-Tor | tests/Phase9Features.test.ts | time-gate levels are achievable within their time bonus |
+| R-056 | 1-UP & Geheim-Bricks | tests/Phase9Features.test.ts | 1-UP question blocks appear in several levels |
+| R-056 | 1-UP & Geheim-Bricks | tests/Phase9Features.test.ts | hidden and secret brick types are used in multiple biomes |
