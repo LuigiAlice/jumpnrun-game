@@ -6,7 +6,7 @@
 // Level 23: Gegner-Horde - 15-20 enemies
 // Level 24: Eis-Höhle-Finale - tunnel structure with platforms on both sides
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const ICE_SNOW_LEVELS: LevelData[] = [
   // ===== Level 19: Tutorial - "Snowy Path" (S=0.65) =====
@@ -36,6 +36,8 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
         createCoin(5000 * S, 370), createCoin(5700 * S, 500), createCoin(6400 * S, 410),
         createCoin(7600 * S, 500),
         createCoin(130, 360), createCoin(160, 360), createCoin(190, 360), createCoin(220, 360),
+        // Discovery moment: bonus coin arc above the tutorial spring
+        createCoin(260, 440), createCoin(300, 400), createCoin(340, 440),
       ];
     })(),
     questionBlocks: (() => {
@@ -65,6 +67,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 4680, y: 528 },
     timeBonus: 120,
+    springs: [createSpring(300, 530)],
     movingPlatforms: (() => {
       const S = 0.65;
       return [
@@ -102,6 +105,9 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
         createCoin(4400 * S, 550), createCoin(5800 * S, 540), createCoin(6200 * S, 420),
         createCoin(7800 * S, 550), createCoin(8700 * S, 450), createCoin(9700 * S, 550),
         createCoin(11000 * S, 430), createCoin(12000 * S, 550),
+        // Coin arcs above the two gap-section springs
+        createCoin(1335, 500), createCoin(1375, 460), createCoin(1415, 500),
+        createCoin(5835, 500), createCoin(5875, 440), createCoin(5915, 500),
       ];
     })(),
     questionBlocks: (() => {
@@ -135,12 +141,17 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 7312, y: 578 },
     timeBonus: 140,
+    springs: [createSpring(1375, 580), createSpring(5875, 580)],
+    // Spikes on the wide snow grounds (large run-up zones, far from QBs/goal/start)
+    spikes: [createSpike(2600, 572), createSpike(5900, 572)],
     movingPlatforms: (() => {
       const S = 0.625;
       return [
         createMovingPlat(1700 * S, 500, 120, 24, 'platform_medium', 'horizontal', 250, 22),
         createMovingPlat(3800 * S, 480, 120, 24, 'platform_medium', 'horizontal', 220, 20),
         createMovingPlat(10200 * S, 500, 150, 24, 'platform_medium', 'horizontal', 280, 22),
+        // Vertical lifter over the third ground section
+        createMovingPlat(2625, 520, 120, 24, 'platform_medium', 'vertical', 150, 20),
       ];
     })(),
   },
@@ -160,6 +171,9 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       plats.push(...pipeSection(S, 4800, 650, 5));
       plats.push(...gapWithPlatforms(S, 6800, 600, 500, 4));
       plats.push(createPlat(7000 * S, 650, 600 * S, 40, 'snow'));
+      // Breakable brick bonus wall above the mid ground (never load-bearing:
+      // the ground below stays the main path; Big Mario smashes it from below)
+      plats.push(createPlat(4200, 540, 96, 24, 'brick'));
       plats.push(...gapWithPlatforms(S, 7750, 650, 350, 3));
       plats.push(createPlat(8500 * S, 650, 800 * S, 40, 'snow'));
       plats.push(...gapWithPlatforms(S, 9400, 600, 600, 4));
@@ -176,6 +190,10 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
         createCoin(5000 * S, 560), createCoin(5500 * S, 460), createCoin(7100 * S, 600),
         createCoin(7900 * S, 520), createCoin(8700 * S, 600), createCoin(9800 * S, 560),
         createCoin(10400 * S, 460), createCoin(12300 * S, 600),
+        // Brick-bonus coins above the breakable brick
+        createCoin(4160, 480), createCoin(4200, 460), createCoin(4240, 480),
+        // Coin arc above the spring on the final ground
+        createCoin(7260, 540), createCoin(7300, 500), createCoin(7340, 540),
       ];
     })(),
     questionBlocks: (() => {
@@ -216,6 +234,9 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 600 },
     goal: { x: 7200, y: 628 },
     timeBonus: 160,
+    springs: [createSpring(7300, 630)],
+    // Spikes on the pipe-base grounds (well clear of QBs, goal and start)
+    spikes: [createSpike(350, 622), createSpike(2150, 622), createSpike(5300, 622)],
     movingPlatforms: (() => {
       const S = 0.6;
       return [
@@ -281,6 +302,10 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
         createCoin(14500 * S, 490), createCoin(14800 * S, 410), createCoin(15100 * S, 330),
         createCoin(15400 * S, 250), createCoin(15700 * S, 330), createCoin(16000 * S, 410),
         createCoin(16300 * S, 490), createCoin(17000 * S, 600),
+        // Coin ladder up from the spring shortcut after climb 1
+        createCoin(2113, 540), createCoin(2113, 470), createCoin(2113, 400),
+        // Coin arc above the spring on the goal ground
+        createCoin(9360, 540), createCoin(9400, 490), createCoin(9440, 540),
       ];
     })(),
     questionBlocks: (() => {
@@ -324,6 +349,8 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 600 },
     goal: { x: 9285, y: 628 },
     timeBonus: 180,
+    coinGoal: 25,
+    springs: [createSpring(2113, 630), createSpring(9400, 630)],
     movingPlatforms: (() => {
       const S = 0.556;
       return [
@@ -361,6 +388,8 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
         createCoin(4400 * S, 600), createCoin(5400 * S, 560), createCoin(5800 * S, 470),
         createCoin(7500 * S, 600), createCoin(8100 * S, 600), createCoin(8600 * S, 600),
         createCoin(9500 * S, 520), createCoin(9800 * S, 450), createCoin(10500 * S, 600),
+        // Coin arc above the horde spring
+        createCoin(3660, 540), createCoin(3700, 500), createCoin(3740, 540),
       ];
     })(),
     questionBlocks: (() => {
@@ -404,6 +433,10 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 600 },
     goal: { x: 5100, y: 628 },
     timeBonus: 200,
+    coinGoal: 13,
+    springs: [createSpring(3700, 630)],
+    // Spike-gasse on the wide arena grounds, spaced apart, clear of QBs
+    spikes: [createSpike(450, 622), createSpike(1700, 622), createSpike(3300, 622)],
     movingPlatforms: (() => {
       const S = 0.5;
       return [
@@ -450,8 +483,11 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
         createCoin(7000 * S, 660), createCoin(7500 * S, 570), createCoin(8100 * S, 490),
         createCoin(9500 * S, 640), createCoin(9800 * S, 600), createCoin(10100 * S, 560),
         createCoin(10500 * S, 600), createCoin(11200 * S, 700), createCoin(12400 * S, 610),
-        createCoin(12700 * S, 540), createCoin(13400 * S, 700), createCoin(14100 * S, 700),
+        createCoin(12700 * S, 540),         createCoin(13400 * S, 700), createCoin(14100 * S, 700),
         createCoin(14800 * S, 700),
+        // Coin arcs above the two finale springs (icicle-dodging compensation)
+        createCoin(260, 640), createCoin(300, 600), createCoin(340, 640),
+        createCoin(5560, 640), createCoin(5600, 600), createCoin(5640, 640),
       ];
     })(),
     questionBlocks: (() => {
@@ -498,6 +534,10 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 700 },
     goal: { x: 5895, y: 728 },
     timeBonus: 220,
+    // Rescue springs for the icicle finale; flat spikes on wide grounds,
+    // clear of QBs, goal and start
+    springs: [createSpring(300, 730), createSpring(5600, 730)],
+    spikes: [createSpike(1500, 722), createSpike(4800, 722)],
     movingPlatforms: (() => {
       const S = 0.45;
       return [

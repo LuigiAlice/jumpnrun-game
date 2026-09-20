@@ -1,6 +1,8 @@
 // Beach/Island World - 6 distinct level types (IDs 43-48)
 // Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Flut-Rennen
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+// Mix-Upgrade (Phase 6b): Springs, Spikes, coinGoal, Breakable-Brick-Bonus.
+// Gravity 1500: Spring-Launch ~607px, Sprunghöhe ~270px, Max-Sprungweite ~336px.
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 const boardwalkSection = (S: number, startX: number, y: number, length: number): any[] => {
   const plats = [];
@@ -42,6 +44,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       for (let x = 5400 * S; x < 6200 * S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 7200 * S; x < 7800 * S; x += 200) cs.push(createCoin(x, 500));
       cs.push(createCoin(470, 400), createCoin(500, 400), createCoin(530, 400));
+      // Discovery moment: bonus coin arc above the tutorial spring
+      cs.push(createCoin(330, 440), createCoin(370, 400), createCoin(410, 440));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -58,7 +62,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       return [
         createEnemy(500 * S, 510, 'goomba'),
         createEnemy(1800 * S, 510, 'crab'),
-        createEnemy(3200 * S, 510, 'goomba'),
+        createEnemy(3200 * S, 510, 'robot'),
         createEnemy(4100 * S, 470, 'piranha'),
       ];
     })(),
@@ -77,6 +81,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     movingPlatforms: [
       createMovingPlat(2600 * 0.625, 500, 120, 24, 'platform_medium', 'horizontal', 250, 18),
     ],
+    // Tutorial: single discovery spring on the start ground (top edge y=530)
+    springs: [createSpring(370, 530)],
   },
 
   // ============================================================
@@ -114,6 +120,9 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       for (let x = 6200 * S; x < 6900 * S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 8800 * S; x < 9400 * S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 10500 * S; x < 11300 * S; x += 200) cs.push(createCoin(x, 500));
+      // Coin arcs above the two gap-section springs
+      cs.push(createCoin(360, 460), createCoin(400, 420), createCoin(440, 460));
+      cs.push(createCoin(3660, 460), createCoin(3700, 420), createCoin(3740, 460));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -160,7 +169,11 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       createMovingPlat(5700 * 0.6, 490, 130, 24, 'platform_medium', 'horizontal', 330, 22),
       createMovingPlat(8300 * 0.6, 480, 120, 24, 'platform_medium', 'horizontal', 350, 24),
       createMovingPlat(10000 * 0.6, 490, 120, 24, 'platform_medium', 'horizontal', 300, 20),
+      // Vertical helper lifting players back up from the mid gap section
+      createMovingPlat(2450, 470, 130, 24, 'platform_medium', 'vertical', 100, 18),
     ],
+    // Springs on the sand grounds (top edge y=530) — pure bonus over the gaps
+    springs: [createSpring(400, 530), createSpring(3700, 530)],
   },
 
   // ============================================================
@@ -211,6 +224,10 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       // Bridge to final ground
       plats.push(...gapWithPlatforms(S, 15900, 550, 400, 3));
       plats.push(createPlat(15900 * S, 550, 800 * S, 40, 'sand'));
+      // Breakable brick bonus wall — hangs above the ground connector (never
+      // load-bearing: the sand ground below stays the main path). Big Mario
+      // can smash it from below for the coins on top.
+      plats.push(createPlat(8830, 460, 96, 24, 'brick'));
       return plats;
     })(),
     coins: (() => {
@@ -223,6 +240,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       for (let x = 11500 * S; x < 11500 * S + 300; x += 100) cs.push(createCoin(x, 370));
       for (let x = 13500 * S; x < 14000 * S; x += 200) cs.push(createCoin(x, 500));
       for (let x = 15900 * S; x < 16700 * S; x += 200) cs.push(createCoin(x, 500));
+      // Brick-bonus coins (above the breakable brick)
+      cs.push(createCoin(8790, 400), createCoin(8830, 380), createCoin(8870, 400));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -274,6 +293,10 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       createMovingPlat(5500 * 0.556, 490, 130, 24, 'platform_medium', 'horizontal', 400, 22),
       createMovingPlat(10700 * 0.556, 470, 120, 24, 'platform_medium', 'vertical', 180, 20),
     ],
+    // Spike passages on the sand connectors between pipe sections (top edge
+    // 530 → spike y 522). Grounded with ≥12px margin, clear of QBs, pipes,
+    // goal (≥96px) and player start (≥150px).
+    spikes: [createSpike(1930, 522), createSpike(4860, 522), createSpike(8960, 522)],
   },
 
   // ============================================================
@@ -330,6 +353,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       for (let x = 11700; x < 12500; x += 200) cs.push(createCoin(x * S, 500));
       for (let x = 13400; x < 14100; x += 200) cs.push(createCoin(x * S, 500));
       for (let x = 14900; x < 15500; x += 200) cs.push(createCoin(x * S, 500));
+      // Coin ladder up from the vertical climb 1 exit (spring-bonus route)
+      cs.push(createCoin(1780, 470), createCoin(1780, 410), createCoin(1780, 350));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -374,11 +399,14 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 14800 * 0.5 + 100, y: 528 },
     timeBonus: 200,
+    coinGoal: 28,
     movingPlatforms: [
       createMovingPlat(800, 490, 120, 24, 'platform_medium', 'horizontal', 250, 20),
       createMovingPlat(4400, 490, 130, 24, 'platform_medium', 'horizontal', 300, 18),
       createMovingPlat(10200, 490, 100, 24, 'platform_medium', 'vertical', 200, 22),
       createMovingPlat(12700, 490, 100, 24, 'platform_medium', 'horizontal', 250, 20),
+      // Circular rider over the mid gap section
+      createMovingPlat(6950, 380, 100, 24, 'platform_medium', 'circular', 100, 18),
     ],
   },
 
@@ -437,16 +465,18 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
         createEnemy(1300 * S, 510, 'crab'),
         createEnemy(1600 * S, 510, 'goomba'),
         createEnemy(1900 * S, 510, 'squid'),
+        createEnemy(2200 * S, 510, 'spiny'),
         createEnemy(3900 * S, 510, 'crab'),
         createEnemy(4400 * S, 510, 'goomba'),
-        createEnemy(4900 * S, 510, 'crab'),
+        createEnemy(4900 * S, 510, 'robot'),
         createEnemy(5400 * S, 510, 'squid'),
         createEnemy(7200 * S, 510, 'goomba'),
         createEnemy(7700 * S, 510, 'crab'),
         createEnemy(8200 * S, 510, 'squid'),
         createEnemy(8700 * S, 510, 'piranha'),
         createEnemy(9100 * S, 510, 'piranha'),
-        createEnemy(10800 * S, 510, 'goomba'),
+        createEnemy(10800 * S, 510, 'robot'),
+        createEnemy(11400 * S, 510, 'spiny'),
         createEnemy(12000 * S, 510, 'squid'),
         createEnemy(15000 * S, 510, 'crab'),
       ];
@@ -464,11 +494,18 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 14300 * 0.455, y: 528 },
     timeBonus: 220,
+    coinGoal: 17,
     movingPlatforms: [
       createMovingPlat(2800, 490, 130, 24, 'platform_medium', 'horizontal', 300, 20),
       createMovingPlat(8000, 490, 120, 24, 'platform_medium', 'horizontal', 350, 22),
       createMovingPlat(11000, 490, 100, 24, 'platform_medium', 'horizontal', 250, 18),
+      // Vertical helper lifting players back up from the long arena 2
+      createMovingPlat(5100, 460, 120, 24, 'platform_medium', 'vertical', 120, 18),
     ],
+    // Spike gauntlet in arena 2 (top edge 530 → y 522) plus one spike in
+    // arena 3 — grounded with ≥12px margin, ≥100px from QBs, ≥96px from the
+    // goal, ≥150px from the player start, never on moving-platform paths.
+    spikes: [createSpike(1500, 522), createSpike(1580, 522), createSpike(1660, 522), createSpike(3250, 522)],
   },
 
   // ============================================================
@@ -597,5 +634,14 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       createMovingPlat(9400 * 0.417, 200, 120, 24, 'platform_medium', 'horizontal', 350, 24),
       createMovingPlat(11800 * 0.417, 100, 120, 24, 'platform_medium', 'vertical', 150, 20),
     ],
+    // Flood compensation: rescue springs (launch ~607px at g=1500 clears the
+    // flood zone). On the start ground (top edge 530) and the second elevated
+    // ground (top edge 240) — high up, away from the flooded bottom passages.
+    springs: [createSpring(250, 530), createSpring(4100, 240)],
+    // Max 2 spikes, both high up — never in the flooded bottom passages.
+    // On the first-elevation sand ground (top 250 → y 242) and the goal-side
+    // descent platform (top 186 → y 178). Right-side placement so landings
+    // stay clear; clear of QBs (≥100px), goal (≥96px) and player start.
+    spikes: [createSpike(960, 242), createSpike(5075, 178)],
   },
 ];

@@ -41,15 +41,22 @@ describe('LevelData new optional fields', () => {
         expect(fixed.coinGoal).toBe(5);
     });
 
-    it('levels without new fields stay unchanged in shape', () => {
-        // PILOT levels 1-12 (grasslands + desert) intentionally introduce
-        // springs/spikes/coinGoal — see tests/PilotElements.test.ts.
-        // This invariant now applies to all non-pilot levels.
-        for (let i = 12; i < getLevelCount(); i++) {
-            const level = getLevel(i);
-            expect(level.springs).toBeUndefined();
-            expect(level.spikes).toBeUndefined();
-            expect(level.coinGoal).toBeUndefined();
+    it('all 15 biomes are upgraded (UPGRADED_BIOMES in sync with level data)', () => {
+        // All biomes intentionally introduce springs/spikes/coinGoal —
+        // see tests/PilotElements.test.ts. This check fails when a new
+        // biome is added to the level data without being added here.
+        const UPGRADED_BIOMES = new Set([
+            'grasslands', 'desert', 'water', 'ice-snow', 'sky-clouds', 'forest',
+            'haunted-mansion', 'ruins', 'canyon-base', 'space-star', 'castle-final',
+            'beach-island', 'volcano-lava', 'factory', 'village',
+        ]);
+        const levelBiomes = new Set<string>();
+        for (let i = 0; i < getLevelCount(); i++) {
+            levelBiomes.add(getLevel(i).biome);
+        }
+        expect(levelBiomes.size, 'distinct biomes in level data').toBe(UPGRADED_BIOMES.size);
+        for (const biome of levelBiomes) {
+            expect(UPGRADED_BIOMES.has(biome), `biome "${biome}" missing from UPGRADED_BIOMES`).toBe(true);
         }
     });
 });

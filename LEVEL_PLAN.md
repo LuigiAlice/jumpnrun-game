@@ -79,9 +79,9 @@ Alle Biome-Dateien nutzen diese Helfer.
 
 ---
 
-## 🟡 Phase 6b: Neue Level-Elemente (Pilot in grasslands + desert)
+## ✅ Phase 6b: Neue Level-Elemente (ALLE 15 Biome, ABGESCHLOSSEN)
 
-Implementiert (Engine: GameScene/helpers/config, Tests: NewElements + PilotElements):
+Implementiert (Engine: GameScene/helpers/config, Tests: NewElements + PilotElements + ElementMix):
 
 | Element | Daten | Mechanik |
 |---------|-------|----------|
@@ -90,7 +90,7 @@ Implementiert (Engine: GameScene/helpers/config, Tests: NewElements + PilotEleme
 | **Zerstörbare Bricks** | 'brick'-Plattform | Big Mario zerbricht von unten (+50); load-bearing Bricks wobble statt brechen (`isBrickLoadBearing`) |
 | **Münz-Tor** | `coinGoal: number` | Goal gesperrt bis X Coins, HUD-Hint |
 
-Pilot-Biome: grasslands (L1-6), desert (L7-12) — jedes Level mit Element-Mix (≥3 Plattform-Typen, variierte Moving-Plats, Coin-Muster, Gegner-Mix, 0-3 Spikes, 1-2 Springs, 2 coinGoal-Level). Ausrollen auf restliche 13 Biome folgt.
+**Rollout ABGESCHLOSSEN**: Alle 15 Biome (90 Level) mit Element-Mix (≥3 Plattform-Typen, variierte Moving-Plats, Coin-Muster, Gegner-Mix, 0-4 Spikes, 1-2 Springs, 1-2 coinGoal-Level pro Biome). L90-Bossarena elementefrei. Runtime-E2E: `e2e/elements.test.ts` (Springs, Spikes, Bricks, Coin-Gate + Stomp-Regression). Globaler Invariant-Test: `tests/ElementMix.test.ts`.
 
 ---
 

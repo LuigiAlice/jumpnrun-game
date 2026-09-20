@@ -400,6 +400,7 @@ export class GameScene extends Phaser.Scene {
       const biomeSpeed = BIOME_ENEMY_SPEED[level.biome] ?? DEFAULT_ENEMY_SPEED;
 
       const enemy = this.enemies.create(e.x, e.y, e.type);
+      enemy.setData('type', e.type);
       // Ground enemies - have edge detection (won't fall off platforms)
       if (e.type === 'goomba' || e.type === 'spiny' || e.type === 'koopa' || e.type === 'robot' || e.type === 'crab') {
         enemy.setVelocityX(-biomeSpeed).setCollideWorldBounds(true).setBounce(0);
@@ -494,8 +495,10 @@ export class GameScene extends Phaser.Scene {
     if (level.springs) {
       level.springs.forEach(s => {
         const spring = this.springs.create(s.x, s.y + 10, 'spring');
-        (spring.body as Phaser.Physics.Arcade.StaticBody).setSize(28, 12, false);
         spring.refreshBody();
+        const springBody = spring.body as Phaser.Physics.Arcade.StaticBody;
+        springBody.setSize(28, 12);
+        springBody.setOffset(2, -6);
       });
     }
 
@@ -619,7 +622,7 @@ export class GameScene extends Phaser.Scene {
         }
         if (platType === 'brick' && b.body.blocked?.up === false) {
           const isBig = this.isPlayerBig || this.isPlayerFire;
-          const loadBearing = this.currentLevelData ? isBrickLoadBearing(this.currentLevelData, b) : false;
+          const loadBearing = this.currentLevelData ? isBrickLoadBearing(this.currentLevelData, { x: b.x, y: b.y, type: platType }) : false;
           if (canBreakBrick(isBig, platType, loadBearing)) {
             b.destroy();
             for (let i = 0; i < 6; i++) {
@@ -716,7 +719,7 @@ export class GameScene extends Phaser.Scene {
         }
         // Player stomps enemy when landing from above
         const playerFeet = p.body.bottom;
-        const enemyTop = e.body.y - e.body.height / 2;
+        const enemyTop = e.body.y;
         const isFalling = p.body.velocity.y >= 0;
         const isStomping = isFalling && playerFeet <= enemyTop + 15 && Math.abs(p.x - e.x) < e.displayWidth / 2 + 15;
         if (isStomping) {

@@ -3,7 +3,7 @@
 // Biome-aware jump distances (gravity from config.ts BIOME_GRAVITY)
 // MAX_JUMP_UP = 350px, MAX_FALL_DOWN = 1000px
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const FOREST_LEVELS: LevelData[] = [
   // ============================================================
@@ -45,6 +45,8 @@ export const FOREST_LEVELS: LevelData[] = [
       for (let x = 5200; x < 5500; x += 150) coins.push(createCoin(x * S, 490));
       for (let x = 6700; x < 7500; x += 120) coins.push(createCoin(x * S, 490));
       coins.push(createCoin(2400, 410), createCoin(2450, 410), createCoin(2500, 410), createCoin(2550, 410));
+      // Discovery moment: bonus coin arc above the tutorial spring
+      coins.push(createCoin(360, 440), createCoin(400, 400), createCoin(440, 440));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -85,6 +87,7 @@ export const FOREST_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 500 },
     goal: { x: 6600 * 0.65, y: 528 },
     timeBonus: 80,
+    springs: [createSpring(400, 530)],
   },
 
   // ============================================================
@@ -131,6 +134,9 @@ export const FOREST_LEVELS: LevelData[] = [
       for (let x = 5800; x < 6300; x += 100) coins.push(createCoin(x * S, 500));
       for (let x = 8300; x < 8800; x += 100) coins.push(createCoin(x * S, 500));
       for (let x = 10800; x < 11500; x += 120) coins.push(createCoin(x * S, 500));
+      // Coin arcs above the two gap-section springs
+      coins.push(createCoin(1960, 450), createCoin(2000, 410), createCoin(2040, 450));
+      coins.push(createCoin(5085, 450), createCoin(5125, 410), createCoin(5165, 450));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -175,11 +181,16 @@ export const FOREST_LEVELS: LevelData[] = [
         createMovingPlat(5300 * S, 460, 120, 24, 'wood', 'horizontal', 220, 22),
         createMovingPlat(7800 * S, 460, 120, 24, 'wood', 'horizontal', 220, 22),
         createMovingPlat(10300 * S, 460, 120, 24, 'wood', 'horizontal', 220, 22),
+        // Vertical lifter between the third and fourth tree
+        createMovingPlat(4350, 480, 120, 24, 'wood', 'vertical', 140, 20),
       ];
     })(),
     playerStart: { x: 150, y: 500 },
     goal: { x: 10700 * 0.625, y: 528 },
     timeBonus: 100,
+    springs: [createSpring(2000, 530), createSpring(5125, 530)],
+    // Flat spikes on the tree platforms (grounded, clear of QBs/goal/start)
+    spikes: [createSpike(1900, 522), createSpike(3450, 522)],
   },
 
   // ============================================================
@@ -237,6 +248,9 @@ export const FOREST_LEVELS: LevelData[] = [
       plats.push(...gapWithPlatforms(S, 9940, 530, 350, 3));
       // Pipes 6: pipe0 left=10288 (startX=16800, 3 pipes)
       plats.push(...pipeSection(S, 16800, 600, 3));
+      // Breakable brick bonus wall above the goal wood (never load-bearing;
+      // Big Mario smashes it from below for the coins on top)
+      plats.push(createPlat(10800, 480, 96, 24, 'brick'));
       // Wood goal
       plats.push(createPlat(18500 * S, 600, 1800 * S, 40, 'wood'));
       return plats;
@@ -256,6 +270,10 @@ export const FOREST_LEVELS: LevelData[] = [
       for (let x = 14000; x < 14600; x += 130) coins.push(createCoin(x * S, 540));
       for (let x = 16200; x < 16500; x += 100) coins.push(createCoin(x * S, 540));
       for (let x = 18700; x < 20000; x += 120) coins.push(createCoin(x * S, 540));
+      // Brick-bonus coins above the breakable brick
+      coins.push(createCoin(10760, 420), createCoin(10800, 400), createCoin(10840, 420));
+      // Coin arc above the spring on the last tree
+      coins.push(createCoin(9560, 490), createCoin(9600, 450), createCoin(9640, 490));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -322,6 +340,9 @@ export const FOREST_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 18500 * 0.6, y: 578 },
     timeBonus: 130,
+    springs: [createSpring(9600, 580)],
+    // Spikes at the pipe passages (grounded on wood sections, clear of QBs)
+    spikes: [createSpike(400, 572), createSpike(2460, 572), createSpike(4200, 572)],
   },
 
   // ============================================================
@@ -398,6 +419,10 @@ export const FOREST_LEVELS: LevelData[] = [
       coins.push(createCoin(14300 * S, 220), createCoin(14600 * S, 220), createCoin(14900 * S, 220));
       coins.push(createCoin(15200 * S, 300), createCoin(15500 * S, 380), createCoin(15800 * S, 460));
       for (let x = 17100; x < 18200; x += 120) coins.push(createCoin(x * S, 550));
+      // Coin ladder up from the spring shortcut after climb 1
+      coins.push(createCoin(2668, 500), createCoin(2668, 430), createCoin(2668, 360));
+      // Coin arc above the spring on the goal wood
+      coins.push(createCoin(9160, 510), createCoin(9200, 470), createCoin(9240, 510));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -453,11 +478,15 @@ export const FOREST_LEVELS: LevelData[] = [
         createMovingPlat(4400 * S, 520, 120, 24, 'wood', 'horizontal', 220, 22),
         createMovingPlat(8200 * S, 520, 120, 24, 'wood', 'horizontal', 220, 22),
         createMovingPlat(12100 * S, 520, 120, 24, 'wood', 'horizontal', 220, 22),
+        // Circular helper floating between the second and third climb
+        createMovingPlat(3615, 500, 120, 24, 'wood', 'circular', 120, 18),
       ];
     })(),
     playerStart: { x: 150, y: 550 },
     goal: { x: 17000 * 0.556, y: 578 },
     timeBonus: 140,
+    coinGoal: 43,
+    springs: [createSpring(2668, 580), createSpring(9200, 580)],
   },
 
   // ============================================================
@@ -501,6 +530,8 @@ export const FOREST_LEVELS: LevelData[] = [
       for (let x = 6200; x < 7600; x += 100) coins.push(createCoin(x * S, 550));
       for (let x = 9800; x < 11200; x += 100) coins.push(createCoin(x * S, 550));
       for (let x = 11800; x < 12700; x += 120) coins.push(createCoin(x * S, 550));
+      // Coin arc above the horde spring
+      coins.push(createCoin(4760, 500), createCoin(4800, 460), createCoin(4840, 500));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -565,6 +596,10 @@ export const FOREST_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 11600 * 0.5, y: 578 },
     timeBonus: 90,
+    coinGoal: 40,
+    springs: [createSpring(4800, 580)],
+    // Spike-gasse on the wood arenas, spaced apart, clear of QBs/goal/start
+    spikes: [createSpike(520, 572), createSpike(1300, 572), createSpike(2800, 572)],
   },
 
   // ============================================================
@@ -579,13 +614,13 @@ export const FOREST_LEVELS: LevelData[] = [
       const plats: any[] = [];
       // Ground start
       plats.push(createPlat(600 * S, 600, 1600 * S, 40, 'wood'));
-      plats.push(createPlat(865, 393, 60, 20, 'platform_easy'));
+      plats.push(createPlat(865, 393, 60, 20, 'platform_medium'));
       // Mid canopy 1
       plats.push(createPlat(3200 * S, 420, 1000 * S, 30, 'wood'));
       plats.push(createPlat(1853, 393, 60, 20, 'platform_easy'));
       // Mid canopy 2
       plats.push(createPlat(5200 * S, 420, 1000 * S, 30, 'wood'));
-      plats.push(createPlat(2784, 213, 60, 20, 'platform_easy'));
+      plats.push(createPlat(2784, 213, 60, 20, 'platform_medium'));
       // High canopy 1
       plats.push(createPlat(7400 * S, 240, 1000 * S, 30, 'wood'));
       plats.push(createPlat(3743, 213, 60, 20, 'platform_easy'));
@@ -626,6 +661,9 @@ export const FOREST_LEVELS: LevelData[] = [
       for (let x = 17900; x < 18800; x += 120) coins.push(createCoin(x * S, 550));
       for (let x = 18900; x < 19400; x += 100) coins.push(createCoin(x * S, 550));
       for (let x = 20100; x < 21000; x += 120) coins.push(createCoin(x * S, 550));
+      // Coin arcs above the two finale springs (falling-branch compensation)
+      coins.push(createCoin(1460, 330), createCoin(1500, 290), createCoin(1540, 330));
+      coins.push(createCoin(5060, 140), createCoin(5100, 100), createCoin(5140, 140));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -697,5 +735,9 @@ export const FOREST_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 550 },
     goal: { x: 20000 * 0.45, y: 578 },
     timeBonus: 160,
+    // Rescue springs on the canopies for the falling-branches finale; flat
+    // spikes only on the ground stretches, clear of QBs/goal/start
+    springs: [createSpring(1500, 405), createSpring(5100, 225)],
+    spikes: [createSpike(440, 572), createSpike(8760, 572)],
   },
 ];

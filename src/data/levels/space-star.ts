@@ -1,7 +1,7 @@
 // Space Star World - 6 Levels (IDs 79-84)
 // Distinct structures: Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Asteroiden-Feld
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const SPACE_STAR_LEVELS: LevelData[] = [
     // ============================================================
@@ -45,6 +45,8 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             coins.push(createCoin(5050 * S, 440), createCoin(5350 * S, 360));
             coins.push(createCoin(5650 * S, 280));
             coins.push(createCoin(570, 440), createCoin(600, 440), createCoin(630, 440));
+            // Sternen-Konstellation (Diamant) above the discovery spring — launch bonus
+            coins.push(createCoin(850, 430), createCoin(790, 370), createCoin(910, 370), createCoin(850, 310));
             return coins;
         })(),
         questionBlocks: (() => {
@@ -78,7 +80,11 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         timeBonus: 100,
         movingPlatforms: [
             createMovingPlat(1450, 520, 120, 24, 'platform_medium', 'horizontal', 400, 20),
+            // Langsame Trajekt-Orbit-Bahn (traumhafte slow circular)
+            createMovingPlat(2600, 470, 110, 24, 'platform_medium', 'circular', 140, 12),
         ],
+        // Discovery-Spring (Biome-Gravity 1000 → Feder-Hub ~910px, nur Bonus-Erreichbarkeit)
+        springs: [createSpring(850, 580)],
     },
 
     // ============================================================
@@ -136,6 +142,11 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             coins.push(createCoin(1650 * S, 460), createCoin(3050 * S, 440));
             coins.push(createCoin(4450 * S, 460), createCoin(5850 * S, 440));
             coins.push(createCoin(7250 * S, 460), createCoin(9050 * S, 440));
+            // Coin arcs above the two gap-section springs
+            coins.push(createCoin(660, 500), createCoin(700, 460), createCoin(740, 500));
+            coins.push(createCoin(4260, 500), createCoin(4300, 460), createCoin(4340, 500));
+            // Sternen-Konstellation ("grosser Wagen") high above the gap run
+            coins.push(createCoin(1750, 340), createCoin(1810, 280), createCoin(1870, 260), createCoin(1930, 280), createCoin(1990, 330), createCoin(2050, 390), createCoin(2100, 440));
             return coins;
         })(),
         questionBlocks: (() => {
@@ -178,6 +189,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             createMovingPlat(999, 500, 120, 24, 'platform_medium', 'horizontal', 350, 22),
             createMovingPlat(2420, 480, 100, 24, 'platform_medium', 'vertical', 180, 20),
         ],
+        springs: [createSpring(700, 600), createSpring(4300, 600)],
     },
 
     // ============================================================
@@ -226,6 +238,9 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             plats.push(createPlat(7500 * S, 540, 120, 28, 'metal'));
             plats.push(createPlat(9200 * S, 540, 120, 28, 'metal'));
             plats.push(createPlat(11300 * S, 540, 120, 28, 'metal'));
+            // Breakable brick bonus — hangs above the middle ground connector
+            // (ground below stays the main path, never load-bearing)
+            plats.push(createPlat(2750, 500, 96, 24, 'brick'));
             return plats;
         })(),
         coins: (() => {
@@ -241,6 +256,10 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             coins.push(createCoin(1050 * S, 480), createCoin(3350 * S, 480));
             coins.push(createCoin(5150 * S, 480), createCoin(7550 * S, 480));
             coins.push(createCoin(9250 * S, 480), createCoin(11350 * S, 480));
+            // Breakable-brick bonus coins (Big Mario smashes it from below)
+            coins.push(createCoin(2720, 455), createCoin(2750, 435), createCoin(2780, 455));
+            // Sternen-Konstellation (Diamant) above the spring on the middle ground
+            coins.push(createCoin(2900, 420), createCoin(2840, 350), createCoin(2960, 350), createCoin(2900, 280));
             return coins;
         })(),
         questionBlocks: (() => {
@@ -289,6 +308,9 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             createMovingPlat(800, 500, 120, 24, 'platform_medium', 'horizontal', 300, 20),
             createMovingPlat(4100, 460, 100, 24, 'platform_medium', 'vertical', 160, 22),
         ],
+        springs: [createSpring(2850, 620)],
+        // Spike passages on the pipe-base ground connectors (≥150px clear of QBs, clear of coin trails)
+        spikes: [createSpike(750, 612), createSpike(1950, 612), createSpike(4930, 612)],
     },
 
     // ============================================================
@@ -343,6 +365,8 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             coins.push(createCoin(550 * S, 460), createCoin(1450 * S, 240));
             coins.push(createCoin(5050 * S, 240), createCoin(8050 * S, 240));
             coins.push(createCoin(11050 * S, 240));
+            // Coin ladder above the spring shortcut after climb 1
+            coins.push(createCoin(1600, 520), createCoin(1600, 450), createCoin(1600, 380), createCoin(1600, 310), createCoin(1600, 240), createCoin(1540, 180), createCoin(1660, 180));
             return coins;
         })(),
         questionBlocks: (() => {
@@ -390,6 +414,8 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             createMovingPlat(1428, 480, 100, 24, 'platform_medium', 'vertical', 180, 20),
             createMovingPlat(3237, 480, 120, 24, 'platform_medium', 'horizontal', 300, 22),
         ],
+        springs: [createSpring(1600, 610)],
+        spikes: [createSpike(2800, 602), createSpike(5600, 602)],
     },
 
     // ============================================================
@@ -444,6 +470,10 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             coins.push(createCoin(6250 * S, 480), createCoin(7450 * S, 480));
             coins.push(createCoin(8250 * S, 400), createCoin(8850 * S, 480));
             coins.push(createCoin(10050 * S, 480));
+            // Coin arc above the spring in the last stretch
+            coins.push(createCoin(4610, 530), createCoin(4650, 490), createCoin(4690, 530));
+            // Sternen-Konstellation (Diamant) above the slow circular orbit
+            coins.push(createCoin(3850, 380), createCoin(3790, 320), createCoin(3910, 320), createCoin(3850, 260));
             return coins;
         })(),
         questionBlocks: (() => {
@@ -451,7 +481,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             return [
                 createQB(2550 * S, 390, 'mushroom'),
                 createQB(5650 * S, 390, 'star'),
-                createQB(8250 * S, 390, 'flower'),
+                createQB(8250 * S, 390, 'star'),
             ];
         })(),
         enemies: (() => {
@@ -496,7 +526,12 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         movingPlatforms: [
             createMovingPlat(910, 500, 120, 24, 'platform_medium', 'horizontal', 350, 22),
             createMovingPlat(3321, 480, 100, 24, 'platform_medium', 'vertical', 160, 20),
+            // Langsame Trajekt-Orbit-Bahn (traumhafte slow circular)
+            createMovingPlat(3900, 500, 110, 24, 'platform_easy', 'circular', 130, 12),
         ],
+        springs: [createSpring(4650, 620)],
+        // Zwei Spike-Gassen in den mittleren Arenen (≥150px clear of QBs, clear of coin trails)
+        spikes: [createSpike(2150, 612), createSpike(2190, 612), createSpike(4400, 612), createSpike(4440, 612)],
     },
 
     // ============================================================
@@ -565,6 +600,11 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             coins.push(createCoin(9750 * S, 460), createCoin(10050 * S, 360));
             coins.push(createCoin(10350 * S, 260), createCoin(10650 * S, 160));
             coins.push(createCoin(10950 * S, 260), createCoin(11250 * S, 360));
+            // Nova-Konstellation above the middle asteroid gap
+            coins.push(createCoin(3400, 400), createCoin(3340, 340), createCoin(3460, 340), createCoin(3400, 280));
+            // Coin arcs above the two compensation springs
+            coins.push(createCoin(260, 520), createCoin(300, 480), createCoin(340, 520));
+            coins.push(createCoin(4810, 520), createCoin(4850, 480), createCoin(4890, 520));
             return coins;
         })(),
         questionBlocks: (() => {
@@ -572,7 +612,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             return [
                 createQB(5050 * S, 490, 'mushroom'),
                 createQB(6750 * S, 290, 'star'),
-                createQB(10650 * S, 150, 'flower'),
+                createQB(10650 * S, 150, 'star'),
             ];
         })(),
         enemies: (() => {
@@ -615,5 +655,8 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
             createMovingPlat(3461, 480, 100, 24, 'platform_medium', 'vertical', 180, 20),
             createMovingPlat(4712, 400, 100, 24, 'platform_medium', 'circular', 150, 22),
         ],
+        // Kompensations-Springs für das asteroidenreiche Finale (Bonus-Erreichbarkeit)
+        springs: [createSpring(300, 620), createSpring(4850, 620)],
+        spikes: [createSpike(3150, 612)],
     },
 ];

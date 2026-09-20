@@ -1,5 +1,7 @@
 # Jump & Run Game - Game Design Document
 
+> Anforderungen mit Test-Traceability (R-001 ff.): [REQUIREMENTS.md](REQUIREMENTS.md)
+
 ## Projektübersicht
 - **Name**: Jump & Run Abenteuer
 - **Typ**: 2D Browser-Platformer (wie Super Mario)
@@ -222,7 +224,7 @@ PLAYER_MOVE_SPEED:   300
 
 ### 90 Level, 15 Biomes, 6 Levels pro Biome
 
-> **Level-Upgrade-Status (Pilot)**: grasslands (1-6) und desert (7-12) sind mit dem neuen Element-Mix aufgebaut (Springs, Spikes, Breakable Bricks, Coin-Muster, variierte Moving-Plats, 2 coinGoal-Level). Die restlichen 13 Biome folgen (s. LEVEL_PLAN.md Phase 6b).
+> **Level-Upgrade-Status (Phase 6b — ABGESCHLOSSEN)**: ALLE 15 Biome (90 Level) sind mit dem Element-Mix aufgebaut (Springs, Spikes, Breakable Bricks, Coin-Muster, variierte Moving-Plats, coinGoal-Levels; L90-Bossarena elementefrei). Invariant-Tests über alle 90 Level: `tests/ElementMix.test.ts`.
 
 | Biome | Levels | Plattformen | Dekorationen |
 |-------|--------|-------------|--------------|

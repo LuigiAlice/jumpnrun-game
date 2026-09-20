@@ -49,11 +49,11 @@ export class BootScene extends Phaser.Scene {
   }
 
   private rivet(g: Phaser.GameObjects.Graphics, x: number, y: number, r: number) {
-    g.fillStyle(0x2a1800, 1);
+    g.fillStyle(0x6a4a10, 1);
     g.fillCircle(x, y, r);
-    g.fillStyle(0x7a5410, 1);
+    g.fillStyle(0xa8822a, 1);
     g.fillCircle(x - r * 0.2, y - r * 0.2, r * 0.65);
-    g.fillStyle(0xd8b060, 0.85);
+    g.fillStyle(0xf0d888, 0.85);
     g.fillCircle(x - r * 0.3, y - r * 0.35, r * 0.3);
   }
 
@@ -61,6 +61,36 @@ export class BootScene extends Phaser.Scene {
     g.lineStyle(2, color, 1);
     if (radius > 0) g.strokeRoundedRect(x, y, w, h, radius);
     else g.strokeRect(x, y, w, h);
+  }
+
+  private softRimLight(g: Phaser.GameObjects.Graphics, x: number, y: number, rx: number, ry: number, alpha = 0.25) {
+    g.lineStyle(1.6, 0xffffff, alpha);
+    g.strokeEllipse(x, y, rx * 2, ry * 2);
+    g.lineStyle(0.8, 0xffffff, alpha * 0.55);
+    g.strokeEllipse(x + 0.6, y + 0.8, rx * 2 - 1.4, ry * 2 - 1.6);
+  }
+
+  private wonderSheen(g: Phaser.GameObjects.Graphics, x: number, y: number, w: number, h: number, alpha = 0.28) {
+    g.fillStyle(0xffffff, alpha);
+    g.fillRoundedRect(x, y, w, h * 0.42, Math.min(3, h * 0.2));
+    g.fillStyle(0xffffff, alpha * 0.4);
+    g.fillRoundedRect(x + w * 0.12, y + h * 0.5, w * 0.5, h * 0.2, 2);
+  }
+
+  private softPuff(g: Phaser.GameObjects.Graphics, cx: number, cy: number, r: number, base: number, light: number, under: number, n = 6) {
+    for (let i = n; i >= 1; i--) {
+      const t = i / n;
+      const px = cx + Math.sin(i * 2.1) * r * 0.5;
+      const py = cy + Math.cos(i * 1.7) * r * 0.28 - r * 0.12;
+      g.fillStyle(under, 0.5);
+      g.fillCircle(px, py + r * 0.3, r * t);
+      g.fillStyle(base, 0.85);
+      g.fillCircle(px, py, r * t);
+      g.fillStyle(light, 0.75);
+      g.fillCircle(px - r * t * 0.25, py - r * t * 0.3, r * t * 0.55);
+    }
+    g.fillStyle(light, 0.5);
+    g.fillCircle(cx - r * 0.2, cy - r * 0.35, r * 0.45);
   }
 
   private softRadialHaze(g: Phaser.GameObjects.Graphics, x: number, y: number, r: number, color: number, maxAlpha: number, steps = 14) {
@@ -540,6 +570,13 @@ export class BootScene extends Phaser.Scene {
       g.fillStyle(SKIN_DARK, 0.22);
       g.fillRoundedRect(cx - headRX * 0.21, mustY + headRY * 0.17, headRX * 0.42, 1, 1);
 
+      g.lineStyle(1.1, 0xffffff, 0.25);
+      g.strokeEllipse(cx - headRX * 0.18, capY + headRY * 0.12 + capTilt, headRX * 1.3, headRY * 0.62);
+      g.lineStyle(0.9, 0xffffff, 0.2);
+      g.strokeRoundedRect(cx - bibW * 0.52, bodyY - 4.5, bibW * 0.6, bodyH * 0.5, 6);
+      g.lineStyle(0.8, 0xffffff, 0.16);
+      g.strokeEllipse(cx - earDX - 1.5, earY - 1.5, earR * 1.7, earR * 1.7);
+
       g.generateTexture(key, w, totalH);
     };
 
@@ -644,9 +681,13 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(10, 29, 2);
     g.fillCircle(20, 31, 1.5);
     // Dark 2px outline on main shapes
-    g.lineStyle(2, 0x2a0a00, 0.9);
+    g.lineStyle(2, 0x5a2418, 0.9);
     g.strokeEllipse(14, 14, 26, 20);
     g.strokeRoundedRect(5, 24, 18, 14, 4);
+    g.lineStyle(1.4, 0xffffff, 0.3);
+    g.strokeEllipse(13, 12.5, 23, 16.5);
+    g.lineStyle(0.8, 0xffffff, 0.2);
+    g.strokeRoundedRect(6.5, 25, 13, 10.5, 3.5);
     g.generateTexture('goomba', 28, 42);
 
     // KOOPA - detailed turtle with hexagonal shell pattern
@@ -696,7 +737,7 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xFFD860, 0.7);
     g.fillEllipse(18, 22, 13, 3);
     // Shell outline
-    g.lineStyle(2, 0x0a3a0a, 0.9);
+    g.lineStyle(2, 0x1c521c, 0.9);
     g.strokeEllipse(18, 18, 20, 16);
     // Head
     g.fillStyle(0x228B22, 1);
@@ -730,8 +771,10 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0x000000, 0.15);
     g.fillCircle(8, 18, 6);
     // Head outline
-    g.lineStyle(2, 0x0a3a0a, 0.9);
+    g.lineStyle(2, 0x1c521c, 0.9);
     g.strokeCircle(8, 9, 8);
+    g.lineStyle(1.2, 0xffffff, 0.3);
+    g.strokeCircle(6.8, 7.6, 6.6);
     g.generateTexture('koopa', 32, 34);
 
     // PIRANHA PLANT - intimidating plant with glowing eyes
@@ -767,8 +810,10 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xCC4040, 0.6);
     g.fillCircle(9, 12, 3);
     // Head outline
-    g.lineStyle(2, 0x2a0000, 0.9);
+    g.lineStyle(2, 0x5c1414, 0.9);
     g.strokeEllipse(14, 18, 22, 18);
+    g.lineStyle(1.3, 0xffffff, 0.28);
+    g.strokeEllipse(13, 15.8, 18.5, 14.5);
     // White spots
     g.fillStyle(0xffffff, 1);
     g.fillCircle(5, 14, 3);
@@ -887,8 +932,10 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(9, 19, 1.5);
     g.fillCircle(21, 17, 1.5);
     // Body outline
-    g.lineStyle(2, 0x5a2400, 0.9);
+    g.lineStyle(2, 0x8a4218, 0.9);
     g.strokeCircle(14, 16, 10);
+    g.lineStyle(1.3, 0xffffff, 0.3);
+    g.strokeCircle(12.8, 14.4, 8.4);
     g.generateTexture('spiny', 28, 32);
 
     // LAKITU - cloud-riding turtle with detailed shell and goggles
@@ -944,8 +991,10 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(16, 16, 1.5);
     g.fillCircle(24, 16, 1.5);
     // Shell outline
-    g.lineStyle(2, 0x0a4a0a, 0.9);
+    g.lineStyle(2, 0x1c5e1c, 0.9);
     g.strokeEllipse(20, 17, 18, 13);
+    g.lineStyle(1.2, 0xffffff, 0.28);
+    g.strokeEllipse(19, 15.5, 15, 10.5);
     // Head
     g.fillStyle(0x1a7a1a, 1);
     g.fillCircle(20, 7, 7);
@@ -1029,8 +1078,10 @@ export class BootScene extends Phaser.Scene {
     g.fillTriangle(3, 10, 1, 13, 3, 16);
     g.fillTriangle(25, 10, 28, 13, 25, 16);
     // Body outline
-    g.lineStyle(2, 0x0f0f0f, 0.9);
+    g.lineStyle(2, 0x383c44, 0.9);
     g.strokeRoundedRect(3, 7, 22, 14, 7);
+    g.lineStyle(1.3, 0xffffff, 0.28);
+    g.strokeRoundedRect(4.4, 8.2, 17.5, 9, 6);
     // Corner rivets
     g.fillStyle(0x151515, 1);
     g.fillCircle(8, 18, 1.6);
@@ -1095,8 +1146,10 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0x6a6a6a, 0.6);
     g.fillRoundedRect(8, 9, 10, 4, 2);
     // Body outline
-    g.lineStyle(2, 0x1a1a1a, 0.9);
+    g.lineStyle(2, 0x4c525a, 0.9);
     g.strokeRoundedRect(4, 8, 20, 18, 4);
+    g.lineStyle(1.3, 0xffffff, 0.26);
+    g.strokeRoundedRect(5.6, 9.4, 15.5, 11, 3.5);
     // Side panel screws
     g.fillStyle(0x1f1f1f, 1);
     g.fillCircle(6, 16, 1.2);
@@ -1236,8 +1289,10 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(11, 12, 2);
     g.fillCircle(17, 12, 2);
     // Shell outline
-    g.lineStyle(2, 0x8a2500, 0.9);
+    g.lineStyle(2, 0xa83a14, 0.9);
     g.strokeEllipse(14, 16, 22, 14);
+    g.lineStyle(1.3, 0xffffff, 0.28);
+    g.strokeEllipse(12.8, 14.2, 17, 10);
     // Claw outlines
     g.strokeEllipse(0, 18, 9, 7);
     g.strokeEllipse(28, 18, 9, 7);
@@ -1358,6 +1413,8 @@ export class BootScene extends Phaser.Scene {
     // Highlight dots
     g.fillStyle(0x999999, 0.4);
     g.fillCircle(14, 29, 1.5);
+    g.lineStyle(1.4, 0xc8d4dc, 0.35);
+    g.strokeRoundedRect(3.2, 4.6, 25.6, 10, 4);
     g.generateTexture('thwomp', 32, 34);
 
     // BOO - modern ghost with semi-transparent layers and wavy bottom
@@ -1434,6 +1491,8 @@ export class BootScene extends Phaser.Scene {
     g.fillEllipse(25, 32.5, 9, 3);
     g.fillStyle(0x9a9ad8, 0.12);
     g.fillEllipse(16, 33, 24, 4);
+    g.lineStyle(1.3, 0xffffff, 0.35);
+    g.strokeEllipse(14, 8.5, 16, 11);
     g.generateTexture('boo', 32, 34);
 
     // FIRE BAR - rotating fire balls with glow and bright cores
@@ -1567,6 +1626,8 @@ export class BootScene extends Phaser.Scene {
     g.fillEllipse(24, 30, 8, 4);
     g.fillStyle(0x8080FF, 0.12);
     g.fillEllipse(16, 31.5, 24, 4);
+    g.lineStyle(1.3, 0xffffff, 0.3);
+    g.strokeEllipse(14.5, 7.5, 15, 10);
     g.generateTexture('ghost', 32, 32);
 
     // SQUID - purple cephalopod with suction cups and expressive eyes
@@ -1658,6 +1719,8 @@ export class BootScene extends Phaser.Scene {
     // Soft fade at the bottom
     g.fillStyle(0x600060, 0.22);
     g.fillEllipse(16, 32.5, 26, 4);
+    g.lineStyle(1.3, 0xffffff, 0.3);
+    g.strokeEllipse(14.6, 8.4, 14, 10.5);
     g.generateTexture('squid', 32, 32);
 
     // UFO - metallic flying saucer with glowing lights and tractor beam
@@ -1744,6 +1807,8 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(8, 17, 2);
     g.fillCircle(24, 17, 2);
     g.fillCircle(16, 14, 1.5);
+    g.lineStyle(1.4, 0xffffff, 0.3);
+    g.strokeEllipse(14.6, 9.4, 13, 9.5);
     g.generateTexture('ufo', 32, 44);
 
     // BOSS - intimidating boss with glowing eyes and armored shoulders
@@ -1779,10 +1844,10 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xA52A2A, 1);
     g.fillRoundedRect(8, 10, 16, 14, 3);
     // Chest armor plate
-    g.fillStyle(0x2a0000, 1);
+    g.fillStyle(0x3a1008, 1);
     g.fillRoundedRect(10, 12, 12, 8, 2);
     // Face mask
-    g.fillStyle(0x1a0000, 1);
+    g.fillStyle(0x2c0808, 1);
     g.fillRect(8, 12, 16, 12);
     // Glowing yellow eyes
     g.fillStyle(0xFFFF00, 1);
@@ -1801,11 +1866,11 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(11.5, 15.5, 0.8);
     g.fillCircle(21.5, 15.5, 0.8);
     // Angry brows
-    g.fillStyle(0x0a0000, 1);
+    g.fillStyle(0x3a0808, 1);
     g.fillTriangle(6, 10, 14, 8, 14, 10);
     g.fillTriangle(18, 10, 18, 8, 26, 10);
     // Mouth
-    g.fillStyle(0x000000, 1);
+    g.fillStyle(0x2a0404, 1);
     g.fillRect(10, 22, 12, 5);
     // Mouth interior
     g.fillStyle(0xff0000, 0.8);
@@ -1816,14 +1881,14 @@ export class BootScene extends Phaser.Scene {
     g.fillRect(15, 22, 2, 4);
     g.fillRect(19, 22, 2, 4);
     // Horns - left
-    g.fillStyle(0x2a0000, 1);
+    g.fillStyle(0x4a1008, 1);
     g.fillTriangle(5, 8, 9, -2, 13, 8);
-    g.fillStyle(0x4a0000, 1);
+    g.fillStyle(0x5c1810, 1);
     g.fillTriangle(7, 6, 10, 0, 12, 8);
     // Horns - right
-    g.fillStyle(0x2a0000, 1);
+    g.fillStyle(0x4a1008, 1);
     g.fillTriangle(19, 8, 23, -2, 27, 8);
-    g.fillStyle(0x4a0000, 1);
+    g.fillStyle(0x5c1810, 1);
     g.fillTriangle(20, 6, 22, 0, 25, 8);
     // Horn tips
     g.fillStyle(0x6a0000, 0.8);
@@ -1861,9 +1926,9 @@ export class BootScene extends Phaser.Scene {
     // Shadow under coin
     g.fillStyle(0x000000, 0.3);
     g.fillEllipse(12, 30, 14, 4);
-    g.fillStyle(0x7a5408, 1);
+    g.fillStyle(0xa8822a, 1);
     g.fillEllipse(12, 14, 20, 28);
-    g.fillStyle(0xc8960c, 1);
+    g.fillStyle(0xd8a830, 1);
     g.fillEllipse(12, 13.6, 18, 26);
     // Main gold body
     g.fillStyle(0xf8c830, 1);
@@ -1871,9 +1936,11 @@ export class BootScene extends Phaser.Scene {
     // Lighter gold highlight (upper-left)
     g.fillStyle(0xfce070, 1);
     g.fillEllipse(10, 10, 11, 17);
-    g.lineStyle(1.6, 0x9e6c04, 0.9);
+    g.fillStyle(0xfff8c8, 0.4);
+    g.fillEllipse(12, 13.5, 21, 29);
+    g.lineStyle(1.4, 0xc89828, 0.7);
     g.strokeEllipse(12, 13.5, 10.5, 17);
-    g.lineStyle(1, 0xffe890, 0.8);
+    g.lineStyle(1, 0xfff0b0, 0.85);
     g.strokeEllipse(12, 13, 9, 20);
     g.fillStyle(0xd4a020, 0.5);
     g.fillRect(5, 11, 14, 1.5);
@@ -1895,11 +1962,11 @@ export class BootScene extends Phaser.Scene {
     
     // Grass ground with grass top, moss/grass blade detail
     g.clear();
-    this.fillVGradient(g, 0, 0, 32, 32, 0x8a5a2e, 0x5d3618, 14);
-    g.fillStyle(0x46280e, 0.5);
+    this.fillVGradient(g, 0, 0, 32, 32, 0xA5693F, 0x7C4A28, 14);
+    g.fillStyle(0x8a5a34, 0.5);
     g.fillRoundedRect(18, 18, 7, 4, 2);
     g.fillRoundedRect(3, 26, 6, 3.5, 1.5);
-    g.fillStyle(0x9a6238, 0.65);
+    g.fillStyle(0xC08A5C, 0.65);
     g.fillEllipse(10, 19, 6, 3); g.fillEllipse(25, 27, 5, 2.5);
     g.fillEllipse(16, 30, 5, 2.5);
     const dirtPebbles: [number, number, number][] = [
@@ -1913,39 +1980,39 @@ export class BootScene extends Phaser.Scene {
     }
     g.fillStyle(0x3d2210, 0.5);
     g.fillRoundedRect(11, 13, 9, 3, 1.5);
-    g.fillStyle(0x2e1a0a, 0.55);
+    g.fillStyle(0x5c3418, 0.55);
     g.fillRect(0, 11, 32, 3.5);
     const scallopXs = [0, 8, 16, 24, 32];
     for (let si = 0; si < scallopXs.length; si++) {
       const sx = scallopXs[si];
       const low = si % 2 === 0;
-      g.fillStyle(0x3d7015, 1);
-      g.fillCircle(sx, low ? 11.5 : 9, low ? 5.4 : 4.2);
+    g.fillStyle(0x5FA84B, 1);
+    g.fillCircle(sx, low ? 11.5 : 9, low ? 5.4 : 4.2);
     }
     for (let si = 0; si < scallopXs.length; si++) {
       const sx = scallopXs[si];
       const low = si % 2 === 0;
-      g.fillStyle(0x4f9428, 1);
+      g.fillStyle(0x7BBE58, 1);
       g.fillCircle(sx + (low ? 4 : -4), low ? 10 : 8.2, low ? 4.6 : 3.6);
     }
     for (let si = 0; si < scallopXs.length; si++) {
       const sx = scallopXs[si];
       const low = si % 2 === 0;
-      g.fillStyle(0x7ecb3c, 1);
+      g.fillStyle(0x8FD46A, 1);
       g.fillCircle(sx, low ? 10 : 7.6, low ? 5 : 3.8);
     }
-    g.fillStyle(0x7ecb3c, 1);
+    g.fillStyle(0x8FD46A, 1);
     g.fillRect(0, 0, 32, 9);
-    g.fillStyle(0xa5e85a, 1);
+    g.fillStyle(0xC4F29A, 1);
     g.fillRoundedRect(0, 0, 32, 4, { tl: 0, tr: 0, bl: 3, br: 3 });
-    g.fillStyle(0xc4f884, 0.8);
+    g.fillStyle(0xDFF8B4, 0.8);
     g.fillCircle(6, 1.6, 2.2); g.fillCircle(20, 1.4, 2.6); g.fillCircle(30, 2, 1.8);
-    g.fillStyle(0x4f9428, 0.45);
+    g.fillStyle(0x7BBE58, 0.45);
     g.fillEllipse(12, 8.4, 12, 3.4); g.fillEllipse(27, 7.6, 9, 3);
-    g.fillStyle(0x3d7015, 0.9);
+    g.fillStyle(0x5FA84B, 0.9);
     g.fillTriangle(10, 12, 11.5, 17, 13, 12);
     g.fillTriangle(22, 13, 23.5, 18.5, 25, 13);
-    g.fillStyle(0x4f9428, 0.9);
+    g.fillStyle(0x7BBE58, 0.9);
     g.fillTriangle(25.5, 12, 26.5, 15.5, 27.5, 12);
     g.generateTexture('ground_grass', 32, 32);
 
@@ -1962,7 +2029,9 @@ export class BootScene extends Phaser.Scene {
     g.lineBetween(22, 18, 26, 28);
     g.fillStyle(0x8a8aa0, 0.35);
     g.fillCircle(9, 7, 1.2); g.fillCircle(24, 17, 1.2);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x1e1e2c);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x3a3a52);
+    g.fillStyle(0xffffff, 0.14);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_cave', 32, 32);
 
     // Castle ground - improved brick pattern with variation
@@ -1990,138 +2059,148 @@ export class BootScene extends Phaser.Scene {
     g.lineBetween(9, 8, 11, 12);
     g.fillStyle(0x8a8a8a, 0.35);
     g.fillCircle(24, 8, 1); g.fillCircle(6, 24, 1);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x181818);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x3c3c44);
+    g.fillStyle(0xffffff, 0.13);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_castle', 32, 32);
 
     // Question block - 3D with beveled edges, brighter gold, animated-looking ?
     g.clear();
-    g.fillStyle(0x5a3a00, 1);
-    g.fillRoundedRect(0, 0, 32, 32, 5);
-    this.fillVGradient(g, 1, 1, 30, 30, 0xfcd44c, 0xc07810, 10);
-    g.fillStyle(0xffe890, 0.55);
-    g.fillRoundedRect(2, 2, 28, 6, 3);
-    g.fillStyle(0x8a5410, 0.45);
+    g.fillStyle(0xa8822a, 1);
+    g.fillRoundedRect(0, 0, 32, 32, 6);
+    this.fillVGradient(g, 1, 1, 30, 30, 0xffe070, 0xe8a830, 10);
+    g.fillStyle(0xfff4c0, 0.55);
+    g.fillRoundedRect(2, 2, 28, 7, 3.5);
+    g.fillStyle(0xc07c28, 0.4);
     g.fillRoundedRect(2, 26, 28, 5, 3);
-    g.fillStyle(0xfff4b8, 0.35);
+    g.fillStyle(0xfff8d8, 0.35);
     g.fillEllipse(8, 8, 10, 6);
     this.rivet(g, 4.5, 4.5, 2.2);
     this.rivet(g, 27.5, 4.5, 2.2);
     this.rivet(g, 4.5, 27.5, 2.2);
     this.rivet(g, 27.5, 27.5, 2.2);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x5a3a00, 5);
-    g.fillStyle(0x2a1400, 0.55);
+    this.strokeOutline(g, 1, 1, 30, 30, 0xa8822a, 6);
+    g.fillStyle(0xb08820, 0.5);
     g.fillRect(12, 9, 10, 5);
     g.fillRect(14, 14, 6, 10);
     g.fillRect(14, 26, 6, 4);
-    g.fillStyle(0xf8f8f8, 1);
+    g.fillStyle(0xfffaf0, 1);
     g.fillRect(11, 7, 10, 5);
     g.fillRect(13, 12, 6, 10);
     g.fillRect(13, 24, 6, 4);
-    g.fillStyle(0xffffff, 0.85);
-    g.fillRect(12, 8, 2, 3);
-    g.fillRect(17, 8, 2, 3);
-    g.fillStyle(0xffffff, 0.35);
+    g.fillStyle(0xffffff, 0.9);
+    g.fillCircle(12, 8, 1.6);
+    g.fillCircle(18, 8, 1.6);
+    g.fillStyle(0xffffff, 0.55);
     g.fillRect(12, 8, 8, 1.2);
     g.fillRect(13, 12, 1.5, 8);
-    g.fillStyle(0x8a5410, 0.35);
+    g.fillStyle(0xc08828, 0.35);
     g.fillRect(12, 11, 9, 1);
     g.generateTexture('question', 32, 32);
 
     // Used question block
     g.clear();
-    g.fillStyle(0x4a3a20, 1);
-    g.fillRoundedRect(0, 0, 32, 32, 5);
-    this.fillVGradient(g, 1, 1, 30, 30, 0x9c8450, 0x6e5428, 8);
-    g.fillStyle(0xb09a64, 0.5);
+    g.fillStyle(0xa89058, 1);
+    g.fillRoundedRect(0, 0, 32, 32, 6);
+    this.fillVGradient(g, 1, 1, 30, 30, 0xdcbc84, 0xb89458, 8);
+    g.fillStyle(0xf0dcb0, 0.5);
     g.fillRoundedRect(2, 2, 28, 6, 3);
-    g.fillStyle(0x54401c, 0.55);
+    g.fillStyle(0x8a6c38, 0.5);
     g.fillRoundedRect(2, 26, 28, 5, 3);
     this.rivet(g, 4.5, 4.5, 2.2);
     this.rivet(g, 27.5, 4.5, 2.2);
     this.rivet(g, 4.5, 27.5, 2.2);
     this.rivet(g, 27.5, 27.5, 2.2);
-    g.lineStyle(1, 0x4a3410, 0.8);
+    g.lineStyle(1, 0x8a6a34, 0.8);
     g.lineBetween(8, 6, 24, 18);
     g.lineBetween(22, 8, 18, 24);
     g.lineBetween(10, 20, 14, 27);
-    g.fillStyle(0x2c2008, 1);
+    g.fillStyle(0x7a6030, 1);
     g.fillRect(11, 8, 10, 4);
     g.fillRect(13, 13, 6, 8);
     g.fillRect(13, 24, 6, 4);
-    g.fillStyle(0x8a7440, 0.4);
+    g.fillStyle(0xe8d0a0, 0.4);
     g.fillCircle(7, 7, 3);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x3c2c10, 5);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x8a7040, 6);
+    g.fillStyle(0xffffff, 0.15);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('question_used', 32, 32);
 
     // Pipe - 3D with highlights
     g.clear();
-    g.fillStyle(0x004a00, 1); g.fillRoundedRect(4, 0, 56, 64, 4);
-    const pipeCols = [0x0f6a0f, 0x1a8a1a, 0x2ab42a, 0x3cd83c, 0x4ce84c, 0x3cd83c, 0x2ab42a, 0x1a8a1a, 0x0f6a0f, 0x0a520a];
+    g.fillStyle(0x1c6a44, 1); g.fillRoundedRect(4, 0, 56, 64, 4);
+    const pipeCols = [0x3A9B68, 0x48AC76, 0x5BC489, 0x74D89E, 0x8FE8B0, 0x74D89E, 0x5BC489, 0x48AC76, 0x3A9B68, 0x2E8A5C];
     const pipeBandW = 48 / pipeCols.length;
     for (let i = 0; i < pipeCols.length; i++) {
       g.fillStyle(pipeCols[i], 1);
       g.fillRect(8 + pipeBandW * i, 2, pipeBandW + 0.5, 60);
     }
+    g.fillStyle(0xffffff, 0.38);
+    g.fillRect(18, 2, 7, 60);
     g.fillStyle(0xffffff, 0.22);
-    g.fillRect(24, 2, 8, 60);
-    g.fillStyle(0x0a4a0a, 0.45);
+    g.fillRect(28, 2, 4, 60);
+    g.fillStyle(0x2E7A50, 0.45);
     g.fillRect(8, 14, 48, 2);
     g.fillRect(8, 30, 48, 2);
     g.fillRect(8, 46, 48, 2);
-    g.fillStyle(0x54f054, 0.5);
+    g.fillStyle(0xB4F8D0, 0.55);
     g.fillRect(8, 3, 48, 2);
-    g.fillStyle(0x002800, 0.5);
+    g.fillStyle(0x14503a, 0.45);
     g.fillRect(8, 60, 48, 2);
-    g.lineStyle(2, 0x005000, 1);
+    g.lineStyle(2, 0x2E7A50, 1);
     g.strokeRoundedRect(4, 0, 56, 64, 4);
     g.generateTexture('pipe', 64, 64);
 
     // Pipe top (lip) - better rim detail
     g.clear();
-    g.fillStyle(0x004a00, 1); g.fillRoundedRect(0, 0, 80, 24, 5);
+    g.fillStyle(0x1c6a44, 1); g.fillRoundedRect(0, 0, 80, 24, 5);
     for (let i = 0; i < pipeCols.length; i++) {
       g.fillStyle(pipeCols[i], 1);
       g.fillRect(4 + (72 / pipeCols.length) * i, 2, 72 / pipeCols.length + 0.5, 20);
     }
-    g.fillStyle(0xffffff, 0.25);
-    g.fillRect(28, 2, 10, 20);
-    g.fillStyle(0x0a3a0a, 1); g.fillRoundedRect(6, 8, 68, 9, 3);
-    g.fillStyle(0x001800, 0.85); g.fillRoundedRect(9, 9, 62, 7, 2);
-    g.fillStyle(0x1a6a1a, 0.6);
+    g.fillStyle(0xffffff, 0.4);
+    g.fillRect(22, 2, 9, 20);
+    g.fillStyle(0xffffff, 0.22);
+    g.fillRect(33, 2, 4, 20);
+    g.fillStyle(0x2E7A50, 1); g.fillRoundedRect(6, 8, 68, 9, 3);
+    g.fillStyle(0x124a34, 0.85); g.fillRoundedRect(9, 9, 62, 7, 2);
+    g.fillStyle(0x3A9B68, 0.6);
     g.fillRect(9, 15, 62, 1.5);
-    g.fillStyle(0x54f054, 0.55); g.fillRect(4, 2, 72, 2.5);
-    g.fillStyle(0x002800, 0.5); g.fillRect(4, 20, 72, 2);
-    g.lineStyle(2, 0x005000, 1);
+    g.fillStyle(0xB4F8D0, 0.55); g.fillRect(4, 2, 72, 2.5);
+    g.fillStyle(0x14503a, 0.5); g.fillRect(4, 20, 72, 2);
+    g.lineStyle(2, 0x2E7A50, 1);
     g.strokeRoundedRect(0, 0, 80, 24, 5);
     g.generateTexture('pipe_top', 80, 24);
 
     // Brick - more texture detail, mortar lines between bricks, highlight
     g.clear();
-    g.fillStyle(0xd8b090, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xecc8b8, 1); g.fillRect(0, 0, 32, 32);
     const brickDefs: [number, number, number, number][] = [
       [1, 1, 14, 14], [17, 1, 14, 14], [1, 17, 14, 14], [17, 17, 14, 14]
     ];
-    const brickTones = [0xb8440a, 0xc84c0c, 0xa83c08, 0xc04a0a];
+    const brickTones = [0xd87858, 0xe08868, 0xc86848, 0xdc8060];
     for (let bi = 0; bi < brickDefs.length; bi++) {
       const [bx, by, bw, bh] = brickDefs[bi];
       g.fillStyle(brickTones[bi], 1);
       g.fillRect(bx, by, bw, bh);
-      g.fillStyle(0xd85818, 0.75);
+      g.fillStyle(0xf0a080, 0.75);
       g.fillRect(bx + 1, by + 1, bw - 2, 3);
-      g.fillStyle(0x782a04, 0.65);
+      g.fillStyle(0xa85038, 0.55);
       g.fillRect(bx + 1, by + bh - 4, bw - 2, 3);
-      g.fillStyle(0x782a04, 0.4);
+      g.fillStyle(0xa85038, 0.35);
       g.fillRect(bx + bw - 3, by + 1, 2, bh - 2);
-      g.fillStyle(0xe87838, 0.4);
+      g.fillStyle(0xffc0a0, 0.4);
       g.fillRect(bx + 2, by + 2, 4, 2);
     }
-    g.fillStyle(0x9a3400, 0.35); g.fillCircle(6, 8, 1.5);
-    g.fillStyle(0xd05820, 0.35); g.fillCircle(22, 22, 1.5);
-    g.fillStyle(0x9a3400, 0.3); g.fillCircle(20, 6, 1.5);
-    g.fillStyle(0xf0e8d8, 0.4);
+    g.fillStyle(0xb05a40, 0.35); g.fillCircle(6, 8, 1.5);
+    g.fillStyle(0xf0a080, 0.35); g.fillCircle(22, 22, 1.5);
+    g.fillStyle(0xb05a40, 0.3); g.fillCircle(20, 6, 1.5);
+    g.fillStyle(0xfff4ec, 0.4);
     g.fillCircle(8, 16, 1); g.fillCircle(24, 16, 1); g.fillCircle(16, 8, 1);
     g.fillCircle(16, 24, 1);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x4a1800);
+    this.strokeOutline(g, 1, 1, 30, 30, 0xa0503a);
+    g.fillStyle(0xffffff, 0.16);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('brick', 32, 32);
 
     g.clear();
@@ -2229,7 +2308,9 @@ export class BootScene extends Phaser.Scene {
     g.fillEllipse(5, 26, 7, 5); g.fillEllipse(27, 5, 6, 4);
     g.fillStyle(0x8a9070, 0.35);
     g.fillCircle(20, 10, 1.5); g.fillCircle(10, 21, 1.5);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x3c2c14);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x5a462c);
+    g.fillStyle(0xffffff, 0.12);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_ruins', 32, 32);
 
     g.clear();
@@ -2245,7 +2326,9 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(28, 20, 1.3); g.fillCircle(13, 29, 1.2);
     g.fillStyle(0xf4dca8, 0.6);
     g.fillCircle(14, 12, 1.2); g.fillCircle(5, 27, 1); g.fillCircle(25, 7, 1);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x9a6a34);
+    this.strokeOutline(g, 1, 1, 30, 30, 0xc09a62);
+    g.fillStyle(0xffffff, 0.14);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_sand', 32, 32);
 
     g.clear();
@@ -2262,7 +2345,9 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(4, 6, 1.2); g.fillCircle(21, 22, 1);
     g.fillStyle(0x043a5c, 0.6);
     g.fillEllipse(16, 14, 8, 4);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x02324e);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x0e5878);
+    g.fillStyle(0xffffff, 0.15);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_water', 32, 32);
 
     g.clear();
@@ -2281,7 +2366,7 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(25, 24, 1.2); g.fillCircle(5, 22, 1);
     g.fillStyle(0xffffff, 0.7);
     g.fillRect(15, 5, 1.5, 4); g.fillRect(13.7, 6.2, 4, 1.5);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x8ab4cc);
+    this.strokeOutline(g, 1, 1, 30, 30, 0xb0d8ea);
     g.generateTexture('ground_snow', 32, 32);
 
     g.clear();
@@ -2300,32 +2385,36 @@ export class BootScene extends Phaser.Scene {
     g.lineBetween(6, 20, 12, 24); g.lineBetween(18, 4, 21, 8);
     g.fillStyle(0x8a1a02, 0.6);
     g.fillCircle(17, 20, 2); g.fillCircle(5, 15, 1.6);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x2a0802);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x8a2408);
+    g.fillStyle(0xffffff, 0.12);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_lava', 32, 32);
 
     g.clear();
-    this.fillVGradient(g, 0, 0, 32, 32, 0xb0bcc4, 0x6e7a84, 10);
+    this.fillVGradient(g, 0, 0, 32, 32, 0xdce6ec, 0x9ab0be, 10);
     for (let i = 0; i < 9; i++) {
-      g.fillStyle(0x8a96a0, 0.35);
+      g.fillStyle(0xb8c8d2, 0.35);
       g.fillRect(2, 3 + i * 3.2, 28, 1);
-      g.fillStyle(0xd4dee4, 0.3);
+      g.fillStyle(0xf0f8fc, 0.3);
       g.fillRect(1, 2.4 + i * 3.2, 30, 1);
     }
-    g.fillStyle(0xa8e4f0, 0.4);
+    g.fillStyle(0xc8ecf4, 0.4);
     g.fillRect(0, 2, 32, 3);
-    g.fillStyle(0x50585e, 0.55);
+    g.fillStyle(0x788c9a, 0.55);
     g.fillRect(0, 29, 32, 3);
-    g.lineStyle(1, 0x3e464c, 0.8);
+    g.lineStyle(1, 0x6c7c88, 0.8);
     g.strokeRect(2, 12, 12, 8); g.strokeRect(18, 12, 12, 8);
     const metalRivets: [number, number][] = [
       [4, 4], [28, 4], [4, 28], [28, 28]
     ];
     for (const [rx, ry] of metalRivets) {
-      g.fillStyle(0x3a4248, 1); g.fillCircle(rx, ry, 2.2);
-      g.fillStyle(0xb8c4cc, 1); g.fillCircle(rx - 0.4, ry - 0.4, 1.4);
-      g.fillStyle(0xeef4f8, 0.8); g.fillCircle(rx - 0.7, ry - 0.7, 0.7);
+      g.fillStyle(0x74848e, 1); g.fillCircle(rx, ry, 2.2);
+      g.fillStyle(0xccdce4, 1); g.fillCircle(rx - 0.4, ry - 0.4, 1.4);
+      g.fillStyle(0xf8fcfe, 0.85); g.fillCircle(rx - 0.7, ry - 0.7, 0.7);
     }
-    this.strokeOutline(g, 1, 1, 30, 30, 0x32383c);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x6a7a86);
+    g.fillStyle(0xffffff, 0.22);
+    g.fillRoundedRect(1, 1, 30, 5, 2);
     g.generateTexture('ground_metal', 32, 32);
 
     g.clear();
@@ -2344,7 +2433,9 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(21, 25, 0.9);
     g.fillStyle(0xaab8d8, 0.35);
     g.fillCircle(12, 15, 1.2); g.fillCircle(24, 14, 1.2);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x101022);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x2e2e4c);
+    g.fillStyle(0xffffff, 0.13);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_space', 32, 32);
 
     g.clear();
@@ -2360,7 +2451,9 @@ export class BootScene extends Phaser.Scene {
     g.lineBetween(24, 22, 28, 30);
     g.fillStyle(0x2a2a3c, 0.7);
     g.fillCircle(18, 19, 1.4); g.fillCircle(28, 12, 1.2);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x20202e);
+    this.strokeOutline(g, 1, 1, 30, 30, 0x46465a);
+    g.fillStyle(0xffffff, 0.13);
+    g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_stone', 32, 32);
 
     g.clear();
@@ -2448,18 +2541,20 @@ export class BootScene extends Phaser.Scene {
     g.fillRect(19, 30, 2, 24);
     g.fillStyle(0x6a3410, 0.8);
     g.fillCircle(20, 42, 1.5); g.fillCircle(24, 50, 1.3);
-    g.fillStyle(0x0e4d0a, 1);
+    g.fillStyle(0x2c6a20, 1);
     g.fillCircle(22, 22, 19);
-    g.fillStyle(0x228B22, 1);
+    g.fillCircle(9, 25, 11); g.fillCircle(34, 25, 11);
+    g.fillStyle(0x3f9434, 1);
     g.fillCircle(22, 21, 17);
-    g.fillStyle(0x2fa42c, 1);
+    g.fillCircle(10, 23, 10); g.fillCircle(33, 23, 10);
+    g.fillStyle(0x54B84C, 1);
     g.fillCircle(15, 17, 10); g.fillCircle(28, 19, 10);
     g.fillCircle(22, 14, 9);
-    g.fillStyle(0x4ccc44, 0.75);
+    g.fillStyle(0x74D864, 0.8);
     g.fillCircle(13, 14, 7); g.fillCircle(27, 15, 7); g.fillCircle(21, 10, 6);
-    g.fillStyle(0x8cf04c, 0.5);
+    g.fillStyle(0xA2E88A, 0.55);
     g.fillCircle(14, 12, 5); g.fillCircle(24, 9, 4);
-    g.fillStyle(0xa8f45c, 0.3);
+    g.fillStyle(0xC8F8AC, 0.35);
     g.fillCircle(12, 10, 6.5);
     g.fillStyle(0xffa500, 0.65);
     g.fillCircle(18, 27, 3.5); g.fillCircle(28, 24, 3);
@@ -2476,20 +2571,20 @@ export class BootScene extends Phaser.Scene {
     g.clear();
     g.fillStyle(0x000000, 0.18);
     g.fillEllipse(20, 32, 36, 5);
-    g.fillStyle(0x0f4a08, 1);
+    g.fillStyle(0x2c6a20, 1);
     g.fillEllipse(20, 24, 40, 25);
     g.fillEllipse(8, 27, 15, 12);
     g.fillEllipse(32, 28, 15, 12);
-    g.fillStyle(0x2fa020, 1);
+    g.fillStyle(0x3f9434, 1);
     g.fillEllipse(20, 23, 36, 21);
     g.fillEllipse(8, 26, 12, 10);
     g.fillEllipse(32, 27, 12, 10);
-    g.fillStyle(0x52d832, 0.8);
+    g.fillStyle(0x6ecf5a, 0.85);
     g.fillEllipse(15, 19, 18, 11);
     g.fillEllipse(27, 20, 12, 9);
-    g.fillStyle(0x7cf054, 0.5);
+    g.fillStyle(0x9ce884, 0.55);
     g.fillCircle(13, 18, 5); g.fillCircle(29, 19, 3.5);
-    g.fillStyle(0xffffff, 0.25);
+    g.fillStyle(0xd2f8c0, 0.3);
     g.fillCircle(16, 18, 7);
     g.fillStyle(0xffa500, 0.75);
     g.fillCircle(15, 25, 3); g.fillCircle(28, 22, 3);
@@ -2501,7 +2596,7 @@ export class BootScene extends Phaser.Scene {
     
     // CLOUD - fluffy cloud
     g.clear();
-    g.fillStyle(0xc8d8ec, 1);
+    g.fillStyle(0xd6efff, 1);
     g.fillCircle(30, 22, 18);
     g.fillCircle(15, 24, 12);
     g.fillCircle(45, 24, 14);
@@ -2513,10 +2608,13 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(45, 21, 13);
     g.fillCircle(25, 26, 9);
     g.fillCircle(35, 24, 9);
-    g.fillStyle(0xE8F4FF, 0.9);
+    g.fillStyle(0xFFFFFF, 0.75);
+    g.fillCircle(38, 25, 10);
+    g.fillCircle(22, 24, 11);
+    g.fillStyle(0xF0FAFF, 0.9);
     g.fillCircle(24, 15, 8);
     g.fillCircle(40, 16, 7);
-    g.fillStyle(0xb4c8e0, 0.8);
+    g.fillStyle(0xd6efff, 0.85);
     g.fillEllipse(30, 30, 34, 8);
     g.fillStyle(0xFFFFFF, 0.85);
     g.fillCircle(20, 12, 3);
@@ -2569,25 +2667,25 @@ export class BootScene extends Phaser.Scene {
     g.clear();
     g.fillStyle(0x123c0c, 1);
     g.fillRoundedRect(9, 19, 6, 13, 2.5);
-    g.fillStyle(0x228B22, 1);
+    g.fillStyle(0x2c7a28, 1);
     g.fillRoundedRect(10, 19, 4, 13, 2);
     g.fillEllipse(6, 26, 6, 3);
-    g.fillStyle(0x54b830, 0.7);
+    g.fillStyle(0x74d864, 0.7);
     g.fillRect(11, 20, 1.5, 10);
-    g.fillStyle(0xb03c78, 1);
+    g.fillStyle(0xc86898, 1);
     for (let p = 0; p < 5; p++) {
       const pa = (p / 5) * Math.PI * 2;
       g.fillEllipse(12 + Math.cos(pa) * 4.4, 15 + Math.sin(pa) * 4.4, 5, 5);
     }
-    g.fillStyle(0xFF69B4, 1);
+    g.fillStyle(0xFF86C8, 1);
     g.fillCircle(12, 15, 5.4);
-    g.fillStyle(0xff5cb0, 0.55);
+    g.fillStyle(0xff7cc4, 0.55);
     g.fillCircle(12, 14.6, 6.2);
-    g.fillStyle(0xff9ec8, 0.7);
+    g.fillStyle(0xffb8dc, 0.7);
     g.fillEllipse(10.4, 13.4, 4.5, 3.5);
-    g.fillStyle(0xFFFF00, 1);
+    g.fillStyle(0xffe860, 1);
     g.fillCircle(12, 15, 2.4);
-    g.fillStyle(0xfff4a0, 0.9);
+    g.fillStyle(0xfff8b4, 0.9);
     g.fillCircle(11.3, 14.3, 1);
     g.generateTexture('flower', 24, 32);
 
@@ -2599,22 +2697,22 @@ export class BootScene extends Phaser.Scene {
     g.fillRoundedRect(9, 17, 6, 10, 2.5);
     g.fillStyle(0x8B4513, 0.5);
     g.fillRoundedRect(12, 18, 2.5, 8, 1);
-    g.fillStyle(0x7a1010, 1);
+    g.fillStyle(0xc05050, 1);
     g.fillEllipse(12, 12, 22, 15);
-    g.fillStyle(0xf01c1c, 1);
+    g.fillStyle(0xf06860, 1);
     g.fillEllipse(12, 11.5, 20, 13);
-    g.fillStyle(0xff5a4a, 0.6);
+    g.fillStyle(0xffa08a, 0.6);
     g.fillEllipse(9, 8.5, 8, 5);
-    g.fillStyle(0xff2020, 0.3);
+    g.fillStyle(0xff8078, 0.3);
     g.fillCircle(11, 10, 8.5);
     g.fillStyle(0xFFFFFF, 1);
     g.fillCircle(8, 10, 2.4); g.fillCircle(15, 8, 2);
     g.fillCircle(14, 13, 1.6);
-    g.fillStyle(0xf0e8e0, 0.8);
+    g.fillStyle(0xfff0f0, 0.85);
     g.fillCircle(8, 9.4, 1);
-    g.fillStyle(0xffffff, 0.5);
+    g.fillStyle(0xffffff, 0.6);
     g.fillCircle(9, 8.2, 1.2);
-    this.strokeOutline(g, 2, 4, 20, 13, 0x5a0808);
+    this.strokeOutline(g, 2, 4, 20, 13, 0xa04848);
     g.generateTexture('mushroom', 24, 28);
     
     // Bat (cave world)
@@ -3179,26 +3277,26 @@ export class BootScene extends Phaser.Scene {
     g.clear();
     g.fillStyle(0x000000, 0.2);
     g.fillEllipse(16, 48, 24, 4);
-    g.fillStyle(0x0f3a10, 1);
+    g.fillStyle(0x3a5a2a, 1);
     g.fillRoundedRect(11, 18, 10, 31, 4);
     g.fillRoundedRect(3, 26, 7, 18, 3);
     g.fillRoundedRect(21, 22, 7, 22, 3);
-    g.fillStyle(0x228B22, 1);
+    g.fillStyle(0x4f9a44, 1);
     g.fillRoundedRect(12, 18, 8, 31, 4);
     g.fillRoundedRect(4, 27, 5, 17, 2.5);
     g.fillRoundedRect(22, 23, 5, 21, 2.5);
-    g.fillStyle(0x32cd32, 0.8);
+    g.fillStyle(0x8ed874, 0.85);
     g.fillRoundedRect(13, 20, 3, 26, 1.5);
     g.fillRoundedRect(23, 25, 2, 16, 1);
     g.fillRoundedRect(5, 29, 2, 12, 1);
-    g.lineStyle(1, 0x123c0c, 0.7);
+    g.lineStyle(1, 0x3a6e30, 0.7);
     g.lineBetween(15, 22, 15, 44); g.lineBetween(24, 26, 24, 40);
     g.lineBetween(6.5, 30, 6.5, 42);
-    g.fillStyle(0xff69b4, 0.95);
-    g.fillCircle(16, 17, 3.5);
-    g.fillStyle(0xffd700, 0.9);
+    g.fillStyle(0xffb8d8, 0.95);
+    g.fillCircle(16, 17, 3.8);
+    g.fillStyle(0xfff0a0, 0.9);
     g.fillCircle(16, 17, 1.4);
-    this.strokeOutline(g, 12, 18, 8, 31, 0x0f3a10);
+    this.strokeOutline(g, 12, 18, 8, 31, 0x3a5a2a);
     g.generateTexture('cactus', 32, 50);
 
     // Rock (desert decoration)
@@ -3501,21 +3599,21 @@ export class BootScene extends Phaser.Scene {
     g.fillRect(15, 24, 1.5, 26);
     g.fillStyle(0x4a2408, 0.7);
     g.fillCircle(16, 30, 1.2); g.fillCircle(15, 40, 1.1);
-    g.fillStyle(0x123c0c, 1);
+    g.fillStyle(0x2c6a20, 1);
     g.fillEllipse(8, 16, 14, 22);
     g.fillEllipse(22, 14, 12, 18);
     g.fillEllipse(16, 9, 10, 14);
-    g.fillStyle(0x228B22, 1);
+    g.fillStyle(0x3f9434, 1);
     g.fillEllipse(8, 15, 11, 18);
     g.fillEllipse(22, 13, 9, 15);
     g.fillEllipse(16, 8, 8, 11);
-    g.fillStyle(0x32CD32, 0.85);
+    g.fillStyle(0x74d864, 0.85);
     g.fillEllipse(6, 12, 6, 8);
     g.fillEllipse(22, 10, 5, 6);
     g.fillEllipse(15, 6, 4, 5);
-    g.fillStyle(0xffa500, 0.9);
+    g.fillStyle(0xffb85c, 0.9);
     g.fillCircle(13, 22, 2.4); g.fillCircle(19, 21, 2);
-    g.fillStyle(0xffd966, 0.7);
+    g.fillStyle(0xffdca0, 0.7);
     g.fillCircle(12.5, 21.4, 1);
     g.generateTexture('palm', 32, 52);
 
@@ -3678,17 +3776,17 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0x3aa03a, 0.6);
     g.fillRect(15.2, 0, 1, 40);
     const vineLeaf = (ly: number) => {
-      g.fillStyle(0x1a5a1a, 1);
+      g.fillStyle(0x2c7a28, 1);
       g.fillEllipse(14, ly, 10, 14);
       g.fillStyle(0x3ce03a, 1);
       g.fillEllipse(13.2, ly - 0.5, 8.5, 12);
-      g.fillStyle(0x6cf054, 0.6);
+      g.fillStyle(0x8cf06c, 0.7);
       g.fillEllipse(11.5, ly - 3, 4, 6);
-      g.fillStyle(0xffffff, 0.25);
+      g.fillStyle(0xd8f8c4, 0.3);
       g.fillEllipse(12.4, ly - 1.5, 6, 9);
-      g.fillStyle(0xffffff, 0.5);
+      g.fillStyle(0xf0fcE0, 0.55);
       g.fillEllipse(11.8, ly - 3, 2.5, 4);
-      g.lineStyle(1, 0x1a5a1a, 0.5);
+      g.lineStyle(1, 0x2c6a28, 0.5);
       g.lineBetween(14, ly - 6, 14, ly + 6);
     };
     vineLeaf(8);
@@ -3879,14 +3977,19 @@ export class BootScene extends Phaser.Scene {
     // ==================== GRASSLANDS BIOME (7 LAYERS) ====================
     // Layer 0: Sky with clouds, birds, sun glow, layered atmosphere
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 420, 0x8FD4F0, 0xA8E88C, 40);
-    this.fillVGradient(g, 0, 420, 1200, 380, 0xA8E88C, 0xFDF6C8, 40);
-    this.softRadialHaze(g, 900, 160, 340, 0xFFF8C0, 0.35, 10);
-    this.drawLightBeams(g, 1200, 800, 0xFFFFFF, 0.08);
-    g.fillStyle(0xdff294, 0.28);
+    this.fillVGradient(g, 0, 0, 1200, 420, 0x9FDFFF, 0xEAFAF2, 40);
+    this.fillVGradient(g, 0, 420, 1200, 380, 0xEAFAF2, 0xFFF6D8, 40);
+    g.fillStyle(0xFFF4C9, 0.16);
+    g.fillEllipse(600, 780, 1400, 260);
+    g.fillStyle(0xFFF4C9, 0.10);
+    g.fillEllipse(600, 700, 1200, 160);
+    this.softRadialHaze(g, 900, 150, 380, 0xFFFAE0, 0.16, 12);
+    this.softRadialHaze(g, 260, 110, 260, 0xD8F4FF, 0.10, 10);
+    this.drawLightBeams(g, 1200, 800, 0xFFFFFF, 0.05);
+    g.fillStyle(0xfff8dc, 0.22);
     g.fillEllipse(600, 640, 1400, 190);
-    g.fillStyle(0xFFFFFF, 0.12); g.fillEllipse(900, 160, 320, 100);
-    g.fillStyle(0xFFFCE0, 0.15); g.fillEllipse(900, 190, 200, 70);
+    g.fillStyle(0xFFFFFF, 0.13); g.fillEllipse(900, 150, 380, 120);
+    g.fillStyle(0xFFFCF0, 0.16); g.fillEllipse(900, 185, 240, 85);
     // Cirrus wisps
     g.fillStyle(0xFFFFFF, 0.15);
     g.fillEllipse(150, 150, 300, 28); g.fillEllipse(550, 130, 260, 24);
@@ -3907,50 +4010,46 @@ export class BootScene extends Phaser.Scene {
     }
     g.generateTexture('bg_grasslands_0', 1200, 800);
 
-    // Layer 1: Far mountains with snow caps and shading
+    // Layer 1: Far smooth dome hills with soft caps
     g.clear();
-    g.fillStyle(0x5B7B9A, 0.38);
-    g.fillTriangle(-100, 400, 150, 100, 400, 400);
-    g.fillTriangle(200, 400, 550, 60, 900, 400);
-    g.fillTriangle(700, 400, 1050, 110, 1400, 400);
-    g.fillTriangle(100, 400, 300, 160, 550, 400);
-    g.fillStyle(0x7FA0C0, 0.3);
-    g.fillTriangle(-100, 400, 150, 100, 120, 400);
-    g.fillTriangle(200, 400, 550, 60, 380, 400);
-    g.fillTriangle(700, 400, 1050, 110, 880, 400);
-    g.fillStyle(0xF0F4F8, 0.4);
-    g.fillTriangle(120, 155, 150, 100, 180, 155);
-    g.fillTriangle(500, 120, 550, 60, 600, 120);
-    g.fillTriangle(1000, 165, 1050, 110, 1100, 165);
-    g.fillStyle(0xFFFFFF, 0.3);
-    g.fillTriangle(135, 140, 150, 100, 165, 140);
-    g.fillTriangle(515, 105, 550, 60, 585, 105);
-    g.fillStyle(0x2E4A2E, 0.25);
-    g.fillTriangle(80, 300, 100, 260, 120, 300);
-    g.fillTriangle(330, 310, 350, 265, 370, 310);
-    g.fillTriangle(850, 290, 870, 250, 890, 290);
+    g.fillStyle(0x9FBCCF, 0.5);
+    g.fillEllipse(150, 420, 560, 340); g.fillEllipse(550, 420, 720, 400); g.fillEllipse(1050, 420, 640, 330);
+    g.fillStyle(0xB8D4E2, 0.42);
+    g.fillEllipse(150, 415, 460, 280); g.fillEllipse(550, 415, 600, 340); g.fillEllipse(1050, 415, 520, 270);
+    g.fillStyle(0xD4E8F0, 0.35);
+    g.fillEllipse(150, 340, 300, 160); g.fillEllipse(550, 315, 380, 190); g.fillEllipse(1050, 345, 330, 160);
+    g.fillStyle(0xF4F8FC, 0.3);
+    g.fillEllipse(120, 300, 180, 80); g.fillEllipse(520, 275, 210, 90); g.fillEllipse(1030, 305, 190, 78);
+    g.fillStyle(0x8FD46A, 0.3);
+    g.fillEllipse(120, 400, 190, 90); g.fillEllipse(420, 410, 160, 80); g.fillEllipse(880, 395, 170, 85);
     g.generateTexture('bg_grasslands_1', 1400, 400);
 
     // Layer 2: Far hills with stream
     g.clear();
-    g.fillStyle(0x5D8245, 0.5);
+    g.fillStyle(0x7BBE58, 0.5);
     g.fillEllipse(200, 420, 420, 210); g.fillEllipse(750, 400, 520, 230);
     g.fillEllipse(1300, 430, 460, 195);
-    g.fillStyle(0x4A7A3A, 0.4);
+    g.fillStyle(0xA2E88A, 0.45);
     g.fillEllipse(500, 415, 380, 180); g.fillEllipse(1050, 410, 400, 200);
+    g.fillStyle(0xB4EC8E, 0.35);
+    g.fillEllipse(180, 400, 220, 100); g.fillEllipse(720, 385, 260, 110); g.fillEllipse(1270, 405, 240, 100);
+    g.fillStyle(0x5FA84B, 0.4);
+    g.fillEllipse(200, 440, 340, 130); g.fillEllipse(750, 430, 430, 140); g.fillEllipse(1300, 450, 380, 120);
     g.fillStyle(0x4A90D9, 0.3); g.fillEllipse(600, 430, 80, 140);
     g.fillStyle(0x6BB5E8, 0.2); g.fillEllipse(600, 425, 50, 110);
     g.generateTexture('bg_grasslands_2', 1600, 450);
 
     // Layer 3: Mid hills with pine tree silhouettes
     g.clear();
-    g.fillStyle(0x3D6E30, 0.7);
+    g.fillStyle(0x5FA84B, 0.7);
     g.fillEllipse(150, 480, 360, 175); g.fillEllipse(580, 460, 420, 205);
     g.fillEllipse(1000, 490, 390, 165);
-    g.fillStyle(0x4A8A3E, 0.55);
+    g.fillStyle(0x8FD46A, 0.55);
     g.fillEllipse(150, 480, 280, 130); g.fillEllipse(580, 460, 320, 150);
     g.fillEllipse(1000, 490, 300, 120);
-    g.fillStyle(0x1A3A10, 0.6);
+    g.fillStyle(0xB2E88A, 0.4);
+    g.fillEllipse(130, 455, 180, 70); g.fillEllipse(560, 435, 200, 80); g.fillEllipse(980, 465, 190, 70);
+    g.fillStyle(0x4A8A3E, 0.6);
     g.fillTriangle(200, 440, 210, 360, 220, 440);
     g.fillTriangle(195, 400, 210, 330, 225, 400);
     g.fillTriangle(650, 420, 660, 340, 670, 420);
@@ -3995,25 +4094,25 @@ export class BootScene extends Phaser.Scene {
       [80, 575, 1], [300, 585, 0.8], [520, 570, 1.05], [750, 582, 0.9], [960, 575, 1], [1160, 588, 0.85]
     ];
     for (const [bx, by, bs] of lushBushes) {
-      g.fillStyle(0x1C5E10, 1);
+      g.fillStyle(0x3F7A2E, 1);
       g.fillEllipse(bx, by, 115 * bs, 58 * bs);
       g.fillEllipse(bx - 38 * bs, by + 6 * bs, 70 * bs, 44 * bs);
       g.fillEllipse(bx + 40 * bs, by + 8 * bs, 72 * bs, 42 * bs);
-      g.fillStyle(0x2E8A1E, 1);
+      g.fillStyle(0x5FA84B, 1);
       g.fillEllipse(bx - 12 * bs, by - 8 * bs, 82 * bs, 48 * bs);
       g.fillEllipse(bx + 30 * bs, by - 2 * bs, 66 * bs, 40 * bs);
       g.fillEllipse(bx - 44 * bs, by + 2 * bs, 52 * bs, 34 * bs);
-      g.fillStyle(0x4CC230, 1);
+      g.fillStyle(0x8FD46A, 1);
       g.fillEllipse(bx - 20 * bs, by - 18 * bs, 58 * bs, 34 * bs);
       g.fillEllipse(bx + 22 * bs, by - 14 * bs, 46 * bs, 28 * bs);
       g.fillEllipse(bx + 44 * bs, by - 10 * bs, 34 * bs, 22 * bs);
-      g.fillStyle(0x7CE850, 0.6);
+      g.fillStyle(0xB2E88A, 0.6);
       g.fillCircle(bx - 28 * bs, by - 22 * bs, 10 * bs);
       g.fillCircle(bx + 14 * bs, by - 20 * bs, 8 * bs);
-      g.fillStyle(0xFFFFFF, 0.3);
+      g.fillStyle(0xffffff, 0.3);
       g.fillCircle(bx - 32 * bs, by - 25 * bs, 5 * bs);
     }
-    g.fillStyle(0x1A4A0D, 0.8);
+    g.fillStyle(0x2C6A20, 0.8);
     g.fillEllipse(180, 595, 55, 30); g.fillEllipse(440, 585, 50, 28);
     g.fillEllipse(680, 592, 52, 32); g.fillEllipse(880, 590, 48, 26);
     g.fillEllipse(1060, 595, 56, 30);
@@ -4071,14 +4170,16 @@ export class BootScene extends Phaser.Scene {
     // ==================== DESERT BIOME (7 LAYERS) ====================
     // Layer 0: Sunset desert sky with heat shimmer bands and vultures
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x1A2A5C, 0xCC5500, 48);
-    g.fillStyle(0xFFD700, 0.12); g.fillRect(0, 600, 1200, 200);
-    g.fillStyle(0xFFAA00, 0.08);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x8A6AB8, 0xFFB070, 48);
+    g.fillStyle(0xFFD98A, 0.2); g.fillRect(0, 600, 1200, 200);
+    g.fillStyle(0xFFE4A8, 0.16); g.fillEllipse(600, 720, 1200, 220);
+    g.fillStyle(0xFFAA80, 0.12);
     g.fillEllipse(200, 680, 400, 30); g.fillEllipse(800, 660, 350, 25);
-    this.drawLightBeams(g, 1200, 800, 0xFFE8B0, 0.07);
+    this.drawLightBeams(g, 1200, 800, 0xFFE8B0, 0.05);
+    this.softRadialHaze(g, 900, 130, 280, 0xFFF4CC, 0.16, 12);
     // Distant sun
-    g.fillStyle(0xFFF8DC, 0.2); g.fillCircle(900, 120, 60);
-    g.fillStyle(0xFFFFFF, 0.15); g.fillCircle(900, 120, 40);
+    g.fillStyle(0xFFF8DC, 0.25); g.fillCircle(900, 120, 60);
+    g.fillStyle(0xFFFFFF, 0.2); g.fillCircle(900, 120, 40);
     // Vultures
     g.fillStyle(0x3A2A1A, 0.5);
     for (let v = 0; v < 4; v++) {
@@ -4090,9 +4191,11 @@ export class BootScene extends Phaser.Scene {
 
     // Layer 1: Far dunes with heat haze and pyramids
     g.clear();
-    g.fillStyle(0xE5C88A, 0.42);
+    g.fillStyle(0xF2DCAC, 0.5);
     g.fillEllipse(250, 400, 620, 260); g.fillEllipse(950, 370, 720, 290);
-    g.fillStyle(0xD9B870, 0.3); g.fillEllipse(600, 390, 550, 230);
+    g.fillStyle(0xE8CC94, 0.4); g.fillEllipse(600, 390, 550, 230);
+    g.fillStyle(0xFAECC8, 0.35);
+    g.fillEllipse(220, 380, 320, 140); g.fillEllipse(900, 350, 340, 150);
     // Pyramids
     g.fillStyle(0xC8A050, 0.55);
     g.fillTriangle(480, 390, 440, 300, 520, 300);
@@ -4220,9 +4323,9 @@ export class BootScene extends Phaser.Scene {
     // ==================== WATER BIOME (7 LAYERS) ====================
     // Layer 0: Deep underwater gradient with caustic waves
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x000A14, 0x00A8D8, 48);
-    g.fillStyle(0x00C8F0, 0.25); g.fillRect(0, 720, 1200, 80);
-    g.fillStyle(0x80D8F0, 0.12); g.fillRect(0, 0, 1200, 100);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x1E5C7C, 0x5CD0E8, 48);
+    g.fillStyle(0x7CE0F0, 0.25); g.fillRect(0, 720, 1200, 80);
+    g.fillStyle(0xB4EEF8, 0.16); g.fillRect(0, 0, 1200, 100);
     g.fillStyle(0x40C0E0, 0.05);
     for (let i = 0; i < 18; i++) {
       g.fillEllipse(80 + i * 72, 200 + (i % 3) * 180, 90 + (i % 4) * 20, 25);
@@ -4392,7 +4495,7 @@ export class BootScene extends Phaser.Scene {
     // ==================== ICE-SNOW BIOME (7 LAYERS) ====================
     // Layer 0: Aurora-lit polar sky with dynamic bands, stars
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x0A0A1E, 0xF0F8FF, 48);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x2C3C6A, 0xF0F8FF, 48);
     // Aurora bands
     g.fillStyle(0x00FF88, 0.12);
     g.fillEllipse(300, 180, 500, 80); g.fillEllipse(900, 200, 450, 70);
@@ -4415,22 +4518,16 @@ export class BootScene extends Phaser.Scene {
     g.fillStyle(0xE8F8FF, 0.2); g.fillRect(0, 680, 1200, 120);
     g.generateTexture('bg_ice_0', 1200, 800);
 
-    // Layer 1: Distant ice-covered mountains with snowy pines
+    // Layer 1: Distant soft pastel-cyan ice domes with snowy pines
     g.clear();
-    g.fillStyle(0x5A6E86, 0.42);
-    g.fillTriangle(-80, 450, 180, 100, 420, 450);
-    g.fillTriangle(250, 450, 550, 70, 850, 450);
-    g.fillTriangle(700, 450, 1050, 120, 1400, 450);
-    g.fillStyle(0x7890B0, 0.3);
-    g.fillTriangle(280, 450, 550, 70, 420, 450);
-    g.fillTriangle(730, 450, 1050, 120, 920, 450);
-    g.fillStyle(0xE8F0F8, 0.5);
-    g.fillTriangle(120, 170, 180, 100, 240, 170);
-    g.fillTriangle(490, 140, 550, 70, 610, 140);
-    g.fillTriangle(990, 180, 1050, 120, 1110, 180);
-    g.fillStyle(0xFFFFFF, 0.25);
-    g.fillTriangle(500, 130, 550, 70, 540, 150);
-    g.fillTriangle(1000, 170, 1050, 120, 1030, 190);
+    g.fillStyle(0xA8D0E4, 0.55);
+    g.fillEllipse(180, 470, 620, 380); g.fillEllipse(550, 470, 700, 420); g.fillEllipse(1050, 470, 660, 360);
+    g.fillStyle(0xC4E4F2, 0.5);
+    g.fillEllipse(180, 460, 480, 290); g.fillEllipse(550, 455, 580, 340); g.fillEllipse(1050, 460, 520, 280);
+    g.fillStyle(0xE8F8FF, 0.55);
+    g.fillEllipse(160, 380, 300, 150); g.fillEllipse(540, 350, 350, 170); g.fillEllipse(1040, 385, 310, 150);
+    g.fillStyle(0xFFFFFF, 0.45);
+    g.fillEllipse(150, 340, 190, 80); g.fillEllipse(520, 315, 210, 85); g.fillEllipse(1030, 345, 190, 78);
     // Snowy pines
     g.fillStyle(0x3A5A4A, 0.3);
     g.fillTriangle(50, 420, 65, 340, 80, 420); g.fillTriangle(45, 380, 65, 310, 85, 380);
@@ -4440,16 +4537,14 @@ export class BootScene extends Phaser.Scene {
 
     // Layer 2: Icebergs, glaciers, penguin colony
     g.clear();
-    g.fillStyle(0x9AC8E0, 0.65);
+    g.fillStyle(0xB8E0F0, 0.65);
     g.fillEllipse(200, 480, 310, 185); g.fillEllipse(680, 460, 390, 225);
     g.fillEllipse(1150, 490, 290, 165);
-    g.fillStyle(0xB0E0F0, 0.5);
+    g.fillStyle(0xD4F0FC, 0.55);
     g.fillEllipse(200, 470, 250, 140); g.fillEllipse(680, 450, 310, 175);
     g.fillEllipse(1150, 480, 220, 120);
-    g.fillStyle(0xFFFFFF, 0.3);
-    g.fillTriangle(120, 440, 200, 370, 280, 440);
-    g.fillTriangle(600, 420, 680, 350, 760, 420);
-    g.fillTriangle(1090, 450, 1150, 390, 1210, 450);
+    g.fillStyle(0xFFFFFF, 0.4);
+    g.fillEllipse(190, 440, 180, 90); g.fillEllipse(670, 420, 210, 105); g.fillEllipse(1140, 460, 170, 85);
     // Blue ice crevasses
     g.fillStyle(0x80D0FF, 0.35);
     g.fillRect(210, 430, 4, 40); g.fillRect(270, 420, 3, 35);
@@ -4553,14 +4648,16 @@ export class BootScene extends Phaser.Scene {
     // ==================== SKY-CLOUDS BIOME (7 LAYERS) ====================
     // Layer 0: Dramatic multi-band sunset with stars
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x1A0533, 0xFFF0C8, 48);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x7A5AA8, 0xFFF0C8, 48);
+    this.softRadialHaze(g, 600, 220, 420, 0xFFF0D8, 0.13, 12);
     g.fillStyle(0xFFFFFF, 0.5);
     for (let s = 0; s < 30; s++) {
       g.fillCircle((s * 67 + 13) % 1150 + 25, (s * 43 + 7) % 90 + 5, (s % 3) + 1);
     }
-    g.fillStyle(0xFFD700, 0.3); g.fillEllipse(600, 700, 800, 250);
-    g.fillStyle(0xFFF4A0, 0.2); g.fillEllipse(600, 680, 500, 180);
-    g.fillStyle(0xFFFFFF, 0.15); g.fillEllipse(600, 660, 300, 120);
+    g.fillStyle(0xFFD700, 0.28); g.fillEllipse(600, 700, 800, 250);
+    g.fillStyle(0xFFF4A0, 0.24); g.fillEllipse(600, 680, 500, 180);
+    g.fillStyle(0xFFFFFF, 0.2); g.fillEllipse(600, 660, 300, 120);
+    g.fillStyle(0xFFEFB4, 0.12); g.fillEllipse(600, 760, 1200, 160);
     g.generateTexture('bg_sky_0', 1200, 800);
 
     // Layer 1: Cirrus + stratus clouds, birds
@@ -4610,12 +4707,12 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(680, 370, 64); g.fillCircle(840, 340, 58);
     g.fillCircle(920, 360, 50);
     g.fillCircle(1100, 330, 62); g.fillCircle(1170, 355, 48);
-    g.fillStyle(0xD0C8C8, 0.35);
+    g.fillStyle(0xD6EFFF, 0.4);
     g.fillCircle(100, 370, 55); g.fillCircle(200, 345, 45);
     g.fillCircle(430, 398, 58); g.fillCircle(560, 362, 42);
     g.fillCircle(680, 388, 50); g.fillCircle(840, 358, 46);
     g.fillCircle(1100, 348, 48);
-    g.fillStyle(0xFFF8E0, 0.3);
+    g.fillStyle(0xFFF8E0, 0.35);
     g.fillCircle(100, 338, 50); g.fillCircle(430, 365, 54);
     g.fillCircle(680, 355, 48); g.fillCircle(1100, 318, 44);
     g.generateTexture('bg_sky_3', 1200, 450);
@@ -4693,8 +4790,9 @@ export class BootScene extends Phaser.Scene {
     // ==================== FOREST BIOME (7 LAYERS) ====================
     // Layer 0: Forest canopy sky with dappled light
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x2A5A2E, 0xF0FCE8, 48);
-    this.drawLightBeams(g, 1200, 800, 0xFFFEC0, 0.09);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x6FA86A, 0xF4FCE8, 48);
+    this.drawLightBeams(g, 1200, 800, 0xFFFEC0, 0.05);
+    this.softRadialHaze(g, 600, 180, 380, 0xFFF6C8, 0.13, 12);
     g.fillStyle(0xFFFF80, 0.08);
     g.fillEllipse(200, 300, 30, 20); g.fillEllipse(500, 350, 25, 18);
     g.fillEllipse(800, 280, 28, 20); g.fillEllipse(1050, 320, 22, 16);
@@ -4818,8 +4916,10 @@ export class BootScene extends Phaser.Scene {
     // ==================== VILLAGE BIOME (7 LAYERS) ====================
     // Layer 0: Peaceful blue sky with sun, clouds, birds
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x87CEEB, 0xFFFBD0, 40);
-    this.drawLightBeams(g, 1200, 800, 0xFFFFFF, 0.1);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0xA8E4FF, 0xFFF6DC, 40);
+    g.fillStyle(0xFFF4C9, 0.15); g.fillEllipse(600, 770, 1300, 220);
+    this.softRadialHaze(g, 900, 130, 340, 0xFFF6D8, 0.14, 12);
+    this.drawLightBeams(g, 1200, 800, 0xFFFFFF, 0.05);
     // Clouds
     g.fillStyle(0xFFFFFF, 0.3);
     g.fillCircle(200, 200, 60); g.fillCircle(260, 190, 48); g.fillCircle(160, 205, 40);
@@ -4948,8 +5048,9 @@ export class BootScene extends Phaser.Scene {
     // ==================== BEACH-ISLAND BIOME (7 LAYERS) ====================
     // Layer 0: Tropical sky with sun and distant seabirds
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x00CED1, 0xFFF2D8, 44);
-    this.drawLightBeams(g, 1200, 800, 0xFFF8D0, 0.09);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x8FE0E0, 0xFFF4DC, 44);
+    g.fillStyle(0xFFF4C9, 0.16); g.fillEllipse(600, 775, 1300, 210);
+    this.drawLightBeams(g, 1200, 800, 0xFFF8D0, 0.05);
     g.fillStyle(0xFFF4C0, 0.25); g.fillCircle(900, 120, 55);
     g.fillStyle(0xFFFFFF, 0.2); g.fillCircle(900, 120, 38);
     g.fillStyle(0x2A2A1A, 0.4);
@@ -5056,10 +5157,11 @@ export class BootScene extends Phaser.Scene {
     // ==================== FACTORY BIOME (7 LAYERS) ====================
     // Layer 0: Smoggy industrial sky with glowing furnaces
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x242424, 0x989898, 40);
-    g.fillStyle(0xFF4400, 0.08); g.fillRect(0, 450, 1200, 350);
-    g.fillStyle(0xFF6600, 0.06);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x5A6470, 0xC4CCD4, 40);
+    g.fillStyle(0xFF8844, 0.10); g.fillRect(0, 450, 1200, 350);
+    g.fillStyle(0xFFAA66, 0.08);
     g.fillEllipse(400, 500, 300, 80); g.fillEllipse(800, 520, 250, 60);
+    this.softRadialHaze(g, 600, 200, 380, 0xE8EEF2, 0.12, 12);
     g.generateTexture('bg_factory_0', 1200, 800);
 
     // Layer 1: Industrial buildings with glowing windows
@@ -5169,12 +5271,12 @@ export class BootScene extends Phaser.Scene {
     // ==================== VOLCANO-LAVA BIOME (7 LAYERS) ====================
     // Layer 0: Dark ashy sky with red glow and ash particles
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x0A0000, 0xCA6060, 48);
-    g.fillStyle(0xFF3300, 0.1); g.fillRect(0, 500, 1200, 300);
-    g.fillStyle(0xFF8800, 0.06); g.fillEllipse(600, 700, 800, 250);
-    this.softRadialHaze(g, 600, 560, 620, 0x280402, 0.5, 12);
-    this.softRadialHaze(g, 300, 300, 320, 0x1A0200, 0.3, 10);
-    this.softRadialHaze(g, 950, 220, 300, 0x1A0200, 0.3, 10);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x2A0A0A, 0xC47070, 48);
+    g.fillStyle(0xFF4A28, 0.12); g.fillRect(0, 500, 1200, 300);
+    g.fillStyle(0xFF8848, 0.08); g.fillEllipse(600, 700, 800, 250);
+    this.softRadialHaze(g, 600, 560, 620, 0x5A1006, 0.42, 12);
+    this.softRadialHaze(g, 300, 300, 320, 0x40100A, 0.28, 10);
+    this.softRadialHaze(g, 950, 220, 300, 0x40100A, 0.28, 10);
     // Ash
     g.fillStyle(0x333333, 0.3);
     for (let a = 0; a < 40; a++) {
@@ -5197,21 +5299,18 @@ export class BootScene extends Phaser.Scene {
 
     // Layer 2: Volcanic mountains with lava streams + eruption
     g.clear();
-    g.fillStyle(0x2F2F2F, 0.8);
-    g.fillTriangle(0, 500, 300, 120, 600, 500);
-    g.fillTriangle(400, 500, 700, 100, 1000, 500);
-    g.fillTriangle(800, 500, 1100, 150, 1400, 500);
-    g.fillStyle(0x1A1A1A, 0.6);
-    g.fillTriangle(450, 500, 700, 100, 600, 500);
-    g.fillTriangle(850, 500, 1100, 150, 1000, 500);
-    g.fillStyle(0xFF3300, 0.7);
-    g.fillTriangle(250, 500, 300, 250, 350, 500);
-    g.fillTriangle(660, 500, 700, 220, 740, 500);
-    g.fillStyle(0xFF5500, 0.5);
-    g.fillTriangle(260, 490, 300, 290, 340, 490);
-    g.fillTriangle(670, 490, 700, 270, 730, 490);
-    g.fillStyle(0xFF8800, 0.3); g.fillCircle(700, 100, 35);
-    g.fillStyle(0xFFDD00, 0.15); g.fillCircle(700, 100, 18);
+    g.fillStyle(0x3E3E42, 0.85);
+    g.fillEllipse(300, 560, 640, 420); g.fillEllipse(700, 560, 640, 480); g.fillEllipse(1100, 560, 640, 400);
+    g.fillStyle(0x2E2E34, 0.7);
+    g.fillEllipse(700, 560, 480, 420); g.fillEllipse(1100, 560, 420, 320);
+    g.fillStyle(0xFF5A2A, 0.55);
+    g.fillEllipse(300, 470, 260, 130); g.fillEllipse(700, 450, 300, 150);
+    g.fillStyle(0xFF8A3A, 0.45);
+    g.fillEllipse(300, 455, 170, 80); g.fillEllipse(700, 435, 200, 95);
+    g.fillStyle(0xFFC05A, 0.3);
+    g.fillEllipse(300, 445, 90, 40); g.fillEllipse(700, 425, 110, 48);
+    g.fillStyle(0xFF8800, 0.35); g.fillCircle(700, 100, 35);
+    g.fillStyle(0xFFDD00, 0.18); g.fillCircle(700, 100, 18);
     g.generateTexture('bg_volcano_2', 1400, 550);
 
     // Layer 3: Falling volcanic rocks + fire sparks
@@ -5287,11 +5386,11 @@ export class BootScene extends Phaser.Scene {
     // ==================== HAUNTED-MANSION BIOME (7 LAYERS) ====================
     // Layer 0: Stormy night sky with lightning and dark clouds
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 460, 0x080812, 0x2D1B4E, 30);
-    this.fillVGradient(g, 0, 460, 1200, 340, 0x2D1B4E, 0x1A0A25, 24);
-    this.softRadialHaze(g, 600, 300, 560, 0x0A0618, 0.45, 12);
-    this.softRadialHaze(g, 250, 180, 340, 0x06040E, 0.3, 10);
-    this.softRadialHaze(g, 1000, 160, 320, 0x06040E, 0.3, 10);
+    this.fillVGradient(g, 0, 0, 1200, 460, 0x141428, 0x3D2A5E, 30);
+    this.fillVGradient(g, 0, 460, 1200, 340, 0x3D2A5E, 0x241430, 24);
+    this.softRadialHaze(g, 600, 300, 560, 0x1A1030, 0.4, 12);
+    this.softRadialHaze(g, 250, 180, 340, 0x100A20, 0.26, 10);
+    this.softRadialHaze(g, 1000, 160, 320, 0x100A20, 0.26, 10);
     // Storm clouds
     g.fillStyle(0x1A1A2E, 0.6);
     g.fillCircle(200, 140, 90); g.fillCircle(320, 120, 75); g.fillCircle(150, 160, 60);
@@ -5410,10 +5509,11 @@ export class BootScene extends Phaser.Scene {
     // ==================== RUINS BIOME (7 LAYERS) ====================
     // Layer 0: Tropical sunset sky with haze
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x4A1040, 0xFFF8D0, 48);
-    g.fillStyle(0xFFDD44, 0.12); g.fillRect(0, 600, 1200, 200);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x7A3060, 0xFFF8D0, 48);
+    g.fillStyle(0xFFE288, 0.16); g.fillRect(0, 600, 1200, 200);
+    g.fillStyle(0xFFF4C9, 0.12); g.fillEllipse(600, 760, 1200, 180);
     // Distant jungle canopy
-    g.fillStyle(0x1A4A1A, 0.2);
+    g.fillStyle(0x2C7A28, 0.22);
     g.fillEllipse(250, 680, 500, 80); g.fillEllipse(800, 660, 400, 70);
     g.generateTexture('bg_ruins_0', 1200, 800);
 
@@ -5514,16 +5614,20 @@ export class BootScene extends Phaser.Scene {
     // ==================== CANYON-BASE BIOME (7 LAYERS) ====================
     // Layer 0: Red/orange canyon sky with layered atmosphere
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x4A2020, 0xFFE060, 48);
-    g.fillStyle(0xFFDD44, 0.1); g.fillRect(0, 600, 1200, 200);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x8A4A3A, 0xFFD98A, 48);
+    g.fillStyle(0xFFC88A, 0.16); g.fillRect(0, 600, 1200, 200);
+    g.fillStyle(0xFFE0AC, 0.14); g.fillEllipse(600, 740, 1200, 190);
+    this.softRadialHaze(g, 600, 260, 380, 0xFFE8C4, 0.12, 12);
     g.generateTexture('bg_canyon_0', 1200, 800);
 
     // Layer 1: Far canyon walls with rock striations
     g.clear();
-    g.fillStyle(0x6A3A2A, 0.5);
-    g.fillTriangle(0, 550, 300, 180, 600, 550);
-    g.fillTriangle(400, 550, 750, 120, 1100, 550);
-    g.fillTriangle(800, 550, 1200, 220, 1600, 550);
+    g.fillStyle(0xB87A5A, 0.55);
+    g.fillEllipse(300, 620, 640, 500); g.fillEllipse(750, 620, 760, 560); g.fillEllipse(1200, 620, 720, 500);
+    g.fillStyle(0xD89A74, 0.42);
+    g.fillEllipse(300, 610, 480, 380); g.fillEllipse(750, 610, 560, 430); g.fillEllipse(1200, 610, 520, 380);
+    g.fillStyle(0xF0BE92, 0.32);
+    g.fillEllipse(300, 540, 320, 200); g.fillEllipse(760, 520, 360, 220); g.fillEllipse(1180, 545, 300, 190);
     // Striations (horizontal color bands)
     g.fillStyle(0x8A5A3A, 0.35);
     g.fillRect(0, 480, 1400, 8); g.fillRect(0, 510, 1400, 6);
@@ -5533,10 +5637,12 @@ export class BootScene extends Phaser.Scene {
 
     // Layer 2: Mid canyon layers with color striations
     g.clear();
-    g.fillStyle(0x8A4A2A, 0.7);
-    g.fillTriangle(0, 550, 200, 250, 400, 550);
-    g.fillTriangle(300, 550, 550, 220, 800, 550);
-    g.fillTriangle(600, 550, 900, 280, 1200, 550);
+    g.fillStyle(0xC47A50, 0.6);
+    g.fillEllipse(200, 620, 440, 400); g.fillEllipse(550, 620, 520, 440); g.fillEllipse(900, 620, 560, 380);
+    g.fillStyle(0xE09A6C, 0.45);
+    g.fillEllipse(200, 610, 330, 300); g.fillEllipse(560, 610, 380, 330); g.fillEllipse(900, 610, 400, 290);
+    g.fillStyle(0xF4BE92, 0.3);
+    g.fillEllipse(210, 540, 240, 150); g.fillEllipse(570, 520, 280, 170); g.fillEllipse(880, 545, 300, 150);
     g.fillStyle(0xAA6A4A, 0.55);
     g.fillRect(0, 420, 1400, 14); g.fillRect(0, 480, 1400, 12);
     g.fillRect(0, 530, 1400, 10);
@@ -5619,12 +5725,13 @@ export class BootScene extends Phaser.Scene {
     // ==================== SPACE-STAR BIOME (7 LAYERS) ====================
     // Layer 0: Deep space with colorful nebula backdrop
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x000008, 0x151540, 40);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x101030, 0x2E2E66, 40);
+    this.softRadialHaze(g, 600, 320, 520, 0x3A3A88, 0.12, 12);
     // Nebula clouds
-    g.fillStyle(0x330066, 0.12); g.fillEllipse(300, 300, 400, 200);
-    g.fillStyle(0x0066AA, 0.08); g.fillEllipse(800, 350, 350, 180);
-    g.fillStyle(0xAA0055, 0.06); g.fillEllipse(200, 500, 300, 160);
-    g.fillStyle(0x6600CC, 0.08); g.fillEllipse(1000, 250, 250, 140);
+    g.fillStyle(0x5A2AA8, 0.14); g.fillEllipse(300, 300, 400, 200);
+    g.fillStyle(0x2A7AC8, 0.10); g.fillEllipse(800, 350, 350, 180);
+    g.fillStyle(0xC83878, 0.08); g.fillEllipse(200, 500, 300, 160);
+    g.fillStyle(0x8030CC, 0.10); g.fillEllipse(1000, 250, 250, 140);
     g.generateTexture('bg_space_0', 1200, 800);
 
     // Layer 1: Stars of varying brightness and colors
@@ -5751,16 +5858,16 @@ export class BootScene extends Phaser.Scene {
     // ==================== CASTLE-FINAL BIOME (7 LAYERS) ====================
     // Layer 0: Midnight sky with dark clouds
     g.clear();
-    this.fillVGradient(g, 0, 0, 1200, 800, 0x000015, 0x202090, 40);
+    this.fillVGradient(g, 0, 0, 1200, 800, 0x141438, 0x3A3A9C, 40);
     // Dark clouds
-    g.fillStyle(0x0A0A1A, 0.5);
+    g.fillStyle(0x2A2A55, 0.5);
     g.fillCircle(200, 120, 100); g.fillCircle(320, 100, 85); g.fillCircle(150, 140, 70);
     g.fillCircle(700, 130, 95); g.fillCircle(850, 110, 80); g.fillCircle(650, 150, 65);
     g.fillCircle(1050, 115, 90); g.fillCircle(1150, 135, 70);
-    g.fillStyle(0x000000, 0.3); g.fillRect(0, 0, 1200, 180);
-    this.softRadialHaze(g, 600, 340, 620, 0x04040E, 0.5, 12);
-    this.softRadialHaze(g, 300, 150, 380, 0x020208, 0.35, 10);
-    this.softRadialHaze(g, 950, 130, 360, 0x020208, 0.35, 10);
+    g.fillStyle(0x0A0A2A, 0.3); g.fillRect(0, 0, 1200, 180);
+    this.softRadialHaze(g, 600, 340, 620, 0x18184A, 0.45, 12);
+    this.softRadialHaze(g, 300, 150, 380, 0x101030, 0.3, 10);
+    this.softRadialHaze(g, 950, 130, 360, 0x101030, 0.3, 10);
     g.generateTexture('bg_castle_0', 1200, 800);
 
     // Layer 1: Stars + moon + dragon silhouettes
@@ -5786,7 +5893,7 @@ export class BootScene extends Phaser.Scene {
 
     // Layer 2: Grand castle silhouette with multiple towers
     g.clear();
-    g.fillStyle(0x1a1a2a, 0.9);
+    g.fillStyle(0x2A2A48, 0.9);
     // Main castle body
     g.fillRect(120, 280, 100, 270); g.fillRect(320, 220, 125, 330);
     g.fillRect(560, 200, 150, 350); g.fillRect(820, 250, 110, 300);
@@ -5813,11 +5920,9 @@ export class BootScene extends Phaser.Scene {
     g.fillRect(620, 500, 50, 50);
     g.fillTriangle(618, 500, 645, 530, 672, 500);
     // Mountain backdrop
-    g.fillStyle(0x1A1A3A, 0.5);
-    g.fillTriangle(0, 550, 150, 350, 300, 550);
-    g.fillTriangle(350, 550, 500, 300, 650, 550);
-    g.fillTriangle(700, 550, 850, 340, 1000, 550);
-    g.fillTriangle(950, 550, 1100, 380, 1250, 550);
+    g.fillStyle(0x2E2E52, 0.5);
+    g.fillEllipse(150, 580, 380, 300); g.fillEllipse(500, 580, 400, 340);
+    g.fillEllipse(850, 580, 380, 310); g.fillEllipse(1100, 580, 380, 280);
     g.generateTexture('bg_castle_2', 1200, 600);
 
     // Layer 3: Banners on towers + wall details

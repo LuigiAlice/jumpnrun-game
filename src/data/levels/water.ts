@@ -1,7 +1,7 @@
 // Water World - 6 Levels (13-18)
 // Tutorial → Gap-Strecke → Röhren-Labyrinth → Vertikal-Kletterer → Gegner-Horde → Tiefsee-Finale
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const WATER_LEVELS: LevelData[] = [
   // ============================================================
@@ -40,6 +40,8 @@ export const WATER_LEVELS: LevelData[] = [
       coins.push(createCoin(1400 * S, 380), createCoin(1700 * S, 310));
       for (let x = 4600; x < 5800; x += 200) coins.push(createCoin(x * S, 450));
       coins.push(createCoin(3140, 555), createCoin(3200, 555), createCoin(3260, 555), createCoin(3320, 555));
+      // Discovery moment: bonus coin arc above the tutorial spring
+      coins.push(createCoin(260, 390), createCoin(300, 350), createCoin(340, 390));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -81,6 +83,7 @@ export const WATER_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 460 },
     goal: { x: 4225, y: 478 },
     timeBonus: 120,
+    springs: [createSpring(300, 480)],
   },
 
   // ============================================================
@@ -124,6 +127,9 @@ export const WATER_LEVELS: LevelData[] = [
       for (let x = 5000; x < 5600; x += 200) coins.push(createCoin(x * S, 450));
       for (let x = 6600; x < 7200; x += 200) coins.push(createCoin(x * S, 450));
       for (let x = 8000; x < 9000; x += 200) coins.push(createCoin(x * S, 450));
+      // Coin arcs above the two gap-section springs
+      coins.push(createCoin(710, 400), createCoin(750, 360), createCoin(790, 400));
+      coins.push(createCoin(2085, 400), createCoin(2125, 360), createCoin(2165, 400));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -168,11 +174,14 @@ export const WATER_LEVELS: LevelData[] = [
         createMovingPlat(2750, 460, 100, 24, 'water', 'horizontal', 300, 20),
         createMovingPlat(4350, 450, 100, 24, 'water', 'horizontal', 280, 22),
         createMovingPlat(5850, 460, 100, 24, 'water', 'horizontal', 320, 20),
+        // Vertical helper lifting players over the middle ground
+        createMovingPlat(1437.5, 460, 100, 24, 'water', 'vertical', 140, 18),
       ];
     })(),
     playerStart: { x: 150, y: 460 },
     goal: { x: 3750, y: 478 },  // 6000 * 0.625
     timeBonus: 140,
+    springs: [createSpring(750, 480), createSpring(2125, 480)],
   },
 
   // ============================================================
@@ -212,6 +221,10 @@ export const WATER_LEVELS: LevelData[] = [
       // Bridge - reduced startX from 12400 to 9700
       plats.push(...gapWithPlatforms(S, 9700, 440, 300, 4));
       plats.push(createPlat(10300 * S, 500, 400 * S, 40, 'water'));
+      // Breakable brick bonus wall — hangs above the ground connector (never
+      // load-bearing: the ground below stays the main path). Big Mario can
+      // smash it from below for the coins on top.
+      plats.push(createPlat(6180, 400, 96, 24, 'brick'));
       // Pipe section 6 (4 pipes) - reduced from 13400 to 10600
       plats.push(...pipeSection(S, 10600, 500, 4));
       // Bridge - reduced startX from 15100 to 11800
@@ -234,6 +247,11 @@ export const WATER_LEVELS: LevelData[] = [
       for (let x = 10600; x < 11100; x += 200) coins.push(createCoin(x * S, 450));
       for (let x = 13000; x < 13500; x += 200) coins.push(createCoin(x * S, 450));
       for (let x = 18100; x < 19200; x += 200) coins.push(createCoin(x * S, 450));
+      // Brick-bonus coins (above the breakable brick)
+      coins.push(createCoin(6140, 340), createCoin(6180, 320), createCoin(6220, 340));
+      // Coin arcs above the two springs on the ground connectors
+      coins.push(createCoin(1100, 400), createCoin(1140, 360), createCoin(1180, 400));
+      coins.push(createCoin(7400, 400), createCoin(7440, 360), createCoin(7480, 400));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -312,6 +330,9 @@ export const WATER_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 460 },
     goal: { x: 9000, y: 478 },
     timeBonus: 160,
+    springs: [createSpring(1140, 480), createSpring(7440, 480)],
+    // Spikes on the pipe-base ground connectors (well clear of QBs, goal and player start)
+    spikes: [createSpike(1200, 472), createSpike(2340, 472), createSpike(3540, 472)],
   },
 
   // ============================================================
@@ -385,6 +406,10 @@ export const WATER_LEVELS: LevelData[] = [
       coins.push(createCoin(18400 * S, 240), createCoin(18700 * S, 320), createCoin(19000 * S, 400));
       coins.push(createCoin(19300 * S, 480));
       for (let x = 20000; x < 21000; x += 200) coins.push(createCoin(x * S, 550));
+      // Coin ladder up from the spring shortcut after climb 1
+      coins.push(createCoin(1779, 500), createCoin(1779, 430), createCoin(1779, 360));
+      // Coin arc above the spring on the last ground stretch
+      coins.push(createCoin(7855, 500), createCoin(7895, 460), createCoin(7935, 500));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -440,6 +465,8 @@ export const WATER_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 560 },
     goal: { x: 9180, y: 578 },  // 16500 * 0.556
     timeBonus: 180,
+    coinGoal: 36,
+    springs: [createSpring(1779, 580), createSpring(7895, 580)],
   },
 
   // ============================================================
@@ -496,6 +523,8 @@ export const WATER_LEVELS: LevelData[] = [
       for (let x = 15000; x < 15800; x += 200) coins.push(createCoin(x * S, 550));
       for (let x = 17600; x < 18500; x += 200) coins.push(createCoin(x * S, 550));
       for (let x = 19300; x < 20600; x += 200) coins.push(createCoin(x * S, 550));
+      // Coin arc above the spring in the third arena
+      coins.push(createCoin(4460, 500), createCoin(4500, 460), createCoin(4540, 500));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -573,6 +602,10 @@ export const WATER_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 560 },
     goal: { x: 8750, y: 578 },
     timeBonus: 200,
+    coinGoal: 40,
+    // Horde spring bonus — no spikes here: the deep (>500px) arena grounds are
+    // swim zones, where spikes would be unfair-unausweichlich
+    springs: [createSpring(4500, 580)],
   },
 
   // ============================================================
@@ -647,6 +680,9 @@ export const WATER_LEVELS: LevelData[] = [
       for (let x = 12800; x < 13600; x += 200) coins.push(createCoin(x * S, 650));
       for (let x = 16000; x < 16600; x += 200) coins.push(createCoin(x * S, 650));
       for (let x = 17700; x < 19000; x += 200) coins.push(createCoin(x * S, 670));
+      // Bonus coins above the two rescue springs (rising-water compensation)
+      coins.push(createCoin(180, 300), createCoin(220, 260), createCoin(260, 300));
+      coins.push(createCoin(2840, 470), createCoin(2880, 430), createCoin(2920, 470));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -715,5 +751,9 @@ export const WATER_LEVELS: LevelData[] = [
     playerStart: { x: 150, y: 360 },
     goal: { x: 7920, y: 698 },
     timeBonus: 220,
+    // Rescue springs high up — rising water compensation (launch clears the
+    // flood zone). Spikes (max 2) sit high up, far from the flooded passages.
+    springs: [createSpring(220, 380), createSpring(2880, 548)],
+    spikes: [createSpike(550, 452), createSpike(4878, 458)],
   },
 ];

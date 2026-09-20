@@ -6,7 +6,7 @@
 // 41: Gegner-Horde (15-20 enemies)
 // 42: Dach-Rennen Finale (rooftop-hopping, multi-height platforms)
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const VILLAGE_LEVELS: LevelData[] = [
   // ============================================================
@@ -53,6 +53,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       c.push(createCoin(2200 * S, 480), createCoin(2250 * S, 480));
       c.push(createCoin(3000 * S, 490), createCoin(3050 * S, 490));
       c.push(createCoin(3350 * S, 340));
+      c.push(createCoin(340, 500), createCoin(400, 460), createCoin(460, 500));
       c.push(createCoin(170, 390), createCoin(200, 390), createCoin(230, 390));
       return c;
     })(),
@@ -88,6 +89,9 @@ export const VILLAGE_LEVELS: LevelData[] = [
         createMovingPlat(2400 * S, 480, 80 * S, 20, 'wood', 'horizontal', 150, 18),
       ];
     })(),
+    springs: [
+      createSpring(400, 630),
+    ],
     playerStart: { x: 150, y: 600 },
     goal: { x: 3450 * 2.0, y: 358 },
     timeBonus: 55,
@@ -150,6 +154,8 @@ export const VILLAGE_LEVELS: LevelData[] = [
       c.push(createCoin(3580 * S, 580), createCoin(3650 * S, 560));
       c.push(createCoin(4100 * S, 500), createCoin(4430 * S, 580));
       c.push(createCoin(4950 * S, 490), createCoin(5200 * S, 370));
+      c.push(createCoin(500, 480), createCoin(450, 410), createCoin(550, 410));
+      c.push(createCoin(7200, 480), createCoin(7150, 410), createCoin(7250, 410));
       return c;
     })(),
     questionBlocks: (() => {
@@ -192,6 +198,14 @@ export const VILLAGE_LEVELS: LevelData[] = [
         createMovingPlat(4600 * S, 500, 100 * S, 20, 'wood', 'horizontal', 200, 20),
       ];
     })(),
+    springs: [
+      createSpring(500, 630),
+      createSpring(7200, 630),
+    ],
+    spikes: [
+      createSpike(5400, 622),
+      createSpike(5480, 622),
+    ],
     playerStart: { x: 150, y: 600 },
     goal: { x: 5250 * 1.82, y: 388 },
     timeBonus: 62,
@@ -217,6 +231,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       // Bridge after pipes
       plats.push(...gapWithPlatforms(S, 1350, 750, 350, 3));
       plats.push(createPlat(1450 * S, 630, 150 * S, 28, 'wood'));
+      plats.push(createPlat(2740, 560, 120, 24, 'brick'));
       // Bridge to pipes 2
       plats.push(...gapWithPlatforms(S, 1750, 750, 350, 3));
       // Pipe section 2
@@ -265,6 +280,8 @@ export const VILLAGE_LEVELS: LevelData[] = [
       c.push(createCoin(4900 * S, 590), createCoin(5400 * S, 590), createCoin(5550 * S, 590));
       c.push(createCoin(6250 * S, 590), createCoin(6500 * S, 590), createCoin(6750 * S, 590));
       c.push(createCoin(7150 * S, 470));
+      c.push(createCoin(400, 580), createCoin(350, 510), createCoin(450, 510));
+      c.push(createCoin(2740, 500), createCoin(2740, 440));
       return c;
     })(),
     questionBlocks: (() => {
@@ -317,8 +334,17 @@ export const VILLAGE_LEVELS: LevelData[] = [
       return [
         createMovingPlat(3300 * S, 600, 100 * S, 20, 'wood', 'horizontal', 200, 20),
         createMovingPlat(5800 * S, 600, 100 * S, 20, 'wood', 'horizontal', 180, 22),
+        createMovingPlat(5000 * S, 600, 100, 20, 'wood', 'vertical', 100, 18),
       ];
     })(),
+    springs: [
+      createSpring(400, 730),
+    ],
+    spikes: [
+      createSpike(2980, 722),
+      createSpike(6600, 722),
+      createSpike(8600, 722),
+    ],
     playerStart: { x: 150, y: 700 },
     goal: { x: 7200 * 1.67, y: 488 },
     timeBonus: 68,
@@ -395,6 +421,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       c.push(createCoin(8200 * S, 720), createCoin(8500 * S, 640), createCoin(8800 * S, 560));
       c.push(createCoin(9100 * S, 480), createCoin(9400 * S, 560), createCoin(9700 * S, 640));
       c.push(createCoin(9900 * S, 480));
+      c.push(createCoin(400, 630), createCoin(350, 560), createCoin(450, 560));
       return c;
     })(),
     questionBlocks: (() => {
@@ -443,6 +470,15 @@ export const VILLAGE_LEVELS: LevelData[] = [
         createMovingPlat(7200 * S, 650, 100 * S, 20, 'wood', 'horizontal', 250, 22),
       ];
     })(),
+    springs: [
+      createSpring(400, 780),
+      createSpring(8400, 780),
+    ],
+    spikes: [
+      createSpike(4100, 772),
+      createSpike(7700, 772),
+    ],
+    coinGoal: 20,
     playerStart: { x: 150, y: 750 },
     goal: { x: 9950 * 1.48, y: 498 },
     timeBonus: 75,
@@ -532,6 +568,8 @@ export const VILLAGE_LEVELS: LevelData[] = [
       c.push(createCoin(6500 * S, 690), createCoin(7100 * S, 790), createCoin(7250 * S, 790));
       c.push(createCoin(7600 * S, 780), createCoin(7700 * S, 760));
       c.push(createCoin(8100 * S, 690), createCoin(8850 * S, 450));
+      c.push(createCoin(350, 680), createCoin(300, 610), createCoin(450, 610));
+      c.push(createCoin(10280, 680), createCoin(10230, 610), createCoin(10330, 610));
       return c;
     })(),
     questionBlocks: (() => {
@@ -590,6 +628,16 @@ export const VILLAGE_LEVELS: LevelData[] = [
         createMovingPlat(6200 * S, 700, 80 * S, 20, 'wood', 'vertical', 100, 18),
       ];
     })(),
+    springs: [
+      createSpring(350, 830),
+      createSpring(10280, 830),
+    ],
+    spikes: [
+      createSpike(7100, 822),
+      createSpike(7180, 822),
+      createSpike(8700, 822),
+    ],
+    coinGoal: 20,
     playerStart: { x: 150, y: 800 },
     goal: { x: 8950 * 1.38, y: 468 },
     timeBonus: 82,
@@ -677,6 +725,8 @@ export const VILLAGE_LEVELS: LevelData[] = [
       c.push(createCoin(9450 * S, 880), createCoin(9550 * S, 860));
       c.push(createCoin(10250 * S, 790), createCoin(10500 * S, 670), createCoin(10700 * S, 550));
       c.push(createCoin(11000 * S, 430));
+      c.push(createCoin(1750, 780), createCoin(1700, 710), createCoin(1800, 710));
+      c.push(createCoin(9300, 780), createCoin(9250, 710), createCoin(9350, 710));
       return c;
     })(),
     questionBlocks: (() => {
@@ -736,6 +786,14 @@ export const VILLAGE_LEVELS: LevelData[] = [
         createMovingPlat(10000 * S, 800, 80 * S, 20, 'wood', 'vertical', 120, 18),
       ];
     })(),
+    springs: [
+      createSpring(1750, 930),
+      createSpring(9300, 930),
+    ],
+    spikes: [
+      createSpike(1437, 808),
+      createSpike(11250, 922),
+    ],
     playerStart: { x: 150, y: 900 },
     goal: { x: 11075 * 1.25, y: 448 },
     timeBonus: 90,

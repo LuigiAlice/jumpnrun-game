@@ -2,7 +2,7 @@
 // 85: Tutorial, 86: Gap-Strecke, 87: Röhren-Labyrinth, 88: Vertikal-Kletterer, 89: Gegner-Horde, 90: Boss-Arena Finale
 // Castle, brick, and metal platforms with banner, chain, torch, boss-flag decorations
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 const S85 = 0.556;
 const S86 = 0.526;
@@ -38,6 +38,8 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       for (let x = 2100; x < 2700; x += 160) cs.push(createCoin(x * S, 550));
       for (let x = 4100; x < 4900; x += 150) cs.push(createCoin(x * S, 540));
       cs.push(createCoin(2160, 640), createCoin(2220, 640), createCoin(2280, 640));
+      // Coin arc above the tutorial spring
+      cs.push(createCoin(260, 490), createCoin(300, 450), createCoin(340, 490));
       return cs;
     })(),
     questionBlocks: [
@@ -64,6 +66,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     movingPlatforms: [
       createMovingPlat(3500 * S85, 540, 120, 24, 'platform_medium', 'horizontal', 250, 20),
     ],
+    springs: [createSpring(300, 580)],
   },
 
   // ============================================================
@@ -95,6 +98,9 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       for (let x = 3900; x < 4400; x += 200) cs.push(createCoin(x * S, 550));
       for (let x = 5600; x < 6100; x += 160) cs.push(createCoin(x * S, 550));
       for (let x = 7300; x < 8000; x += 150) cs.push(createCoin(x * S, 540));
+      // Coin arcs above the two throne-room springs
+      cs.push(createCoin(1110, 490), createCoin(1150, 450), createCoin(1190, 490));
+      cs.push(createCoin(2910, 490), createCoin(2950, 450), createCoin(2990, 490));
       return cs;
     })(),
     questionBlocks: [
@@ -132,6 +138,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       createMovingPlat(5000 * S86, 520, 140, 24, 'platform_medium', 'horizontal', 340, 22),
       createMovingPlat(6700 * S86, 530, 120, 24, 'platform_easy', 'vertical', 180, 20),
     ],
+    springs: [createSpring(1150, 580), createSpring(2950, 580)],
   },
 
   // ============================================================
@@ -170,6 +177,9 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       plats.push(...pipeSection(S, 13280, 600, 3));
       // Goal ground
       plats.push(createPlat(15100 * S, 600, 800 * S, 40, 'castle'));
+      // Breakable brick bonus — hangs above the mid-ground connector
+      // (ground below stays the main path, never load-bearing)
+      plats.push(createPlat(6350, 470, 96, 24, 'brick'));
       return plats;
     })(),
     coins: (() => {
@@ -181,6 +191,8 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       for (let x = 7500; x < 8000; x += 180) cs.push(createCoin(x * S, 550));
       for (let x = 12800; x < 13200; x += 150) cs.push(createCoin(x * S, 550));
       for (let x = 15200; x < 15800; x += 150) cs.push(createCoin(x * S, 540));
+      // Breakable-brick bonus coins (Big Mario smashes it from below)
+      cs.push(createCoin(6320, 425), createCoin(6350, 405), createCoin(6380, 425));
       return cs;
     })(),
     questionBlocks: [
@@ -230,6 +242,9 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       createMovingPlat(4800 * S87, 540, 130, 24, 'platform_medium', 'horizontal', 350, 22),
       createMovingPlat(10200 * S87, 530, 120, 24, 'platform_medium', 'vertical', 180, 20),
     ],
+    springs: [createSpring(1250, 580)],
+    // Spike passages on the pipe-base ground connectors (≥100px clear of QBs)
+    spikes: [createSpike(1380, 572), createSpike(3750, 572)],
   },
 
   // ============================================================
@@ -291,6 +306,8 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       for (let x = 10700; x < 10900; x += 100) cs.push(createCoin(x * S, 240));
       for (let x = 12000; x < 12500; x += 180) cs.push(createCoin(x * S, 550));
       for (let x = 15300; x < 15900; x += 150) cs.push(createCoin(x * S, 540));
+      // Coin ladder above the spring shortcut after climb 1
+      cs.push(createCoin(1600, 500), createCoin(1600, 430), createCoin(1600, 360), createCoin(1600, 290), createCoin(1600, 220), createCoin(1540, 160), createCoin(1660, 160));
       return cs;
     })(),
     questionBlocks: [
@@ -334,6 +351,8 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       createMovingPlat(8900 * S88, 520, 130, 24, 'platform_medium', 'horizontal', 300, 22),
       createMovingPlat(14800 * S88, 530, 120, 24, 'platform_medium', 'vertical', 160, 20),
     ],
+    springs: [createSpring(1600, 580)],
+    spikes: [createSpike(2900, 572), createSpike(5700, 572)],
   },
 
   // ============================================================
@@ -378,6 +397,9 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       for (let x = 6600; x < 8100; x += 180) cs.push(createCoin(x * S, 570));
       for (let x = 9200; x < 10700; x += 180) cs.push(createCoin(x * S, 570));
       for (let x = 11800; x < 13400; x += 180) cs.push(createCoin(x * S, 570));
+      // Coin arcs above the two horde springs
+      cs.push(createCoin(1610, 510), createCoin(1650, 470), createCoin(1690, 510));
+      cs.push(createCoin(4410, 510), createCoin(4450, 470), createCoin(4490, 510));
       return cs;
     })(),
     questionBlocks: [
@@ -433,7 +455,13 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       createMovingPlat(2600 * S89, 550, 130, 24, 'platform_medium', 'horizontal', 320, 22),
       createMovingPlat(8800 * S89, 550, 120, 24, 'platform_medium', 'horizontal', 300, 24),
       createMovingPlat(11500 * S89, 550, 120, 24, 'platform_medium', 'vertical', 160, 20),
+      // Langsame Orbit-Bahn über der mittleren Lücke
+      createMovingPlat(3549, 500, 120, 24, 'platform_easy', 'circular', 120, 12),
     ],
+    coinGoal: 33,
+    springs: [createSpring(1650, 600), createSpring(4450, 600)],
+    // Zwei Spike-Gassen in den mittleren Arenen (≥100px clear of QBs, ≥96px vom Goal)
+    spikes: [createSpike(2980, 592), createSpike(3020, 592), createSpike(4150, 592), createSpike(4190, 592)],
   },
 
   // ============================================================

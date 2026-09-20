@@ -1,7 +1,7 @@
 // Sky Clouds World - 6 Levels (25-30)
 // Distinct structures: Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Wolken-Inseln-Finale
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const SKY_CLOUDS_LEVELS: LevelData[] = [
     // ============================================================
@@ -35,6 +35,8 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createCoin(1070, 380),
                 createCoin(1100, 380),
                 createCoin(1130, 380),
+                // Discovery moment: bonus coin arc above the tutorial spring
+                createCoin(190, 440), createCoin(230, 400), createCoin(270, 440),
             ];
         })(),
         questionBlocks: (() => {
@@ -67,6 +69,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 504 },
         goal: { x: 4800 * 0.65 + 250 * 0.65, y: 380 },
         timeBonus: 180,
+        springs: [createSpring(230, 520)],
     },
 
     // ============================================================
@@ -119,6 +122,9 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createCoin(8000 * S, 400),
                 createCoin(10500 * S, 400),
                 createCoin(13800 * S, 360),
+                // Coin arcs above the two gap-section springs
+                createCoin(1710, 420), createCoin(1750, 380), createCoin(1790, 420),
+                createCoin(6710, 320), createCoin(6750, 280), createCoin(6790, 320),
             ];
         })(),
         questionBlocks: (() => {
@@ -160,6 +166,9 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 524 },
         goal: { x: 13600 * 0.625 + 300 * 0.625, y: 360 },
         timeBonus: 160,
+        springs: [createSpring(1750, 500), createSpring(6750, 400)],
+        // Flat spikes on cloud islands (grounded, far from QBs/goal/start)
+        spikes: [createSpike(1800, 492), createSpike(5400, 412)],
     },
 
     // ============================================================
@@ -211,6 +220,9 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 ...gapWithPlatforms(S, 11500, 460, 600, 4),
                 // Cloud island
                 createPlat(19900 * S, 500, 450 * S, 40, 'cloud'),
+                // Breakable brick bonus wall above the cloud island (never
+                // load-bearing; Big Mario smashes it from below)
+                createPlat(11940, 410, 96, 24, 'brick'),
                 // Entry bridge
                 ...gapWithPlatforms(S, 10200, 450, 600, 4),
                 ...pipeSection(S, 20500, 510, 4),
@@ -232,6 +244,10 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createCoin(15100 * S, 500),
                 createCoin(19200 * S, 480),
                 createCoin(23000 * S, 470),
+                // Brick-bonus coins above the breakable brick
+                createCoin(11900, 340), createCoin(11940, 320), createCoin(11980, 340),
+                // Coin arc above the spring on the goal cloud
+                createCoin(13460, 390), createCoin(13500, 350), createCoin(13540, 390),
             ];
         })(),
         questionBlocks: (() => {
@@ -269,7 +285,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         movingPlatforms: [
             createMovingPlat(16100, 520, 120, 24, 'platform_easy', 'horizontal', 200, 15),
             createMovingPlat(19600, 510, 120, 24, 'platform_medium', 'vertical', 140, 16),
-            createMovingPlat(22200, 500, 120, 24, 'platform_medium', 'horizontal', 180, 14),
+            createMovingPlat(22200, 500, 120, 24, 'platform_medium', 'horizontal', 180, 16),
         ],
         decorations: (() => {
             const S = 0.6;
@@ -285,6 +301,9 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 544 },
         goal: { x: 22600 * 0.6 + 300 * 0.6, y: 470 },
         timeBonus: 140,
+        springs: [createSpring(13500, 470)],
+        // Spikes at the pipe passages (grounded on cloud islands, clear of QBs)
+        spikes: [createSpike(2280, 532), createSpike(4920, 512), createSpike(7560, 492)],
     },
 
     // ============================================================
@@ -338,6 +357,10 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createCoin(11000 * S, 460),
                 createCoin(14500 * S, 430),
                 createCoin(16800 * S, 430),
+                // Coin ladder up from the spring shortcut after climb 1
+                createCoin(2335, 460), createCoin(2335, 390), createCoin(2335, 320),
+                // Coin arc above the spring on the goal cloud
+                createCoin(9160, 350), createCoin(9200, 310), createCoin(9240, 350),
             ];
         })(),
         questionBlocks: (() => {
@@ -363,7 +386,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         movingPlatforms: [
             createMovingPlat(5600, 540, 120, 24, 'platform_medium', 'horizontal', 180, 15),
             createMovingPlat(9800, 510, 120, 24, 'platform_medium', 'vertical', 140, 16),
-            createMovingPlat(13850, 470, 120, 24, 'platform_easy', 'horizontal', 160, 14),
+            createMovingPlat(13850, 470, 120, 24, 'platform_easy', 'horizontal', 160, 16),
             createMovingPlat(16200, 460, 120, 24, 'platform_medium', 'vertical', 120, 15),
         ],
         decorations: (() => {
@@ -380,6 +403,8 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 564 },
         goal: { x: 16600 * 0.556 + 300 * 0.556, y: 430 },
         timeBonus: 140,
+        coinGoal: 9,
+        springs: [createSpring(2335, 540), createSpring(9200, 430)],
     },
 
     // ============================================================
@@ -421,6 +446,8 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createCoin(12000 * S, 380),
                 createCoin(14500 * S, 360),
                 createCoin(16100 * S, 320),
+                // Coin arc above the horde spring
+                createCoin(3110, 380), createCoin(3150, 340), createCoin(3190, 380),
             ];
         })(),
         questionBlocks: (() => {
@@ -458,7 +485,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         })(),
         movingPlatforms: [
             createMovingPlat(5800, 500, 120, 24, 'platform_medium', 'vertical', 140, 16),
-            createMovingPlat(10200, 440, 120, 24, 'platform_medium', 'horizontal', 200, 14),
+            createMovingPlat(10200, 440, 120, 24, 'platform_medium', 'horizontal', 200, 16),
             createMovingPlat(15500, 370, 120, 24, 'platform_easy', 'vertical', 130, 15),
         ],
         decorations: (() => {
@@ -475,6 +502,10 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         playerStart: { x: 150, y: 564 },
         goal: { x: 15900 * 0.5 + 300 * 0.5, y: 320 },
         timeBonus: 140,
+        coinGoal: 8,
+        springs: [createSpring(3150, 460)],
+        // Spike-gasse on cloud islands, spaced apart, clear of QBs
+        spikes: [createSpike(1100, 512), createSpike(2150, 492), createSpike(4300, 432)],
     },
 
     // ============================================================
@@ -577,6 +608,9 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
                 createCoin(16300 * S, 370),
                 createCoin(18500 * S, 360),
                 createCoin(21000 * S, 320),
+                // Coin arcs above the two finale springs (bröckel/wind compensation)
+                createCoin(1940, 390), createCoin(1980, 350), createCoin(2020, 390),
+                createCoin(3380, 340), createCoin(3420, 300), createCoin(3460, 340),
             ];
         })(),
         questionBlocks: (() => {
@@ -606,11 +640,11 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
             ];
         })(),
         movingPlatforms: [
-            createMovingPlat(3700, 530, 120, 24, 'platform_medium', 'horizontal', 220, 14),
+            createMovingPlat(3700, 530, 120, 24, 'platform_medium', 'horizontal', 220, 16),
             createMovingPlat(9000, 470, 120, 24, 'platform_medium', 'vertical', 160, 15),
-            createMovingPlat(14400, 440, 120, 24, 'platform_medium', 'horizontal', 200, 14),
+            createMovingPlat(14400, 440, 120, 24, 'platform_medium', 'horizontal', 200, 16),
             createMovingPlat(17800, 410, 120, 24, 'platform_easy', 'vertical', 150, 16),
-            createMovingPlat(21500, 370, 120, 24, 'platform_medium', 'horizontal', 250, 13),
+            createMovingPlat(21500, 370, 120, 24, 'platform_medium', 'horizontal', 250, 15),
         ],
         decorations: (() => {
             const S = 0.45;
@@ -629,5 +663,7 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
         playerStart: { x: 200, y: 584 },
         goal: { x: 22000 * 0.45 + 350 * 0.45, y: 330 },
         timeBonus: 120,
+        // Rescue springs on mid islands — crumble-platform compensation
+        springs: [createSpring(1980, 470), createSpring(3420, 420)],
     },
 ];

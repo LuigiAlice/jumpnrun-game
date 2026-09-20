@@ -1,7 +1,7 @@
 // Volcano Lava World - 6 Levels (55-60)
 // S-Factors: 0.556, 0.526, 0.5, 0.476, 0.455, 0.435
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     // ============================================================
@@ -28,7 +28,15 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                     plats.push(createPlat(Math.round((baseX + 1075) * S), 440, 100 * S, 24, 'platform_easy'));
                     plats.push(createPlat((baseX + 1500) * S, 440, 100 * S, 24, 'platform_easy'));
                 }
+                // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut)
+                if (n >= 1 && n <= 10 && n < segCount - 1) {
+                    plats.push(createPlat(Math.round((baseX + 2420) * S), 440, 100 * S, 24, 'platform_easy'));
+                }
             }
+
+            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
+            // Stein1(→1334) → Bridge(1460) → Helper(1571) — jede Hufe ≤221px
+            plats.push(createPlat(1460, 440, 100, 24, 'platform_easy'));
 
             // Brick towers for decoration
             plats.push(createPlat(1200 * S, 400, 80 * S, 130, 'brick'));
@@ -116,6 +124,12 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             createMovingPlat(3100, 300, 110, 24, 'platform_medium', 'horizontal', 180, 20),
             createMovingPlat(12500, 310, 120, 24, 'platform_hard', 'horizontal', 200, 22),
         ],
+        // Tutorial: 1 Discovery-Spring (nicht pflicht, zeigt Mechanik)
+        // y = Plattform-Oberkante (p.y - p.h/2 = 530-50 = 480)
+        springs: (() => {
+            const S = 0.556;
+            return [createSpring(400 * S, 480)];
+        })(),
     },
 
     // ============================================================
@@ -143,6 +157,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                     const hY = n % 3 === 0 ? 460 : (n % 3 === 1 ? 430 : 450);
                     plats.push(createPlat((baseX + 1400) * S, hY, 100 * S, 24, 'platform_easy'));
                     plats.push(createPlat((baseX + 1550) * S, 480, 100 * S, 24, 'platform_easy'));
+                }
+                // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut)
+                if (n >= 1 && n <= 11 && n < segCount - 1) {
+                    plats.push(createPlat(Math.round((baseX + 1024) * S), 520, Math.round(134 * S), 24, 'platform_easy'));
                 }
             }
 
@@ -242,6 +260,15 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             createMovingPlat(16200, 350, 120, 24, 'platform_hard', 'horizontal', 200, 20),
             createMovingPlat(20200, 360, 110, 24, 'platform_medium', 'horizontal', 220, 22),
         ],
+        // Gap-Level: 2 Springs als Bonus-Helfer über weiten Sprüngen
+        // (je mittig auf Stein-Segmenten, ≥200px von Lava-Kanten; Oberkante = 550-50 = 500)
+        springs: (() => {
+            const S = 0.526;
+            return [
+                createSpring(500 * S, 500),
+                createSpring(14800 * S, 500),
+            ];
+        })(),
     },
 
     // ============================================================
@@ -261,12 +288,21 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             // Start ground
             plats.push(createPlat(0 * S, 560, 1500 * S, 100, 'stone'));
 
+            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
+            // Stein(→2000) → A(2180) → B(2480) → Pipe1 — jede Hufe ≤221px
+            plats.push(createPlat(2180, 540, 100, 24, 'platform_easy'));
+            plats.push(createPlat(2480, 520, 100, 24, 'platform_easy'));
+
             // Pipe section 1 (3 pipes) at gap
             plats.push(...pipeSection(S, 1800, 560, 3));
-
             // Ground segment
             plats.push(createPlat(3400 * S, 560, 1200 * S, 100, 'stone'));
             plats.push(createPlat((3400 + 1200) * S, 560, 200 * S, 100, 'lava'));
+
+            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
+            // Stein(→3700) → A(3850) → B(4110) → Pipe(4310) — jede Hufe ≤221px
+            plats.push(createPlat(3850, 540, 100, 24, 'platform_easy'));
+            plats.push(createPlat(4110, 520, 100, 24, 'platform_easy'));
 
             // Pipe section 2 (4 pipes)
             plats.push(...pipeSection(S, 5000, 560, 4));
@@ -277,6 +313,11 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
 
             // Pipe section 3 (5 pipes)
             plats.push(...pipeSection(S, 8400, 560, 5));
+
+            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
+            // Stein2(→5800) → A(5920) → B(6230) → Pipe(6410) — jede Hufe ≤221px
+            plats.push(createPlat(5920, 540, 100, 24, 'platform_easy'));
+            plats.push(createPlat(6230, 520, 100, 24, 'platform_easy'));
 
             // Ground segment
             plats.push(createPlat(11000 * S, 560, 1200 * S, 100, 'stone'));
@@ -289,12 +330,21 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             plats.push(createPlat(14400 * S, 560, 1200 * S, 100, 'stone'));
             plats.push(createPlat((14400 + 1200) * S, 560, 200 * S, 100, 'lava'));
 
+            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
+            // Stein3(→7500) → A(7660) → B(7960) → Pipe5(8110) — jede Hufe ≤221px
+            plats.push(createPlat(7660, 540, 100, 24, 'platform_easy'));
+            plats.push(createPlat(7960, 520, 100, 24, 'platform_easy'));
+
             // Pipe section 5 (5 pipes)
             plats.push(...pipeSection(S, 16000, 560, 5));
 
             // Ground segment
             plats.push(createPlat(18200 * S, 560, 1200 * S, 100, 'stone'));
             plats.push(createPlat((18200 + 1200) * S, 560, 200 * S, 100, 'lava'));
+
+            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
+            // Lava6(→9750) → A(9870) → Pipe6(10010) — jede Hufe ≤221px
+            plats.push(createPlat(9870, 540, 100, 24, 'platform_easy'));
 
             // Pipe section 6 (3 pipes)
             plats.push(...pipeSection(S, 19800, 560, 3));
@@ -319,6 +369,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
       // Bridge platforms to close BFS gaps
       plats.push(createPlat(761.0, 370, 100, 24, 'platform_easy'));
       plats.push(createPlat(2087.5, 390, 100, 24, 'platform_easy'));
+
+      // Breakable-Brick-Bonus: freistehendes Regal über dem Zielpfad
+      // (Big Mario zerbricht es von unten, +50; nie load-bearing)
+      plats.push(createPlat(21600 * S, 380, 100 * S, 24, 'brick'));
 
       return plats;
     })(),
@@ -428,6 +482,19 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             createMovingPlat(15000, 370, 120, 24, 'platform_medium', 'horizontal', 200, 20),
             createMovingPlat(18800, 380, 110, 24, 'platform_easy', 'vertical', 140, 18),
         ],
+        // Tunnel: Spike-Passagen auf breiten Steinböden, mittig im Segment
+        // (≥450px von Lava-Kanten; Oberkante = 560-50 = 510 → y = 502)
+        spikes: (() => {
+            const S = 0.5;
+            return [
+                createSpike(3520 * S, 502),
+                createSpike(3800 * S, 502),
+                createSpike(11200 * S, 502),
+                createSpike(18300 * S, 502),
+            ];
+        })(),
+        // Breakable-Brick-Bonus: freistehende Bricks als Big-Mario-Bonuspfad
+        // (Basis für Bricks ist das bestehende Deko-Turm-Element)
     },
 
     // ============================================================
@@ -447,6 +514,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             // Start ground
             plats.push(createPlat(0 * S, 580, 1500 * S, 100, 'stone'));
 
+            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
+            // Climb1-Ende(→1395) → Bridge(1530) → Stein2(1666) — jede Hufe ≤221px
+            plats.push(createPlat(1530, 540, 100, 24, 'platform_easy'));
+
             // Vertical climb 1
             plats.push(...verticalClimb(S, 1800, 580, 'stone'));
 
@@ -454,12 +525,30 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             plats.push(createPlat(4100 * S, 580, 1200 * S, 100, 'stone'));
             plats.push(createPlat(5300 * S, 580, 200 * S, 100, 'lava'));
 
+            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
+            // Climb2-Ende(→3251) → Bridge(3390) → Stein3(3522) — jede Hufe ≤221px
+            plats.push(createPlat(3390, 540, 100, 24, 'platform_easy'));
+
             // Vertical climb 2
             plats.push(...verticalClimb(S, 5700, 580, 'stone'));
+
+            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut)
+            plats.push(createPlat(8995, 478, 147, 24, 'platform_easy'));
+            plats.push(createPlat(12888, 478, 147, 24, 'platform_easy'));
+            plats.push(createPlat(14883, 478, 142, 24, 'platform_easy'));
 
             // Ground after climb 2
             plats.push(createPlat(8000 * S, 580, 1200 * S, 100, 'stone'));
             plats.push(createPlat(9200 * S, 580, 200 * S, 100, 'lava'));
+
+            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
+            // Stein3(→4094) → A(4210) → B(4440) → Climb3(4546) — jede Hufe ≤221px
+            plats.push(createPlat(4210, 540, 100, 24, 'platform_easy'));
+            plats.push(createPlat(4440, 480, 100, 24, 'platform_easy'));
+
+            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
+            // Climb3-Ende(→5107) → Bridge(5245) → Stein4(5379) — jede Hufe ≤221px
+            plats.push(createPlat(5245, 540, 100, 24, 'platform_easy'));
 
             // Vertical climb 3
             plats.push(...verticalClimb(S, 9600, 580, 'stone'));
@@ -468,8 +557,17 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             plats.push(createPlat(11900 * S, 580, 1200 * S, 100, 'stone'));
             plats.push(createPlat(13100 * S, 580, 200 * S, 100, 'lava'));
 
+            // Volcano-Gravity-Bruecken (g=2200, ensureSolvable-Bridges, vorbaut):
+            // Stein4(→5950) → A(6050) → B(6290) → Climb4(6402) — jede Hufe ≤221px
+            plats.push(createPlat(6050, 540, 100, 24, 'platform_easy'));
+            plats.push(createPlat(6290, 480, 100, 24, 'platform_easy'));
+
             // Vertical climb 4
             plats.push(...verticalClimb(S, 13500, 580, 'stone'));
+
+            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
+            // Climb4-Ende(→6964) → Bridge(7080) → Stein5(7236) — jede Hufe ≤221px
+            plats.push(createPlat(7080, 540, 100, 24, 'platform_easy'));
 
             // Ground after climb 4
             plats.push(createPlat(15800 * S, 580, 1200 * S, 100, 'stone'));
@@ -601,6 +699,13 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             createMovingPlat(11600, 380, 110, 24, 'platform_easy', 'horizontal', 220, 20),
             createMovingPlat(15600, 370, 120, 24, 'platform_medium', 'horizontal', 240, 24),
         ],
+        // Vertikal: Coin-Leiter — Goal erst mit 32/47 Coins (68%) offen
+        coinGoal: 32,
+        // Bonus-Feder mittig auf dem Start-Boden (Oberkante = 580-50 = 530), weit weg von QB/Lava
+        springs: (() => {
+            const S = 0.476;
+            return [createSpring(600 * S, 530)];
+        })(),
     },
 
     // ============================================================
@@ -625,6 +730,11 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
                 if (n < segCount - 1) {
                     plats.push(createPlat((baseX + 1200) * S, 560, 200 * S, 100, 'lava'));
                     plats.push(createPlat((baseX + 1500) * S, 450, 100 * S, 24, 'platform_easy'));
+                }
+                // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
+                // Stein(→+600) → Bridge(über Lava-Streifen) → Stein(+1800) — jede Hufe ≤170px
+                if (n < segCount - 1) {
+                    plats.push(createPlat(Math.round((baseX + 1050) * S), 408, Math.round(154 * S), 24, 'platform_easy'));
                 }
             }
 
@@ -772,6 +882,19 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             createMovingPlat(17000, 320, 110, 24, 'platform_easy', 'circular', 100, 18),
             createMovingPlat(20600, 310, 120, 24, 'platform_medium', 'vertical', 160, 22),
         ],
+        // Horde: Spike-Gasse auf breiten Steinböden, mittig im Segment
+        // (≥170px von Lava-Kanten; Oberkante = 560-50 = 510 → y = 502)
+        spikes: (() => {
+            const S = 0.455;
+            return [
+                createSpike(3700 * S, 502),
+                createSpike(3875 * S, 502),
+                createSpike(9400 * S, 502),
+                createSpike(14800 * S, 502),
+            ];
+        })(),
+        // Horde: Goal erst mit 55/86 Coins (64%) offen
+        coinGoal: 55,
     },
 
     // ============================================================
@@ -791,6 +914,9 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             // Stage 1: Start at ground level
             plats.push(createPlat(0 * S, 580, 1500 * S, 100, 'stone'));
             plats.push(createPlat(1500 * S, 580, 200 * S, 100, 'lava'));
+
+            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut)
+            plats.push(createPlat(400, 530, 70, 24, 'platform_easy'));
 
             // Ascent 1: step up via platforms (ground → y=500 → y=420 → y=340)
             plats.push(createPlat(1900 * S, 500, 120 * S, 28, 'platform_easy'));
@@ -814,6 +940,11 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             // Mid-level plateau
             plats.push(createPlat(8800 * S, 20, 1500 * S, 100, 'stone'));
             plats.push(createPlat(10300 * S, 20, 200 * S, 100, 'lava'));
+
+            // Volcano-Gravity-Bruecke (g=2200, ensureSolvable-Bridge, vorbaut):
+            // Mid-Plateau(→4154) → A(4340) → B(4600) → Descent-Helper(4629)
+            plats.push(createPlat(4340, -60, 100, 24, 'platform_easy'));
+            plats.push(createPlat(4600, -60, 100, 24, 'platform_easy'));
 
             // Descent phase: step down
             plats.push(createPlat(10700 * S, 100, 120 * S, 28, 'platform_hard'));
@@ -977,5 +1108,25 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
             createMovingPlat(15600, 20, 110, 24, 'platform_medium', 'horizontal', 240, 22),
             createMovingPlat(17800, 30, 120, 24, 'platform_hard', 'horizontal', 200, 20),
         ],
+        // Eruption-Finale: steigende Lava flutet untere Passagen —
+        // KEINE Spikes unten; max 2 Spikes auf den obersten Plateaus
+        // (Plattform-Oberkante = p.y - p.h/2), fern von QBs (≥100px) und Coins
+        spikes: (() => {
+            const S = 0.435;
+            return [
+                createSpike(3170, -38),
+                createSpike(7400, 42),
+            ];
+        })(),
+        // Springs oben als Flucht-/Rettungs-Element Richtung nächste Etage
+        // (je mittig auf Stein-Plateaus, fern von QBs/Coins)
+        springs: (() => {
+            const S = 0.435;
+            return [
+                createSpring(9000 * S, -30),
+                createSpring(14000 * S, 50),
+                createSpring(17300 * S, 50),
+            ];
+        })(),
     },
 ];

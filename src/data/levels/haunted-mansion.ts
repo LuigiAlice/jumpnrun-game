@@ -2,7 +2,7 @@
 // Distinct structures: Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Geister-Verfolgung Finale
 // Stone/Brick theme with haunted decorations: cobweb, tombstone, ghost, web
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 // ---- Local helpers ----
 
@@ -63,6 +63,8 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createCoin(8800 * S, 400), // ghost platform area
         createCoin(10000 * S, 500), createCoin(11500 * S, 490),
         createCoin(1970, 430), createCoin(2000, 430), createCoin(2030, 430), createCoin(2060, 430), createCoin(2090, 430),
+        // Coin arc above the tutorial spring
+        createCoin(349, 460), createCoin(389, 420), createCoin(429, 460),
       ];
     })(),
     questionBlocks: (() => {
@@ -97,6 +99,8 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 83, y: 510 },
     goal: { x: 11800, y: 538 },
     timeBonus: 150,
+    // Discovery-Spring on the entry bridge (bridge top edge = 540)
+    springs: [createSpring(389, 540)],
     movingPlatforms: [
       createMovingPlat(5000, 440, 120, 24, 'platform_medium', 'horizontal', 200, 18),
       createMovingPlat(8700, 460, 100, 22, 'platform_easy', 'horizontal', 160, 22),
@@ -132,6 +136,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createCoin(11000 * S, 500), createCoin(12500 * S, 490),
         createCoin(13100 * S, 440), // over gap 4
         createCoin(14500 * S, 500), createCoin(15500 * S, 490),
+        // Coin arcs above the gap springs
+        createCoin(2180 * S, 460), createCoin(2200 * S, 420), createCoin(2220 * S, 460),
+        createCoin(10330 * S, 460), createCoin(10350 * S, 420), createCoin(10370 * S, 460),
       ];
     })(),
     questionBlocks: (() => {
@@ -169,6 +176,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 79, y: 510 },
     goal: { x: 16300, y: 538 },
     timeBonus: 170,
+    // Rescue springs before the big gaps (bridge top edge = 540)
+    springs: [createSpring(1157.2, 540), createSpring(5444.1, 540)],
+    // Gruf-fallen on the safe bridge ground, well clear of QBs and gaps
+    spikes: [createSpike(447.1, 532), createSpike(4023.9, 532)],
     movingPlatforms: [
       createMovingPlat(5100, 420, 120, 24, 'platform_medium', 'horizontal', 220, 20),
       createMovingPlat(8900, 390, 120, 24, 'platform_medium', 'vertical', 160, 22),
@@ -215,6 +226,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createCoin(11000 * S, 520), createCoin(12500 * S, 460),
         createCoin(14000 * S, 520), createCoin(16000 * S, 500), // pipe
         createCoin(17500 * S, 520), createCoin(19000 * S, 520),
+        // Coin arcs above the pipe-maze springs
+        createCoin(2610, 480), createCoin(2650, 440), createCoin(2690, 480),
+        createCoin(6085, 480), createCoin(6125, 440), createCoin(6165, 480),
       ];
     })(),
     questionBlocks: (() => {
@@ -264,6 +278,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 75, y: 530 },
     goal: { x: 19600, y: 558 },
     timeBonus: 190,
+    // Springs on the connector bridges between pipe sections (bridge top edge = 560)
+    springs: [createSpring(2650, 560), createSpring(6125, 560)],
+    // Spike passages between the pipe sections (never on pipe tops)
+    spikes: [createSpike(500, 552), createSpike(8475, 552), createSpike(14050, 552)],
     movingPlatforms: [
       createMovingPlat(4000, 480, 120, 24, 'platform_medium', 'horizontal', 200, 20),
       createMovingPlat(8200, 430, 120, 24, 'platform_medium', 'vertical', 140, 18),
@@ -303,6 +321,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createCoin(7500 * S, 580), createCoin(8300 * S, 570),
         createCoin(8800 * S, 530), createCoin(9100 * S, 430), // climb 4
         createCoin(10000 * S, 580), createCoin(10800 * S, 570),
+        // Coin arcs above the vertical shortcut springs
+        createCoin(2935, 540), createCoin(2975, 500), createCoin(3015, 540),
+        createCoin(7647, 540), createCoin(7687, 500), createCoin(7727, 540),
       ];
     })(),
     questionBlocks: (() => {
@@ -348,6 +369,11 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 71, y: 590 },
     goal: { x: 11000, y: 618 },
     timeBonus: 200,
+    // Spring shortcuts on the connector bridges (bridge top edge = 620)
+    springs: [createSpring(2975, 620), createSpring(7687, 620)],
+    // Gruf-fallen guarding the bridge passages
+    spikes: [createSpike(404.6, 612), createSpike(10234, 612)],
+    coinGoal: 17,
     movingPlatforms: [
       createMovingPlat(2600, 540, 120, 24, 'platform_medium', 'vertical', 180, 20),
       createMovingPlat(5400, 500, 120, 24, 'platform_medium', 'horizontal', 200, 22),
@@ -388,6 +414,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createCoin(11500 * S, 540), createCoin(12500 * S, 530),
         createCoin(13000 * S, 430), // ghost platforms 2
         createCoin(14200 * S, 540), createCoin(15000 * S, 530),
+        // Coin arcs above the horde springs
+        createCoin(551, 500), createCoin(591.5, 460), createCoin(631.5, 500),
+        createCoin(8172, 520), createCoin(8212, 480), createCoin(8252, 520),
       ];
     })(),
     questionBlocks: (() => {
@@ -444,6 +473,11 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 68, y: 550 },
     goal: { x: 14200, y: 578 },
     timeBonus: 210,
+    // Springs as escape hatches in the horde gauntlet (bridge top edge = 580)
+    springs: [createSpring(591.5, 580), createSpring(8212.75, 580)],
+    // Spike alley through the horde ground (bridge top edge = 580)
+    spikes: [createSpike(1410.5, 572), createSpike(4186, 572), createSpike(11466, 572)],
+    coinGoal: 14,
     movingPlatforms: [
       createMovingPlat(5200, 500, 120, 24, 'platform_medium', 'horizontal', 220, 20),
       createMovingPlat(7500, 460, 120, 24, 'platform_medium', 'vertical', 150, 18),
@@ -488,6 +522,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createCoin(10500 * S, 580), createCoin(11600 * S, 280), // vertical shaft 3
         createCoin(12500 * S, 580), createCoin(13500 * S, 460), // ghost platforms 4
         createCoin(15000 * S, 580), createCoin(15500 * S, 570),
+        // Coin arcs above the finale springs (spring launch reaches them)
+        createCoin(1260 * S, 480), createCoin(1300 * S, 440), createCoin(1340 * S, 480),
+        createCoin(16210 * S, 480), createCoin(16250 * S, 440), createCoin(16290 * S, 480),
       ];
     })(),
     questionBlocks: (() => {
@@ -543,6 +580,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     playerStart: { x: 65, y: 590 },
     goal: { x: 15800, y: 618 },
     timeBonus: 220,
+    // Springs as compensation against the falling-hazard finale (bridge top edge = 620)
+    springs: [createSpring(565.5, 620), createSpring(7068.75, 620)],
+    // Max 2 gruf-fallen in the finale, only on brick bridges (never on crumble/ghost platforms)
+    spikes: [createSpike(4219.5, 612), createSpike(12702, 612)],
     movingPlatforms: [
       createMovingPlat(3600, 500, 120, 24, 'platform_medium', 'horizontal', 220, 22),
       createMovingPlat(6400, 460, 120, 24, 'platform_medium', 'vertical', 160, 20),

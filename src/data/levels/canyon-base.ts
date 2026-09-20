@@ -1,4 +1,4 @@
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, pipeSection, verticalClimb, gapWithPlatforms } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, pipeSection, verticalClimb, gapWithPlatforms } from './helpers';
 
 const canyonGroundSection = (S: number, startX: number, baseY: number, width: number): any[] => {
   const plats = [];
@@ -117,6 +117,8 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       for (let x = 18400 * S; x < 20800 * S; x += 150 * S) coins.push(createCoin(x, 30));
       for (let x = 20800 * S; x < 21800 * S; x += 150 * S) coins.push(createCoin(x, 30));
       coins.push(createCoin(220, 380), createCoin(250, 380), createCoin(280, 380), createCoin(310, 380));
+      // Coin arc above the tutorial spring
+      coins.push(createCoin(160, 470), createCoin(200, 430), createCoin(240, 470));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -154,6 +156,10 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     playerStart: { x: 100, y: 470 },
     goal: createGoal(21300 * 0.556, 48, 1200, 'easy'),
     timeBonus: 180,
+    // Discovery-Spring on the start plateau (stone top edge = 530)
+    springs: [createSpring(200, 530)],
+    // Spike traps on safe stone ground at the abyss edges (large clearance)
+    spikes: [createSpike(2900, 442), createSpike(5900, 362)],
   },
 
   // ============================================================
@@ -233,6 +239,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       for (let x = 29100 * S; x < 32700 * S; x += 150 * S) coins.push(createCoin(x, 210));
       for (let x = 32700 * S; x < 34400 * S; x += 100 * S) coins.push(createCoin(x, 140));
       for (let x = 34400 * S; x < 36800 * S; x += 150 * S) coins.push(createCoin(x, 100));
+      // Coin arcs above the gap springs
+      coins.push(createCoin(2910, 520), createCoin(2950, 480), createCoin(2990, 520));
+      coins.push(createCoin(5750, 490), createCoin(5790, 450), createCoin(5830, 490));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -278,6 +287,10 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     playerStart: { x: 100, y: 520 },
     goal: createGoal(37100 * 0.526, 118, 1500, 'medium'),
     timeBonus: 200,
+    // Rescue springs before the canyon gaps (stone top edges = 580 / 530)
+    springs: [createSpring(2950, 580), createSpring(5790, 530)],
+    // Spike traps on safe ground at the abyss edges, far from QBs
+    spikes: [createSpike(8400, 452), createSpike(11151.2, 392)],
   },
 
   // ============================================================
@@ -365,6 +378,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       for (let x = 24200 * S; x < 25800 * S; x += 100 * S) coins.push(createCoin(x, 190));
       for (let x = 25800 * S; x < 26600 * S; x += 130 * S) coins.push(createCoin(x, 120));
       for (let x = 26600 * S; x < 29000 * S; x += 150 * S) coins.push(createCoin(x, 120));
+      // Coin arcs above the pipe-maze springs
+      coins.push(createCoin(1060, 620), createCoin(1100, 580), createCoin(1140, 620));
+      coins.push(createCoin(9010, 340), createCoin(9050, 300), createCoin(9090, 340));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -428,6 +444,10 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     playerStart: { x: 100, y: 620 },
     goal: createGoal(29500 * 0.5, 138, 1500, 'medium'),
     timeBonus: 210,
+    // Springs on the pipe-maze connector grounds (stone top edges = 680 / 400)
+    springs: [createSpring(1100, 680), createSpring(9050, 400)],
+    // Spike passages between the pipe sections (never on pipe tops)
+    spikes: [createSpike(1650, 672), createSpike(2100, 672), createSpike(7600, 462)],
   },
 
   // ============================================================
@@ -496,6 +516,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       for (let x = 25300 * S; x < 27600 * S; x += 150 * S) coins.push(createCoin(x, 100));
       for (let x = 27600 * S; x < 28200 * S; x += 80 * S) coins.push(createCoin(x, 70));
       for (let x = 29000 * S; x < 31400 * S; x += 150 * S) coins.push(createCoin(x, 50));
+      // Coin arcs above the spring shortcuts
+      coins.push(createCoin(2340, 500), createCoin(2380, 460), createCoin(2420, 500));
+      coins.push(createCoin(8480, 220), createCoin(8520, 180), createCoin(8560, 220));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -539,6 +562,11 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     playerStart: { x: 100, y: 570 },
     goal: createGoal(31900 * 0.476, 68, 1800, 'hard'),
     timeBonus: 200,
+    // Spring shortcuts on the connector grounds (stone top edges = 560 / 280)
+    springs: [createSpring(2380, 560), createSpring(8520, 280)],
+    // Spike traps on safe stone grounds
+    spikes: [createSpike(5300, 412), createSpike(12042.8, 122)],
+    coinGoal: 145,
   },
 
   // ============================================================
@@ -603,6 +631,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       for (let x = 32900 * S; x < 33500 * S; x += 80 * S) coins.push(createCoin(x, 220));
       for (let x = 34300 * S; x < 37200 * S; x += 150 * S) coins.push(createCoin(x, 210));
       for (let x = 37200 * S; x < 38200 * S; x += 150 * S) coins.push(createCoin(x, 210));
+      // Coin arcs above the horde springs
+      coins.push(createCoin(2330, 520), createCoin(2370, 480), createCoin(2410, 520));
+      coins.push(createCoin(8920, 380), createCoin(8960, 340), createCoin(9000, 380));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -656,6 +687,11 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     playerStart: { x: 100, y: 520 },
     goal: createGoal(37700 * 0.455, 228, 1600, 'medium'),
     timeBonus: 200,
+    // Springs as escape hatches in the horde gauntlet (stone top edges = 580 / 440)
+    springs: [createSpring(2370, 580), createSpring(8960, 440)],
+    // Spike alley through the horde ground, far from QBs and goal
+    spikes: [createSpike(5232.5, 512), createSpike(7200, 512), createSpike(13600, 312)],
+    coinGoal: 165,
   },
 
   // ============================================================
@@ -732,6 +768,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       for (let x = 33400 * S; x < 34400 * S; x += 100 * S) coins.push(createCoin(x, 70));
       for (let x = 34400 * S; x < 35100 * S; x += 80 * S) coins.push(createCoin(x, 50));
       for (let x = 35900 * S; x < 38800 * S; x += 150 * S) coins.push(createCoin(x, 20));
+      // High bonus coins above the finale springs (spring launch reaches them)
+      coins.push(createCoin(110, 670), createCoin(150, 630), createCoin(190, 670));
+      coins.push(createCoin(5010, 420), createCoin(5050, 360), createCoin(5090, 420));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -786,5 +825,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     playerStart: { x: 100, y: 670 },
     goal: createGoal(39300 * 0.417, 38, 2400, 'hard'),
     timeBonus: 220,
+    // Springs as compensation for the crumbling finale (stone top edges = 730 / 480)
+    springs: [createSpring(150, 730), createSpring(5050, 480)],
+    // Max 2 spike traps, only on stone grounds (never on crumble platforms or landing spots)
+    spikes: [createSpike(10720, 212), createSpike(12900, 122)],
   },
 ];

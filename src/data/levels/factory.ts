@@ -1,7 +1,7 @@
 // Factory World - 6 distinct level types (IDs 49-54)
 // Tutorial, Gap-Strecke, Röhren-Labyrinth, Vertikal-Kletterer, Gegner-Horde, Förderband-Finale
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const FACTORY_LEVELS: LevelData[] = [
   // ============================================================
@@ -56,6 +56,8 @@ export const FACTORY_LEVELS: LevelData[] = [
       for (let x = 5000 * S; x < 6000 * S; x += 200) cs.push(createCoin(x, 550));
       for (let x = 6300 * S; x < 7300 * S; x += 200) cs.push(createCoin(x, 550));
       cs.push(createCoin(3250, 640), createCoin(3300, 640), createCoin(3350, 640), createCoin(3400, 640));
+      // Coin arc above the discovery spring
+      cs.push(createCoin(660, 420), createCoin(700, 380), createCoin(740, 420));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -93,6 +95,8 @@ export const FACTORY_LEVELS: LevelData[] = [
     movingPlatforms: [
       createMovingPlat(4500 * 0.625, 540, 130, 24, 'platform_easy', 'horizontal', 300, 20),
     ],
+    // Tutorial discovery spring on the second metal stretch
+    springs: [createSpring(700, 580)],
   },
 
   // ============================================================
@@ -153,6 +157,9 @@ export const FACTORY_LEVELS: LevelData[] = [
       for (let x = 5500 * S; x < 6100 * S; x += 200) cs.push(createCoin(x, 550));
       for (let x = 7200 * S; x < 8000 * S; x += 200) cs.push(createCoin(x, 550));
       for (let x = 9200 * S; x < 10000 * S; x += 200) cs.push(createCoin(x, 550));
+      // Coin arcs above both springs
+      cs.push(createCoin(160, 420), createCoin(200, 380), createCoin(240, 420));
+      cs.push(createCoin(4160, 420), createCoin(4200, 380), createCoin(4240, 420));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -196,6 +203,9 @@ export const FACTORY_LEVELS: LevelData[] = [
       createMovingPlat(5800 * 0.6, 530, 140, 24, 'platform_medium', 'horizontal', 380, 22),
       createMovingPlat(8000 * 0.6, 520, 120, 24, 'platform_easy', 'vertical', 200, 18),
     ],
+    // Gap-Strecke: two launch springs with coin arcs + guarded conveyor passages
+    springs: [createSpring(200, 580), createSpring(4200, 580)],
+    spikes: [createSpike(4400, 572), createSpike(5400, 572)],
   },
 
   // ============================================================
@@ -262,6 +272,10 @@ export const FACTORY_LEVELS: LevelData[] = [
       plats.push(createPlat(3451.0, 396, 100, 24, 'platform_easy'));
       plats.push(createPlat(7356.9, 496, 100, 24, 'platform_easy'));
 
+      // Breakable brick bonus ledges (optional, not load-bearing)
+      plats.push(createPlat(4615, 490, 120, 24, 'brick'));
+      plats.push(createPlat(7200, 470, 90, 24, 'brick'));
+
       return plats;
     })(),
     coins: (() => {
@@ -273,6 +287,9 @@ export const FACTORY_LEVELS: LevelData[] = [
       for (let x = 8300 * S; x < 8800 * S; x += 200) cs.push(createCoin(x, 550));
       for (let x = 12700 * S; x < 13300 * S; x += 200) cs.push(createCoin(x, 550));
       for (let x = 17200 * S; x < 18000 * S; x += 200) cs.push(createCoin(x, 550));
+      // Breakable brick bonus coins
+      cs.push(createCoin(4585, 440), createCoin(4615, 440), createCoin(4645, 440));
+      cs.push(createCoin(7180, 420), createCoin(7220, 420));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -326,6 +343,8 @@ export const FACTORY_LEVELS: LevelData[] = [
       createMovingPlat(10400 * 0.556, 540, 120, 24, 'platform_medium', 'vertical', 180, 20),
       createMovingPlat(16300 * 0.556, 530, 130, 24, 'platform_medium', 'horizontal', 350, 24),
     ],
+    // Pipe passages guarded by spikes + breakable brick bonus ledges
+    spikes: [createSpike(750, 572), createSpike(1850, 572), createSpike(6000, 572), createSpike(7100, 572)],
   },
 
   // ============================================================
@@ -411,6 +430,8 @@ export const FACTORY_LEVELS: LevelData[] = [
       // Climb 4 peak
       for (let x = 16000; x < 16200; x += 100) cs.push(createCoin(x * S, 240));
       for (let x = 17200 * S; x < 18000 * S; x += 200) cs.push(createCoin(x, 550));
+      // Coin ladder up the mixed-height section
+      cs.push(createCoin(3300, 470), createCoin(3450, 390), createCoin(3600, 310), createCoin(3750, 170));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -461,9 +482,15 @@ export const FACTORY_LEVELS: LevelData[] = [
     timeBonus: 180,
     movingPlatforms: [
       createMovingPlat(700 * 0.5, 530, 120, 24, 'platform_medium', 'horizontal', 300, 20),
+      // Smokestack elevator between the mixed-height platforms
+      createMovingPlat(3900, 500, 120, 24, 'platform_medium', 'vertical', 160, 20),
       createMovingPlat(8800 * 0.5, 520, 130, 24, 'platform_medium', 'horizontal', 280, 22),
       createMovingPlat(16600 * 0.5, 520, 130, 24, 'platform_medium', 'horizontal', 320, 24),
     ],
+    // Vertikal-Kletterer: spring shortcut + guarded ground stretches + coin ladder gate
+    springs: [createSpring(2870, 580)],
+    spikes: [createSpike(1500, 572), createSpike(3030, 572)],
+    coinGoal: 16,
   },
 
   // ============================================================
@@ -539,12 +566,11 @@ export const FACTORY_LEVELS: LevelData[] = [
     enemies: (() => {
       const S = 0.455;
       return [
-        // Arena 1: 5 enemies
+        // Arena 1: 4 enemies
         createEnemy(350 * S, 610, 'robot'),
         createEnemy(600 * S, 610, 'robot'),
         createEnemy(900 * S, 610, 'goomba'),
         createEnemy(1200 * S, 610, 'koopa'),
-        createEnemy(1500 * S, 610, 'goomba'),
         // Arena 2: 5 enemies
         createEnemy(3300 * S, 610, 'robot'),
         createEnemy(3700 * S, 610, 'crab'),
@@ -557,11 +583,10 @@ export const FACTORY_LEVELS: LevelData[] = [
         createEnemy(7900 * S, 610, 'koopa'),
         createEnemy(8800 * S, 610, 'piranha'),
         createEnemy(9200 * S, 610, 'piranha'),
-        // Arena 4: 4 enemies
+        // Arena 4: 3 enemies
         createEnemy(10700 * S, 610, 'robot'),
         createEnemy(11200 * S, 610, 'crab'),
         createEnemy(11700 * S, 610, 'robot'),
-        createEnemy(12200 * S, 610, 'goomba'),
         // Arena 5: 3 enemies
         createEnemy(14200 * S, 610, 'robot'),
         createEnemy(15000 * S, 610, 'goomba'),
@@ -589,6 +614,9 @@ export const FACTORY_LEVELS: LevelData[] = [
       createMovingPlat(10000 * 0.455, 580, 120, 24, 'platform_medium', 'horizontal', 400, 24),
       createMovingPlat(14500 * 0.455, 580, 130, 24, 'platform_easy', 'vertical', 180, 22),
     ],
+    // Spike-Gasse through Arena 2 + single guard in Arena 4
+    spikes: [createSpike(1250, 622), createSpike(1320, 622), createSpike(1390, 622), createSpike(5200, 622)],
+    coinGoal: 20,
   },
 
   // ============================================================
@@ -661,6 +689,9 @@ export const FACTORY_LEVELS: LevelData[] = [
       for (let x = 10400 * S; x < 12400 * S; x += 180) cs.push(createCoin(x, 600));
       for (let x = 14200 * S; x < 16200 * S; x += 180) cs.push(createCoin(x, 600));
       for (let x = 17200 * S; x < 19200 * S; x += 180) cs.push(createCoin(x, 600));
+      // Coin arcs above both rescue springs
+      cs.push(createCoin(350, 530), createCoin(400, 490), createCoin(450, 530));
+      cs.push(createCoin(6060, 530), createCoin(6100, 490), createCoin(6140, 530));
       return cs;
     })(),
     questionBlocks: (() => {
@@ -739,5 +770,8 @@ export const FACTORY_LEVELS: LevelData[] = [
       createMovingPlat(12000 * 0.417, 570, 140, 24, 'platform_medium', 'horizontal', 400, 24),
       createMovingPlat(16500 * 0.417, 580, 130, 24, 'platform_medium', 'horizontal', 300, 22),
     ],
+    // Finale compensation: rescue springs against falling hazards + flat spikes
+    springs: [createSpring(400, 630), createSpring(6100, 630)],
+    spikes: [createSpike(320, 622), createSpike(4400, 622)],
   },
 ];

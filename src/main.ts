@@ -31,6 +31,7 @@ const config: Phaser.Types.Core.GameConfig = {
 const game = new Phaser.Game(config);
 
 (window as any).game = game;
+(window as any).__game = game;
 
 game.events.once('ready', () => {
   game.canvas?.setAttribute('tabindex', '0');

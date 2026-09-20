@@ -3,7 +3,7 @@
 // Biome-aware jump distances (gravity from config.ts BIOME_GRAVITY)
 // MAX_JUMP_UP = 350, MAX_FALL_DOWN = 1000
 
-import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
+import { LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat, createSpring, createSpike, gapWithPlatforms, pipeSection, verticalClimb } from './helpers';
 
 export const RUINS_LEVELS: LevelData[] = [
   // ============================================================
@@ -41,6 +41,8 @@ export const RUINS_LEVELS: LevelData[] = [
       for (let x = 3500; x < 3800; x += 100) coins.push(createCoin(x * S, 480));
       for (let x = 4400; x < 5300; x += 120) coins.push(createCoin(x * S, 500));
       coins.push(createCoin(1610, 590), createCoin(1650, 590), createCoin(1690, 590), createCoin(1730, 590));
+      // Coin arc above the tutorial spring
+      coins.push(createCoin(1660, 465), createCoin(1700, 425), createCoin(1740, 465));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -77,6 +79,8 @@ export const RUINS_LEVELS: LevelData[] = [
     ],
     playerStart: { x: 150, y: 500 },
     goal: { x: 4300 * 0.625, y: 523 },
+    // Discovery-Spring on the mid ruins section (top edge = 525)
+    springs: [createSpring(1700, 525)],
   },
 
   // ============================================================
@@ -124,6 +128,9 @@ export const RUINS_LEVELS: LevelData[] = [
       for (let x = 5900; x < 6300; x += 80) coins.push(createCoin(x * S, 480));
       for (let x = 7000; x < 7800; x += 130) coins.push(createCoin(x * S, 500));
       for (let x = 9000; x < 9600; x += 120) coins.push(createCoin(x * S, 500));
+      // Coin arcs above the gap springs
+      coins.push(createCoin(1510, 455), createCoin(1550, 415), createCoin(1590, 455));
+      coins.push(createCoin(4030, 455), createCoin(4070, 415), createCoin(4110, 455));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -173,6 +180,10 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 500 },
     goal: { x: 8900 * 0.6, y: 523 },
+    // Rescue springs on the mid ruins sections (top edge = 525)
+    springs: [createSpring(1550, 525), createSpring(4070, 525)],
+    // Spike traps on safe ruins ground, clear of QBs and gaps
+    spikes: [createSpike(320, 517), createSpike(2820, 517)],
   },
 
   // ============================================================
@@ -227,6 +238,9 @@ export const RUINS_LEVELS: LevelData[] = [
       for (let x = 9500; x < 10400; x += 130) coins.push(createCoin(x * S, 550));
       for (let x = 10600; x < 11200; x += 100) coins.push(createCoin(x * S, 550));
       for (let x = 11900; x < 12900; x += 120) coins.push(createCoin(x * S, 550));
+      // Coin arcs above the pipe-maze springs
+      coins.push(createCoin(2740, 505), createCoin(2780, 465), createCoin(2820, 505));
+      coins.push(createCoin(5186, 505), createCoin(5226, 465), createCoin(5266, 505));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -289,6 +303,10 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 550 },
     goal: { x: 11800 * 0.556, y: 573 },
+    // Springs on the ruins bridges between pipe sections (top edge = 575)
+    springs: [createSpring(2780, 575), createSpring(5226, 575)],
+    // Spike passages on the ruins bridges (never on pipes)
+    spikes: [createSpike(400, 567), createSpike(4003, 567), createSpike(5050, 567)],
   },
 
   // ============================================================
@@ -350,6 +368,9 @@ export const RUINS_LEVELS: LevelData[] = [
       coins.push(createCoin(14400 * S, 270), createCoin(14700 * S, 270), createCoin(15000 * S, 270));
       coins.push(createCoin(15300 * S, 310), createCoin(15600 * S, 390), createCoin(15900 * S, 470));
       for (let x = 16200; x < 17200; x += 120) coins.push(createCoin(x * S, 580));
+      // Coin arcs above the spring shortcuts
+      coins.push(createCoin(2160, 535), createCoin(2200, 495), createCoin(2240, 535));
+      coins.push(createCoin(4100, 535), createCoin(4140, 495), createCoin(4180, 535));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -408,6 +429,11 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 580 },
     goal: { x: 16100 * 0.5, y: 603 },
+    // Spring shortcuts on the mid ruins sections (top edge = 605)
+    springs: [createSpring(2200, 605), createSpring(4140, 605)],
+    // Spike traps between the pillar climbs
+    spikes: [createSpike(320, 597), createSpike(6080, 597)],
+    coinGoal: 48,
   },
 
   // ============================================================
@@ -449,6 +475,9 @@ export const RUINS_LEVELS: LevelData[] = [
       for (let x = 8300; x < 9400; x += 100) coins.push(createCoin(x * S, 600));
       for (let x = 9800; x < 10400; x += 80) coins.push(createCoin(x * S, 580));
       for (let x = 11000; x < 12400; x += 120) coins.push(createCoin(x * S, 600));
+      // Coin arcs above the horde springs
+      coins.push(createCoin(2410, 555), createCoin(2450, 515), createCoin(2490, 555));
+      coins.push(createCoin(3560, 555), createCoin(3600, 515), createCoin(3640, 555));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -510,6 +539,11 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 600 },
     goal: { x: 10900 * 0.455, y: 623 },
+    // Springs as escape hatches in the guardian horde (top edge = 625)
+    springs: [createSpring(2450, 625), createSpring(3600, 625)],
+    // Spike alley through the horde ground (top edge = 625)
+    spikes: [createSpike(350, 617), createSpike(2700, 617), createSpike(4000, 617)],
+    coinGoal: 50,
   },
 
   // ============================================================
@@ -558,6 +592,9 @@ export const RUINS_LEVELS: LevelData[] = [
       for (let x = 9800; x < 10400; x += 100) coins.push(createCoin(x * S, 180));
       for (let x = 11000; x < 11600; x += 80) coins.push(createCoin(x * S, 150));
       for (let x = 12300; x < 13300; x += 120) coins.push(createCoin(x * S, 150));
+      // High bonus coins above the finale springs (spring launch reaches them)
+      coins.push(createCoin(400, 340), createCoin(400, 270), createCoin(400, 200));
+      coins.push(createCoin(5260, 100), createCoin(5300, 40), createCoin(5340, 100));
       return coins;
     })(),
     questionBlocks: (() => {
@@ -615,5 +652,9 @@ export const RUINS_LEVELS: LevelData[] = [
     })(),
     playerStart: { x: 150, y: 450 },
     goal: { x: 12200 * 0.417, y: 173 },
+    // Springs as compensation against the falling-temple finale (ruins top edges = 475 / 175)
+    springs: [createSpring(400, 475), createSpring(5300, 175)],
+    // Max 2 spike traps in the finale, only on ruins slabs (never on crumble stepping platforms)
+    spikes: [createSpike(1751, 312), createSpike(4003, 202)],
   },
 ];
