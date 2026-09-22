@@ -9,7 +9,7 @@ export const createCoin = (x: number, y: number) => ({ x, y });
 export const createQB = (x: number, y: number, contents: QuestionBlockContent) => ({ x, y, contents });
 export const createEnemy = (x: number, y: number, type: EnemyType) => ({ x, y, type });
 export const createDeco = (x: number, y: number, type: DecorationType) => ({ x, y, type });
-export const createGoal = (x: number, y: number, points: number, difficulty: Goal['difficulty']): Goal => ({ x, y, points, difficulty });
+export const createGoal = (x: number, y: number, points: number): Goal => ({ x, y, points });
 export const createMovingPlat = (x: number, y: number, w: number, h: number, type: PlatformType, moveType: 'horizontal' | 'vertical' | 'circular', range: number, speed: number): MovingPlatform => ({ x, y, w, h, type, moveType, range, speed });
 export const createSpring = (x: number, y: number) => ({ x, y });
 export const createSpike = (x: number, y: number) => ({ x, y });
@@ -33,8 +33,8 @@ export const createCrumblePlat = (x: number, y: number, w: number, h: number, ty
 export const createConveyorPlat = (x: number, y: number, w: number, h: number, type: PlatformType, dir: 1 | -1, speed: number = 80): Platform =>
   ({ x, y, w, h, type, conveyor: dir * speed });
 
-export const createIcePlat = (x: number, y: number, w: number, h: number, type: PlatformType = 'ice'): Platform =>
-  ({ x, y, w, h, type });
+export const createIcePlat = (x: number, y: number, w: number, h: number): Platform =>
+  ({ x, y, w, h, type: 'ice' });
 
 export const createCheckpoint = (x: number, y: number) => ({ x, y });
 export const createWindZone = (x: number, y: number, w: number, h: number, strength: number = 140, intervalMs: number = 3000) =>
@@ -62,7 +62,7 @@ export const plateauSection = (startX: number, baseTop: number, specs: { dx: num
   });
 
 /** Pit floor below the surrounding ground (the surrounding ground forms the ledges). */
-export const pitWithLedges = (pitStart: number, baseTop: number, pitWidth: number, pitDepth: number = 160, type: PlatformType = 'stone'): Platform[] => {
+export const pitFloor = (pitStart: number, baseTop: number, pitWidth: number, pitDepth: number = 160, type: PlatformType = 'stone'): Platform[] => {
   const floor = createPlat(pitStart + pitWidth / 2, baseTop + pitDepth + 20, pitWidth, 40, type);
   return [floor];
 };

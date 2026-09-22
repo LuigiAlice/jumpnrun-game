@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { loadLevel, getLevelName } from '../generator/LevelLoader';
-import type { LevelData, Biome } from '../data/levels/index';
+import type { LevelData, Biome, Rect } from '../data/levels/index';
 import { GAME_HEIGHT, GAME_WIDTH, BIOME_GRAVITY, SPRING_VELOCITY } from '../config';
 import { goToTitle } from '../sceneNav';
 import { canBreakBrick, isBrickLoadBearing } from '../data/levels/helpers';
@@ -75,6 +75,7 @@ export class GameScene extends Phaser.Scene {
   private isTransitioning: boolean = false;
   private isQuitting: boolean = false;
   private isJumping: boolean = false;
+  private lastBeltX: number = 0;
   private lastCameraX: number = 0;
   private animFrame: number = 0;
   private animTime: number = 0;
@@ -114,7 +115,8 @@ export class GameScene extends Phaser.Scene {
   private bossHpBar?: Phaser.GameObjects.Graphics;
   private lastBossShot: number = 0;
   private fallingHazards!: Phaser.Physics.Arcade.Group;
-  private windTime: number = 0;
+  private lastHazardSpawn: number = 0;
+  private hazardCount: number = 0;
   private springs!: Phaser.Physics.Arcade.StaticGroup;
   private spikes!: Phaser.Physics.Arcade.StaticGroup;
   private coinGateText?: Phaser.GameObjects.Text;
@@ -131,7 +133,7 @@ export class GameScene extends Phaser.Scene {
   private totalTime: number = 300;
   private levelElapsed: number = 0;
   private timeGateText?: Phaser.GameObjects.Text;
-  private windZoneTimers: Map<object, number> = new Map();
+  private windZoneTimers: Map<object, { last: number; gusts: number }> = new Map();
 
   constructor() { super({ key: 'Game' }); }
 
@@ -162,6 +164,9 @@ export class GameScene extends Phaser.Scene {
     this.keysCollected = 0;
     this.levelElapsed = 0;
     this.windZoneTimers = new Map();
+    this.lastBeltX = 0;
+    this.lastHazardSpawn = 0;
+    this.hazardCount = 0;
     this.doorSprites = [];
     this.extraGoals = [];
   }
@@ -198,6 +203,9 @@ export class GameScene extends Phaser.Scene {
     // Start music on first input (click or key)
     this.input.once('pointerdown', () => this.startBgm());
     this.input.keyboard!.once('keydown', () => this.startBgm());
+
+    // Phaser ruft scene.shutdown() nie selbst auf — nur den SHUTDOWN-Event
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
 
     if (this.game.canvas) {
       this.game.canvas.setAttribute('tabindex', '0');
@@ -266,37 +274,37 @@ export class GameScene extends Phaser.Scene {
   private spawnEntities(level: LevelData) {
     // Render decorations in background
     if (level.decorations) {
-      level.decorations.forEach(d => {
+      level.decorations.forEach((d, di) => {
         const dec = this.add.image(d.x, d.y, d.type);
         dec.setScrollFactor(0.3, 0.3).setDepth(-85);
-        // Animate certain decoration types
+        // Animate certain decoration types (deterministic index-based timing)
         if (d.type === 'fire' || d.type === 'ember') {
           this.tweens.add({
             targets: dec,
             scaleX: { from: 1, to: 0.8 },
             scaleY: { from: 1, to: 1.2 },
             alpha: { from: 0.8, to: 1 },
-            duration: 400 + Math.random() * 300,
+            duration: 400 + (di % 5) * 60,
             yoyo: true,
             repeat: -1,
             ease: 'Sine.easeInOut',
-            delay: Math.random() * 500,
+            delay: (di * 97) % 500,
           });
         } else if (d.type === 'bubble' || d.type === 'seaweed') {
           this.tweens.add({
             targets: dec,
             y: d.y - 6,
-            duration: 1500 + Math.random() * 1000,
+            duration: 1500 + (di % 5) * 200,
             yoyo: true,
             repeat: -1,
             ease: 'Sine.easeInOut',
-            delay: Math.random() * 1000,
+            delay: (di * 53) % 1000,
           });
         } else if (d.type === 'ghost' || d.type === 'cobweb') {
           this.tweens.add({
             targets: dec,
             alpha: { from: 0.5, to: 1 },
-            duration: 2000 + Math.random() * 1000,
+            duration: 2000 + (di % 5) * 200,
             yoyo: true,
             repeat: -1,
             ease: 'Sine.easeInOut',
@@ -337,6 +345,7 @@ export class GameScene extends Phaser.Scene {
       else if (platType === 'wood') tex = 'ground_cave';
       else if (platType === 'sand') tex = 'ground_sand';
       else if (platType === 'snow') tex = 'ground_snow';
+      else if (platType === 'ice') tex = 'ground_snow';
       else if (platType === 'lava') tex = 'ground_lava';
       else if (platType === 'space') tex = 'ground_space';
       else if (platType === 'sandstone') tex = 'ground_ruins';
@@ -414,10 +423,10 @@ export class GameScene extends Phaser.Scene {
         const platRight = p.x + p.w / 2;
         const platTop = p.y - p.h / 2;
         
-        // Enemy is above/within platform and platform is solid type
+        // Enemy is above/within platform and platform is solid or one-way ground
         if (e.x >= platLeft - 20 && e.x <= platRight + 20 && 
-            e.y >= platTop - 10 && e.y <= platTop + 50 &&
-            SOLID_TYPES.includes(p.type)) {
+            e.y >= platTop - 40 && e.y <= platTop + 50 &&
+            (SOLID_TYPES.includes(p.type) || p.type.startsWith('platform_'))) {
           hasSolidBelow = true;
           break;
         }
@@ -428,6 +437,7 @@ export class GameScene extends Phaser.Scene {
         const safePlat = this.solidPlatforms.create(e.x, e.y + 35, 'ground_grass');
         safePlat.setDisplaySize(80, 20).refreshBody();
         (safePlat as any).platformType = 'grass';
+        safePlat.setVisible(false);
       }
       
       const biomeSpeed = BIOME_ENEMY_SPEED[level.biome] ?? DEFAULT_ENEMY_SPEED;
@@ -538,8 +548,8 @@ export class GameScene extends Phaser.Scene {
     if (level.spikes) {
       level.spikes.forEach(sp => {
         const spike = this.spikes.create(sp.x, sp.y, 'spike');
-        (spike.body as Phaser.Physics.Arcade.StaticBody).setSize(24, 16, true);
         spike.refreshBody();
+        (spike.body as Phaser.Physics.Arcade.StaticBody).setSize(24, 16, true);
       });
     }
 
@@ -548,24 +558,10 @@ export class GameScene extends Phaser.Scene {
       const isWater = level.rising.kind === 'water';
       const floor = this.platforms.create(level.width / 2, level.height + (isWater ? 200 : 150), isWater ? 'ground_water' : 'ground_lava');
       floor.setDisplaySize(level.width, isWater ? 400 : 300).refreshBody();
-      // Reuses the lava-kill semantics: touching the rising flood is lethal (same as before).
-      (floor as any).platformType = 'lava';
+      // Flut hebt: solide, nicht tödlich (Spieler kann reiten). Lava tötet bei Kontakt.
+      (floor as any).platformType = isWater ? 'water' : 'lava';
       floor.setData('risingLava', true);
       floor.setData('risingSpeed', level.rising.speed ?? 0.4);
-    }
-    
-    // Phase 9: crumble is data-driven (p.crumble in level data). Legacy fallback
-    // for levels 30/72/78/84 that have no explicit crumble flags yet.
-    const hasExplicitCrumble = level.platforms.some(p => p.crumble);
-    if (!hasExplicitCrumble && [30, 72, 78, 84].includes(level.id)) {
-      const tag = (p: any) => {
-        const type = p.getData?.('type') || (p as any).platformType;
-        if (type === 'platform_easy' || type === 'platform_medium' || type === 'platform_hard' || type === 'cloud') {
-          p.setData('crumble', true);
-        }
-      };
-      this.platforms.getChildren().forEach(tag);
-      this.solidPlatforms.getChildren().forEach(tag);
     }
     
     // Level 90: Boss HP tracking + arena walls
@@ -599,15 +595,25 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  // Phase 9: checkpoints, keys/doors, cannons, multi-goal, zones
+  // Phase 9: checkpoints, keys/doors, cannons, multi-goal, zones (thin orchestrator)
   private spawnPhase9Entities(level: LevelData) {
+    this.spawnCheckpoints(level);
+    this.spawnKeysAndDoors(level);
+    this.spawnCannons(level);
+    this.spawnExtraGoals(level);
+    this.spawnZoneMarkers(level);
+  }
+
+  private spawnCheckpoints(level: LevelData) {
     (level.checkpoints || []).forEach(cp => {
       const sprite = this.checkpointGroup.create(cp.x, cp.y, 'flag');
       sprite.setTint(0x55ff88);
       sprite.setScale(0.6);
       sprite.setData('active', false);
     });
+  }
 
+  private spawnKeysAndDoors(level: LevelData) {
     this.totalKeys = (level.keys || []).length;
     (level.keys || []).forEach(k => {
       const key = this.keyGroup.create(k.x, k.y, 'star');
@@ -623,7 +629,9 @@ export class GameScene extends Phaser.Scene {
       this.doorSprites.push(door);
     });
     if (this.totalKeys === 0) this.openDoors();
+  }
 
+  private spawnCannons(level: LevelData) {
     (level.cannons || []).forEach(c => {
       const marker = this.add.rectangle(c.x, c.y, 26, 18, 0x444455).setStrokeStyle(2, 0x999999);
       marker.setDepth(4);
@@ -641,7 +649,9 @@ export class GameScene extends Phaser.Scene {
         },
       });
     });
+  }
 
+  private spawnExtraGoals(level: LevelData) {
     (level.goals || []).forEach(g => {
       const extra = this.physics.add.sprite(g.x, g.y, 'flag').setImmovable(true);
       (extra.body as Phaser.Physics.Arcade.Body).allowGravity = false;
@@ -649,7 +659,9 @@ export class GameScene extends Phaser.Scene {
       this.extraGoals.push(extra);
       this.physics.add.overlap(this.player, extra, () => this.reachGoal(g.points));
     });
+  }
 
+  private spawnZoneMarkers(level: LevelData) {
     // Wind zones: translucent markers so the area is readable
     (level.windZones || []).forEach(z => {
       this.add.rectangle(z.x + z.w / 2, z.y + z.h / 2, z.w, z.h, 0xffffff, 0.06).setDepth(-50);
@@ -1106,8 +1118,6 @@ export class GameScene extends Phaser.Scene {
     const coinGoal = level.coinGoal;
     const timeGate = level.timeGate;
     if (!coinGoal && !timeGate) return;
-    const coinOk = !coinGoal || this.coinCount >= coinGoal;
-    const timeOk = !timeGate || this.levelElapsed >= timeGate;
     if (this.goalUnlocked()) {
       if (this.coinGateOpen) return;
       this.coinGateOpen = true;
@@ -1122,12 +1132,12 @@ export class GameScene extends Phaser.Scene {
       }
       return;
     }
-    // Still locked
+    // Still locked: HUD shows the first unmet requirement
     (this.goal.body as Phaser.Physics.Arcade.Body).enable = false;
     this.goal.setAlpha(0.4);
     if (this.coinGateText) {
-      if (!coinOk) this.coinGateText.setText(`Coins: ${Math.min(this.coinCount, coinGoal!)} / ${coinGoal}`);
-      else if (!timeOk) this.coinGateText.setText(`Zeit-Tor: ${Math.max(0, Math.ceil(timeGate! - this.levelElapsed))}s`);
+      if (coinGoal && this.coinCount < coinGoal) this.coinGateText.setText(`Coins: ${Math.min(this.coinCount, coinGoal)} / ${coinGoal}`);
+      else if (timeGate !== undefined) this.coinGateText.setText(`Zeit-Tor: ${Math.max(0, Math.ceil(timeGate - this.levelElapsed))}s`);
     }
   }
 
@@ -1239,6 +1249,10 @@ export class GameScene extends Phaser.Scene {
     return found;
   }
 
+  private inRect(r: Rect, x: number, y: number): boolean {
+    return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+  }
+
   update(time: number) {
     if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
       this.quitToTitle();
@@ -1251,6 +1265,12 @@ export class GameScene extends Phaser.Scene {
     // One ground lookup per frame (used by ice slip and conveyor belts below)
     const groundPlat = body.blocked.down ? this.getGroundPlatform() : null;
     const groundType = (groundPlat as any)?.platformType;
+
+    // Remove last frame's conveyor offset before input handling (prevents compounding)
+    if (this.lastBeltX) {
+      body.velocity.x -= this.lastBeltX;
+      this.lastBeltX = 0;
+    }
 
     if (this.cursors.left.isDown) {
       this.player.setFlipX(true);
@@ -1326,14 +1346,16 @@ export class GameScene extends Phaser.Scene {
       this.player.setTexture(`${prefix}_idle`);
     }
 
-    // Conveyor belts (Phase 9): shift the player while standing on a belt
-    const beltSpeed = groundPlat ? (groundPlat as any).getData?.('conveyor') : undefined;
-    if (beltSpeed) body.x += beltSpeed * dt;
+    // Conveyor belts (Phase 9): velocity offset — idle drift = belt speed, walking = run speed + belt
+    const belt = groundPlat ? (groundPlat as any).getData?.('conveyor') : undefined;
+    if (belt) {
+      body.velocity.x += belt;
+      this.lastBeltX = belt;
+    }
 
     // Swimming: water biome below y=500 or inside a water zone (Phase 9)
     const inWaterZone = (this.currentLevelData?.waterZones || []).some(z =>
-      this.player.x >= z.x && this.player.x <= z.x + z.w &&
-      this.player.y >= z.y && this.player.y <= z.y + z.h
+      this.inRect(z, this.player.x, this.player.y)
     );
     if ((this.currentBiome === 'water' && body.y > 500) || inWaterZone) {
       body.setGravityY(-(this.physics.world.gravity.y - 600));
@@ -1385,30 +1407,19 @@ export class GameScene extends Phaser.Scene {
     this.platforms.getChildren().forEach(updateCrumble);
     this.solidPlatforms.getChildren().forEach(updateCrumble);
     
-    // L6, L42: Wind gusts (legacy, Phase 9 wind zones are preferred)
-    if (this.levelId === 6 || this.levelId === 42) {
-      this.windTime += 1;
-      if (this.windTime % 180 === 0 && this.windTime > 0) {
-        const windStr = Phaser.Math.Between(-150, 150);
-        if (windStr !== 0) {
-          (this.player.body as Phaser.Physics.Arcade.Body).setVelocityX(
-            (this.player.body as Phaser.Physics.Arcade.Body).velocity.x + windStr
-          );
-        }
-      }
-    }
-
-    // Wind zones (Phase 9): periodic gust while inside the zone
+    // Wind zones (Phase 9): deterministic alternating gust while inside the zone
     (this.currentLevelData?.windZones || []).forEach((z) => {
-      const inside = this.player.x >= z.x && this.player.x <= z.x + z.w &&
-        this.player.y >= z.y && this.player.y <= z.y + z.h;
-      if (!inside) return;
-      const last = this.windZoneTimers.get(z) ?? 0;
-      const interval = z.intervalMs ?? 3000;
-      if (time - last >= interval) {
-        this.windZoneTimers.set(z, time);
-        const gust = Phaser.Math.Between(1, 2) === 1 ? -z.strength : z.strength;
-        body.setVelocityX(body.velocity.x + gust);
+      if (!this.inRect(z, this.player.x, this.player.y)) return;
+      let state = this.windZoneTimers.get(z);
+      if (!state) {
+        state = { last: 0, gusts: 0 };
+        this.windZoneTimers.set(z, state);
+      }
+      if (time - state.last >= (z.intervalMs ?? 3000)) {
+        state.last = time;
+        const dir = state.gusts % 2 === 0 ? 1 : -1;
+        state.gusts++;
+        body.setVelocityX(body.velocity.x + dir * z.strength);
       }
     });
 
@@ -1452,10 +1463,11 @@ export class GameScene extends Phaser.Scene {
 
       if (isOnPlatform && (Math.abs(dx) > 0 || Math.abs(dy) > 0)) {
         playerCarried = true;
+        // Position-based carry only. Never touch body.velocity here: overwriting it
+        // stomps jump/walk input (player glued to movers) and dx*60 is frame-rate
+        // dependent garbage. Bugfix: "figur bleibt auf der plattform kleben".
         this.player.setX(this.player.x + dx);
         this.player.setY(this.player.y + dy);
-        if (dx !== 0) (this.player.body as any).setVelocityX(dx * 60);
-        if (dy !== 0) (this.player.body as any).setVelocityY(dy * 60);
       }
     });
     
@@ -1622,11 +1634,22 @@ export class GameScene extends Phaser.Scene {
       if (proj.y > 800 || proj.x < -100 || proj.x > 15000) proj.destroy();
     });
     
-    // Biome finales: falling hazards (L12 desert, L24 ice-snow, L36 forest, L54 factory, L66 canyon-base)
-    if ([12, 24, 36, 54, 66].includes(this.levelId)) {
-      if (time - (this as any)._lastHazardSpawn > 2500) {
-        (this as any)._lastHazardSpawn = time;
-        const xPos = this.player.x + Phaser.Math.Between(-300, 300);
+    // Cull falling hazards (incl. cannon shots) outside the level bounds
+    const cullW = this.currentLevelData?.width ?? GAME_WIDTH;
+    const cullH = this.currentLevelData?.height ?? GAME_HEIGHT;
+    this.fallingHazards.getChildren().forEach((hz: any) => {
+      if (!hz.body) return;
+      if (hz.x < -200 || hz.x > cullW + 200 || hz.y > cullH + 200) hz.destroy();
+    });
+    
+    // Biome finales: falling hazards (data-driven via level.fallingHazards)
+    const hazardCfg = this.currentLevelData?.fallingHazards;
+    if (hazardCfg) {
+      const intervalMs = hazardCfg.intervalMs ?? 2500;
+      if (time - this.lastHazardSpawn > intervalMs) {
+        this.lastHazardSpawn = time;
+        const xOff = ((this.hazardCount++ * 137) % 600) - 300;
+        const xPos = this.player.x + xOff;
         const hazard = this.fallingHazards.create(xPos, -50, 'fireball');
         hazard.setVelocityY(300);
         hazard.setScale(0.8);
@@ -1684,7 +1707,13 @@ export class GameScene extends Phaser.Scene {
 
   shutdown(): void {
     this.isMusicPlaying = false;
-    this.stopMusic();
+    this.musicPlayer?.stop();
+    this.musicPlayer = undefined;
+    this.audioContext?.close().catch(() => {});
+    this.audioContext = undefined;
+    this.audioMaster = undefined;
+    this.audioDelay = undefined;
+    this.audioDelayFeedback = undefined;
     this.restartKey?.off('down', this.onRestartKey, this);
     this.nextKey?.off('down', this.onNextKey, this);
   }
@@ -1774,27 +1803,30 @@ export class GameScene extends Phaser.Scene {
     const biome = this.currentLevelData?.biome || 'grasslands';
 
     try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      this.audioContext = new AudioCtx();
+      // AudioChain wird nur einmal erzeugt und über startBgm-Aufrufe hinweg wiederverwendet
+      if (!this.audioContext) {
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        this.audioContext = new AudioCtx();
+
+        const ctx = this.audioContext;
+        this.audioMaster = ctx.createGain();
+        this.audioMaster.gain.setValueAtTime(0.6, ctx.currentTime);
+        this.audioMaster.connect(ctx.destination);
+
+        this.audioDelay = ctx.createDelay(0.5);
+        this.audioDelay.delayTime.setValueAtTime(0.18, ctx.currentTime);
+        this.audioDelayFeedback = ctx.createGain();
+        this.audioDelayFeedback.gain.setValueAtTime(0.25, ctx.currentTime);
+        this.audioDelay.connect(this.audioDelayFeedback);
+        this.audioDelayFeedback.connect(this.audioDelay);
+        this.audioDelay.connect(this.audioMaster);
+      }
 
       if (this.audioContext.state === 'suspended') {
         this.audioContext.resume();
       }
 
-      const ctx = this.audioContext;
-      this.audioMaster = ctx.createGain();
-      this.audioMaster.gain.setValueAtTime(0.6, ctx.currentTime);
-      this.audioMaster.connect(ctx.destination);
-
-      this.audioDelay = ctx.createDelay(0.5);
-      this.audioDelay.delayTime.setValueAtTime(0.18, ctx.currentTime);
-      this.audioDelayFeedback = ctx.createGain();
-      this.audioDelayFeedback.gain.setValueAtTime(0.25, ctx.currentTime);
-      this.audioDelay.connect(this.audioDelayFeedback);
-      this.audioDelayFeedback.connect(this.audioDelay);
-      this.audioDelay.connect(this.audioMaster);
-
-      this.musicPlayer = new MusicPlayer(ctx, this.audioMaster);
+      this.musicPlayer = new MusicPlayer(this.audioContext, this.audioMaster!);
       const song = (BIOME_MUSIC as Record<string, BiomeSong>)[biome] || BIOME_MUSIC['grasslands'];
       this.musicPlayer.start(song, biome);
     } catch (e) {}

@@ -7,7 +7,7 @@
 import {
   LevelData, createPlat, createQB, createEnemy, createDeco, createGoal,
   createMovingPlat, createSpring, createSpike, createCrumblePlat, createWindZone,
-  createKey, createDoor, staircase, plateauSection, pitWithLedges, twoTierSection,
+  createKey, createDoor, staircase, plateauSection, pitFloor, twoTierSection,
   islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
   gapWithPlatforms,
 } from './helpers';
@@ -23,7 +23,7 @@ export const DESERT_LEVELS: LevelData[] = [
     platforms.push(createPlat(400, 640, 700, 40, 'sand'));
     platforms.push(...staircase(820, 620, 3, 70, 130, 30, 'sand'));
     platforms.push(createPlat(1500, 660, 420, 40, 'sand'));
-    platforms.push(...pitWithLedges(1770, 640, 340, 140, 'stone'));
+    platforms.push(...pitFloor(1770, 640, 340, 140, 'stone'));
     platforms.push(createPlat(2270, 660, 440, 40, 'sand'));
     platforms.push(...gapWithPlatforms(1, 2490, 652, 380, 2, {
       widths: [90, 110], dy: [0, 40], types: ['platform_easy', 'platform_medium'],
@@ -92,7 +92,7 @@ export const DESERT_LEVELS: LevelData[] = [
       widths: [120], dy: [0], types: ['platform_medium'],
     }));
     platforms.push(createPlat(1500, 660, 900, 40, 'sand'));
-    platforms.push(...pitWithLedges(2050, 640, 620, 200, 'stone'));
+    platforms.push(...pitFloor(2050, 640, 620, 200, 'stone'));
     platforms.push(...islandCluster(2150, 840, [
       { dx: 0, dy: 60, w: 120, type: 'platform_easy' },
       { dx: 200, dy: 130, w: 100, type: 'platform_medium' },
@@ -350,7 +350,7 @@ export const DESERT_LEVELS: LevelData[] = [
       { dx: 240, dy: 160, w: 120, type: 'sandstone' },
       { dx: 480, dy: 80, w: 160, type: 'sandstone' },
     ]));
-    platforms.push(...pitWithLedges(1900, 640, 500, 160, 'stone'));
+    platforms.push(...pitFloor(1900, 640, 500, 160, 'stone'));
     platforms.push(createPlat(2480, 700, 160, 24, 'platform_medium'));
     platforms.push(createPlat(2900, 660, 900, 40, 'sand'));
     platforms.push(...twoTierSection(3450, 640, 600, 'sand', 'sandstone'));
@@ -433,7 +433,7 @@ export const DESERT_LEVELS: LevelData[] = [
     platforms.push(createPlat(1500, 760, 900, 40, 'sand'));
     platforms.push(...staircase(2050, 740, 4, 70, 150, 45, 'sandstone'));
     platforms.push(createPlat(2950, 600, 500, 40, 'sand'));
-    platforms.push(...pitWithLedges(3300, 560, 700, 260, 'stone'));
+    platforms.push(...pitFloor(3300, 560, 700, 260, 'stone'));
     platforms.push(createPlat(3650, 700, 160, 24, 'stone'));
     platforms.push(...islandCluster(4150, 820, [
       { dx: 0, dy: 0, w: 140, type: 'stone' },
@@ -503,9 +503,10 @@ export const DESERT_LEVELS: LevelData[] = [
         createWindZone(5000, 460, 600, 160, 160, 2500),
       ],
       goals: [
-        createGoal(3650, 680, 5000, 'hard'),
-        createGoal(6470, 452, 3000, 'medium'),
+        createGoal(3650, 680, 5000),
+        createGoal(6470, 452, 3000),
       ],
+      fallingHazards: { intervalMs: 2500 },
     };
   })(),
 ];

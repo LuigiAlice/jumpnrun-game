@@ -13,7 +13,7 @@
 import {
   LevelData, createPlat, createQB, createEnemy, createDeco, createMovingPlat,
   createSpring, createSpike, createCrumblePlat, createConveyorPlat, createCheckpoint,
-  createKey, createDoor, createCannon, staircase, pitWithLedges, gapWithPlatforms,
+  createKey, createDoor, createCannon, staircase, pitFloor, gapWithPlatforms,
   coinArc, coinDiamond, coinTrail, coinLadder,
 } from './helpers';
 
@@ -39,7 +39,7 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(createPlat(2350, 560, 300, 40, 'metal'));          // top 540  [2200,2500]
     platforms.push(createConveyorPlat(2830, 532, 660, 24, 'metal', 1, 60)); // Band R top 520 [2500,3160]
     platforms.push(createPlat(3480, 580, 640, 40, 'metal'));          // top 560  [3160,3800]
-    platforms.push(...pitWithLedges(3800, 560, 420, 160, 'metal')); // Grubenboden top 720
+    platforms.push(...pitFloor(3800, 560, 420, 160, 'metal')); // Grubenboden top 720
     platforms.push(createPlat(3860, 682, 110, 24, 'platform_easy'));  // Leiter L top 670
     platforms.push(createPlat(4160, 682, 110, 24, 'platform_easy'));  // Leiter R top 670
     platforms.push(createPlat(4540, 580, 640, 40, 'metal'));          // top 560  [4220,4860]
@@ -226,7 +226,7 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(createPlat(6250, 380, 80, 160, 'metal'));          // Kanonenblock top 300
     platforms.push(createConveyorPlat(7650, 592, 600, 24, 'metal', -1, 60)); // Band L top 580 [7350,7950]
     platforms.push(createPlat(8300, 620, 660, 40, 'metal'));          // top 600  [7970,8630]
-    platforms.push(...pitWithLedges(8630, 600, 420, 160, 'metal')); // Grube top 760
+    platforms.push(...pitFloor(8630, 600, 420, 160, 'metal')); // Grube top 760
     platforms.push(createPlat(8690, 722, 110, 24, 'platform_easy'));  // Leiter L top 710
     platforms.push(createPlat(8990, 722, 110, 24, 'platform_easy'));  // Leiter R top 710
     platforms.push(createPlat(9100, 700, 140, 24, 'platform_medium')); // Stufe top 688
@@ -477,7 +477,7 @@ export const FACTORY_LEVELS: LevelData[] = [
       coinGoal: 24,
       timeGate: 40,
       goals: [
-        { x: 9500, y: 472, points: 2500, difficulty: 'hard' },
+        { x: 9500, y: 472, points: 2500 },
       ],
       springs: [createSpring(700, 640), createSpring(8800, 520)],
       spikes: [createSpike(560, 632), createSpike(5450, 592), createSpike(7950, 572)],
@@ -593,6 +593,7 @@ export const FACTORY_LEVELS: LevelData[] = [
         createCannon(3500, 480, -1, 2200, 240),
         createCannon(8600, 180, -1, 2000, 280),
       ],
+      fallingHazards: { intervalMs: 2500 },
     };
   })(),
 ];

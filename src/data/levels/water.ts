@@ -2,7 +2,9 @@
 // L13 Lagunenpfad   (Oberflaeche + ueberflutete Korallengrotte, waterZone)
 // L14 Tiden-Tunnel  (komplett unter Wasser: Graeben, zwei Ebenen, Hallen)
 // L15 Korallen-Labyrinth (Terrassen + Flutkammer + Schluessel/Tuer-Bonusraum)
-// L16 Tauchgang     (versunkener Tempel: Pflicht-Tauchbecken, coinGoal)
+// L16 Tauchgang     (versunkener Tempel: Schwimmkorridor mit durchgehendem
+//                   Boden – Pflichtweg bleibt laufbar; Zone ist Verstaerkung/Bonus,
+//                   coinGoal)
 // L17 Tiefsee-Horde (grosse Arenen tief unten, ~25 Gegner, coinGoal)
 // L18 Mariana-Finale (steigendes Wasser: Flucht nach oben/rechts, Checkpoints)
 //
@@ -16,7 +18,7 @@
 import {
   LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat,
   createSpring, createSpike, createCheckpoint, createWaterZone, createKey, createDoor,
-  createCrumblePlat, staircase, plateauSection, pitWithLedges, twoTierSection,
+  createCrumblePlat, staircase, plateauSection, pitFloor, twoTierSection,
   islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder, seg,
 } from './helpers';
 
@@ -113,7 +115,7 @@ export const WATER_LEVELS: LevelData[] = [
       seg(0, 700, 620, 40, 'water'),
       seg(740, 940, 560, 24, 'platform_medium'),
       ...overhangSection(980, 620, 900, 1400, 200, 'cave'),
-      ...pitWithLedges(1400, 620, 200, 160, 'cave'),
+      ...pitFloor(1400, 620, 200, 160, 'cave'),
       seg(1920, 2500, 660, 40, 'water'),
       ...twoTierSection(2540, 660, 900, 'water', 'platform_hard'),
       seg(3480, 3780, 580, 24, 'platform_medium'),
@@ -195,7 +197,8 @@ export const WATER_LEVELS: LevelData[] = [
   },
   // ==========================================================================
   // L15 "Coral Labyrinth" — Korallen-Labyrinth (width 10000)
-  // Terrassen -> Unterweg -> Pflicht-Flutkammer (waterZone 360..680) ->
+  // Terrassen -> Unterweg -> Schwimmkorridor mit durchgehendem Boden
+  // (waterZone 360..680: Pflichtweg bleibt laufbar; Zone ist Verstaerkung/Bonus) ->
   // Tauchgrube mit 500er-Ausstiegsstufen (waterZone 500..680) -> Schluessel +
   // Tuer-Bonusraum (Sackgasse, nie Pflichtweg) -> Steg-Finale.
   // ==========================================================================
@@ -211,6 +214,9 @@ export const WATER_LEVELS: LevelData[] = [
       ...overhangSection(1520, 350, 700, 1860, 180, 'cave'),
       seg(1860, 2040, 500, 24, 'bubble'),
       seg(2260, 2500, 460, 24, 'platform_easy'),
+      // Flutkammer: durchgehender Boden (Pflichtweg laeuft hier).
+      // Bubble-Kette (520/440) ist optionaler Bonusweg (130px-Hop, im Swim
+      // nicht Pflicht) – Freischwimmen in den Luecken ist ebenfalls moeglich.
       seg(2540, 3500, 620, 40, 'cave'),
       seg(2700, 2920, 520, 24, 'bubble'),
       seg(3050, 3250, 440, 24, 'bubble'),
@@ -295,6 +301,8 @@ export const WATER_LEVELS: LevelData[] = [
     keys: [createKey(6560, 300)],
     doors: [createDoor(7180, 380, 40, 80)],
     waterZones: [
+      // Schwimmkorridor mit durchgehendem Boden (Pflichtweg bleibt laufbar;
+      // Zone ist Verstaerkung/Bonus).
       createWaterZone(2540, 360, 960, 320),
       createWaterZone(5700, 500, 200, 180),
     ],
@@ -302,8 +310,9 @@ export const WATER_LEVELS: LevelData[] = [
 
   // ==========================================================================
   // L16 "Sunken Temple" — Tauchgang (width 10500, coinGoal 30)
-  // Abstieg in den versunkenen Tempel, Pflicht-Fluthalle (waterZone 380..760)
-  // mit Ausgang auf der Zonenoberkante, Terrassenaufstieg, Pflicht-Tauchbecken
+  // Abstieg in den versunkenen Tempel, Schwimmkorridor mit durchgehendem Boden
+  // (waterZone 380..760: Pflichtweg bleibt laufbar; Zone ist Verstaerkung/Bonus)
+  // mit Ausgang auf der Zonenoberkante, Terrassenaufstieg, Schwimmkorridor
   // (waterZone 500..680) mit 500er-Ausstiegsstufe, Zwei-Ebenen-Dach, Gipfelziel.
   // ==========================================================================
   {
@@ -400,6 +409,8 @@ export const WATER_LEVELS: LevelData[] = [
     springs: [createSpring(1500, 380)],
     spikes: [createSpike(1900, 552), createSpike(5350, 312), createSpike(8400, 292)],
     waterZones: [
+      // Schwimmkorridor mit durchgehendem Boden (Pflichtweg bleibt laufbar;
+      // Zone ist Verstaerkung/Bonus).
       createWaterZone(2500, 380, 1700, 380),
       createWaterZone(6100, 500, 400, 180),
     ],

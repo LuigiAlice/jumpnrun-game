@@ -110,11 +110,10 @@ describe('Helper Functions', () => {
     });
 
     it('createGoal should create valid goal', () => {
-        const goal = createGoal(100, 200, 1000, 'easy');
+        const goal = createGoal(100, 200, 1000);
         expect(goal.x).toBe(100);
         expect(goal.y).toBe(200);
         expect(goal.points).toBe(1000);
-        expect(goal.difficulty).toBe('easy');
     });
 
     it('createMovingPlat should create valid moving platform', () => {

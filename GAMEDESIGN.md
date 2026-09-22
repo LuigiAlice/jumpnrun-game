@@ -105,7 +105,7 @@ Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pf
 | **Crumble-Plattformen** | `Platform.crumble: true` | 800ms nach Betreten bröckeln, 3s Respawn; Finale-Biome sky/ruins/canyon/space; jede Stelle hat sichere Alternativroute |
 | **Eis-Plattformen** | `PlatformType 'ice'` | Rutschfaktor ×0.96 (biome-unabhängig); nur ice-snow; `snow` rutscht im Biom weiterhin ×0.92 |
 | **Förderbänder** | `Platform.conveyor: px/s` | Schiebt den Spieler beim Stehen (positiv = rechts); factory-Level, beide Richtungen |
-| **Checkpoints** | `checkpoints: {x,y}[]` | Overlap aktiviert Respawn-Punkt (Flagge wird gelb); nach Tod Respawn dort, weiterhin 1 Leben Abzug; nur Level width ≥ 12000 |
+| **Checkpoints** | `checkpoints: {x,y}[]` | Overlap aktiviert Respawn-Punkt (Flagge wird gelb); nach Tod Respawn dort, weiterhin 1 Leben Abzug; Pflicht ab width ≥ 16000 |
 | **Wind-Zonen** | `windZones: {x,y,w,h,strength,intervalMs}[]` | Periodischer seitlicher Schub (Default alle 3s, ±strength) nur innerhalb des Rechtecks; transluzente Markierung |
 | **Wasser-Zonen** | `waterZones: {x,y,w,h}[]` | Aktiviert Schwimm-Physik (Gravity 600, ↑ −250, Drift ×0.95) innerhalb des Rechtecks; bläuliches Overlay |
 | **Schlüssel & Türen** | `keys: {x,y}[]`, `doors: {x,y,w,h}[]` | Alle Schlüssel sammeln öffnet sämtliche Türen (Alpha 0.2, Body disabled); nur Bonusräume, nie Start/Goal blockierend |
@@ -115,8 +115,8 @@ Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pf
 | **1-UP-Block** | `QuestionBlockContent 'oneup'` | QB gibt +1 Leben (1-UP-Popup + Arpeggio) |
 | **Geheim-Bricks** | `hidden`, `brick_secret`, `brick_multi` | `hidden` wird beim Bonk sichtbar (+Münze), `brick_secret` gibt Münze, `brick_multi` mehrfach (300ms Cooldown) |
 
-- Steigende Lava/Flut (L60/L18/L48) ist datengetrieben (`rising: { kind: 'lava' | 'water', speed? }`), folgt dem Spieler mit Chase-Abstand 560px und kann ihn nicht einkesseln; Berührung bleibt tödlich (Lava-Semantik)
-- Crumble/Wind/Fallhazards sind datengetrieben statt an Level-IDs gebunden (Legacy-Fallback für L30/72/78/84 greift nur, wenn ein Level keine expliziten `crumble`-Flags setzt)
+- Steigende Lava/Flut (L60/L18/L48) ist datengetrieben (`rising: { kind: 'lava' | 'water', speed? }`), folgt dem Spieler mit Chase-Abstand 560px und kann ihn nicht einkesseln; Flut (`kind: 'water'`) ist reitbar/nicht tödlich — nur Lava (`kind: 'lava'`) tötet bei Berührung
+- Crumble via `Platform.crumble`, Windböen via `windZones`, fallende Hindernisse via `fallingHazards`-LevelData-Feld — keine Level-ID-Hardcodes
 
 ## Power-ups (Question Blocks)
 
@@ -238,7 +238,7 @@ Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pf
 | vertical | `sin(time * 0.00002 * speed) * range` |
 | circular | `cos/sin` mit `angle += speed * 0.0002` |
 
-- Spieler wird mitgetragen (Position + Velocity)
+- Spieler wird mitgetragen — ausschliesslich positionsbasiert (`setX`/`setY`); `body.velocity` wird dabei nie überschrieben (Bugfix „Figur klebt auf dem Mover", R-057)
 - Keine Gravity, immovable Body
 - **In ALLEN 90 Leveln vorhanden**
 
@@ -357,7 +357,7 @@ createCoin(x, y)              - Münze
 createQB(x, y, contents)      - Fragezeichen-Block
 createEnemy(x, y, type)       - Gegner
 createDeco(x, y, type)        - Dekoration
-createGoal(x, y, pts, diff)   - Ziel
+createGoal(x, y, pts)         - Ziel
 createMovingPlat(x, y, w, h, type, moveType, range, speed) - Bewegliche Plattform
 ```
 

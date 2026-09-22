@@ -140,7 +140,7 @@ describe.skipIf(!biome)(`BiomeAudit: ${biome}`, () => {
   it('phase 9 feature expectations for this biome', () => {
     const has = (fn: (l: LevelData) => boolean) => levels.some(fn);
     const featureMap: Record<string, Record<string, boolean>> = {
-      'grasslands': { windZones: true, checkpoints: false },
+      'grasslands': { windZones: true, checkpoints: true },
       'desert': { windZones: true, keys: true, goals: true },
       'water': { waterZones: true, rising: true },
       'ice-snow': { ice: true },

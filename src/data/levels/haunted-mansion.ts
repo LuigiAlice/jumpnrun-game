@@ -8,7 +8,7 @@ import {
   LevelData, createPlat, createQB, createEnemy, createDeco,
   createMovingPlat, createSpring, createSpike, createCrumblePlat,
   createCheckpoint, createKey, createDoor,
-  staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster,
+  staircase, plateauSection, pitFloor, twoTierSection, islandCluster,
   zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
 } from './helpers';
 import type { PlatformType } from './index';
@@ -39,7 +39,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     platforms.push(ground(2875, 450, 460, 'castle'));
     platforms.push(createPlat(3400, 420, 200, 24, 'platform_hard'));
     platforms.push(ground(3450, 700, 720, 'castle'));
-    platforms.push(...pitWithLedges(4150, 720, 440, 140, 'stone'));
+    platforms.push(...pitFloor(4150, 720, 440, 140, 'stone'));
     platforms.push(ground(4560, 680, 720, 'castle'));
     platforms.push(...overhangSection(5240, 720, 900, 5740, 180, 'castle'));
     platforms.push(ground(6300, 800, 720, 'castle'));
@@ -331,7 +331,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
   (() => {
     const platforms = [] as LevelData['platforms'];
     platforms.push(ground(0, 900, 780, 'stone'));
-    platforms.push(...pitWithLedges(950, 780, 420, 140, 'stone'));
+    platforms.push(...pitFloor(950, 780, 420, 140, 'stone'));
     platforms.push(ground(1200, 700, 780, 'stone'));
     platforms.push(...staircase(1900, 780, 3, 70, 130, 40, 'stone'));
     platforms.push(ground(2400, 500, 570, 'stone'));
@@ -342,7 +342,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     platforms.push(...staircase(4800, 880, 3, 80, 120, 40, 'stone'));
     platforms.push(ground(5300, 800, 640, 'stone'));
     platforms.push(...overhangSection(6200, 640, 1000, 6700, 200, 'stone'));
-    platforms.push(...pitWithLedges(7300, 640, 420, 160, 'stone'));
+    platforms.push(...pitFloor(7300, 640, 420, 160, 'stone'));
     platforms.push(ground(7550, 700, 640, 'stone'));
     platforms.push(...plateauSection(8350, 640, [
       { dx: 0, dy: 0, w: 350, h: 40, type: 'stone' },
@@ -458,7 +458,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     platforms.push(ground(4550, 1000, 400, 'castle'));
     platforms.push(...overhangSection(5650, 800, 1000, 6150, 200, 'castle'));
     platforms.push(ground(6750, 900, 800, 'castle'));
-    platforms.push(...pitWithLedges(7750, 800, 420, 140, 'stone'));
+    platforms.push(...pitFloor(7750, 800, 420, 140, 'stone'));
     platforms.push(ground(8000, 800, 800, 'castle'));
     platforms.push(ground(8900, 1400, 800, 'castle'));
     platforms.push(...staircase(10300, 800, 3, 70, 140, 40, 'castle'));
@@ -578,7 +578,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     platforms.push(ground(2120, 1200, 900, 'stone'));
     platforms.push(...staircase(2120, 900, 4, 70, 130, 40, 'castle'));
     platforms.push(ground(2700, 620, 620, 'castle'));
-    platforms.push(...pitWithLedges(3440, 900, 420, 140, 'stone'));
+    platforms.push(...pitFloor(3440, 900, 420, 140, 'stone'));
     platforms.push(ground(3780, 1100, 900, 'stone'));
     platforms.push(...staircase(3780, 900, 4, 70, 130, 40, 'castle'));
     platforms.push(ground(4360, 520, 620, 'castle'));
@@ -713,6 +713,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       ],
       springs: [createSpring(400, 820), createSpring(7000, 900), createSpring(13600, 900)],
       spikes: [createSpike(2600, 892), createSpike(10000, 892)],
+      fallingHazards: { intervalMs: 2500 },
     };
   })(),
 ];

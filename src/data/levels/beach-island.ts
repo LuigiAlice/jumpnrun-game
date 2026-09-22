@@ -13,7 +13,7 @@
 import {
   LevelData, createPlat, createCoin, createQB, createEnemy, createDeco, createMovingPlat,
   createSpring, createSpike, createCheckpoint, createWaterZone, createCrumblePlat,
-  staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster,
+  staircase, plateauSection, pitFloor, twoTierSection, islandCluster,
   zigzagClimb, overhangSection, gapWithPlatforms, coinArc, coinDiamond, coinTrail, coinLadder, seg,
 } from './helpers';
 
@@ -43,7 +43,7 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
       seg(1780, 2020, 450, 24, 'wood'),
       seg(2060, 2200, 490, 24, 'wood'),
       seg(2240, 2900, 550, 40, 'sand'),
-      ...pitWithLedges(2900, 550, 240, 160, 'sand'),
+      ...pitFloor(2900, 550, 240, 160, 'sand'),
       seg(3140, 3700, 550, 40, 'sand'),
       ...staircase(3700, 550, 3, 90, 180, 40, 'platform_medium'),
       seg(4440, 4900, 190, 40, 'stone'),
@@ -541,8 +541,8 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     timeBonus: 240,
     rising: { kind: 'water', speed: 0.25 },
     goals: [
-      { x: 2200, y: 380, points: 2500, difficulty: 'hard' },
-      { x: 6800, y: 160, points: 3000, difficulty: 'hard' },
+      { x: 2200, y: 380, points: 2500 },
+      { x: 6800, y: 160, points: 3000 },
     ],
     springs: [createSpring(400, 720), createSpring(5700, 240)],
     spikes: [createSpike(3900, 392), createSpike(11500, 352)],

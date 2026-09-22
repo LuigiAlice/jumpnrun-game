@@ -84,17 +84,18 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 
 ## 10. Level-Vielfalt (Phase 9)
 
-- **R-046** – Helfer v2: deterministische Baukästen `staircase`, `plateauSection`, `pitWithLedges`, `twoTierSection`, `islandCluster`, `zigzagClimb`, `overhangSection` sowie Coin-Muster (`coinArc`, `coinDiamond`, `coinTrail`, `coinLadder`) erzeugen variierte Geometrie ohne Math.random.
+- **R-046** – Helfer v2: deterministische Baukästen `staircase`, `plateauSection`, `pitFloor`, `twoTierSection`, `islandCluster`, `zigzagClimb`, `overhangSection` sowie Coin-Muster (`coinArc`, `coinDiamond`, `coinTrail`, `coinLadder`) erzeugen variierte Geometrie ohne Math.random.
 - **R-047** – Geometrie-Vielfalt: Jedes Level hat ≥ 4 verschiedene Oberkanten-y, ≥ 3 verschiedene Plattform-Breiten und keinen (w,h)-Stempel über 65 %; kein Level ist mehr eine flache Ein-Linien-Anordnung.
 - **R-048** – As-authored lösbar: Alle 90 Level sind ohne Auto-Fixer traversierbar; `ensureSolvable` fügt in keinem Level Plattformen hinzu.
 - **R-049** – Crumble-Plattformen sind datengetrieben (`crumble: true`, 800 ms Standzeit, 3 s Respawn) und in den Finale-Biomen sky-clouds, ruins, canyon-base, space-star verbaut; jede Crumble-Stelle hat eine sichere Nicht-Crumble-Route.
 - **R-050** – Eis-Plattformen (`PlatformType 'ice'`) rutschen stärker und kommen ausschließlich im Biom ice-snow vor (≥ 2 Level).
 - **R-051** – Förderbänder (`conveyor`) wirken in factory-Leveln als Laufkraft in beide Richtungen.
-- **R-052** – Checkpoints (`checkpoints`) stehen in langen Leveln (width ≥ 12000) auf Plattformen und verschieben nach dem Tod den Respawn dorthin.
+- **R-052** – Checkpoints (`checkpoints`) stehen in langen Leveln (width ≥ 16000) auf Plattformen und verschieben nach dem Tod den Respawn dorthin.
 - **R-053** – Wind-Zonen (`windZones`) gibt es in ≥ 4 windigen Biomen (u. a. grasslands, desert, sky-clouds, village, canyon-base), Wasser-Zonen (`waterZones`) in water und beach-island.
 - **R-054** – Schlüssel/Türen sind immer gepaart, blockieren nie Start oder Goal und öffnen nur Bonusräume; Multi-Goal-Level bieten zusätzliche Zielflaggen mit eigenen Punktwerten.
 - **R-055** – Kanonen (`cannons`) feuern in factory, castle-final und canyon-base tödliche Projektile; Zeit-Tore (`timeGate`) entsperren das Goal erst nach X Sekunden und sind innerhalb des Zeitbonus erreichbar.
 - **R-056** – 1-UP-Blöcke (`oneup`) kommen in mehreren Leveln vor; die Plattformtypen `hidden`, `brick_secret` und `brick_multi` werden in ≥ 3 Biomen für Geheimnisse genutzt.
+- **R-057** – Moving-Platform-Escape (Bugfix „Figur bleibt auf der Plattform kleben"): Die Mitnahme durch bewegliche Plattformen erfolgt ausschliesslich positionsbasiert (`setX`/`setY`) und darf `body.velocity` nie überschreiben — Sprung- und Laufeingaben müssen jederzeit greifen; `dx*60`-Velocity-Übergabe ist framezeitabhängig und verboten.
 
 ---
 
@@ -114,7 +115,7 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-003 | Physik-Limits 800/350/1000 | tests/Physics.test.ts | max fall down should be 1000px |
 | R-004 | Biome-Gravitation | tests/LevelInvariant.test.ts | all 90 levels should be fully traversable to goal (biome gravity) |
 | R-004 | Biome-Gravitation | tests/LevelSolvability.test.ts | all levels should be solvable |
-| R-005 | Eis-Rutsch & Schwimmen | tests/Phase9Features.test.ts | crumble and conveyor helpers carry their extra data |
+| R-005 | Eis-Rutsch & Schwimmen | tests/Phase9Features.test.ts | ice platforms exist in ice-snow and nowhere else |
 | R-005 | Eis-Rutsch & Schwimmen | tests/Phase9Features.test.ts | water zones appear in water and beach-island |
 | R-006 | Fire-Schuss 250ms | — | — |
 | R-007 | ESC → Titelmenü | e2e/game.test.ts | ESC returns to title screen |
@@ -203,3 +204,4 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-055 | Cannons & Zeit-Tor | tests/Phase9Features.test.ts | time-gate levels are achievable within their time bonus |
 | R-056 | 1-UP & Geheim-Bricks | tests/Phase9Features.test.ts | 1-UP question blocks appear in several levels |
 | R-056 | 1-UP & Geheim-Bricks | tests/Phase9Features.test.ts | hidden and secret brick types are used in multiple biomes |
+| R-057 | Moving-Platform-Escape | e2e/elements.test.ts | moving platform must not stomp |

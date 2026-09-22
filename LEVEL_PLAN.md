@@ -125,9 +125,11 @@ Implementiert (Engine: GameScene/helpers/config, Tests: NewElements + PilotEleme
 **Stufe 1 — Leveldaten (kein Engine-Risiko, Solver/Invarianten bleiben)**
 - Pro Biom eigene 6 Archetypen statt globalem Rezept (z. B. water: Tauchgang/Strömung/Luftblasen/Grotte; factory: Förderband/Aufzug/Maschinenraum; ice: Rutschbahn/Eishöhle/Gletscherspalte).
 - Terrain statt Linie: Terrassen, Plateaus, Senken, Gruben mit Rändern; Plattformbreiten 40–400px, Höhenstaffel 40–250px statt fixem 20px-Raster.
-- Helfer entzerren: `gapWithPlatforms` mit Varianten (Breiten, dy-Muster, Typ-Mix) parametrisieren; neue Helfer `staircase`, `plateauSection`, `pitWithLedges`, `twoTierSection`, `islandCluster`, `zigzagClimb`, `overhang`.
+- Helfer entzerren: `gapWithPlatforms` mit Varianten (Breiten, dy-Muster, Typ-Mix) parametrisieren; neue Helfer `staircase`, `plateauSection`, `pitFloor`, `twoTierSection`, `islandCluster`, `zigzagClimb`, `overhang`.
 - Dramaturgie: Spannungsbogen pro Level (ruhig → Hindernis → Belohnungsinsel → Eskalation → Finale), Risiko-Belohnung (High-Risk-Coins), Wahrzeichen pro Level.
 - Coins entlang der Sprunglinie (Bögen, Rauten, Trails); Gegner als Wächter auf Plattformen, Patrouillen, Ambushes statt y=510-Linie.
+
+Spannungsbogen, Wahrzeichen, Risiko-Belohnung sind qualitative Designziele — sie werden bei Reviews manuell geprüft, ohne automatisierten Test.
 
 **Stufe 2 — Daten + kleine Engine-Erweiterungen (mit Tests)**
 - `ice`-PlatformType nutzen → Rutschen nur auf Eisflächen statt global.
@@ -138,20 +140,20 @@ Implementiert (Engine: GameScene/helpers/config, Tests: NewElements + PilotEleme
 - `oneup` in QBs, mehr `circular`-Moving-Plats; totes `goals`-Feld nutzen (Multi-Goal) oder entfernen.
 
 **Stufe 3 — grössere Features (optional)**
-- Checkpoints bei 20k+-Leveln, Wind-/Wasser-Zonen als LevelData, Multi-Goal/Zeit-Tor, Schlüssel/Türen, Kanonen.
+- Checkpoints ab width >= 16000 (Pflicht), Wind-/Wasser-Zonen als LevelData, Multi-Goal/Zeit-Tor, Schlüssel/Türen, Kanonen.
 
 ### Umsetzungsspezifikation (Rollout)
 
 **Status**: ABGESCHLOSSEN — Engine + Typen + Tests + alle 15 Biome umgebaut. Verifikation: `tests/Phase9Features.test.ts` (28 Tests), `tests/BiomeAudit.test.ts` (scoped pro Biom), `tests/ElementMix.test.ts`, `LEVEL_PLAN.md`-Spezifikation unten.
 
 **Neue LevelData-Felder** (alle optional, Solver-agnostisch, dürfen nie Pflichtweg sein):
-`checkpoints`, `windZones`, `waterZones`, `keys`, `doors`, `cannons`, `timeGate`, `rising`; Plattform-Extras `crumble`, `conveyor`; `PlatformType` 'ice'; nutzbar: `hidden`, `brick_secret`, `brick_multi`; QB-Inhalt `oneup`; `goals` (Multi-Goal).
+`checkpoints`, `windZones`, `waterZones`, `keys`, `doors`, `cannons`, `timeGate`, `rising` (Flut `kind: 'water'` reitbar/nicht tödlich, nur Lava `kind: 'lava'` tötet), `fallingHazards` (fallende Hindernisse-Finale, `{ intervalMs? }`); Plattform-Extras `crumble`, `conveyor`; `PlatformType` 'ice'; nutzbar: `hidden`, `brick_secret`, `brick_multi`; QB-Inhalt `oneup`; `goals` (Multi-Goal).
 
 **Helfer v2** (`helpers.ts`, absolute Koordinaten, `baseTop` = Oberkante des Bodens):
 - `seg(l, r, top, h, type)` — Segment aus linker/rechter Kante + Oberkante (gemeinsame Basis mehrerer Biome-Dateien)
 - `staircase(startX, baseTop, steps, rise=70, width=140, gapX=40, type)`
 - `plateauSection(startX, baseTop, specs[{dx,dy,w,h?,type?}])`
-- `pitWithLedges(pitStart, baseTop, pitWidth, pitDepth=160, type)` — Grubenboden; die umliegende Erde bildet die Ränder
+- `pitFloor(pitStart, baseTop, pitWidth, pitDepth=160, type)` — Grubenboden; die umliegende Erde bildet die Ränder
 - `twoTierSection(startX, baseTop, length, lowerType?, upperType?)` — obere Route bei baseTop−160
 - `islandCluster(startX, baseTop, specs[{dx,dy,w,type?}])`
 - `zigzagClimb(startX, baseTop, steps=6, rise=90, width=110, swing=130, type)`
@@ -177,7 +179,7 @@ Abwärts ist bis 1000px Fallhöhe immer möglich. Bei `body.y > 500` schwimmt de
 
 | Biom | 6 Archetypen (Vorschlag) | Pflicht |
 |------|--------------------------|---------|
-| grasslands | 1 Tutorial, 2 Hügel & Gruben, 3 Röhren & Geheimnisse, 4 Kletterpartie, 5 Horde, 6 Wind-Dash-Finale | Wind-Zonen, Checkpoints in langen Leveln |
+| grasslands | 1 Tutorial, 2 Hügel & Gruben, 3 Röhren & Geheimnisse, 4 Kletterpartie, 5 Horde, 6 Wind-Dash-Finale | Wind-Zonen, Checkpoints in langen Leveln (width >= 16000) |
 | desert | 1 Dünen-Tutorial, 2 Sandsturm-Schlucht, 3 Pyramiden-Labyrinth, 4 Oasen-Kletterer, 5 Skorpion-Horde, 6 Pharaonen-Finale | Wind-Zonen, Keys+Doors (Bonusraum), Multi-Goal |
 | water | 1 Lagunenpfad, 2 Tiden-Tunnel, 3 Korallen-Labyrinth, 4 Tauchgang, 5 Tiefsee-Horde, 6 Mariana-Finale | Water-Zonen, Rising-Water (L18) |
 | ice-snow | 1 Schneepfad, 2 Gletscherspalten, 3 Eistunnel, 4 Gipfelsturm, 5 Polarhorde, 6 Eiszeit-Finale | Ice-Plattformen (≥2 Level) |
@@ -202,7 +204,7 @@ Abwärts ist bis 1000px Fallhöhe immer möglich. Bei `body.y > 500` schwimmt de
 - village L37: load-bearing `brick` exakt (2400,650)
 - Pilot L1–L12: ≥5/6 Level je Biom mit Spring; vertikale UND circulare Moving-Plats; Spikes-Regeln
 
-**Element-Regeln**: Spikes max 4/Level, ≥100px zu QBs, ≥96px zu Goal, ≥150px zu playerStart, immer auf solider Plattform; Springs exakt auf Plattform-Oberkante; coinGoal ≤ Coins; ≤3 coinGoal-Level/Biom; Bricks nur zerbrechbar, wenn `isBrickLoadBearing` false (Tests prüfen das). Kein Level darf nach dem Umbau noch `ensureSolvable`-Flickwerk nötig haben (as-authored traversierbar bauen).
+**Element-Regeln**: Spikes max 4/Level, ≥100px zu QBs, ≥96px zu Goal, ≥150px zu playerStart, immer auf solider Plattform; Springs exakt auf Plattform-Oberkante; coinGoal ≤ Coins; ≤3 coinGoal-Level/Biom; Bricks nur zerbrechbar, wenn `isBrickLoadBearing` false (Tests prüfen das). Checkpoints sind ab width >= 16000 Pflicht (BiomeAudit-Schwelle). Kein Level darf nach dem Umbau noch `ensureSolvable`-Flickwerk nötig haben (as-authored traversierbar bauen).
 
 ### Bugs/Inkonsistenzen (unabhängig von Phase 9 fixen)
 

@@ -3,10 +3,12 @@ import { ALL_LEVELS, getLevel, getLevelCount, ensureSolvable } from '../src/data
 import {
   createPlat, createCrumblePlat, createConveyorPlat, createIcePlat, createCheckpoint,
   createWindZone, createWaterZone, createKey, createDoor, createCannon,
-  staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster, zigzagClimb,
+  staircase, plateauSection, pitFloor, twoTierSection, islandCluster, zigzagClimb,
   overhangSection, coinArc, coinDiamond, coinTrail, coinLadder, canBreakBrick, isBrickLoadBearing,
 } from '../src/data/levels/helpers';
 import type { LevelData } from '../src/data/levels/index';
+import { Physics } from '../src/engine/Physics';
+import { getBiomeGravity } from '../src/config';
 
 const levels = ALL_LEVELS;
 const playable = (): LevelData[] => Array.from({ length: getLevelCount() }, (_, i) => getLevel(i));
@@ -46,11 +48,11 @@ describe('Phase 9: helper building blocks', () => {
     expect(new Set(steps.map(p => p.w)).size).toBe(1);
   });
 
-  it('plateauSection, pitWithLedges and overhangSection build terrain', () => {
+  it('plateauSection, pitFloor and overhangSection build terrain', () => {
     const plats = plateauSection(1000, 530, [{ dx: 0, dy: 0, w: 300 }, { dx: 400, dy: 160, w: 200 }]);
     expect(plats).toHaveLength(2);
     expect(plats[1].y).toBeLessThan(plats[0].y);
-    const pit = pitWithLedges(1500, 530, 240, 160);
+    const pit = pitFloor(1500, 530, 240, 160);
     expect(pit[0].y - pit[0].h / 2).toBeGreaterThan(530);
     const over = overhangSection(2000, 530, 500, 2100, 120);
     expect(over).toHaveLength(2);
@@ -151,6 +153,31 @@ describe('Phase 9: data-driven level elements', () => {
     expect(levelsWithZones.length).toBeGreaterThanOrEqual(4);
   });
 
+  it('goal and extra goals stay inside the level width', () => {
+    const failures: string[] = [];
+    for (const level of levels) {
+      if (level.goal.x > level.width) {
+        failures.push(`${label(level)}: goal.x ${level.goal.x} > width ${level.width}`);
+      }
+      for (const g of level.goals || []) {
+        if (!(g.x > 0 && g.x < level.width)) {
+          failures.push(`${label(level)}: extra goal x=${g.x} outside (0, ${level.width})`);
+        }
+      }
+    }
+    expect(failures, failures.join('\n')).toHaveLength(0);
+  });
+
+  it('every wide level has at least one checkpoint', () => {
+    const failures: string[] = [];
+    for (const level of levels) {
+      if (level.width >= 16000 && (level.checkpoints || []).length < 1) {
+        failures.push(`${label(level)}: width ${level.width} but no checkpoint`);
+      }
+    }
+    expect(failures, failures.join('\n')).toHaveLength(0);
+  });
+
   it('keys and doors are paired and never block start or goal', () => {
     const keyLevels = levels.filter(l => (l.keys || []).length > 0);
     expect(keyLevels.length).toBeGreaterThanOrEqual(3);
@@ -191,7 +218,6 @@ describe('Phase 9: data-driven level elements', () => {
     for (const level of multi) {
       for (const goal of level.goals || []) {
         expect(goal.points).toBeGreaterThan(0);
-        expect(['easy', 'medium', 'hard']).toContain(goal.difficulty);
         expect(goal.x).toBeGreaterThan(0);
         expect(goal.x).toBeLessThan(level.width);
       }
@@ -324,6 +350,18 @@ describe('Phase 9: pinned level signatures stay intact', () => {
     expect(levels[0].springs).toHaveLength(1);
     expect(levels[0].spikes || []).toHaveLength(0);
   });
+
+  it('grasslands L1 keeps its pipeWarps', () => {
+    const level = levels[0];
+    const warps = level.pipeWarps || [];
+    expect(warps).toHaveLength(2);
+    for (const w of warps) {
+      expect(w.pipeY).toBe(506);
+      expect(w.pipeX).toBeGreaterThan(0);
+      expect(w.pipeX, `pipeX ${w.pipeX} outside level`).toBeLessThan(level.width);
+    }
+    expect([...warps.map(w => w.targetLevelIndex)].sort((a, b) => a - b)).toEqual([2, 5]);
+  });
 });
 
 describe('Phase 9: ensureSolvable preserves new fields', () => {
@@ -352,7 +390,7 @@ describe('Phase 9: ensureSolvable preserves new fields', () => {
       keys: [createKey(700, 400)],
       doors: [createDoor(1200, 460, 40, 90)],
       cannons: [createCannon(1500, 450, -1)],
-      goals: [{ x: 2500, y: 460, points: 2000, difficulty: 'hard' }],
+      goals: [{ x: 2500, y: 460, points: 2000 }],
       timeGate: 30,
     };
     const fixed = ensureSolvable(level);
@@ -367,12 +405,13 @@ describe('Phase 9: ensureSolvable preserves new fields', () => {
     expect(fixed.platforms.some(p => p.crumble)).toBe(true);
   });
 
-  it('all 90 playable levels still solve with the new fields present', () => {
+  it('all 90 playable levels still solve with the new fields present', { timeout: 60000 }, () => {
     const failures: string[] = [];
     for (const level of playable()) {
-      const tops = new Set(level.platforms.map(p => Math.round(p.y - p.h / 2)));
-      if (tops.size < 4) failures.push(label(level));
+      const physics = new Physics(level.platforms, level.width, level.height, level.movingPlatforms || [], getBiomeGravity(level.biome));
+      const solvable = physics.isSolvable(level.playerStart.x, level.playerStart.y, level.goal.x, level.goal.y);
+      if (!solvable) failures.push(`${label(level)}: isSolvable=false`);
     }
-    expect(failures).toHaveLength(0);
+    expect(failures, failures.join('\n')).toHaveLength(0);
   });
 });

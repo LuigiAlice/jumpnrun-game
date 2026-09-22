@@ -13,7 +13,7 @@
 import {
   LevelData, createPlat, createQB, createEnemy, createDeco, createMovingPlat,
   createSpring, createSpike, createIcePlat, createCrumblePlat, createCheckpoint,
-  createKey, createDoor, staircase, plateauSection, pitWithLedges, twoTierSection,
+  createKey, createDoor, staircase, plateauSection, pitFloor, twoTierSection,
   islandCluster, zigzagClimb, overhangSection, gapWithPlatforms,
   coinArc, coinDiamond, coinTrail, coinLadder,
 } from './helpers';
@@ -28,7 +28,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       // Two-tier terrace: safe lower route, risky upper route
       ...twoTierSection(1200, 560, 600, 'snow', 'platform_medium'), // lower top 560, upper top 400
       // Crevasse with ledges (escape route on both sides)
-      ...pitWithLedges(1800, 560, 400, 140, 'stone'),           // floor top 700 [1800,2200]
+      ...pitFloor(1800, 560, 400, 140, 'stone'),           // floor top 700 [1800,2200]
       createPlat(1860, 650, 110, 24, 'platform_easy'),              // ledge top 638
       createPlat(2140, 650, 110, 24, 'platform_easy'),              // ledge top 638
       // Snow ground B
@@ -119,7 +119,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       // Ice slide 1 - spikes and guards while sliding
       createIcePlat(3400, 612, 1000, 24),                           // top 600 [2900,3900]
       // Crevasse crossed by a crumbling ice bridge (shortcut) or the safe pit floor
-      ...pitWithLedges(3900, 600, 500, 150, 'stone'),           // floor top 750 [3900,4400]
+      ...pitFloor(3900, 600, 500, 150, 'stone'),           // floor top 750 [3900,4400]
       createCrumblePlat(4075, 612, 350, 24, 'ice'),                 // crumbling ice bridge top 600 [3900,4250]
       createPlat(4900, 620, 1000, 40, 'snow'),                      // top 600 [4400,5400]
       // Ice slide 2 with bonus platforms above
@@ -216,7 +216,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       createIcePlat(3100, 612, 1000, 24),                           // top 600 [2600,3600]
       createPlat(3100, 460, 600, 40, 'cave'),                       // ceiling top 440 [2800,3400]
       // Crevasse with ledges
-      ...pitWithLedges(3600, 600, 400, 150, 'stone'),           // floor top 750 [3600,4000]
+      ...pitFloor(3600, 600, 400, 150, 'stone'),           // floor top 750 [3600,4000]
       createPlat(3650, 690, 110, 24, 'platform_easy'),              // ledge top 678
       createPlat(3950, 690, 110, 24, 'platform_easy'),              // ledge top 678
       // Two-tier cave section
@@ -349,7 +349,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       ...staircase(3450, 610, 4, 65, 150, 40, 'snow'),              // tops 545/480/415/350
       createIcePlat(4450, 342, 700, 24),                            // summit top 330 [4100,4800]
       // Glacier crevasse inside the summit
-      ...pitWithLedges(4800, 330, 400, 150, 'stone'),           // floor top 480 [4800,5200]
+      ...pitFloor(4800, 330, 400, 150, 'stone'),           // floor top 480 [4800,5200]
       createPlat(4850, 420, 100, 24, 'platform_easy'),              // ledge top 408
       createPlat(5150, 420, 100, 24, 'platform_easy'),              // ledge top 408
       createPlat(5500, 350, 600, 40, 'snow'),                       // top 330 [5200,5800]
@@ -463,7 +463,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       // Wide ice arena
       createIcePlat(4280, 632, 1440, 24),                           // top 620 [3560,5000]
       // Pit with ledges in the arena
-      ...pitWithLedges(5000, 620, 420, 150, 'ice'),             // floor top 770 [5000,5420]
+      ...pitFloor(5000, 620, 420, 150, 'ice'),             // floor top 770 [5000,5420]
       createPlat(5050, 710, 110, 24, 'platform_easy'),              // ledge top 698
       createPlat(5330, 710, 110, 24, 'platform_easy'),              // ledge top 698
       createPlat(6210, 640, 1580, 40, 'snow'),                      // top 620 [5420,7000]
@@ -570,7 +570,7 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       // Long open ice slide (danger stretch)
       createIcePlat(5300, 652, 1400, 24),                           // top 640 [4600,6000]
       // Pit with ledges
-      ...pitWithLedges(6000, 640, 400, 150, 'stone'),           // floor top 790 [6000,6400]
+      ...pitFloor(6000, 640, 400, 150, 'stone'),           // floor top 790 [6000,6400]
       createPlat(6050, 730, 110, 24, 'platform_easy'),              // ledge top 718
       createPlat(6350, 730, 110, 24, 'platform_easy'),              // ledge top 718
       createPlat(7000, 660, 1200, 40, 'snow'),                      // top 640 [6400,7600]
@@ -672,5 +672,6 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
       createMovingPlat(5300, 510, 120, 24, 'platform_medium', 'vertical', 110, 26),
       createMovingPlat(9000, 520, 110, 24, 'platform_medium', 'circular', 80, 28),
     ],
+    fallingHazards: { intervalMs: 2500 },
   },
 ];

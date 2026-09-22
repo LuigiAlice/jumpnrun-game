@@ -40,7 +40,7 @@ describe('Asset Coverage Tests', () => {
 
     it('all platform types in levels should use valid texture names', () => {
       const validTextures = new Set(REQUIRED_PLATFORM_TEXTURES);
-      const knownTypes = ['grass', 'cave', 'castle', 'ruins', 'sand', 'water', 'snow', 'lava', 'metal', 'space', 'stone', 'brick', 'pipe', 'pipe_top', 'cloud', 'wood', 'sandstone', 'platform_easy', 'platform_medium', 'platform_hard', 'bubble', 'ground', 'ice', 'hidden', 'brick_secret', 'brick_multi', 'dirt'];
+      const knownTypes = ['grass', 'cave', 'castle', 'ruins', 'sand', 'water', 'snow', 'lava', 'metal', 'space', 'stone', 'brick', 'pipe', 'pipe_top', 'cloud', 'wood', 'sandstone', 'platform_easy', 'platform_medium', 'platform_hard', 'bubble', 'ground', 'ice', 'hidden', 'brick_secret', 'brick_multi'];
       const issues: string[] = [];
 
       for (let i = 0; i < getLevelCount(); i++) {

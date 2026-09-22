@@ -546,6 +546,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     platforms.push(createPlat(10400, 160, 700, 40, 'space'));        // top 140 Nova-Krone [10050,10750]
     platforms.push(createPlat(11200, 260, 600, 40, 'metal'));        // top 240 [10900,11500]
     platforms.push(createPlat(12200, 360, 800, 40, 'space'));        // top 340 Ziel [11800,12600]
+    platforms.forEach(p => { if (p.type === 'platform_easy' || p.type === 'platform_medium' || p.type === 'platform_hard' || p.type === 'cloud') p.crumble = true; });
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(200, 800, 1000, 800, 4));

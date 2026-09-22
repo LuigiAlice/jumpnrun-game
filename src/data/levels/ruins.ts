@@ -11,7 +11,7 @@ import {
   LevelData, createPlat, createQB, createEnemy, createDeco,
   createMovingPlat, createSpring, createSpike, createCrumblePlat,
   createCheckpoint, createKey, createDoor,
-  staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster,
+  staircase, plateauSection, pitFloor, twoTierSection, islandCluster,
   overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
   gapWithPlatforms,
 } from './helpers';
@@ -26,7 +26,7 @@ export const RUINS_LEVELS: LevelData[] = [
   (() => {
     const platforms = [] as LevelData['platforms'];
     platforms.push(createPlat(600, 760, 1000, 48, 'ruins'));
-    platforms.push(...pitWithLedges(1100, 736, 240, 140, 'sandstone'));
+    platforms.push(...pitFloor(1100, 736, 240, 140, 'sandstone'));
     // Geheim-Brick über dem Grubenrand (nur mit Sprung erreichbar)
     platforms.push(createPlat(1300, 600, 140, 24, 'brick_secret'));
     platforms.push(createPlat(1800, 760, 800, 48, 'ruins'));
@@ -150,7 +150,7 @@ export const RUINS_LEVELS: LevelData[] = [
     platforms.push(createPlat(4450, 760, 800, 48, 'ruins'));
     platforms.push(...twoTierSection(4900, 736, 900, 'stone', 'sandstone'));
     platforms.push(createPlat(6400, 760, 900, 48, 'ruins'));
-    platforms.push(...pitWithLedges(6900, 736, 280, 150, 'sandstone'));
+    platforms.push(...pitFloor(6900, 736, 280, 150, 'sandstone'));
     // Insel-Cluster über der Grabkammer
     platforms.push(...islandCluster(6900, 736, [
       { dx: 0, dy: 150, w: 120, type: 'platform_easy' },
@@ -645,7 +645,7 @@ export const RUINS_LEVELS: LevelData[] = [
     }));
     platforms.push(createPlat(6600, 940, 900, 48, 'ruins'));
     platforms.push(createPlat(7600, 900, 700, 48, 'stone'));
-    platforms.push(...pitWithLedges(8000, 876, 300, 60, 'sandstone'));
+    platforms.push(...pitFloor(8000, 876, 300, 60, 'sandstone'));
     platforms.push(createPlat(8800, 900, 700, 48, 'ruins'));
     platforms.push(createPlat(9500, 860, 600, 48, 'sandstone'));
     // Fallstücke (Crumble) über der sicheren Querung
@@ -663,6 +663,7 @@ export const RUINS_LEVELS: LevelData[] = [
     // Schlusstempel-Treppe
     platforms.push(...staircase(14400, 676, 4, 70, 140, 40, 'sandstone'));
     platforms.push(createPlat(15550, 420, 600, 48, 'ruins'));
+    platforms.forEach(p => { if (p.type === 'platform_easy' || p.type === 'platform_medium' || p.type === 'platform_hard' || p.type === 'cloud') p.crumble = true; });
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(200, 460, 900, 460, 4));

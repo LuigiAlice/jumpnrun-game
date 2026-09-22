@@ -202,6 +202,7 @@ test.describe('Pilot elements runtime verification', () => {
       scene.player.body.setSize(22, 32);
       scene.player.body.reset(target.x, target.y - 40);
       scene.player.body.setVelocityY(300);
+      scene.coins.getChildren().forEach(c => c.destroy());
       return { type: getType(target), scoreBefore, lives: scene.lives, tx: target.x, ty: target.y };
     `);
     expect(setup.error, `Setup failed: ${JSON.stringify(setup)}`).toBeUndefined();
@@ -223,12 +224,103 @@ test.describe('Pilot elements runtime verification', () => {
     }
     expect(result, 'poll produced no result').not.toBeNull();
     expect(result.targetAlive, `target enemy was not destroyed within 3s (score=${result.score}, isDead=${result.isDead})`).toBe(false);
-    // Coins collected during the fall may add score on top of the +500 stomp.
-    expect(result.score, `expected at least +500 for stomp, got score=${result.score} (before=${setup.scoreBefore})`).toBeGreaterThanOrEqual(setup.scoreBefore + 500);
+    // Coins destroyed in setup: stomp must yield exactly +500.
+    expect(result.score, `expected exactly +500 for stomp, got score=${result.score} (before=${setup.scoreBefore})`).toBe(setup.scoreBefore + 500);
     expect(result.isDead, 'player died instead of stomping').toBe(false);
     expect(result.lives, 'player lives must be unchanged after stomp').toBe(setup.lives);
     // Bounce -400: Aufwaerts-Geschwindigkeit kurz nach Stomp (Poll-Intervall 10ms;
     // Gravity 2000 reduziert vy pro Sample um ~20, daher Grenze -300 statt exakt -400).
     expect(minVy, `player did not bounce upward after stomp (minVy=${minVy}, expected <= -300)`).toBeLessThanOrEqual(-300);
+  });
+
+  test('T7: vertical moving platform must not stomp the jump (player escapes)', async ({ page }) => {
+    await startLevel(page, 0);
+    const setup = await inGame(page, `
+      let target = null;
+      for (const m of scene.movingPlatforms.getChildren()) {
+        const d = scene.movingPlatformData.get(m);
+        if (d && (d.moveType === 'vertical' || d.moveType === 'circular')) { target = m; break; }
+      }
+      if (!target) return { error: 'no vertical/circular mover in level' };
+      scene.player.body.reset(target.x - 11, target.y - 46);
+      scene.player.body.setVelocity(0, 0);
+      return { tx: target.x, ty: target.y };
+    `);
+    expect(setup.error, `Setup failed: ${JSON.stringify(setup)}`).toBeUndefined();
+    await page.waitForFunction(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const s = (window as any).__game.scene.getScene('Game');
+      if (!s || !s.player || !s.player.body) return false;
+      for (const m of s.movingPlatforms.getChildren()) {
+        const d = s.movingPlatformData.get(m);
+        if (d && (d.moveType === 'vertical' || d.moveType === 'circular')) {
+          return s.player.body.blocked.down && Math.abs(s.player.x - m.x) < 80 && Math.abs(s.player.y - m.y) < 50;
+        }
+      }
+      return false;
+    }, undefined, { timeout: 3000 }).catch(() => { throw new Error('player did not settle on the vertical mover'); });
+
+    await page.locator('canvas').click({ position: { x: 400, y: 300 } });
+    await page.keyboard.down('ArrowUp');
+    let maxRise = 0;
+    const startY = (await inGame(page, `return scene.player.y;`)) as number;
+    for (let i = 0; i < 30; i++) {
+      await page.waitForTimeout(16);
+      const r = await inGame(page, `return { py: scene.player.y }; `) as { py: number };
+      const rise = startY - r.py;
+      if (rise > maxRise) maxRise = rise;
+    }
+    await page.keyboard.up('ArrowUp');
+    expect(maxRise, `player never left the vertical mover (maxRise=${maxRise.toFixed(0)}px, expected >= 100) — jump is glued to the platform`).toBeGreaterThanOrEqual(100);
+  });
+
+  test('T8: horizontal moving platform must not stomp walk input (player escapes)', async ({ page }) => {
+    await startLevel(page, 4);
+    const setup = await inGame(page, `
+      let target = null;
+      for (const m of scene.movingPlatforms.getChildren()) {
+        const d = scene.movingPlatformData.get(m);
+        if (d && d.moveType === 'horizontal') { target = m; break; }
+      }
+      if (!target) return { error: 'no horizontal mover in level' };
+      scene.player.body.reset(target.x - 11, target.y - 46);
+      scene.player.body.setVelocity(0, 0);
+      return { tx: target.x };
+    `);
+    expect(setup.error, `Setup failed: ${JSON.stringify(setup)}`).toBeUndefined();
+    await page.waitForFunction(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const s = (window as any).__game.scene.getScene('Game');
+      if (!s || !s.player || !s.player.body) return false;
+      for (const m of s.movingPlatforms.getChildren()) {
+        const d = s.movingPlatformData.get(m);
+        if (d && d.moveType === 'horizontal') {
+          return s.player.body.blocked.down && Math.abs(s.player.x - m.x) < 80 && Math.abs(s.player.y - m.y) < 50;
+        }
+      }
+      return false;
+    }, undefined, { timeout: 3000 }).catch(() => { throw new Error('player did not settle on the horizontal mover'); });
+
+    const res = await inGame(page, `
+      let target = null;
+      for (const m of scene.movingPlatforms.getChildren()) {
+        const d = scene.movingPlatformData.get(m);
+        if (d && d.moveType === 'horizontal') { target = m; break; }
+      }
+      const stillRiding = scene.player.body.blocked.down
+        && Math.abs(scene.player.x - target.x) < 80 && Math.abs(scene.player.y - target.y) < 50;
+      if (!stillRiding) return { error: 'player left the mover before measurement' };
+      // Activate the walk input branch (clamps at PLAYER_SPEED=300, dt-robust) and
+      // measure two native frames later: the value must still be the player's own
+      // input velocity — NOT the platform's dx*60.
+      scene.cursors.right.isDown = true;
+      scene.player.body.setVelocityX(300);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      const vxAfter = Math.round(scene.player.body.velocity.x);
+      scene.cursors.right.isDown = false;
+      return { vxAfter };
+    `);
+    expect(res.error, `Setup failed: ${JSON.stringify(res)}`).toBeUndefined();
+    expect(res.vxAfter, `walk velocity was overwritten to ${res.vxAfter} (expected >= 250) — mover carry stomps input`).toBeGreaterThanOrEqual(250);
   });
 });

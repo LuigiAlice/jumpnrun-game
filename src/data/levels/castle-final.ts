@@ -12,7 +12,7 @@ import {
   LevelData, createPlat, createQB, createEnemy, createDeco,
   createMovingPlat, createSpring, createSpike, createCrumblePlat,
   createCheckpoint, createKey, createDoor, createCannon,
-  staircase, plateauSection, pitWithLedges, twoTierSection, zigzagClimb,
+  staircase, plateauSection, pitFloor, twoTierSection, zigzagClimb,
   overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
   gapWithPlatforms,
 } from './helpers';
@@ -37,7 +37,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(3100, 512, 180, 24, 'platform_medium'));   // top 500
     platforms.push(createPlat(3900, 660, 1000, 40, 'castle'));           // top 640 [3400,4400]
     platforms.push(createPlat(4600, 592, 140, 24, 'platform_hard'));     // top 580 obere Grabenroute
-    platforms.push(...pitWithLedges(4400, 640, 300, 180, 'cave'));   // Grabenboden top 820
+    platforms.push(...pitFloor(4400, 640, 300, 180, 'cave'));   // Grabenboden top 820
     platforms.push(createPlat(4840, 780, 140, 24, 'platform_easy'));     // top 768 Graben-Ausstieg
     platforms.push(createPlat(5200, 672, 600, 40, 'castle'));            // top 652 [4900,5500]
     platforms.push(...overhangSection(5500, 652, 700, 5800, 180, 'castle')); // Spalt [5800,5980]
@@ -125,7 +125,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
   (() => {
     const platforms = [] as LevelData['platforms'];
     platforms.push(createPlat(700, 780, 1400, 40, 'castle'));            // top 760 [0,1400]
-    platforms.push(...pitWithLedges(1400, 760, 500, 200, 'cave'));   // Grabenboden top 960
+    platforms.push(...pitFloor(1400, 760, 500, 200, 'cave'));   // Grabenboden top 960
     platforms.push(createCrumblePlat(1520, 748, 140, 24, 'platform_medium')); // Zugbruecke top 736
     platforms.push(createCrumblePlat(1750, 736, 140, 24, 'platform_medium')); // top 724
     platforms.push(createCrumblePlat(1980, 748, 160, 24, 'platform_hard'));   // top 736
@@ -140,7 +140,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       widths: [110], dy: [20], types: ['platform_medium'], xOffsets: [0],
     }));                                                                 // top 740 Trittstein
     platforms.push(createPlat(7900, 700, 800, 40, 'castle'));            // top 680 [7500,8300]
-    platforms.push(...pitWithLedges(8300, 680, 400, 200, 'cave'));   // Grabenboden top 900
+    platforms.push(...pitFloor(8300, 680, 400, 200, 'cave'));   // Grabenboden top 900
     platforms.push(createPlat(8760, 810, 140, 24, 'platform_easy'));     // top 798 Graben-Ausstieg
     platforms.push(createPlat(9250, 700, 900, 40, 'castle'));            // top 680 [8800,9700]
     platforms.push(...staircase(9700, 680, 2, 40, 140, 30, 'stone'));    // Stufen top 640/600
@@ -229,7 +229,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
   (() => {
     const platforms = [] as LevelData['platforms'];
     platforms.push(createPlat(600, 740, 1200, 40, 'castle'));            // top 720 [0,1200]
-    platforms.push(...pitWithLedges(1200, 720, 420, 200, 'cave'));   // Kanalboden top 920
+    platforms.push(...pitFloor(1200, 720, 420, 200, 'cave'));   // Kanalboden top 920
     platforms.push(createPlat(1310, 632, 120, 24, 'platform_medium'));   // top 620
     platforms.push(createPlat(1490, 632, 120, 24, 'platform_medium'));   // top 620
     platforms.push(createPlat(1660, 644, 140, 24, 'platform_easy'));     // top 632
@@ -244,7 +244,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(...overhangSection(4850, 660, 800, 5200, 200, 'castle')); // Spalt [5200,5400]
     platforms.push(createPlat(5500, 570, 200, 24, 'platform_medium'));   // top 558 Zellenboden 2
     platforms.push(createPlat(6250, 680, 1100, 40, 'stone'));            // top 660 [5700,6800]
-    platforms.push(...pitWithLedges(6800, 660, 700, 260, 'cave'));   // Kanalboden top 940
+    platforms.push(...pitFloor(6800, 660, 700, 260, 'cave'));   // Kanalboden top 940
     platforms.push(createPlat(6900, 580, 120, 24, 'platform_medium'));   // top 568
     platforms.push(createPlat(7150, 540, 120, 24, 'platform_hard'));     // top 528
     platforms.push(createPlat(7400, 580, 120, 24, 'platform_medium'));   // top 568
@@ -365,7 +365,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(4950, 700, 1000, 40, 'stone'));            // top 680 [4450,5450] Checkpoint 1
     platforms.push(createPlat(4900, 610, 120, 24, 'platform_easy'));     // top 598 Stufe
     platforms.push(createPlat(5000, 520, 140, 24, 'platform_hard'));     // top 508 Schluesselplateau
-    platforms.push(...pitWithLedges(5450, 680, 500, 220, 'cave'));   // Grabenboden top 900
+    platforms.push(...pitFloor(5450, 680, 500, 220, 'cave'));   // Grabenboden top 900
     platforms.push(createPlat(5600, 600, 140, 24, 'platform_medium'));   // top 588 obere Route
     platforms.push(createPlat(5800, 560, 140, 24, 'platform_hard'));     // top 548
     platforms.push(createPlat(6030, 850, 120, 24, 'platform_easy'));     // top 838 untere Route
@@ -504,7 +504,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
       { dx: 700, dy: 160, w: 340, h: 40, type: 'stone' },                 // top 600 [2500,2840]
     ]));
     platforms.push(createPlat(3500, 740, 1400, 40, 'castle'));           // top 720 Arena 1 [2800,4200]
-    platforms.push(...pitWithLedges(4200, 720, 500, 200, 'cave'));   // Grabenboden top 920
+    platforms.push(...pitFloor(4200, 720, 500, 200, 'cave'));   // Grabenboden top 920
     platforms.push(createPlat(4350, 640, 140, 24, 'platform_medium'));   // top 628
     platforms.push(createPlat(4600, 600, 140, 24, 'platform_hard'));     // top 588
     platforms.push(createPlat(4750, 860, 120, 24, 'platform_easy'));     // top 848 Ausstieg
@@ -514,7 +514,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(7500, 680, 1200, 40, 'castle'));           // top 660 [6900,8100]
     platforms.push(...overhangSection(8100, 660, 900, 8450, 200, 'castle')); // Spalt [8450,8650]
     platforms.push(createPlat(9600, 680, 1200, 40, 'stone'));            // top 660 [9000,10200] Checkpoint 2
-    platforms.push(...pitWithLedges(10200, 660, 600, 240, 'cave'));  // Grabenboden top 880
+    platforms.push(...pitFloor(10200, 660, 600, 240, 'cave'));  // Grabenboden top 880
     platforms.push(createPlat(10350, 560, 130, 24, 'platform_medium'));  // top 548
     platforms.push(createPlat(10600, 520, 130, 24, 'platform_hard'));    // top 508
     platforms.push(createPlat(10850, 560, 130, 24, 'platform_medium'));  // top 548

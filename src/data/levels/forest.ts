@@ -8,7 +8,7 @@ import {
   LevelData, createPlat, createQB, createEnemy, createDeco,
   createMovingPlat, createSpring, createSpike, createCrumblePlat,
   createCheckpoint, createKey, createDoor,
-  staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster,
+  staircase, plateauSection, pitFloor, twoTierSection, islandCluster,
   zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder,
   gapWithPlatforms,
 } from './helpers';
@@ -34,7 +34,7 @@ export const FOREST_LEVELS: LevelData[] = [
     // Vertikale Aufzug-Plattform als Kronen-Bonusroute
     platforms.push(createPlat(2300, 400, 120, 24, 'platform_hard'));
     platforms.push(createPlat(3200, 660, 500, 40, 'grass'));
-    platforms.push(...pitWithLedges(3520, 640, 120, 100, 'stone'));
+    platforms.push(...pitFloor(3520, 640, 120, 100, 'stone'));
     platforms.push(createPlat(3900, 660, 500, 40, 'grass'));
     platforms.push(createPlat(4650, 660, 700, 40, 'grass'));
     platforms.push(createPlat(5600, 660, 800, 40, 'grass'));
@@ -217,7 +217,7 @@ export const FOREST_LEVELS: LevelData[] = [
     platforms.push(createPlat(3100, 700, 700, 40, 'grass'));
     platforms.push(...overhangSection(3500, 680, 900, 3800, 200, 'stone'));
     platforms.push(createPlat(5000, 700, 900, 40, 'grass'));
-    platforms.push(...pitWithLedges(5450, 680, 400, 160, 'stone'));
+    platforms.push(...pitFloor(5450, 680, 400, 160, 'stone'));
     platforms.push(createPlat(5970, 760, 160, 24, 'platform_medium'));
     platforms.push(createPlat(6200, 700, 300, 40, 'grass'));
     // Unterirdischer Bonusraum (Schlüssel + Tür)
@@ -229,7 +229,7 @@ export const FOREST_LEVELS: LevelData[] = [
     platforms.push(createPlat(6900, 800, 140, 24, 'wood'));
     platforms.push(createPlat(7450, 560, 140, 24, 'platform_hard'));
     platforms.push(createPlat(7850, 700, 700, 40, 'grass'));
-    platforms.push(...pitWithLedges(8200, 680, 380, 160, 'stone'));
+    platforms.push(...pitFloor(8200, 680, 380, 160, 'stone'));
     platforms.push(createPlat(8700, 760, 160, 24, 'platform_medium'));
     platforms.push(createPlat(9250, 700, 800, 40, 'grass'));
     platforms.push(createPlat(9790, 660, 120, 24, 'platform_easy'));
@@ -335,7 +335,7 @@ export const FOREST_LEVELS: LevelData[] = [
     ]));
     platforms.push(createPlat(3450, 480, 160, 24, 'platform_medium'));
     platforms.push(createPlat(3850, 700, 800, 40, 'grass'));
-    platforms.push(...pitWithLedges(4250, 680, 360, 160, 'stone'));
+    platforms.push(...pitFloor(4250, 680, 360, 160, 'stone'));
     platforms.push(createPlat(4700, 760, 160, 24, 'platform_medium'));
     platforms.push(createPlat(5200, 700, 1000, 40, 'grass'));
     platforms.push(createPlat(5850, 620, 120, 24, 'platform_easy'));
@@ -552,7 +552,7 @@ export const FOREST_LEVELS: LevelData[] = [
     platforms.push(createPlat(400, 800, 700, 40, 'grass'));
     platforms.push(...staircase(850, 780, 3, 75, 130, 40, 'wood'));
     platforms.push(...twoTierSection(1350, 780, 1000, 'grass', 'wood'));
-    platforms.push(...pitWithLedges(2350, 780, 400, 180, 'stone'));
+    platforms.push(...pitFloor(2350, 780, 400, 180, 'stone'));
     platforms.push(createPlat(2820, 860, 160, 24, 'platform_medium'));
     platforms.push(createPlat(3250, 800, 800, 40, 'grass'));
     // Aufstieg aufs erste Kronendach
@@ -673,6 +673,7 @@ export const FOREST_LEVELS: LevelData[] = [
         createSpike(12800, 772),
       ],
       coinGoal: 40,
+      fallingHazards: { intervalMs: 2500 },
     };
   })(),
 ];

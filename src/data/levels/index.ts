@@ -1,7 +1,7 @@
 // 100 Levels - 15 Biome (Super Mario inspired)
 
 // Re-export helpers from separate file to avoid circular imports
-export { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, canBreakBrick, isBrickLoadBearing, createCrumblePlat, createConveyorPlat, createIcePlat, createCheckpoint, createWindZone, createWaterZone, createKey, createDoor, createCannon, staircase, plateauSection, pitWithLedges, twoTierSection, islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder, seg } from './helpers';
+export { createPlat, createCoin, createQB, createEnemy, createDeco, createGoal, createMovingPlat, createSpring, createSpike, canBreakBrick, isBrickLoadBearing, createCrumblePlat, createConveyorPlat, createIcePlat, createCheckpoint, createWindZone, createWaterZone, createKey, createDoor, createCannon, staircase, plateauSection, pitFloor, twoTierSection, islandCluster, zigzagClimb, overhangSection, coinArc, coinDiamond, coinTrail, coinLadder, seg } from './helpers';
 
 export type Biome = 
   | 'grasslands' | 'desert' | 'water' | 'ice-snow'
@@ -10,7 +10,7 @@ export type Biome =
   | 'canyon-base' | 'space-star' | 'castle-final';
 
 export type PlatformType = 
-  | 'grass' | 'dirt' | 'sandstone' | 'sand' | 'ice' | 'snow'
+  | 'grass' | 'sandstone' | 'sand' | 'ice' | 'snow'
   | 'stone' | 'brick' | 'brick_secret' | 'brick_multi' | 'cave' | 'castle' | 'metal'
   | 'pipe' | 'pipe_top' | 'cloud' | 'platform_easy' | 'platform_medium' | 'platform_hard'
   | 'lava' | 'wood' | 'ruins' | 'space' | 'water' | 'bubble' | 'hidden';
@@ -62,11 +62,22 @@ export interface MovingPlatform {
     speed: number;
 }
 
+export interface Rect {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+}
+
+export interface WindZone extends Rect {
+    strength: number;
+    intervalMs?: number;
+}
+
 export interface Goal {
     x: number;
     y: number;
     points: number;
-    difficulty: 'easy' | 'medium' | 'hard';
 }
 
 export interface PipeWarp {
@@ -88,7 +99,7 @@ export interface LevelData {
     enemies: { x: number; y: number; type: EnemyType }[];
     decorations: { x: number; y: number; type: DecorationType }[];
     playerStart: { x: number; y: number };
-    goal: { x: number; y: number; points?: number; difficulty?: Goal['difficulty'] };
+    goal: { x: number; y: number };
     goals?: Goal[];
     pipeWarps?: PipeWarp[];
     springs?: { x: number; y: number }[];
@@ -97,18 +108,20 @@ export interface LevelData {
     /** Respawn points; touching one moves the respawn after death (never required for solvability). */
     checkpoints?: { x: number; y: number }[];
     /** Rectangular wind areas: periodic sideways push while the player is inside. */
-    windZones?: { x: number; y: number; w: number; h: number; strength: number; intervalMs?: number }[];
+    windZones?: WindZone[];
     /** Rectangular water areas: enables swim physics inside (bonus route). */
-    waterZones?: { x: number; y: number; w: number; h: number }[];
+    waterZones?: Rect[];
     /** Collect every key to open all doors (doors must never block the critical path). */
     keys?: { x: number; y: number }[];
-    doors?: { x: number; y: number; w: number; h: number }[];
+    doors?: Rect[];
     /** Stationary cannons that fire deadly projectiles in dir (1 = right, -1 = left). */
     cannons?: { x: number; y: number; dir: 1 | -1; intervalMs?: number; speed?: number }[];
     /** Zeit-Tor: goal stays locked until this many seconds of the level have elapsed. */
     timeGate?: number;
     /** Rising flood/lava finale: spawns a level-wide floor that chases the player (keeps ~560px distance). */
     rising?: { kind: 'lava' | 'water'; speed?: number };
+    /** Falling hazard finale: timed falling fireballs spawn near the player. */
+    fallingHazards?: { intervalMs?: number };
     timeBonus: number;
 }
 

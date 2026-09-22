@@ -9,7 +9,7 @@ import {
   LevelData, createPlat, createQB, createEnemy, createDeco,
   createMovingPlat, createSpring, createSpike, createCrumblePlat,
   createCheckpoint, createWindZone, createKey, createDoor,
-  staircase, plateauSection, pitWithLedges, twoTierSection,
+  staircase, plateauSection, pitFloor, twoTierSection,
   zigzagClimb, overhangSection,
   coinArc, coinDiamond, coinTrail, coinLadder,
   gapWithPlatforms,
@@ -142,7 +142,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
       { dx: 640, dy: 160, w: 300, h: 40, type: 'stone' },
     ]));
     platforms.push(createPlat(3200, 720, 400, 40, 'stone'));
-    platforms.push(...pitWithLedges(3450, 700, 400, 160, 'stone'));
+    platforms.push(...pitFloor(3450, 700, 400, 160, 'stone'));
     platforms.push(createPlat(4100, 720, 400, 40, 'stone'));
     platforms.push(...twoTierSection(4400, 700, 900, 'stone', 'wood'));
     platforms.push(createPlat(5700, 720, 500, 40, 'stone'));
@@ -464,7 +464,7 @@ export const VILLAGE_LEVELS: LevelData[] = [
     ]));
     platforms.push(...twoTierSection(2550, 740, 900, 'stone', 'wood'));
     platforms.push(createPlat(4150, 720, 500, 40, 'stone'));
-    platforms.push(...pitWithLedges(4450, 700, 400, 160, 'stone'));
+    platforms.push(...pitFloor(4450, 700, 400, 160, 'stone'));
     platforms.push(createPlat(5050, 720, 400, 40, 'stone'));
     platforms.push(createPlat(5350, 620, 160, 24, 'wood'));
     platforms.push(createPlat(5650, 540, 160, 24, 'wood'));
