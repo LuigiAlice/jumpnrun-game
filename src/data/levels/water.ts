@@ -133,7 +133,7 @@ export const WATER_LEVELS: LevelData[] = [
       seg(7700, 8900, 500, 40, 'water'),
     ],
     movingPlatforms: [
-      createMovingPlat(1500, 640, 120, 24, 'platform_medium', 'vertical', 100, 20),
+      createMovingPlat(1500, 560, 120, 24, 'platform_medium', 'horizontal', 150, 20),
       createMovingPlat(2500, 560, 120, 24, 'platform_easy', 'horizontal', 200, 22),
     ],
     coins: [

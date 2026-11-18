@@ -2,3 +2,4 @@
 .agents/skills/
 /dist/*
 /test-results/
+.playwright-mcp/

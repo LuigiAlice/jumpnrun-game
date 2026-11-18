@@ -50,7 +50,7 @@ Alle Biome-Dateien nutzen diese Helfer.
 
 | Biome | Mechanik | Implementierung |
 |-------|----------|----------------|
-| **ice-snow** | Rutschige Plattformen | `body.velocity.x * 0.92` bei Loslassen |
+| **ice-snow** | Rutschige Eisflächen | Nur `ice` bei Bodenkontakt: Beschleunigung/Trägheit, zeitnormierte Reibung ×0.96; Schnee bleibt griffig |
 | **water** | Schwimmen | Gravity 600, `vY = -250` per up, Drift `vX * 0.95` |
 | **space-star** | Low-Gravity | world gravity = 1000 |
 | **sky-clouds** | Wind + Bröckel | Wind in Finale, Background-Animation |
@@ -230,3 +230,7 @@ Abwärts ist bis 1000px Fallhöhe immer möglich. Bei `body.y > 500` schwimmt de
 | **7: Difficulty** | 0 | GameScene.ts | 🔜 |
 | **8: Balance** | 0 | GameScene.ts | 🔜 |
 | **9: Vielfalt** | 90 | 15 Level-Dateien + helpers.ts + GameScene + Tests | ✅ |
+
+## Klassischer Einstieg (aktuell)
+
+L1 erhält unter der bisherigen Hügelroute einen sicheren Bodenlauf, zwei Brick–Frageblock–Brick-Gruppen und eine massive vierstufige Treppe mit Münzbogen vor der Flagge. Die Hügel bleiben als höhere Belohnungsroute erhalten. Geheim-Plattform, Warp-Röhren, genau eine Feder und null Stacheln bleiben erhalten. Sprint ist optional; alle Level bleiben ohne Sprint lösbar.

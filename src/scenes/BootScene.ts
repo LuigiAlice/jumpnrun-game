@@ -123,451 +123,85 @@ export class BootScene extends Phaser.Scene {
   private createPlayerTextures() {
     const g = this.add.graphics();
 
+    // A side-facing silhouette keeps facing direction and strides readable at game scale.
+    // All poses share a fixed canvas and foot baseline, so animation never shifts the body.
     const drawMario = (key: string, shirtColor: number, pantsColor: number, isBig: boolean, pose: 'idle' | 'walk1' | 'walk2' | 'jump' = 'idle') => {
       g.clear();
       const w = isBig ? 36 : 30;
-      const h = isBig ? 52 : 44;
-      const yOff = isBig ? 0 : 8;
-      const totalH = h + yOff;
-      const cx = w / 2;
-
-      // ── Palette: 3-tone harmony per material, outline = darkest tone ────
-      const SKIN        = 0xF5C99B;
-      const SKIN_LIGHT  = 0xFBE1B8;
-      const SKIN_SHADOW = 0xC98A57;
-      const SKIN_DEEP   = 0xA8653A;
-      const SKIN_OUT    = 0xB0744A;
-      const CHEEK       = 0xF49E8C;
-      const HAIR        = 0x3A2418;
-      const HAIR_MID    = 0x543726;
-      const HAIR_LIGHT  = 0x6B4A32;
-      const WHITE       = 0xffffff;
-      const GLOVE_SHADE = 0xE8E8E8;
-      const GLOVE_LINE  = 0xC9C9D2;
-      const BOOT        = 0x7A4426;
-      const BOOT_LIGHT  = 0x9A5C38;
-      const BOOT_DARK   = 0x4A2814;
-      const BTN_GOLD    = 0xFFD34E;
-      const BTN_DARK    = 0xE8A81E;
-
-      const shirtDark  = Phaser.Display.Color.ValueToColor(shirtColor).darken(30).color;
-      const shirtLight = Phaser.Display.Color.ValueToColor(shirtColor).lighten(35).color;
-      const shirtDeep  = Phaser.Display.Color.ValueToColor(shirtColor).darken(48).color;
-      const shirtPale  = Phaser.Display.Color.ValueToColor(shirtColor).lighten(52).color;
-      const pantsDark  = Phaser.Display.Color.ValueToColor(pantsColor).darken(30).color;
-      const pantsLight = Phaser.Display.Color.ValueToColor(pantsColor).lighten(35).color;
-
-      const headCY = h * 0.21 + yOff;
-      const headRX = w * 0.50;
-      const headRY = h * 0.205;
-
-      const bodyY = h * 0.44 + yOff;
-      const bodyH = h * 0.24;
-      const bibW  = w * 0.58;
-
-      // ── Pose skeleton: one parameterization for all schemes ─────────────
-      let leftBootX  = cx - 7,  leftBootY  = h * 0.88 + yOff;
-      let rightBootX = cx + 7,  rightBootY = h * 0.88 + yOff;
-      let leftLegX   = cx - 8,  leftLegY   = h * 0.63 + yOff, leftLegH  = h * 0.23;
-      let rightLegX  = cx + 1,  rightLegY  = h * 0.63 + yOff, rightLegH = h * 0.23;
-      let leftArmX   = cx - 14, leftArmY   = bodyY + 1, leftArmH  = bodyH * 0.52;
-      let leftHandX  = cx - 14, leftHandY  = bodyY + bodyH * 0.30;
-      let rightArmX  = cx + 8,  rightArmY  = bodyY + 1, rightArmH = bodyH * 0.52;
-      let rightHandX = cx + 14, rightHandY = bodyY + bodyH * 0.30;
-      let capTilt = 0;
-      let bob = 0;
-
-      if (pose === 'walk1') {
-        leftBootX = cx - 10;  leftBootY  = h * 0.88 + yOff;
-        leftLegX  = cx - 11;  leftLegY   = h * 0.63 + yOff; leftLegH  = h * 0.23;
-        rightBootX = cx + 9;  rightBootY = h * 0.83 + yOff;
-        rightLegX  = cx + 2;  rightLegY  = h * 0.58 + yOff; rightLegH = h * 0.20;
-        leftArmX   = cx - 14; leftArmY   = bodyY - 2; leftArmH  = bodyH * 0.50;
-        leftHandX  = cx - 15; leftHandY  = bodyY + bodyH * 0.08;
-        rightArmX  = cx + 7;  rightArmY  = bodyY + 4; rightArmH = bodyH * 0.44;
-        rightHandX = cx + 12; rightHandY = bodyY + bodyH * 0.55;
-        bob = -1;
-      } else if (pose === 'walk2') {
-        leftBootX  = cx - 9;   leftBootY  = h * 0.83 + yOff;
-        leftLegX   = cx - 10;  leftLegY   = h * 0.58 + yOff; leftLegH = h * 0.20;
-        rightBootX = cx + 10;  rightBootY = h * 0.88 + yOff;
-        rightLegX  = cx + 3;   rightLegY  = h * 0.63 + yOff; rightLegH = h * 0.23;
-        leftArmX   = cx - 12;  leftArmY   = bodyY + 4; leftArmH  = bodyH * 0.44;
-        leftHandX  = cx - 11;  leftHandY  = bodyY + bodyH * 0.55;
-        rightArmX  = cx + 8;   rightArmY  = bodyY - 2; rightArmH = bodyH * 0.50;
-        rightHandX = cx + 15;  rightHandY = bodyY + bodyH * 0.08;
-        bob = 0;
-      } else if (pose === 'jump') {
-        rightArmX  = cx + 6;   rightArmY  = bodyY - 9;  rightArmH  = bodyH * 0.80;
-        rightHandX = cx + 9;   rightHandY = bodyY - 13;
-        leftArmX   = cx - 15;  leftArmY   = bodyY + 4;  leftArmH   = bodyH * 0.50;
-        leftHandX  = cx - 17;  leftHandY  = bodyY + bodyH * 0.68;
-        leftBootX  = cx - 6;   leftBootY  = h * 0.74 + yOff;
-        leftLegX   = cx - 7;   leftLegY   = h * 0.52 + yOff; leftLegH = h * 0.18;
-        rightBootX = cx + 8;   rightBootY = h * 0.89 + yOff;
-        rightLegX  = cx + 2;   rightLegY  = h * 0.62 + yOff; rightLegH = h * 0.27;
-        capTilt = 0;
-        bob = -1.5;
-      }
-
-      const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
-      leftArmX = clamp(leftArmX, 2, w - 10);
-      rightArmX = clamp(rightArmX, 4, w - 8);
-      leftHandX = clamp(leftHandX, 6, w - 6);
-      rightHandX = clamp(rightHandX, 6, w - 6);
-      leftLegX = clamp(leftLegX, 0.5, w - 8.5);
-      rightLegX = clamp(rightLegX, 0.5, w - 8.5);
-      leftBootX = clamp(leftBootX, 6, w - 8);
-      rightBootX = clamp(rightBootX, 6, w - 8);
-
-      // ════ GROUND SHADOW ═══════════════════════════════════════════════
-      g.fillStyle(0x000000, 0.18);
-      g.fillEllipse(cx, totalH - 0.5, w * 0.6, 4.5);
-
-      // ════ BOOTS (rounded, warm brown, toe shine) ═══════════════════════
-      const drawBoot = (bx: number, by: number) => {
-        g.fillStyle(0xF3EBDC, 1);
-        g.fillRoundedRect(bx - 3, by - 4.5, 9, 3, 1.2);
-        g.fillStyle(0xD9CBb4, 0.55);
-        g.fillRect(bx - 3, by - 3.2, 9, 0.8);
-        g.fillStyle(BOOT_DARK, 1);
-        g.fillEllipse(bx + 1, by + 2, 13, 4.5);
-        g.fillStyle(BOOT, 1);
-        g.fillRoundedRect(bx - 4, by - 3, 10, 5.5, 2);
-        g.fillStyle(BOOT_LIGHT, 1);
-        g.fillEllipse(bx + 3, by - 0.5, 9, 5.5);
-        g.fillStyle(this.lerpColor(BOOT_LIGHT, WHITE, 0.35), 1);
-        g.fillEllipse(bx + 2, by - 1.5, 6, 3.5);
-        g.fillStyle(WHITE, 0.28);
-        g.fillCircle(bx + 1, by - 2, 1.5);
+      const height = 52;
+      const xOffset = isBig ? 3 : 0;
+      const headTop = isBig ? 2 : 12;
+      const torsoTop = headTop + 18;
+      const legTop = isBig ? 36 : 40;
+      const ink = 0x25233b;
+      const skin = 0xffc38b;
+      const skinLight = 0xffdfad;
+      const hair = 0x633620;
+      const boot = 0x713d26;
+      const shirtDark = Phaser.Display.Color.ValueToColor(shirtColor).darken(24).color;
+      const pantsDark = Phaser.Display.Color.ValueToColor(pantsColor).darken(23).color;
+      const rect = (color: number, x: number, y: number, width: number, h: number) => {
+        g.fillStyle(color, 1);
+        g.fillRect(xOffset + x, y, width, h);
       };
-      drawBoot(leftBootX, leftBootY);
-      drawBoot(rightBootX, rightBootY);
+      const running = pose === 'walk1' || pose === 'walk2';
+      const stride = pose === 'walk1' ? -4 : pose === 'walk2' ? 4 : 0;
+      const jumping = pose === 'jump';
 
-      // ════ LEGS (denim cylinders with soft seam) ════════════════════════
-      const drawLeg = (lx: number, ly: number, lh: number) => {
-        g.fillStyle(pantsColor, 1);
-        g.fillRoundedRect(lx, ly, 8, lh, 3.5);
-        g.fillStyle(pantsLight, 0.38);
-        g.fillRoundedRect(lx + 1, ly + 1, 3, lh - 3, 2);
-        g.fillStyle(pantsDark, 0.45);
-        g.fillRoundedRect(lx + 5, ly + 1, 2, lh - 3, 1);
-        g.fillStyle(pantsDark, 0.20);
-        g.fillRect(lx + 3.5, ly + 2, 1, lh - 5);
-      };
-      drawLeg(leftLegX, leftLegY, leftLegH);
-      drawLeg(rightLegX, rightLegY, rightLegH);
+      // Back arm, then shirt and overalls. The forward hand rises during a jump.
+      const rearHandY = jumping ? torsoTop + 2 : torsoTop + 8 + (running ? -stride : 0);
+      rect(ink, 2, rearHandY - 4, 8, 10);
+      rect(shirtDark, 4, rearHandY - 3, 6, 6);
+      rect(0xfff5df, 2, rearHandY + 1, 6, 5);
+      rect(ink, 7, torsoTop - 2, 16, legTop - torsoTop + 7);
+      rect(shirtColor, 6, torsoTop, 16, legTop - torsoTop + 2);
+      rect(shirtDark, 18, torsoTop + 4, 6, 8);
+      rect(pantsColor, 8, torsoTop + 7, 14, legTop - torsoTop - 1);
+      rect(pantsColor, 8, torsoTop, 4, 10);
+      rect(pantsColor, 18, torsoTop, 4, 10);
+      rect(0xffd34e, 10, torsoTop + 7, 2, 2);
+      rect(0xffd34e, 18, torsoTop + 7, 2, 2);
+      rect(pantsDark, 18, torsoTop + 11, 4, Math.max(2, legTop - torsoTop - 9));
 
-      // ════ BODY: shirt layer, overall bib, straps, gold buttons ═════════
-      const bodyTop = bodyY + bob;
-      g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - bibW / 2 - 1, bodyTop - 5, bibW + 2, bodyH * 0.62, {tl: 7, tr: 7, bl: 0, br: 0});
-      g.fillStyle(shirtLight, 0.32);
-      g.fillRoundedRect(cx - bibW / 2 + 2, bodyTop - 4, bibW * 0.42, bodyH * 0.30, 3);
-      g.fillStyle(shirtDark, 0.24);
-      g.fillRoundedRect(cx + bibW * 0.08, bodyTop - 4, bibW * 0.36, bodyH * 0.32, 3);
+      // Distinct long strides, a tucked jump leg and a stable standing pose.
+      const rearX = 8 + stride;
+      const frontX = 16 - stride;
+      const rearFootY = jumping ? 43 : pose === 'walk1' ? 46 : 48;
+      const frontFootY = jumping ? 48 : pose === 'walk2' ? 46 : 48;
+      rect(ink, rearX - 1, legTop, 8, rearFootY - legTop + 4);
+      rect(pantsDark, rearX, legTop, 6, rearFootY - legTop);
+      rect(boot, rearX - 2, rearFootY, 10, 3);
+      rect(ink, rearX - 2, rearFootY + 3, 10, 1);
+      rect(ink, frontX - 1, legTop, 8, frontFootY - legTop + 4);
+      rect(pantsColor, frontX, legTop, 6, frontFootY - legTop);
+      rect(boot, frontX, frontFootY, 10, 3);
+      rect(ink, frontX, frontFootY + 3, 10, 1);
+      rect(0xb97642, frontX + 4, frontFootY, 4, 1);
 
-      g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(cx - bibW / 2, bodyTop, bibW, bodyH, {tl: 5, tr: 5, bl: 6, br: 6});
-      this.fillVGradient(g, cx - bibW / 2 + 1, bodyTop + 1, bibW - 2, bodyH - 2,
-        this.lerpColor(pantsColor, pantsLight, 0.30), pantsColor, 10);
-      g.fillStyle(pantsDark, 0.26);
-      g.fillRoundedRect(cx + bibW * 0.10, bodyTop + 2, bibW * 0.32, bodyH - 4, 3);
-      const bibY = bodyTop - 2.5;
-      const bibFW = bibW * 0.66;
-      g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(cx - bibFW / 2, bibY, bibFW, bodyH * 0.40, {tl: 3, tr: 3, bl: 0, br: 0});
-      g.fillStyle(pantsDark, 0.20);
-      g.fillRect(cx - bibFW / 2 + 1, bibY, 2, bodyH * 0.40);
-      g.fillStyle(pantsLight, 0.18);
-      g.fillRect(cx + bibFW / 2 - 3, bibY, 2, bodyH * 0.40);
-      const strapX1  = cx - bibW / 2 - 0.5;
-      const strapX2  = cx + bibW / 2 - 3.5;
-      const strapTopY = bodyTop - 2;
-      const strapH   = bodyH * 0.88;
-      g.fillStyle(pantsColor, 1);
-      g.fillRoundedRect(strapX1, strapTopY, 4, strapH, 2);
-      g.fillRoundedRect(strapX2, strapTopY, 4, strapH, 2);
-      g.fillStyle(pantsDark, 0.32);
-      g.fillRect(strapX1, strapTopY, 1.5, strapH);
-      g.fillRect(strapX2, strapTopY, 1.5, strapH);
-      g.fillStyle(pantsLight, 0.22);
-      g.fillRect(strapX1 + 2.5, strapTopY, 1, strapH);
+      // Profile: cap brim, one bright eye, projecting nose and dark moustache.
+      rect(ink, 6, headTop, 16, 18);
+      rect(ink, 4, headTop + 4, 22, 10);
+      rect(hair, 5, headTop + 7, 9, 10);
+      rect(skin, 11, headTop + 6, 13, 10);
+      rect(skinLight, 20, headTop + 9, 8, 5);
+      rect(skin, 7, headTop + 10, 5, 5);
+      rect(hair, 11, headTop + 7, 3, 5);
+      rect(0xfff8e8, 17, headTop + 6, 5, 6);
+      rect(ink, 20, headTop + 7, 2, 5);
+      rect(hair, 16, headTop + 13, 10, 3);
+      rect(skinLight, 13, headTop + 16, 9, 2);
+      rect(shirtDark, 5, headTop + 2, 17, 5);
+      rect(shirtColor, 7, headTop, 13, 5);
+      rect(shirtColor, 10, headTop + 4, 17, 3);
+      rect(Phaser.Display.Color.ValueToColor(shirtColor).lighten(18).color, 9, headTop + 1, 9, 2);
+      rect(0xfff5df, 17, headTop + 1, 3, 3);
 
-      g.fillStyle(0x000000, 0.12);
-      g.fillRect(cx - bibW / 2, bodyTop - 0.5, bibW, 1);
-
-      const btnY = bibY + 5;
-      const drawButton = (bx: number) => {
-        g.fillStyle(BTN_DARK, 1);
-        g.fillCircle(bx + 0.4, btnY + 0.5, 2.9);
-        g.fillStyle(BTN_GOLD, 1);
-        g.fillCircle(bx, btnY, 2.6);
-        g.fillStyle(this.lerpColor(BTN_GOLD, WHITE, 0.55), 1);
-        g.fillCircle(bx - 0.7, btnY - 0.8, 1.1);
-        g.fillStyle(BTN_DARK, 0.5);
-        g.fillCircle(bx + 0.6, btnY + 0.9, 0.9);
-      };
-      drawButton(strapX1 + 2);
-      drawButton(strapX2 + 2);
-
-      g.lineStyle(1, pantsDark, 0.20);
-      g.lineBetween(cx - bibW * 0.30, bodyTop + bodyH * 0.52, cx - bibW * 0.26, bodyTop + bodyH - 3);
-      g.lineBetween(cx + bibW * 0.26, bodyTop + bodyH * 0.52, cx + bibW * 0.30, bodyTop + bodyH - 3);
-      g.lineStyle(1, shirtDark, 0.25);
-      g.lineBetween(cx - bibW * 0.44, bodyTop - 1, cx - bibW * 0.32, bodyTop + 2);
-      g.lineBetween(cx + bibW * 0.32, bodyTop - 1, cx + bibW * 0.44, bodyTop + 2);
-      g.lineStyle(0, 0x000000, 0);
-
-      if (shirtColor === 0xf8f8f8) {
-        const flame = (fx: number, fy: number, fs: number) => {
-          g.fillStyle(0xff7a00, 0.95);
-          g.fillTriangle(fx, fy - fs, fx - fs * 0.8, fy + fs, fx + fs * 0.8, fy + fs);
-          g.fillStyle(0xffc800, 1);
-          g.fillTriangle(fx, fy - fs * 0.25, fx - fs * 0.45, fy + fs * 0.9, fx + fs * 0.8, fy + fs * 0.8);
-          g.fillStyle(0xfff0a0, 0.8);
-          g.fillCircle(fx, fy + fs * 0.35, fs * 0.22);
-        };
-        flame(cx - bibW * 0.36, bodyTop - 2.5, 2.2);
-        flame(cx + bibW * 0.36, bodyTop - 2.5, 2.2);
-        flame(cx, bodyTop + bodyH * 0.74, 3.2);
-      }
-
-      // ════ ARMS (cylinders) & GLOVES (spheres) ══════════════════════════
-      const drawArm = (ax: number, ay: number, ah: number, hx: number, hy: number, isLeft: boolean) => {
-        g.fillStyle(shirtColor, 1);
-        g.fillCircle(ax + (isLeft ? 4 : 2), ay, 5.5);
-        g.fillStyle(shirtLight, 0.40);
-        g.fillCircle(ax + 3, ay - 1.5, 2.5);
-        g.fillStyle(shirtColor, 1);
-        g.fillRoundedRect(ax, ay, 7, ah, 3.5);
-        g.fillStyle(isLeft ? shirtLight : shirtDark, 0.28);
-        g.fillRoundedRect(isLeft ? ax + 1 : ax + 4, ay + 1, 2, ah - 3, 1.5);
-        g.fillStyle(shirtDark, 0.50);
-        g.fillRoundedRect(ax, ay + ah - 3, 7, 3, {bl: 3, br: 3, tl: 0, tr: 0});
-        g.fillStyle(WHITE, 1);
-        g.fillCircle(hx, hy, 5.5);
-        g.fillStyle(GLOVE_SHADE, 1);
-        g.fillCircle(hx, hy + 1, 4.5);
-        g.lineStyle(0.9, GLOVE_LINE, 1);
-        g.lineBetween(hx - 2, hy - 2.5, hx - 2, hy + 1.5);
-        g.lineBetween(hx,     hy - 3,   hx,     hy + 2);
-        g.lineBetween(hx + 2, hy - 2.5, hx + 2, hy + 1.5);
-        g.fillStyle(WHITE, 0.50);
-        g.fillCircle(hx - 1.5, hy - 3, 1.3);
-      };
-      drawArm(leftArmX,  leftArmY,  leftArmH,  leftHandX,  leftHandY,  true);
-      drawArm(rightArmX, rightArmY, rightArmH, rightHandX, rightHandY, false);
-
-      // ════ HEAD ════════════════════════════════════════════════════════
-      g.fillStyle(SKIN, 1);
-      g.fillRoundedRect(cx - 4.5, headCY + headRY * 0.80, 9, 5.5, 2);
-      g.fillStyle(SKIN_SHADOW, 0.35);
-      g.fillRect(cx - 4.5, headCY + headRY * 0.80, 2, 5.5);
-      const earY = headCY + headRY * 0.06;
-      const earR = 4.0;
-      const earDX = Math.min(headRX * 0.94, w / 2 - earR - 0.6);
-      g.fillStyle(SKIN, 1);
-      g.fillCircle(cx - earDX, earY, earR);
-      g.fillStyle(SKIN_SHADOW, 0.45);
-      g.fillCircle(cx - earDX + 0.5, earY + 1.5, 3.2);
-      g.fillStyle(CHEEK, 0.55);
-      g.fillCircle(cx - earDX, earY, 2.2);
-      g.fillStyle(SKIN, 1);
-      g.fillCircle(cx + earDX, earY, earR);
-      g.fillStyle(SKIN_SHADOW, 0.45);
-      g.fillCircle(cx + earDX - 0.5, earY + 1.5, 3.2);
-      g.fillStyle(CHEEK, 0.55);
-      g.fillCircle(cx + earDX, earY, 2.2);
-      g.fillStyle(SKIN, 1);
-      g.fillEllipse(cx, headCY, headRX * 1.85, headRY * 1.90);
-      g.fillStyle(SKIN_SHADOW, 0.18);
-      g.fillEllipse(cx, headCY + headRY * 0.42, headRX * 1.50, headRY * 0.75);
-      g.fillStyle(SKIN_LIGHT, 0.38);
-      g.fillEllipse(cx - headRX * 0.22, headCY - headRY * 0.24, headRX * 0.90, headRY * 0.62);
-      g.fillStyle(CHEEK, 0.30);
-      g.fillEllipse(cx - headRX * 0.48, headCY + headRY * 0.24, headRX * 0.32, headRY * 0.22);
-      g.fillEllipse(cx + headRX * 0.48, headCY + headRY * 0.24, headRX * 0.32, headRY * 0.22);
-      g.fillStyle(0x000000, 0.13);
-      g.fillEllipse(cx, headCY - headRY * 0.30 + capTilt, headRX * 1.40, headRY * 0.36);
-
-      // ════ HAIR ════════════════════════════════════════════════════════
-      const capY = headCY - headRY * 0.92 + capTilt;
-      g.fillStyle(HAIR, 1);
-      g.fillRoundedRect(cx - headRX * 0.84, headCY - headRY * 0.90 + capTilt, headRX * 1.68, headRY * 0.50, {tl: 5, tr: 5, bl: 0, br: 0});
-      g.fillRect(cx - headRX * 0.90, headCY - headRY * 0.55 + capTilt, 5.5, headRY * 0.62);
-      g.fillCircle(cx - headRX * 0.72, headCY + headRY * 0.12 + capTilt, 3.6);
-      g.fillCircle(cx - headRX * 0.66, headCY + headRY * 0.27 + capTilt, 2.6);
-      g.fillRect(cx + headRX * 0.60, headCY - headRY * 0.55 + capTilt, 5.0, headRY * 0.62);
-      g.fillCircle(cx + headRX * 0.72, headCY + headRY * 0.12 + capTilt, 3.6);
-      g.fillCircle(cx + headRX * 0.66, headCY + headRY * 0.27 + capTilt, 2.6);
-      g.fillStyle(HAIR_LIGHT, 0.38);
-      g.fillRoundedRect(cx - headRX * 0.52, headCY - headRY * 0.82 + capTilt, headRX * 0.44, headRY * 0.22, 3);
-      g.fillStyle(HAIR_MID, 0.28);
-      g.fillRoundedRect(cx + headRX * 0.00, headCY - headRY * 0.79 + capTilt, headRX * 0.34, headRY * 0.14, 2);
-
-      // ════ CAP: dome gradient + sheen + band + curved brim ══════════════
-      g.fillStyle(shirtColor, 1);
-      g.fillEllipse(cx, capY + headRY * 0.40, headRX * 1.80, headRY * 0.70);
-      g.fillStyle(shirtDark, 0.28);
-      g.fillEllipse(cx, capY + headRY * 0.55, headRX * 1.62, headRY * 0.26);
-      g.fillStyle(shirtLight, 0.24);
-      g.fillEllipse(cx - headRX * 0.24, capY + headRY * 0.32, headRX * 0.80, headRY * 0.22);
-      g.fillStyle(WHITE, 0.15);
-      g.fillCircle(cx - headRX * 0.32, capY + headRY * 0.24, headRY * 0.13);
-      g.fillStyle(shirtLight, 0.45);
-      g.fillEllipse(cx - headRX * 0.02, capY + headRY * 0.34, headRX * 1.42, headRY * 0.10);
-      g.fillStyle(shirtDark, 0.75);
-      g.fillRoundedRect(cx - headRX * 0.86, capY + headRY * 0.48, headRX * 1.72, headRY * 0.20, 2);
-      g.fillStyle(shirtLight, 0.25);
-      g.fillRoundedRect(cx - headRX * 0.78, capY + headRY * 0.48, headRX * 0.72, headRY * 0.08, 1);
-      const brimTopW = Math.min(headRX * 1.32, w - 0.5 - (cx - 4));
-      const brimDarkW = Math.min(headRX * 1.30, w - 0.5 - (cx - 3));
-      g.fillStyle(shirtDark, 1);
-      g.fillRoundedRect(cx - 3, capY + headRY * 0.62, brimDarkW, headRY * 0.28, {bl: 5, br: 5, tl: 1, tr: 1});
-      g.fillStyle(shirtColor, 1);
-      g.fillRoundedRect(cx - 4, capY + headRY * 0.54, brimTopW, headRY * 0.22, {bl: 5, br: 5, tl: 1, tr: 1});
-      g.fillStyle(shirtLight, 0.32);
-      g.fillRoundedRect(cx - 3, capY + headRY * 0.55, brimTopW * 0.64, headRY * 0.08, 2);
-
-      // ════ M BADGE (white disc + bevel + M) ═════════════════════════════
-      g.fillStyle(WHITE, 1);
-      g.fillCircle(cx - 1, capY + headRY * 0.34, headRY * 0.30);
-      g.fillStyle(0x000000, 0.08);
-      g.fillEllipse(cx - 1, capY + headRY * 0.46, headRY * 0.46, headRY * 0.12);
-      g.fillStyle(shirtColor, 1);
-      const mx = cx - 1, my = capY + headRY * 0.34;
-      const mw = headRY * 0.22, mh = headRY * 0.22;
-      g.beginPath();
-      g.moveTo(mx - mw,        my + mh);
-      g.lineTo(mx - mw,        my - mh);
-      g.lineTo(mx - mw * 0.5,  my - mh);
-      g.lineTo(mx,             my);
-      g.lineTo(mx + mw * 0.5,  my - mh);
-      g.lineTo(mx + mw,        my - mh);
-      g.lineTo(mx + mw,        my + mh);
-      g.lineTo(mx + mw * 0.6,  my + mh);
-      g.lineTo(mx + mw * 0.6,  my - mh * 0.15);
-      g.lineTo(mx,             my + mh * 0.62);
-      g.lineTo(mx - mw * 0.6,  my - mh * 0.15);
-      g.lineTo(mx - mw * 0.6,  my + mh);
-      g.closePath();
-      g.fillPath();
-      g.fillStyle(WHITE, 0.42);
-      g.fillCircle(cx - mw * 1.5, my - mh * 0.3, headRY * 0.09);
-
-      // ════ EYES: big readable — sclera + iris + pupil + 2 glints ════════
-      const eyeY  = headCY - headRY * 0.02;
-      const eyeLX = cx - headRX * 0.30;
-      const eyeRX = cx + headRX * 0.30;
-      const eyeW  = headRX * 0.40;
-      const eyeH  = headRY * 0.48;
-      g.fillStyle(SKIN_SHADOW, 0.32);
-      g.fillEllipse(eyeLX, eyeY + 1.5, eyeW + 2, eyeH + 2);
-      g.fillEllipse(eyeRX, eyeY + 1.5, eyeW + 2, eyeH + 2);
-      g.fillStyle(WHITE, 1);
-      g.fillEllipse(eyeLX, eyeY, eyeW, eyeH);
-      g.fillEllipse(eyeRX, eyeY, eyeW, eyeH);
-      g.fillStyle(0x000000, 0.06);
-      g.fillEllipse(eyeLX, eyeY - eyeH * 0.28, eyeW, eyeH * 0.35);
-      g.fillEllipse(eyeRX, eyeY - eyeH * 0.28, eyeW, eyeH * 0.35);
-      g.fillStyle(0x091830, 1);
-      g.fillCircle(eyeLX, eyeY, headRX * 0.25);
-      g.fillCircle(eyeRX, eyeY, headRX * 0.25);
-      g.fillStyle(0x1a77dd, 1);
-      g.fillCircle(eyeLX, eyeY, headRX * 0.20);
-      g.fillCircle(eyeRX, eyeY, headRX * 0.20);
-      g.fillStyle(0x55aaff, 1);
-      g.fillCircle(eyeLX, eyeY + headRY * 0.04, headRX * 0.13);
-      g.fillCircle(eyeRX, eyeY + headRY * 0.04, headRX * 0.13);
-      g.fillStyle(0x000000, 1);
-      g.fillCircle(eyeLX, eyeY, headRX * 0.11);
-      g.fillCircle(eyeRX, eyeY, headRX * 0.11);
-      g.fillStyle(WHITE, 1);
-      g.fillCircle(eyeLX + headRX * 0.09, eyeY - headRY * 0.14, headRX * 0.10);
-      g.fillCircle(eyeRX + headRX * 0.09, eyeY - headRY * 0.14, headRX * 0.10);
-      g.fillStyle(WHITE, 0.62);
-      g.fillCircle(eyeLX - headRX * 0.10, eyeY + headRY * 0.06, headRX * 0.05);
-      g.fillCircle(eyeRX - headRX * 0.10, eyeY + headRY * 0.06, headRX * 0.05);
-      g.lineStyle(1.2, HAIR, 1);
-      const lashOffsets = [-headRX * 0.13, 0, headRX * 0.13];
-      lashOffsets.forEach((ox, li) => {
-        const ly = eyeY - eyeH * 0.48;
-        g.lineBetween(eyeLX + ox, ly, eyeLX + ox - (li - 1) * 0.8, ly - 2.5);
-        g.lineBetween(eyeRX + ox, ly, eyeRX + ox - (li - 1) * 0.8, ly - 2.5);
-      });
-
-      // ════ EYEBROWS ════════════════════════════════════════════════════
-      g.fillStyle(HAIR, 1);
-      g.beginPath();
-      g.moveTo(cx - headRX * 0.46, eyeY - headRY * 0.29);
-      g.lineTo(cx - headRX * 0.12, eyeY - headRY * 0.27);
-      g.lineTo(cx - headRX * 0.12, eyeY - headRY * 0.18);
-      g.lineTo(cx - headRX * 0.46, eyeY - headRY * 0.18);
-      g.closePath();
-      g.fillPath();
-      g.beginPath();
-      g.moveTo(cx + headRX * 0.12, eyeY - headRY * 0.27);
-      g.lineTo(cx + headRX * 0.46, eyeY - headRY * 0.29);
-      g.lineTo(cx + headRX * 0.46, eyeY - headRY * 0.18);
-      g.lineTo(cx + headRX * 0.12, eyeY - headRY * 0.18);
-      g.closePath();
-      g.fillPath();
-      g.fillStyle(HAIR_LIGHT, 0.32);
-      g.fillRoundedRect(cx - headRX * 0.43, eyeY - headRY * 0.27, headRX * 0.26, headRY * 0.06, 1);
-      g.fillRoundedRect(cx + headRX * 0.14, eyeY - headRY * 0.27, headRX * 0.26, headRY * 0.06, 1);
-
-      // ════ NOSE: big round with shadow + shine ══════════════════════════
-      const noseX = cx + headRX * 0.08;
-      const noseY = eyeY + headRY * 0.23;
-      g.fillStyle(SKIN_DEEP, 0.45);
-      g.fillEllipse(noseX, noseY + 1.5, headRY * 0.38, headRY * 0.24);
-      g.fillStyle(SKIN, 1);
-      g.fillCircle(noseX, noseY, headRY * 0.18);
-      g.fillStyle(WHITE, 0.52);
-      g.fillCircle(noseX - headRY * 0.07, noseY - headRY * 0.07, headRY * 0.07);
-      g.fillStyle(SKIN_DEEP, 0.38);
-      g.fillCircle(noseX + headRY * 0.08, noseY + headRY * 0.08, headRY * 0.055);
-
-      // ════ MUSTACHE: groomed with strands ═══════════════════════════════
-      const mustY = eyeY + headRY * 0.37;
-      g.fillStyle(HAIR, 1);
-      g.beginPath();
-      g.moveTo(cx - headRX * 0.42, mustY);
-      g.lineTo(cx - 0.5, mustY);
-      g.lineTo(cx - 0.5, mustY + headRY * 0.14);
-      g.lineTo(cx - headRX * 0.38, mustY + headRY * 0.18);
-      g.lineTo(cx - headRX * 0.42, mustY + headRY * 0.08);
-      g.closePath();
-      g.fillPath();
-      g.beginPath();
-      g.moveTo(cx + 0.5, mustY);
-      g.lineTo(cx + headRX * 0.42, mustY);
-      g.lineTo(cx + headRX * 0.42, mustY + headRY * 0.08);
-      g.lineTo(cx + headRX * 0.38, mustY + headRY * 0.18);
-      g.lineTo(cx + 0.5, mustY + headRY * 0.14);
-      g.closePath();
-      g.fillPath();
-      g.fillCircle(cx - headRX * 0.40, mustY + headRY * 0.11, headRY * 0.11);
-      g.fillCircle(cx + headRX * 0.40, mustY + headRY * 0.11, headRY * 0.11);
-      g.fillStyle(HAIR_LIGHT, 0.28);
-      g.fillRoundedRect(cx - headRX * 0.26, mustY + 1.2, headRX * 0.52, headRY * 0.07, 2);
-
-      // ════ MOUTH ═══════════════════════════════════════════════════════
-      g.fillStyle(SKIN_DEEP, 0.38);
-      g.fillRoundedRect(cx - headRX * 0.19, mustY + headRY * 0.18, headRX * 0.38, headRY * 0.10, 2);
-      g.fillStyle(SKIN_DEEP, 0.22);
-      g.fillRoundedRect(cx - headRX * 0.21, mustY + headRY * 0.17, headRX * 0.42, 1, 1);
-
-      // ════ WONDER GLOSS PASS ═══════════════════════════════════════════
-      g.lineStyle(1.1, 0xffffff, 0.25);
-      g.strokeEllipse(cx - headRX * 0.14, capY + headRY * 0.46 + capTilt, headRX * 1.15, headRY * 0.40);
-      g.lineStyle(0.9, 0xffffff, 0.2);
-      g.strokeRoundedRect(cx - bibW * 0.52, bodyTop - 4.5, bibW * 0.6, bodyH * 0.5, 6);
-      g.lineStyle(0.8, 0xffffff, 0.16);
-      g.strokeEllipse(cx - earDX - 0.8, earY - 0.8, earR * 1.55, earR * 1.55);
-
-      g.generateTexture(key, w, totalH);
+      const handY = jumping ? headTop + 2 : torsoTop + 7 + (running ? stride : 0);
+      rect(ink, 23, handY - 1, 7, 9);
+      rect(shirtColor, 22, handY + 3, 6, 5);
+      rect(0xfff5df, 24, handY, 6, 5);
+      rect(0xd3d7e2, 26, handY + 4, 4, 2);
+      g.generateTexture(key, w, height);
     };
 
     // Classic red/blue Mario
@@ -1913,36 +1547,21 @@ export class BootScene extends Phaser.Scene {
 
   private createCoinTextures() {
     const g = this.add.graphics();
-    // Shadow under coin
-    g.fillStyle(0x000000, 0.3);
-    g.fillEllipse(12, 30, 14, 4);
-    g.fillStyle(0xa8822a, 1);
-    g.fillEllipse(12, 14, 20, 28);
-    g.fillStyle(0xd8a830, 1);
-    g.fillEllipse(12, 13.6, 18, 26);
-    // Main gold body
-    g.fillStyle(0xf8c830, 1);
-    g.fillEllipse(12, 13.4, 15, 23.5);
-    // Lighter gold highlight (upper-left)
-    g.fillStyle(0xfce070, 1);
-    g.fillEllipse(10, 10, 11, 17);
-    g.fillStyle(0xfff8c8, 0.4);
-    g.fillEllipse(12, 13.5, 21, 29);
-    g.lineStyle(1.4, 0xc89828, 0.7);
-    g.strokeEllipse(12, 13.5, 10.5, 17);
-    g.lineStyle(1, 0xfff0b0, 0.85);
-    g.strokeEllipse(12, 13, 9, 20);
-    g.fillStyle(0xd4a020, 0.5);
-    g.fillRect(5, 11, 14, 1.5);
-    g.fillRect(5, 16, 14, 1.5);
-    g.fillStyle(0xfef8a0, 0.75);
-    g.fillEllipse(9.5, 8.5, 7, 10);
-    g.fillStyle(0xffffff, 0.95);
-    g.fillCircle(8, 7.5, 1.9);
-    g.fillStyle(0xffffff, 0.5);
-    g.fillCircle(10.4, 5.6, 1);
-    g.fillStyle(0xfff4b0, 0.5);
-    g.fillEllipse(12, 24, 9, 2.5);
+    // Stepped gold outline and recessed centre remain legible above busy terrain.
+    g.fillStyle(0x8b4a14, 1);
+    g.fillRect(7, 1, 10, 28);
+    g.fillRect(3, 5, 18, 20);
+    g.fillStyle(0xffbf23, 1);
+    g.fillRect(7, 3, 10, 24);
+    g.fillRect(5, 6, 14, 18);
+    g.fillStyle(0xffec83, 1);
+    g.fillRect(7, 4, 3, 19);
+    g.fillRect(10, 3, 5, 3);
+    g.fillStyle(0xd67e12, 1);
+    g.fillRect(12, 8, 4, 14);
+    g.fillStyle(0xfff7c4, 1);
+    g.fillRect(11, 7, 3, 13);
+    g.fillRect(6, 6, 2, 3);
     g.generateTexture('coin', 24, 32);
     g.destroy();
   }
@@ -1950,60 +1569,19 @@ export class BootScene extends Phaser.Scene {
   private createBlockTextures() {
     const g = this.add.graphics();
     
-    // Grass ground with grass top, moss/grass blade detail
+    // A crisp green ledge separates the safe landing surface from the dirt face.
     g.clear();
-    this.fillVGradient(g, 0, 0, 32, 32, 0xA5693F, 0x7C4A28, 14);
-    g.fillStyle(0x8a5a34, 0.5);
-    g.fillRoundedRect(18, 18, 7, 4, 2);
-    g.fillRoundedRect(3, 26, 6, 3.5, 1.5);
-    g.fillStyle(0xC08A5C, 0.65);
-    g.fillEllipse(10, 19, 6, 3); g.fillEllipse(25, 27, 5, 2.5);
-    g.fillEllipse(16, 30, 5, 2.5);
-    const dirtPebbles: [number, number, number][] = [
-      [5, 15, 1.4], [14, 24, 1.6], [23, 20, 1.3], [28, 15, 1.2], [8, 29, 1.2], [19, 29, 1]
-    ];
-    for (const [px, py, pr] of dirtPebbles) {
-      g.fillStyle(0xfff2dc, 0.6);
-      g.fillEllipse(px, py, pr * 2.4, pr * 1.7);
-      g.fillStyle(0xffffff, 0.75);
-      g.fillEllipse(px - pr * 0.3, py - pr * 0.35, pr * 1.1, pr * 0.8);
-    }
-    g.fillStyle(0x3d2210, 0.5);
-    g.fillRoundedRect(11, 13, 9, 3, 1.5);
-    g.fillStyle(0x5c3418, 0.55);
-    g.fillRect(0, 11, 32, 3.5);
-    const scallopXs = [0, 8, 16, 24, 32];
-    for (let si = 0; si < scallopXs.length; si++) {
-      const sx = scallopXs[si];
-      const low = si % 2 === 0;
-    g.fillStyle(0x5FA84B, 1);
-    g.fillCircle(sx, low ? 11.5 : 9, low ? 5.4 : 4.2);
-    }
-    for (let si = 0; si < scallopXs.length; si++) {
-      const sx = scallopXs[si];
-      const low = si % 2 === 0;
-      g.fillStyle(0x7BBE58, 1);
-      g.fillCircle(sx + (low ? 4 : -4), low ? 10 : 8.2, low ? 4.6 : 3.6);
-    }
-    for (let si = 0; si < scallopXs.length; si++) {
-      const sx = scallopXs[si];
-      const low = si % 2 === 0;
-      g.fillStyle(0x8FD46A, 1);
-      g.fillCircle(sx, low ? 10 : 7.6, low ? 5 : 3.8);
-    }
-    g.fillStyle(0x8FD46A, 1);
-    g.fillRect(0, 0, 32, 9);
-    g.fillStyle(0xC4F29A, 1);
-    g.fillRoundedRect(0, 0, 32, 4, { tl: 0, tr: 0, bl: 3, br: 3 });
-    g.fillStyle(0xDFF8B4, 0.8);
-    g.fillCircle(6, 1.6, 2.2); g.fillCircle(20, 1.4, 2.6); g.fillCircle(30, 2, 1.8);
-    g.fillStyle(0x7BBE58, 0.45);
-    g.fillEllipse(12, 8.4, 12, 3.4); g.fillEllipse(27, 7.6, 9, 3);
-    g.fillStyle(0x5FA84B, 0.9);
-    g.fillTriangle(10, 12, 11.5, 17, 13, 12);
-    g.fillTriangle(22, 13, 23.5, 18.5, 25, 13);
-    g.fillStyle(0x7BBE58, 0.9);
-    g.fillTriangle(25.5, 12, 26.5, 15.5, 27.5, 12);
+    g.fillStyle(0x99552d, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xc78345, 1);
+    g.fillRect(2, 13, 10, 8); g.fillRect(18, 21, 11, 8);
+    g.fillStyle(0x673d27, 1);
+    g.fillRect(12, 15, 3, 5); g.fillRect(3, 27, 7, 3);
+    g.fillRect(25, 13, 5, 3); g.fillRect(15, 27, 3, 5);
+    g.fillStyle(0x296836, 1); g.fillRect(0, 6, 32, 5);
+    g.fillRect(4, 9, 5, 4); g.fillRect(22, 9, 6, 4);
+    g.fillStyle(0x59bc43, 1); g.fillRect(0, 2, 32, 5);
+    g.fillRect(4, 6, 5, 4); g.fillRect(22, 6, 6, 4);
+    g.fillStyle(0xb7ec68, 1); g.fillRect(0, 0, 32, 2);
     g.generateTexture('ground_grass', 32, 32);
 
     // Cave ground
@@ -2054,66 +1632,34 @@ export class BootScene extends Phaser.Scene {
     g.fillRoundedRect(1, 1, 30, 4, 2);
     g.generateTexture('ground_castle', 32, 32);
 
-    // Question block - 3D with beveled edges, brighter gold, animated-looking ?
+    // Square bonus block with an actual pixel question mark (not an exclamation mark).
     g.clear();
-    g.fillStyle(0xa8822a, 1);
-    g.fillRoundedRect(0, 0, 32, 32, 6);
-    this.fillVGradient(g, 1, 1, 30, 30, 0xffe070, 0xe8a830, 10);
-    g.fillStyle(0xfff4c0, 0.55);
-    g.fillRoundedRect(2, 2, 28, 7, 3.5);
-    g.fillStyle(0xc07c28, 0.4);
-    g.fillRoundedRect(2, 26, 28, 5, 3);
-    g.fillStyle(0xfff8d8, 0.35);
-    g.fillEllipse(8, 8, 10, 6);
-    this.rivet(g, 4.5, 4.5, 2.2);
-    this.rivet(g, 27.5, 4.5, 2.2);
-    this.rivet(g, 4.5, 27.5, 2.2);
-    this.rivet(g, 27.5, 27.5, 2.2);
-    this.strokeOutline(g, 1, 1, 30, 30, 0xa8822a, 6);
-    g.fillStyle(0xb08820, 0.5);
-    g.fillRect(12, 9, 10, 5);
-    g.fillRect(14, 14, 6, 10);
-    g.fillRect(14, 26, 6, 4);
-    g.fillStyle(0xfffaf0, 1);
-    g.fillRect(11, 7, 10, 5);
-    g.fillRect(13, 12, 6, 10);
-    g.fillRect(13, 24, 6, 4);
-    g.fillStyle(0xffffff, 0.9);
-    g.fillCircle(12, 8, 1.6);
-    g.fillCircle(18, 8, 1.6);
-    g.fillStyle(0xffffff, 0.55);
-    g.fillRect(12, 8, 8, 1.2);
-    g.fillRect(13, 12, 1.5, 8);
-    g.fillStyle(0xc08828, 0.35);
-    g.fillRect(12, 11, 9, 1);
+    g.fillStyle(0x7c431c, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xf8b62d, 1); g.fillRect(2, 2, 28, 28);
+    g.fillStyle(0xffe47a, 1); g.fillRect(2, 2, 28, 3); g.fillRect(2, 2, 3, 26);
+    g.fillStyle(0xd47b1e, 1); g.fillRect(5, 27, 25, 3); g.fillRect(27, 5, 3, 22);
+    const questionPixels = [
+      [11, 7, 10, 3], [8, 10, 4, 4], [19, 10, 4, 6],
+      [15, 15, 7, 3], [13, 18, 4, 3], [13, 24, 4, 4]
+    ];
+    for (const [x, y, width, height] of questionPixels) {
+      g.fillStyle(0x9c591e, 1); g.fillRect(x + 1, y + 1, width, height);
+    }
+    for (const [x, y, width, height] of questionPixels) {
+      g.fillStyle(0xfff8d7, 1); g.fillRect(x, y, width, height);
+    }
+    g.fillStyle(0x99531e, 1);
+    for (const x of [4, 26]) for (const y of [4, 26]) g.fillRect(x, y, 2, 2);
     g.generateTexture('question', 32, 32);
 
-    // Used question block
+    // Spent blocks lose their symbol, making collectible state clear immediately.
     g.clear();
-    g.fillStyle(0xa89058, 1);
-    g.fillRoundedRect(0, 0, 32, 32, 6);
-    this.fillVGradient(g, 1, 1, 30, 30, 0xdcbc84, 0xb89458, 8);
-    g.fillStyle(0xf0dcb0, 0.5);
-    g.fillRoundedRect(2, 2, 28, 6, 3);
-    g.fillStyle(0x8a6c38, 0.5);
-    g.fillRoundedRect(2, 26, 28, 5, 3);
-    this.rivet(g, 4.5, 4.5, 2.2);
-    this.rivet(g, 27.5, 4.5, 2.2);
-    this.rivet(g, 4.5, 27.5, 2.2);
-    this.rivet(g, 27.5, 27.5, 2.2);
-    g.lineStyle(1, 0x8a6a34, 0.8);
-    g.lineBetween(8, 6, 24, 18);
-    g.lineBetween(22, 8, 18, 24);
-    g.lineBetween(10, 20, 14, 27);
-    g.fillStyle(0x7a6030, 1);
-    g.fillRect(11, 8, 10, 4);
-    g.fillRect(13, 13, 6, 8);
-    g.fillRect(13, 24, 6, 4);
-    g.fillStyle(0xe8d0a0, 0.4);
-    g.fillCircle(7, 7, 3);
-    this.strokeOutline(g, 1, 1, 30, 30, 0x8a7040, 6);
-    g.fillStyle(0xffffff, 0.15);
-    g.fillRoundedRect(1, 1, 30, 4, 2);
+    g.fillStyle(0x68442e, 1); g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0xa8794d, 1); g.fillRect(2, 2, 28, 28);
+    g.fillStyle(0xc69b68, 1); g.fillRect(2, 2, 28, 3); g.fillRect(2, 2, 3, 26);
+    g.fillStyle(0x815532, 1); g.fillRect(5, 27, 25, 3); g.fillRect(27, 5, 3, 22);
+    g.fillStyle(0x68442e, 1);
+    for (const x of [5, 25]) for (const y of [5, 25]) g.fillRect(x, y, 2, 2);
     g.generateTexture('question_used', 32, 32);
 
     // Pipe - 3D with highlights

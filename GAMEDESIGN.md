@@ -36,9 +36,17 @@ PLAYER_MOVE_SPEED:   300
 | volcano-lava | 2200 |
 | Alle anderen | 2000 |
 
-### Eis-Rutsch-Effekt (ice-snow)
-- Spieler behält horizontale Velocity beim Loslassen (body.velocity.x * 0.92)
-- Kein sofortiger Stopp wie auf anderen Plattformen
+### Klassisches Plattformspiel-Gefühl
+- Direkte horizontale Steuerung: sofortige Lauf-/Sprintgeschwindigkeit, sofortiger Stopp beim Loslassen und sofortiger Richtungswechsel; gilt auch in der Luft.
+- Laufen 300 px/s, Sprint mit Shift 400 px/s; Solver und Level bleiben auf 300 px/s ausgelegt.
+- Sprung nur auf neuen Tastendruck (kein automatisches Dauerspringen), 90 ms Kulanz nach einer Kante und 120 ms Eingabepuffer vor Landung.
+- Loslassen begrenzt eigene Aufwärtsgeschwindigkeit einmalig auf −360 px/s; Federn und Stomp-Bounces behalten ihren Impuls.
+- Trägheit und Beschleunigung nur bei Bodenkontakt auf einer echten `ice`-Plattform; alle anderen Flächen einschließlich Schnee steuern direkt.
+- Seitliche Pixelfigur, feste Lauf-Silhouette, scharfe Pixel ohne Texturfilterung; lesbare Fragezeichen- und Münzgrafik.
+
+### Eis-Rutsch-Effekt (`ice`-Plattformen)
+- Nur auf `ice`: Beschleunigung, allmähliches Umkehren und Ausgleiten beim Loslassen (×0.96 pro 60-Hz-Frame, über Game-Time normalisiert).
+- `snow` und andere Plattformen im ice-snow-Biom bleiben griffig; nach dem Absprung gilt sofort wieder direkte Luftsteuerung.
 
 ### Schwimmen (water biome)
 - Aktiv bei `body.y > 500`
@@ -51,7 +59,8 @@ PLAYER_MOVE_SPEED:   300
 | Taste | Aktion |
 |-------|--------|
 | ← → | Bewegen |
-| ↑ | Springen / Schwimmen (Wasser) |
+| ↑ / Z | Springen / Schwimmen (Wasser); halten = voller Sprung, kurz drücken = flacher Sprung |
+| Shift | Sprinten (400 px/s statt 300 px/s) |
 | X / Space | Schießen (Fire Mario) |
 | R | Level neustarten |
 | N | Nächstes Level |
@@ -103,7 +112,7 @@ Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pf
 | Element | LevelData | Verhalten |
 |---------|-----------|-----------|
 | **Crumble-Plattformen** | `Platform.crumble: true` | 800ms nach Betreten bröckeln, 3s Respawn; Finale-Biome sky/ruins/canyon/space; jede Stelle hat sichere Alternativroute |
-| **Eis-Plattformen** | `PlatformType 'ice'` | Rutschfaktor ×0.96 (biome-unabhängig); nur ice-snow; `snow` rutscht im Biom weiterhin ×0.92 |
+| **Eis-Plattformen** | `PlatformType 'ice'` | Nur bei Bodenkontakt: Beschleunigung/Trägheit und Rutschfaktor ×0.96 (zeitnormiert); `snow` bleibt griffig |
 | **Förderbänder** | `Platform.conveyor: px/s` | Schiebt den Spieler beim Stehen (positiv = rechts); factory-Level, beide Richtungen |
 | **Checkpoints** | `checkpoints: {x,y}[]` | Overlap aktiviert Respawn-Punkt (Flagge wird gelb); nach Tod Respawn dort, weiterhin 1 Leben Abzug; Pflicht ab width ≥ 16000 |
 | **Wind-Zonen** | `windZones: {x,y,w,h,strength,intervalMs}[]` | Periodischer seitlicher Schub (Default alle 3s, ±strength) nur innerhalb des Rechtecks; transluzente Markierung |
@@ -333,14 +342,32 @@ Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pf
 
 ## Audio
 
-- **15 handkomponierte Biome-Songs** (`src/audio/biomeMusic.ts`, MIDI-Noten in kompakter Autor-Domain, deterministisch, 0× Math.random)
-- **Struktur**: 16 Takte × 16 Steps, Form A-A'-B-A' mit Hook (Takte 1-2) und Hook-Reprise in Takt 9; Call-and-Response-Phrasen
-- **Drums**: Kick 1&3, Snare 2&4, Offbeat-HiHats, Fill vor jeder Hook-Reprise
-- **Scheduler**: `src/audio/musicPlayer.ts` — Lookahead-Scheduling (25ms-Poll, 0.12s Ahead, exakte `ctx.currentTime`-Timeline, kein Drift)
-- **Instrumente**: Lead (Biome-Wellenform: square/triangle/sine/sawtooth + Detune-Zweitosc + Vibrato), Bass (triangle + Sub-Sine), Arpeggio (square, root-5th-oct), Kick (pitch-drop), Snare (Noise + Körper), HiHat (Noise highpass)
-- **BPM pro Biome**: 118 (space-star) bis 176 (castle-final); Tonart/Mode passt sich dem Biom an (phrygisch-dominant desert, lydisch water/space, moll haunted/volcano/castle)
-- **SFX** separat via GameScene playNote/playChord (Coin, Gate-Arpeggio, QB)
-- Start bei erstem User-Input (AudioContext-Resume), Stop bei Tod/Pause/Levelwechsel
+- **15 eigenständige handkomponierte Biome-Songs** (`src/audio/biomeMusic.ts`), mit eingängigen Motiven, Antwortphrasen und Hook-Reprise in Takt 9; 16 Takte × 16 Steps. Keine Nintendo-Melodien.
+- **Tondauern**: `melodyDurations` erhält die komponierten Notenlängen in Steps; 0 im Melodie-Track bedeutet Pause oder Fortsetzung ohne neuen Anschlag. Längere Noten klingen tatsächlich aus.
+- **Arrangement pro Biom**: `arpEverySteps`, `percussionGain`, `leadGain`, `padGain`, `delaySend` steuern Dichte und Mischung. Die Melodie bleibt vorn, ruhige Biome haben weniger Schlagzeug und mehr Raum.
+- **Harmonie**: Bassfiguren berücksichtigen Dur/Moll; Akkordflächen wechseln einmal pro Takt, statt sich vierfach über Akkordwechsel zu überlagern.
+- **Klang**: weich gefilterter Lead, zurückhaltendes Arpeggio, warmer Bass und leichte Percussion; Delay folgt dem Songtempo.
+- **Scheduler**: `src/audio/musicPlayer.ts` — Lookahead-Scheduling (25ms-Poll, 0.12s Ahead) auf exakter `ctx.currentTime`-Timeline. Audio-Knoten werden bei Ende/Stop freigegeben; Percussion-Noise verwendet einen festen Seed.
+- **SFX** separat via GameScene playNote/playChord (Coin, Gate-Arpeggio, QB).
+- Start bei erstem User-Input (AudioContext-Resume), Stop bei Tod/Pause/Levelwechsel.
+
+| Biom | Musikalische Stimmung |
+|------|-----------------------|
+| grasslands | Fröhlich, federnd, einprägsame Abenteuermelodie |
+| desert | Geheimnisvoll, orientalisch gefärbte Melodik |
+| water | Fließend, sanft und schwebend |
+| ice-snow | Glitzernd, leicht und klar |
+| sky-clouds | Luftig, aufsteigende Melodiebögen |
+| forest | Warm, verspielt und märchenhaft |
+| village | Gemütlich, tänzerisch und freundlich |
+| beach-island | Sonnig und beschwingt |
+| factory | Rhythmisch, präzise und vorwärtsdrängend |
+| volcano-lava | Treibend und spannungsvoll |
+| haunted-mansion | Gespenstisch und zurückhaltend |
+| ruins | Geheimnisvoll und erkundend |
+| canyon-base | Weit, abenteuerlich und beweglich |
+| space-star | Funkelnd, ruhig und schwerelos |
+| castle-final | Dramatisch, entschlossen und melodisch |
 
 ## Level Solver (Physics.ts BFS)
 

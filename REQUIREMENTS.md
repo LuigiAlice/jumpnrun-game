@@ -16,7 +16,7 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-002** – Sprungphysik: Sprünge werden aus JUMP_SPEED 900 und der (biome-abhängigen) Gravitation physikalisch berechnet; horizontale Sprungweite hängt von der Höhendifferenz ab.
 - **R-003** – Physik-Limits: MAX_JUMP_DISTANCE = 800, MAX_JUMP_UP = 350, MAX_FALL_DOWN = 1000.
 - **R-004** – Biome-Gravitation: space-star 1000, water 1200, sky-clouds/beach-island 1500, volcano-lava 2200, alle anderen 2000; Solver und Gameplay nutzen `getBiomeGravity`.
-- **R-005** – Biome-Bewegungsmechaniken: Im Biome ice-snow behält der Spieler beim Loslassen horizontale Velocity (×0.92, Eis-Rutsch); der `ice`-Plattformtyp rutscht biome-unabhängig stärker (×0.96). Im Biome water gilt ab `body.y > 500` Schwimmen (Gravity 600, ↑ → vY −250, horizontaler Drift ×0.95); `waterZones` aktivieren dasselbe Schwimmen auch außerhalb des water-Bioms.
+- **R-005** – Biome-Bewegungsmechaniken: Nur auf dem `ice`-Plattformtyp gelten bei Bodenkontakt Beschleunigung, Trägheit und zeitnormierter Eis-Rutsch (×0.96 pro 60-Hz-Frame); Schnee und andere Flächen im ice-snow-Biom steuern direkt. Im Biome water gilt ab `body.y > 500` Schwimmen (Gravity 600, ↑ → vY −250, horizontaler Drift ×0.95); `waterZones` aktivieren dasselbe Schwimmen auch außerhalb des water-Bioms.
 - **R-006** – Fire-Schuss: Fire Mario schießt mit X/Space Feuerbälle, maximal alle 250 ms.
 - **R-007** – ESC-Taste führt aus dem Spiel zurück zum Titelmenü.
 
@@ -96,8 +96,19 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-055** – Kanonen (`cannons`) feuern in factory, castle-final und canyon-base tödliche Projektile; Zeit-Tore (`timeGate`) entsperren das Goal erst nach X Sekunden und sind innerhalb des Zeitbonus erreichbar.
 - **R-056** – 1-UP-Blöcke (`oneup`) kommen in mehreren Leveln vor; die Plattformtypen `hidden`, `brick_secret` und `brick_multi` werden in ≥ 3 Biomen für Geheimnisse genutzt.
 - **R-057** – Moving-Platform-Escape (Bugfix „Figur bleibt auf der Plattform kleben"): Die Mitnahme durch bewegliche Plattformen erfolgt ausschliesslich positionsbasiert (`setX`/`setY`) und darf `body.velocity` nie überschreiben — Sprung- und Laufeingaben müssen jederzeit greifen; `dx*60`-Velocity-Übergabe ist framezeitabhängig und verboten.
+- **R-058** – Wasserlevel spielbar (Bugfix „Wasserlevel nicht durchspielbar"): Unsichtbare Notfallböden (`safePlat`) werden nur noch für bodengebundene Gegner erzeugt — schwebende Gegner (ghost/boo/ufo/squid/lakitu/thwomp/bullet_bill/fireball/boss) hinterlassen keine Hindernisse; Schwimmpfade bleiben offen.
+- **R-059** – Hidden-Blöcke (`hidden`/`brick_secret`/`brick_multi`) werden durch Bonk von unten enthüllt und geben Bonusinhalte; die Enthüllung liest den echten `platformType` (nicht die Textur).
+- **R-060** – Runtime-Smoke aller 15 Biome: je 2 Level pro Biome werden auf Spawn, Bodenkontakt, Sprung (gravity-abhängig), Laufen und lebende Mover geprüft; dazu verifizieren Element-Probes die Phase-9-Mechaniken zur Laufzeit (Crumble, Conveyor, Eis, Checkpoint, Wind, Schwimmzone, Schlüssel/Tür, Kanonen, Zeit-Tor, Multi-Goal, Rising, Hidden, 1-UP).
+- **R-061** – Frame-Rate-Independenz der Bewegung: Mover (horizontal/vertikal/circular) und Gegner-Bob rechnen auf kumulierter Game-Time (`delta`-Akkumulator), nie auf der Wandzeit — bei Slow-Mo/Fokus-Cooldown (gekappte Phaser-Delta) dürfen Plattformen die Physik nicht überholen. Bei konstanten 60fps identisch zum alten Verhalten.
 
 ---
+
+- **R-062** – Präzises Bewegungsgefühl: sofortige horizontale Geschwindigkeit, sofortiges Stoppen und Umkehren auch in der Luft; Beschleunigung/Rutschen ausschließlich auf Eis bei Bodenkontakt. Optionaler Shift-Sprint (400), variable Sprunghöhe mit ↑/Z, 90 ms Coyote-Zeit, 120 ms Sprungpuffer, kein Auto-Bounce; externe Feder-/Stomp-Impulse bleiben erhalten.
+
+- **R-063** – Klassischer L1-Einstieg: sicherer Bodenlauf unter optionaler Hügelroute, erreichbare Brick–Frageblock–Brick-Gruppen und massive Zieltreppe mit frei liegendem Münzbogen.
+
+- **R-064** – Melodische Biome-Musik: 15 unterschiedliche Motive mit harmonischen Taktankern, echten Notenlängen und Hook-Reprise; ruhige Biome mit weniger Percussion und langsameren Tempi als Action-Biome. Begleitdichte und Mischung sind pro Song steuerbar.
+- **R-065** – Musik-Wiedergabe: Akkordflächen einmal pro Takt, notenlängentreuer Lead, taktsynchrones Delay, deterministische Percussion sowie vollständige Audio-Knoten-Freigabe beim Stoppen.
 
 ## Traceability
 
@@ -205,3 +216,27 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-056 | 1-UP & Geheim-Bricks | tests/Phase9Features.test.ts | 1-UP question blocks appear in several levels |
 | R-056 | 1-UP & Geheim-Bricks | tests/Phase9Features.test.ts | hidden and secret brick types are used in multiple biomes |
 | R-057 | Moving-Platform-Escape | e2e/elements.test.ts | moving platform must not stomp |
+| R-058 | Wasserlevel spielbar | e2e/element-features.test.ts | floating enemies leave no invisible ground |
+| R-059 | Hidden-Blöcke per Bonk | e2e/element-features.test.ts | hidden brick reveals itself when bonked from below |
+| R-060 | Runtime-Smoke aller Biome | e2e/biome-smoke.test.ts | spawn, ground, jump, run and movers work |
+| R-060 | Runtime-Smoke aller Biome | e2e/element-features.test.ts | crumble platform breaks after 800ms and respawns after 3s |
+| R-061 | Frame-Rate-Independenz Mover | e2e/biome-smoke.test.ts | movers work |
+| R-061 | Frame-Rate-Independenz Mover | e2e/elements.test.ts | horizontal moving platform must not stomp |
+
+| R-062 | Sprint und Solver-Walk | tests/PlayerMovement.test.ts | keeps the authored solver walk speed |
+| R-062 | Variable Sprunghöhe | tests/PlayerMovement.test.ts | shortens only player-owned jumps |
+| R-062 | Eingabepuffer und Kulanz | tests/PlayerMovement.test.ts | buffers a press just before landing |
+| R-062 | Runtime-Sprint | e2e/player-feel.test.ts | Shift sprint reaches 400 |
+| R-062 | Runtime-Sprunghöhe | e2e/player-feel.test.ts | holding jump rises higher |
+| R-063 | Klassischer Leveleinstieg | tests/ClassicIntro.test.ts | provides a continuous safe running lane |
+| R-063 | Blockgruppen | tests/ClassicIntro.test.ts | introduces reachable power-up |
+| R-063 | Zieltreppe und Münzen | tests/ClassicIntro.test.ts | guides the final jump |
+| R-064 | Echte Notenlängen | tests/MusicArrangement.test.ts | preserves written note lengths |
+| R-064 | Biome-Motive | tests/MusicArrangement.test.ts | gives all fifteen biomes distinct hooks |
+| R-064 | Harmonische Melodien | tests/MusicArrangement.test.ts | anchors melodic downbeats |
+| R-064 | Biome-Stimmung | tests/MusicArrangement.test.ts | keeps calm biomes gentler |
+| R-065 | Notenlängen und Delay | tests/MusicPlayer.test.ts | plays authored long notes with sustain |
+| R-065 | Akkordwechsel | tests/MusicPlayer.test.ts | ends chord pads before the next bar |
+| R-065 | Audio-Freigabe | tests/MusicPlayer.test.ts | disconnects completed voices |
+| R-065 | Deterministische Percussion | tests/MusicPlayer.test.ts | creates bounded, repeatable non-silent |
+| R-062 | Direkte Steuerung ohne Rutschen | tests/PlayerMovement.test.ts | stops and reverses immediately |

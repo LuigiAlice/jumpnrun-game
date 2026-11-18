@@ -17,14 +17,19 @@ import {
 
 export const GRASSLANDS_LEVELS: LevelData[] = [
   // ============================================================
-  // Level 1 (Tutorial): flacher Start, Hügel-Treppe mit Belohnungs-
-  // Plateau, Abstieg zu den zwei Warp-Röhren, Gap-Stufen, Zwei-
-  // Ebenen-Route und ruhiger Zielauslauf. Genau 1 Spring, 0 Spikes,
+  // Level 1 (Tutorial): sicherer Bodenlauf mit Brick-/Frageblock-
+  // Gruppen, optionaler Hügelroute, zwei Warp-Röhren, Gap-Stufen,
+  // Zwei-Ebenen-Route und massiver Zieltreppe. Genau 1 Spring, 0 Spikes,
   // Secret-Plattform exakt (520, 400) vom Start erreichbar.
   // ============================================================
   (() => {
     const platforms = [] as LevelData['platforms'];
     platforms.push(createPlat(350, 550, 500, 40, 'grass'));
+    // A forgiving running lane introduces blocks before the first real pit.
+    // The higher hill remains an optional route with extra coins.
+    platforms.push(createPlat(1200, 665, 1200, 270, 'grass'));
+    platforms.push(createPlat(268, 420, 32, 32, 'brick'));
+    platforms.push(createPlat(332, 420, 32, 32, 'brick'));
     // Secret room above the start (PIN: exact position/size/type)
     platforms.push(createPlat(520, 400, 140, 24, 'platform_easy'));
     // Hill staircase (4 Stufen, je 70px)
@@ -40,6 +45,8 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     platforms.push(createPlat(2050, 506, 80, 24, 'pipe_top'));
     platforms.push(createPlat(2210, 550, 64, 64, 'pipe'));
     platforms.push(createPlat(2210, 506, 80, 24, 'pipe_top'));
+    platforms.push(createPlat(2318, 420, 32, 32, 'brick'));
+    platforms.push(createPlat(2382, 420, 32, 32, 'brick'));
     // Gap stairs (Phase 9: always with opts)
     platforms.push(...gapWithPlatforms(1, 2500, 530, 420, 2, {
       widths: [110, 90], dy: [0, 30], types: ['platform_easy', 'platform_medium'],
@@ -54,6 +61,12 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     platforms.push(createPlat(5150, 520, 100, 24, 'platform_medium'));
     platforms.push(createPlat(5350, 490, 100, 24, 'platform_easy'));
     platforms.push(createPlat(5700, 550, 900, 40, 'grass'));
+    // Solid, contiguous steps form a recognisable final run-up to the flag.
+    // They are optional: the ground below remains the safe route.
+    for (let step = 0; step < 4; step++) {
+      const height = (step + 1) * 32;
+      platforms.push(createPlat(5564 + step * 48, 530 - height / 2, 48, height, 'stone'));
+    }
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(140, 480, 560, 480, 4));
@@ -64,7 +77,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     coins.push(...coinTrail(1650, 290, 1900, 400, 3));
     coins.push(...coinArc(2650, 470, 5, 60, 60));
     coins.push(...coinDiamond(4150, 320, 60));
-    coins.push(...coinTrail(5300, 450, 6100, 450, 5));
+    coins.push(...coinTrail(5300, 450, 5500, 450, 2));
+    coins.push(...coinArc(5820, 390, 5, 80, 70));
+    coins.push(...coinTrail(6000, 450, 6100, 450, 2));
 
     return {
       id: 1, name: 'Grasslands Plains', width: 6400, height: 800, biome: 'grasslands',

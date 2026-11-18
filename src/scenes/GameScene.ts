@@ -7,12 +7,8 @@ import { canBreakBrick, isBrickLoadBearing } from '../data/levels/helpers';
 import { BIOME_MUSIC } from '../audio/biomeMusic';
 import type { BiomeSong } from '../audio/biomeMusic';
 import { MusicPlayer } from '../audio/musicPlayer';
+import { createJumpState, stepJump, stepHorizontalVelocity } from '../engine/PlayerMovement';
 
-const PLAYER_SPEED = 300;
-const JUMP_VELOCITY = -900;
-const ACCEL = 1400;
-const DECEL = 900;
-const TURN_DECEL = 1600;
 const MIN_ENEMY_SPAWN_DISTANCE = 500;
 
 /** Enemies that cannot be stomped (see AGENTS.md). */
@@ -55,6 +51,8 @@ export class GameScene extends Phaser.Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private shootKey!: Phaser.Input.Keyboard.Key;
   private spaceShoot!: Phaser.Input.Keyboard.Key;
+  private jumpKey!: Phaser.Input.Keyboard.Key;
+  private runKey!: Phaser.Input.Keyboard.Key;
   private escapeKey!: Phaser.Input.Keyboard.Key;
   private restartKey!: Phaser.Input.Keyboard.Key;
   private nextKey!: Phaser.Input.Keyboard.Key;
@@ -74,7 +72,8 @@ export class GameScene extends Phaser.Scene {
   private isDead: boolean = false;
   private isTransitioning: boolean = false;
   private isQuitting: boolean = false;
-  private isJumping: boolean = false;
+  private jumpState = createJumpState();
+  private externalLaunchPending = false;
   private lastBeltX: number = 0;
   private lastCameraX: number = 0;
   private animFrame: number = 0;
@@ -108,6 +107,7 @@ export class GameScene extends Phaser.Scene {
   private bgTiles: Phaser.GameObjects.TileSprite[] = [];
   private currentBiome: string = '';
   private movingPlatformData: Map<Phaser.GameObjects.Sprite, { startX: number; startY: number; moveType: string; range: number; speed: number; angle?: number }> = new Map();
+  private moveAccum: number = 0;
   
   // Phase 3: Special mechanics
   private bossProjectiles!: Phaser.Physics.Arcade.Group;
@@ -149,7 +149,8 @@ export class GameScene extends Phaser.Scene {
     this.isDead = false;
     this.isTransitioning = false;
     this.isInvincible = false;
-    this.isJumping = false;
+    this.jumpState = createJumpState();
+    this.externalLaunchPending = false;
     this.lastCameraX = 0;
     this.animFrame = 0;
     this.animTime = 0;
@@ -165,6 +166,7 @@ export class GameScene extends Phaser.Scene {
     this.levelElapsed = 0;
     this.windZoneTimers = new Map();
     this.lastBeltX = 0;
+    this.moveAccum = 0;
     this.lastHazardSpawn = 0;
     this.hazardCount = 0;
     this.doorSprites = [];
@@ -194,6 +196,8 @@ export class GameScene extends Phaser.Scene {
     
     this.shootKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     this.spaceShoot = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.jumpKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+    this.runKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     this.escapeKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     this.restartKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     this.nextKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.N);
@@ -416,24 +420,33 @@ export class GameScene extends Phaser.Scene {
       // Skip enemies too close to player start (Bosse ausgenommen)
       if (e.type !== 'boss' && e.x < level.playerStart.x + MIN_ENEMY_SPAWN_DISTANCE) return;
 
+      // Safety net only for ground-walking enemies (they can fall into the void).
+      // Floating enemies (ghost/boo/ufo/squid/lakitu/thwomp/bullet_bill/fireball/boss)
+      // must NOT get hidden ground: those slabs become invisible walls that block
+      // swim routes and jumps (bug: "Wasserlevel nicht durchspielbar").
+      const needsGround = e.type === 'goomba' || e.type === 'koopa' || e.type === 'spiny'
+        || e.type === 'robot' || e.type === 'crab';
+
       // Check if there's solid ground below the enemy (within 60px vertical gap)
       let hasSolidBelow = false;
-      for (const p of level.platforms) {
-        const platLeft = p.x - p.w / 2;
-        const platRight = p.x + p.w / 2;
-        const platTop = p.y - p.h / 2;
-        
-        // Enemy is above/within platform and platform is solid or one-way ground
-        if (e.x >= platLeft - 20 && e.x <= platRight + 20 && 
-            e.y >= platTop - 40 && e.y <= platTop + 50 &&
-            (SOLID_TYPES.includes(p.type) || p.type.startsWith('platform_'))) {
-          hasSolidBelow = true;
-          break;
+      if (needsGround) {
+        for (const p of level.platforms) {
+          const platLeft = p.x - p.w / 2;
+          const platRight = p.x + p.w / 2;
+          const platTop = p.y - p.h / 2;
+
+          // Enemy is above/within platform and platform is solid or one-way ground
+          if (e.x >= platLeft - 20 && e.x <= platRight + 20 &&
+              e.y >= platTop - 40 && e.y <= platTop + 50 &&
+              (SOLID_TYPES.includes(p.type) || p.type.startsWith('platform_'))) {
+            hasSolidBelow = true;
+            break;
+          }
         }
       }
-      
+
       // If no solid platform below, create invisible ground platform
-      if (!hasSolidBelow) {
+      if (needsGround && !hasSolidBelow) {
         const safePlat = this.solidPlatforms.create(e.x, e.y + 35, 'ground_grass');
         safePlat.setDisplaySize(80, 20).refreshBody();
         (safePlat as any).platformType = 'grass';
@@ -640,7 +653,9 @@ export class GameScene extends Phaser.Scene {
         loop: true,
         callback: () => {
           if (this.isDead || this.isTransitioning || this.isQuitting) return;
-          const hazard = this.fallingHazards.create(c.x, c.y, 'fireball');
+          // Spawn ahead of the muzzle and above the platform so the shot is not
+          // destroyed by its own cannon's ground on the first physics step.
+          const hazard = this.fallingHazards.create(c.x + c.dir * 30, c.y - 12, 'fireball');
           hazard.setVelocity(c.dir * (c.speed ?? 260), 0);
           hazard.setScale(0.7);
           (hazard.body as Phaser.Physics.Arcade.Body).setSize(11, 11, true);
@@ -698,7 +713,7 @@ export class GameScene extends Phaser.Scene {
   private setupCollisions() {
     // Solid platforms: player walks on them + bricks break + hidden blocks reveal
     this.physics.add.collider(this.player, this.solidPlatforms, (p: any, b: any) => {
-      const platType = b.getData?.('platformType') || b.texture?.key;
+      const platType = (b as any).platformType || b.getData?.('platformType') || b.texture?.key;
       if (b.body?.touching?.down && p.body?.touching?.up) {
         if (platType === 'hidden') {
           b.setTexture('question');
@@ -841,6 +856,7 @@ export class GameScene extends Phaser.Scene {
             }
             this.playStompSound();
             p.setVelocityY(-400);
+            this.externalLaunchPending = true;
             this.score += 500;
         } else {
             this.playerHit();
@@ -909,6 +925,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.springs, (p: any, s: any) => {
       if (p.body?.touching?.down && !this.isDead) {
         p.setVelocityY(SPRING_VELOCITY);
+        this.externalLaunchPending = true;
         s.setScale(s.scaleX, 0.6);
         this.tweens.add({ targets: s, scaleY: 1, duration: 120, ease: 'Back.Out' });
         this.playJumpSound();
@@ -1056,8 +1073,8 @@ export class GameScene extends Phaser.Scene {
     const levelData = this.currentLevelData;
     const levelName = levelData?.name || `Level ${this.levelIndex + 1}`;
 
-    const labelStyle = { fontSize: '12px', fontFamily: 'Arial', color: '#fff', stroke: '#000', strokeThickness: 3 };
-    const valueStyle = { fontSize: '22px', fontFamily: 'Arial', color: '#fff', stroke: '#000', strokeThickness: 3 };
+    const labelStyle = { fontSize: '12px', fontFamily: 'monospace', color: '#fff', stroke: '#000', strokeThickness: 3 };
+    const valueStyle = { fontSize: '22px', fontFamily: 'monospace', color: '#fff', stroke: '#000', strokeThickness: 3 };
     const hudY = 20;
     const valY = hudY + 18;
 
@@ -1084,7 +1101,7 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
     
     // ESC hint
-    this.add.text(GAME_WIDTH - 20, GAME_HEIGHT - 20, 'ESC = Quit', {
+    this.add.text(GAME_WIDTH - 20, GAME_HEIGHT - 20, '← → Laufen · Shift Sprint · ↑ / Z Sprung · X / Space Feuer · ESC Menü', {
       fontSize: '12px',
       fontFamily: 'Arial',
       color: '#aaa',
@@ -1253,7 +1270,7 @@ export class GameScene extends Phaser.Scene {
     return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
   }
 
-  update(time: number) {
+  update(time: number, delta: number) {
     if (Phaser.Input.Keyboard.JustDown(this.escapeKey)) {
       this.quitToTitle();
       return;
@@ -1261,9 +1278,9 @@ export class GameScene extends Phaser.Scene {
     if (this.isDead || this.isTransitioning) return;
     this.updateUI();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
-    const dt = this.game.loop.delta / 1000;
+    const grounded = body.blocked.down || body.touching.down;
     // One ground lookup per frame (used by ice slip and conveyor belts below)
-    const groundPlat = body.blocked.down ? this.getGroundPlatform() : null;
+    const groundPlat = grounded ? this.getGroundPlatform() : null;
     const groundType = (groundPlat as any)?.platformType;
 
     // Remove last frame's conveyor offset before input handling (prevents compounding)
@@ -1272,57 +1289,29 @@ export class GameScene extends Phaser.Scene {
       this.lastBeltX = 0;
     }
 
-    if (this.cursors.left.isDown) {
-      this.player.setFlipX(true);
-      if (body.velocity.x > 0) {
-        body.velocity.x -= TURN_DECEL * dt;
-        if (body.velocity.x <= 0) body.velocity.x = -PLAYER_SPEED;
-      } else {
-        body.velocity.x = Math.max(body.velocity.x - ACCEL * dt, -PLAYER_SPEED);
-      }
-    } else if (this.cursors.right.isDown) {
-      this.player.setFlipX(false);
-      if (body.velocity.x < 0) {
-        body.velocity.x += TURN_DECEL * dt;
-        if (body.velocity.x >= 0) body.velocity.x = PLAYER_SPEED;
-      } else {
-        body.velocity.x = Math.min(body.velocity.x + ACCEL * dt, PLAYER_SPEED);
-      }
-    } else {
-      const onIcePlatform = groundType === 'ice';
-      const onSnowBiome = !!body.blocked.down && this.currentLevelData?.biome === 'ice-snow';
-      if (onIcePlatform || onSnowBiome) {
-        if (Math.abs(body.velocity.x) < 5) body.velocity.x = 0;
-        else body.velocity.x *= onIcePlatform ? 0.96 : 0.92;
-      } else if (Math.abs(body.velocity.x) < 5) {
-        body.velocity.x = 0;
-      } else if (body.velocity.x > 0) {
-        body.velocity.x = Math.max(0, body.velocity.x - DECEL * dt);
-      } else {
-        body.velocity.x = Math.min(0, body.velocity.x + DECEL * dt);
-      }
-    }
+    const direction = this.cursors.left.isDown ? -1 : this.cursors.right.isDown ? 1 : 0;
+    if (direction !== 0) this.player.setFlipX(direction < 0);
+    const surface = groundType === 'ice' ? 'ice' : 'normal';
+    body.setVelocityX(stepHorizontalVelocity(
+      body.velocity.x, direction, this.runKey.isDown, grounded, surface, delta,
+    ));
 
-    // Pipe entry: DOWN + JUMP while on pipe_top (check BEFORE jump to avoid phantom sound)
-    const enteringPipe = body.blocked.down && this.cursors.down.isDown && Phaser.Input.Keyboard.JustDown(this.cursors.up);
-    if (enteringPipe) {
-      this.handlePipeEntry();
-    }
-
-    if (this.cursors.up.isDown && body.blocked.down && !enteringPipe) {
-      body.setVelocityY(JUMP_VELOCITY);
-      this.isJumping = true;
-      this.playJumpSound();
-    }
-    if (this.isJumping && body.velocity.y < 0) {
-      if (!this.cursors.up.isDown) {
-        body.velocity.y *= 0.5;
-        this.isJumping = false;
-      }
-    }
-    if (body.blocked.down) {
-      this.isJumping = false;
-    }
+    const inWaterZone = (this.currentLevelData?.waterZones || []).some(z =>
+      this.inRect(z, this.player.x, this.player.y)
+    );
+    const swimming = (this.currentBiome === 'water' && body.y > 500) || inWaterZone;
+    const jumpDown = this.cursors.up.isDown || this.jumpKey.isDown;
+    // Pipe intent takes precedence over buffered jumping.
+    const enteringPipe = grounded && this.cursors.down.isDown && jumpDown && !this.jumpState.wasDown;
+    if (enteringPipe) this.handlePipeEntry();
+    const jump = stepJump(this.jumpState, {
+      grounded, jumpDown, velocityY: body.velocity.y, deltaMs: delta,
+      suppressed: enteringPipe || swimming, externalLaunch: this.externalLaunchPending,
+    });
+    this.jumpState = jump.state;
+    this.externalLaunchPending = false;
+    body.setVelocityY(jump.velocityY);
+    if (jump.jumped) this.playJumpSound();
 
     if (this.cameras.main.scrollX < this.lastCameraX) {
       this.cameras.main.scrollX = this.lastCameraX;
@@ -1331,19 +1320,24 @@ export class GameScene extends Phaser.Scene {
 
     const playerSpeed = Math.abs(body.velocity.x);
     const prefix = this.isPlayerFire ? 'player_fire' : this.isPlayerBig ? 'player_big' : 'player';
-    if (!body.blocked.down) {
+    if (!grounded || jump.jumped) {
       this.player.setTexture(`${prefix}_jump`);
+      this.player.setScale(1, 1);
     } else if (playerSpeed > 20) {
-      this.animTime += this.game.loop.delta;
-      if (this.animTime >= this.ANIM_SPEED) {
+      this.animTime += delta;
+      const strideTime = this.ANIM_SPEED * 300 / Math.max(150, playerSpeed);
+      if (this.animTime >= strideTime) {
         this.animTime = 0;
         this.animFrame = (this.animFrame + 1) % 2;
       }
       this.player.setTexture(`${prefix}_walk${this.animFrame + 1}`);
+      // Keep pixel silhouette and collision footprint stable through the stride.
+      this.player.setScale(1, 1);
     } else {
       this.animFrame = 0;
       this.animTime = 0;
       this.player.setTexture(`${prefix}_idle`);
+      this.player.setScale(1, 1);
     }
 
     // Conveyor belts (Phase 9): velocity offset — idle drift = belt speed, walking = run speed + belt
@@ -1353,13 +1347,10 @@ export class GameScene extends Phaser.Scene {
       this.lastBeltX = belt;
     }
 
-    // Swimming: water biome below y=500 or inside a water zone (Phase 9)
-    const inWaterZone = (this.currentLevelData?.waterZones || []).some(z =>
-      this.inRect(z, this.player.x, this.player.y)
-    );
-    if ((this.currentBiome === 'water' && body.y > 500) || inWaterZone) {
+    // Water retains its dedicated vertical controls.
+    if (swimming) {
       body.setGravityY(-(this.physics.world.gravity.y - 600));
-      if (this.cursors.up.isDown) body.setVelocityY(-250);
+      if (jumpDown) body.setVelocityY(-250);
       if (Math.abs(body.velocity.x) > 0) body.setVelocityX(body.velocity.x * 0.95);
     } else {
       body.setGravityY(0);
@@ -1428,6 +1419,14 @@ export class GameScene extends Phaser.Scene {
     this.updateCoinGate();
     
     // Update moving platforms
+    // Mover motion runs on accumulated game time (delta), NOT the wall-clock
+    // `time` argument: TimeStep caps `delta` while its panic cooldown is active,
+    // so physics runs in slow motion while wall time keeps advancing. Using
+    // `time` here made platforms outrun physics on slow frames (frame-rate
+    // dependent carries, unreachable landings). At a steady 60fps both bases are
+    // identical, so tuned feel is unchanged.
+    this.moveAccum += delta;
+    const mt = this.moveAccum;
     let playerCarried = false;
     this.movingPlatforms.getChildren().forEach((mplat: any) => {
       const data = this.movingPlatformData.get(mplat);
@@ -1437,12 +1436,12 @@ export class GameScene extends Phaser.Scene {
       const prevY = mplat.y;
 
       if (data.moveType === 'horizontal') {
-        mplat.x = data.startX + Math.sin(time * 0.00002 * data.speed) * data.range;
+        mplat.x = data.startX + Math.sin(mt * 0.00002 * data.speed) * data.range;
       } else if (data.moveType === 'vertical') {
-        mplat.y = data.startY + Math.sin(time * 0.00002 * data.speed) * data.range;
+        mplat.y = data.startY + Math.sin(mt * 0.00002 * data.speed) * data.range;
       } else if (data.moveType === 'circular') {
         if (!data.angle) data.angle = 0;
-        data.angle += data.speed * 0.0002;
+        data.angle += data.speed * 0.0002 * (delta / 16.6667);
         mplat.x = data.startX + Math.cos(data.angle) * data.range;
         mplat.y = data.startY + Math.sin(data.angle) * data.range;
       }
@@ -1455,9 +1454,11 @@ export class GameScene extends Phaser.Scene {
 
       const mBody = mplat.body as any;
       const pBody = this.player.body as any;
-      const platformTop = mBody.y - mBody.halfHeight;
+      // Dynamic body y is the body top — do not subtract halfHeight (that
+      // widened the carry window by 12px and dragged players hovering above).
+      const platformTop = mBody.y;
       const playerBottom = this.player.y + (pBody.halfHeight || 16);
-      const isAbovePlatform = Math.abs(playerBottom - platformTop) < 15;
+      const isAbovePlatform = Math.abs(playerBottom - platformTop) < 12;
       const isHorizontallyAligned = Math.abs(this.player.x - mplat.x) < (mBody.halfWidth || 40) + 20;
       const isOnPlatform = isAbovePlatform && isHorizontallyAligned;
 
@@ -1567,15 +1568,15 @@ export class GameScene extends Phaser.Scene {
       } else if (eType === 'ghost') {
         const ghostDir = this.player.x > enemy.x ? 1 : -1;
         enemy.setVelocityX(ghostDir * (aiBiomeSpeed * 0.5));
-        enemy.setVelocityY(Math.sin(time * 0.003) * 40);
+        enemy.setVelocityY(Math.sin(mt * 0.003) * 40);
       } else if (eType === 'ufo') {
         const ufoDir = this.player.x > enemy.x ? 1 : -1;
         enemy.setVelocityX(ufoDir * (aiBiomeSpeed * 0.3));
-        enemy.setVelocityY(Math.sin(time * 0.002 + enemy.x) * 25);
+        enemy.setVelocityY(Math.sin(mt * 0.002 + enemy.x) * 25);
       } else if (eType === 'squid') {
         const sDir = this.player.x > enemy.x ? 1 : -1;
         enemy.setVelocityX(sDir * (aiBiomeSpeed * 0.3));
-        enemy.setVelocityY(Math.sin(time * 0.004 + enemy.x) * 50);
+        enemy.setVelocityY(Math.sin(mt * 0.004 + enemy.x) * 50);
       } else if (eType === 'lakitu') {
         const distX = this.player.x - enemy.x;
         if (Math.abs(distX) > 120) {

@@ -8,6 +8,8 @@ import { goToTitle } from './sceneNav';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
+  pixelArt: true,
+  roundPixels: true,
   parent: 'game-container',
   width: 1200,
   height: 800,

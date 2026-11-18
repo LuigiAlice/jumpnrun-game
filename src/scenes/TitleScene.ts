@@ -82,7 +82,7 @@ export class TitleScene extends Phaser.Scene {
         this.createStartButton();
 
         // Control help
-        this.add.text(centerX, GAME_HEIGHT - 180, '← → : Bewegen  |  ↑ : Springen  |  X / Space : Schießen', {
+        this.add.text(centerX, GAME_HEIGHT - 180, '← → Laufen  |  Shift Sprint  |  ↑ / Z Springen (halten = höher)  |  X / Space Feuer', {
             fontSize: '16px',
             color: '#fff',
             stroke: '#000',

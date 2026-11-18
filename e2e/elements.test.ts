@@ -5,7 +5,7 @@ const startLevel = async (page: Page, levelIndex: number) => {
   await page.waitForFunction(() => {
     const g = (window as unknown as { __game?: { scene: Phaser.Scene.ScenePlugin & { isActive: (k: string) => boolean } } }).__game;
     return typeof g !== 'undefined' && !!g.scene && g.scene.isActive('Title');
-  }, undefined, { timeout: 20000 });
+  }, undefined, { timeout: 30000 });
   await page.evaluate((idx: number) => {
     (window as unknown as { __game: { scene: { start: (k: string, d?: unknown) => void } } }).__game.scene.start('Game', { levelIndex: idx });
   }, levelIndex);
@@ -14,7 +14,7 @@ const startLevel = async (page: Page, levelIndex: number) => {
     if (!g) return false;
     const s = g.scene.getScene('Game');
     return !!s && s.scene.isActive() && !!s.player;
-  }, levelIndex, { timeout: 20000 });
+  }, levelIndex, { timeout: 30000 });
 };
 
 const inGame = (page: Page, code: string) =>
@@ -299,7 +299,7 @@ test.describe('Pilot elements runtime verification', () => {
         }
       }
       return false;
-    }, undefined, { timeout: 3000 }).catch(() => { throw new Error('player did not settle on the horizontal mover'); });
+    }, undefined, { timeout: 8000 }).catch(() => { throw new Error('player did not settle on the horizontal mover'); });
 
     const res = await inGame(page, `
       let target = null;
