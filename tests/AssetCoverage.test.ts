@@ -26,7 +26,7 @@ const REQUIRED_DECORATION_TEXTURES = [
 
 const REQUIRED_ENEMY_TEXTURES = [
   'goomba', 'koopa', 'piranha', 'spiny', 'boo', 'thwomp', 'lakitu', 'bullet_bill',
-  'robot', 'crab', 'fire_bar', 'fireball', 'ghost', 'squid', 'ufo', 'boss'
+  'robot', 'crab', 'fire_bar', 'fireball', 'ghost', 'squid', 'ufo', 'boss', 'parakoopa', 'buzzy_beetle', 'bobomb'
 ];
 
 describe('Asset Coverage Tests', () => {

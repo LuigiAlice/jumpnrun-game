@@ -1,11 +1,14 @@
 /** Small, renderer-independent rules shared by runtime and regression tests. */
-export type EnemyContact = 'ignore' | 'damage' | 'stomp' | 'kick' | 'stop-shell' | 'star-kill';
+export type EnemyContact = 'ignore' | 'damage' | 'stomp' | 'kick' | 'stop-shell' | 'star-kill' | 'dewing' | 'ignite';
 export const NON_STOMPABLE_ENEMIES = new Set([
   'piranha', 'thwomp', 'boo', 'lakitu', 'bullet_bill', 'fireball', 'boss', 'spiny',
 ]);
 
 export function enemyContact(type: string, state: string, fromAbove: boolean, star: boolean, hitShield: boolean): EnemyContact {
   if (star) return type === 'boss' ? 'ignore' : 'star-kill';
+  if (type === 'bobomb' && state === 'fused') return 'ignore';
+  if (type === 'parakoopa' && fromAbove) return 'dewing';
+  if (type === 'bobomb' && fromAbove) return 'ignite';
   if (state === 'shell_moving') return fromAbove ? 'stop-shell' : hitShield ? 'ignore' : 'damage';
   if (state === 'shell_idle') return 'kick';
   if (NON_STOMPABLE_ENEMIES.has(type)) return hitShield ? 'ignore' : 'damage';

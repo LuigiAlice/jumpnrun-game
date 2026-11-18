@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import { ClassicElements } from '../engine/ClassicElements';
+import { advanceBombFuse, BOMB_FUSE_MS, BOMB_BLAST_RADIUS, fireHitEffect, isInBombBlast, parakoopaOffset } from '../engine/ClassicEnemyRules';
 import { TerrainTextures } from '../rendering/terrain';
 import { goalConditionsMet, nextCampaignLevel } from '../engine/GoalRules';
 import { loadLevel, getLevelName, getLevelCount } from '../generator/LevelLoader';
@@ -38,6 +40,7 @@ const BIOME_PARTICLE_CONFIG: Record<string, { key: string; color: number; freque
 export class GameScene extends Phaser.Scene {
   private player!: Phaser.Physics.Arcade.Sprite;
   private terrainTextures!: TerrainTextures;
+  private classicElements?: ClassicElements;
   private platforms!: Phaser.Physics.Arcade.StaticGroup;
   private solidPlatforms!: Phaser.Physics.Arcade.StaticGroup;
   private movingPlatforms!: Phaser.Physics.Arcade.Group;
@@ -139,6 +142,7 @@ export class GameScene extends Phaser.Scene {
   constructor() { super({ key: 'Game' }); }
 
   init(data: any) {
+    this.classicElements = undefined;
     this.levelIndex = data.levelIndex || 0;
     this.score = data.score || 0;
     this.lives = data.lives !== undefined ? data.lives : 3;
@@ -197,6 +201,17 @@ export class GameScene extends Phaser.Scene {
     this.spawnPhase9Entities(level);
     this.createUI();
     this.setupCollisions();
+    this.classicElements = new ClassicElements(this, this.player, level, {
+      hit: () => this.playerHit(),
+      coin: () => { if (!this.isDead && !this.isTransitioning) this.addCoin(); },
+      reward: (kind, x, y) => {
+        if (this.isDead || this.isTransitioning) return;
+        if (kind === 'oneup') this.lives++;
+        else this.score += 1000;
+        this.showScorePopup(kind === 'oneup' ? '1-UP!' : '+1000', x, y - 36);
+        this.playPowerUpSound();
+      },
+    });
     this.updateCoinGate();
     this.setupTimer();
     
@@ -439,7 +454,7 @@ export class GameScene extends Phaser.Scene {
       // must NOT get hidden ground: those slabs become invisible walls that block
       // swim routes and jumps (bug: "Wasserlevel nicht durchspielbar").
       const needsGround = e.type === 'goomba' || e.type === 'koopa' || e.type === 'spiny'
-        || e.type === 'robot' || e.type === 'crab';
+        || e.type === 'robot' || e.type === 'crab' || e.type === 'buzzy_beetle' || e.type === 'bobomb';
 
       // Check if there's solid ground below the enemy (within 60px vertical gap)
       let hasSolidBelow = false;
@@ -472,9 +487,15 @@ export class GameScene extends Phaser.Scene {
       const enemy = this.enemies.create(e.x, e.y, e.type);
       enemy.setData('type', e.type);
       // Ground enemies - have edge detection (won't fall off platforms)
-      if (e.type === 'goomba' || e.type === 'spiny' || e.type === 'koopa' || e.type === 'robot' || e.type === 'crab') {
+      if (e.type === 'goomba' || e.type === 'spiny' || e.type === 'koopa' || e.type === 'robot' || e.type === 'crab' || e.type === 'buzzy_beetle' || e.type === 'bobomb') {
         enemy.setVelocityX(-biomeSpeed).setCollideWorldBounds(true).setBounce(0);
         enemy.setDragX(0);
+      } else if (e.type === 'parakoopa') {
+        enemy.body.setAllowGravity(false);
+        enemy.setData('noEdgeDetection', true);
+        enemy.setData('flightBaseY', e.y);
+        enemy.setData('flightPhaseMs', e.x % 2400);
+        enemy.setVelocity(0, 0);
       } else if (e.type === 'boo' || e.type === 'fireball') {
         // Floating enemies - no gravity, no edge detection
         enemy.body.setAllowGravity(false);
@@ -841,6 +862,25 @@ export class GameScene extends Phaser.Scene {
           return;
         }
         if (contact === 'damage') { this.playerHit(); return; }
+        if (contact === 'dewing') {
+          e.setData('type', 'koopa').setData('noEdgeDetection', false).setData('state', 'walking');
+          e.setTexture('koopa_walk1');
+          e.body.setAllowGravity(true);
+          e.setVelocity(-DEFAULT_ENEMY_SPEED, 0);
+          this.playStompSound();
+          p.setVelocityY(-400);
+          this.externalLaunchPending = true;
+          this.score += 100;
+          return;
+        }
+        if (contact === 'ignite') {
+          this.igniteBomb(e);
+          this.playStompSound();
+          p.setVelocityY(-400);
+          this.externalLaunchPending = true;
+          this.score += 100;
+          return;
+        }
         if (contact === 'kick') {
           const kickDir = p.x < e.x ? 1 : -1;
           e.setVelocityX(kickDir * 400);
@@ -855,11 +895,11 @@ export class GameScene extends Phaser.Scene {
           }
           return;
         }
-        if (enemyType === 'koopa') {
+        if (enemyType === 'koopa' || enemyType === 'buzzy_beetle') {
           const feet = e.body.bottom;
           e.setData('state', 'shell_idle');
           e.setData('shellDir', e.body.velocity.x > 0 ? 1 : -1);
-          e.setVelocity(0, 0).setBounce(0).setScale(1, 1).setTexture('koopa_shell');
+          e.setVelocity(0, 0).setBounce(0).setScale(1, 1).setTexture(enemyType === 'buzzy_beetle' ? 'buzzy_shell' : 'koopa_shell');
           e.body.setSize(28, 16, false).setOffset(2, 18);
           e.setY(feet - 17);
           e.body.updateFromGameObject();
@@ -901,6 +941,10 @@ export class GameScene extends Phaser.Scene {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.overlap(this.fireballs, this.enemies, (f: any, e: any) => {
       const eType = e.getData('type') || e.texture?.key;
+      if (e.getData('defeated') || !e.body?.enable) return;
+      const effect = fireHitEffect(eType);
+      if (effect === 'resist') { f.destroy(); this.playBlockSound(); return; }
+      if (effect === 'ignite') { f.destroy(); this.igniteBomb(e); return; }
       if (eType === 'boss') {
         const hp = (e.getData('hp') || 3) - 1;
         e.setData('hp', hp);
@@ -945,6 +989,32 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.physics.add.overlap(this.player, this.spikes, () => this.die());
+  }
+
+  private igniteBomb(enemy: Phaser.Physics.Arcade.Sprite): void {
+    if (!enemy.active || enemy.getData('defeated') || enemy.getData('state') === 'fused') return;
+    enemy.setData('state', 'fused').setData('fuseMs', BOMB_FUSE_MS).setData('noEdgeDetection', true);
+    enemy.setVelocityX(0).setTexture('bobomb_lit');
+    this.showScorePopup('!', enemy.x, enemy.y - 26);
+  }
+
+  private explodeBomb(enemy: Phaser.Physics.Arcade.Sprite): void {
+    if (enemy.getData('defeated')) return;
+    const x = enemy.x, y = enemy.y;
+    enemy.setData('defeated', true);
+    if (enemy.body) enemy.body.enable = false;
+    const burst = this.add.circle(x, y, BOMB_BLAST_RADIUS, 0xffb84b, 0.35).setDepth(40);
+    this.tweens.add({ targets: burst, alpha: 0, scale: 1.15, duration: 220, onComplete: () => burst.destroy() });
+    if (isInBombBlast(x, y, this.player.x, this.player.y)) this.playerHit();
+    for (const target of this.enemies.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
+      if (target === enemy || target.getData('defeated') || target.getData('type') === 'boss') continue;
+      if (isInBombBlast(x, y, target.x, target.y)) {
+        this.killEnemy(target);
+        this.score += 500;
+      }
+    }
+    this.playBlockSound();
+    enemy.destroy();
   }
 
   private killEnemy(enemy: Phaser.GameObjects.Sprite, scoreAmount: number = 500) {
@@ -1150,7 +1220,7 @@ export class GameScene extends Phaser.Scene {
     }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
     
     // ESC hint
-    this.add.text(GAME_WIDTH - 20, GAME_HEIGHT - 20, '← → Laufen · Shift Sprint · ↑ / Z Sprung · X / Space Feuer · ESC Menü', {
+    this.add.text(GAME_WIDTH - 20, GAME_HEIGHT - 20, '← → Laufen · Shift Sprint · ↑/Z Sprung · ↑/↓ Ranken, Z Absprung · X Feuer · ESC Menü', {
       fontSize: '12px',
       fontFamily: 'monospace',
       color: '#aaa',
@@ -1357,16 +1427,21 @@ export class GameScene extends Phaser.Scene {
       this.inRect(z, this.player.x, this.player.y)
     );
     const swimming = (this.currentBiome === 'water' && body.y > 500) || inWaterZone;
+    const climb = this.classicElements?.handleClimbing({
+      up: this.cursors.up.isDown, down: this.cursors.down.isDown,
+      jumpDown: this.jumpKey.isDown, horizontal: direction,
+    }, swimming) ?? { climbing: false, launched: false };
+    if (climb.launched) this.externalLaunchPending = true;
     const jumpDown = this.cursors.up.isDown || this.jumpKey.isDown;
     // Pipe intent takes precedence over buffered jumping.
-    const enteringPipe = grounded && this.cursors.down.isDown;
+    const enteringPipe = grounded && this.cursors.down.isDown && !climb.climbing;
     if (enteringPipe) {
       this.handlePipeEntry();
       if (this.isTransitioning) return;
     }
     const jump = stepJump(this.jumpState, {
       grounded, jumpDown, velocityY: body.velocity.y, deltaMs: delta,
-      suppressed: enteringPipe || swimming, externalLaunch: this.externalLaunchPending,
+      suppressed: enteringPipe || swimming || climb.climbing, externalLaunch: this.externalLaunchPending,
     });
     this.jumpState = jump.state;
     this.externalLaunchPending = false;
@@ -1598,13 +1673,23 @@ export class GameScene extends Phaser.Scene {
       const eType = enemy.getData('type') || enemy.texture?.key;
       
       const eState = enemy.getData('state') || 'walking';
-      if (['goomba', 'koopa', 'spiny', 'robot', 'crab'].includes(eType) && eState === 'walking') {
+      if (['goomba', 'koopa', 'spiny', 'robot', 'crab', 'parakoopa', 'buzzy_beetle', 'bobomb'].includes(eType) && eState === 'walking') {
         const frame = Math.floor(mt / 140 + enemy.x / 200) % 2 + 1;
         const texture = `${eType}_walk${frame}`;
         if (this.textures.exists(texture)) enemy.setTexture(texture);
         if (enemy.body.velocity.x !== 0) enemy.setFlipX(enemy.body.velocity.x < 0);
       }
-      if (eType === 'piranha') {
+      if (eType === 'parakoopa') {
+        enemy.setVelocity(0, 0);
+        enemy.setY(enemy.getData('flightBaseY') + parakoopaOffset(mt, enemy.getData('flightPhaseMs')));
+        enemy.body.updateFromGameObject();
+      } else if (eType === 'bobomb' && eState === 'fused') {
+        const fuse = advanceBombFuse(enemy.getData('fuseMs') ?? BOMB_FUSE_MS, delta);
+        enemy.setData('fuseMs', fuse.remainingMs);
+        enemy.setTexture(fuse.lit ? 'bobomb_lit' : 'bobomb');
+        enemy.setVelocityX(0);
+        if (fuse.explode) this.explodeBomb(enemy);
+      } else if (eType === 'piranha') {
         const near = Math.abs(this.player.x - enemy.x) < 64;
         const step = stepPiranha(enemy.getData('piranhaState') || { phase: 'hidden', elapsedMs: 0 }, delta, near);
         enemy.setData('piranhaState', step.state);
@@ -1716,13 +1801,13 @@ export class GameScene extends Phaser.Scene {
         }
       }
       // Koopa shell timer: re-awaken after 4s
-      if (eType === 'koopa' && eState === 'shell_idle') {
+      if ((eType === 'koopa' || eType === 'buzzy_beetle') && eState === 'shell_idle') {
         const timer = enemy.getData('shellTimer') || 0;
         if (timer > 0) {
           enemy.setData('shellTimer', timer - delta);
         } else {
           enemy.setData('state', 'walking');
-          enemy.setScale(1, 1).setTexture('koopa_walk1');
+          enemy.setScale(1, 1).setTexture(eType === 'buzzy_beetle' ? 'buzzy_beetle_walk1' : 'koopa_walk1');
           enemy.body.setSize(28, 34, true);
           enemy.setData('noEdgeDetection', false);
           const shellDir = enemy.getData('shellDir') || -1;
@@ -1779,6 +1864,8 @@ export class GameScene extends Phaser.Scene {
       }
     }
     
+    this.classicElements?.update(delta);
+
     // Safety Threshold for death - player dies when falling out of level bounds
     const levelHeight = this.currentLevelData?.height || GAME_HEIGHT;
     if (this.player.y > levelHeight + 100) this.die();
@@ -1807,6 +1894,8 @@ export class GameScene extends Phaser.Scene {
   };
 
   shutdown(): void {
+    this.classicElements?.destroy();
+    this.classicElements = undefined;
     this.isMusicPlaying = false;
     this.musicPlayer?.stop();
     this.musicPlayer = undefined;

@@ -52,7 +52,7 @@ Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinG
 ## Key Types
 - PlatformType: grass, stone, brick, brick_secret, brick_multi, pipe, pipe_top, cloud, platform_easy/medium/hard, lava, wood, sand, snow, ice, ruins, space, water, bubble, ground, cave, castle, metal, sandstone, hidden
 - SOLID_TYPES: alles ausser lava, pipe, pipe_top, platform_* (lava ist in `this.platforms`, nicht solid)
-- EnemyType: goomba, koopa, piranha, spiny, boo, thwomp, lakitu, bullet_bill, fireball, crab, robot, ghost, squid, ufo, boss
+- EnemyType: goomba, koopa, piranha, spiny, boo, thwomp, lakitu, bullet_bill, fireball, crab, robot, ghost, squid, ufo, boss, parakoopa, buzzy_beetle, bobomb
 - Stompbare Gegner: goomba, koopa, robot, crab, ghost, squid, ufo
 - Nicht stompbar: spiny, piranha, thwomp, boo, lakitu, bullet_bill, fireball, boss
 
@@ -142,3 +142,10 @@ Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinG
 - `GoalRules.ts` kombiniert Münzen, Zeit und Boss-HP. L90-Flagge erst nach Boss-Sieg; HP-Bar und Grafikreferenzen bei Restart zurücksetzen.
 - Welt/Kamera-Höhe ist max(GAME_HEIGHT, level.height), Hintergründe bleiben bildschirmfüllend. Direkte Steuerung auf Normalboden und in der Luft bleibt unverändert.
 - Physik-Solver: signed deltaY auch bei Aufwärtssprüngen; maximale Aufstiegshöhe min(350, v²/(2g)). Kein Level darf Auto-Fixer-Plattformen benötigen.
+
+## Zusätzliche klassische Rollen
+- `classicExpansion.ts` ergänzt 24 kuratierte Level deterministisch; keine Pflichtgeometrie ändern, L1/L2/L11/L90 bleiben unverändert.
+- `parakoopa`: erster Stomp entfernt Flügel. `buzzy_beetle`: feuerfest, Stomp macht eigenen Panzer. `bobomb`: Stomp/Feuer zündet 1500 ms Game-Time-Lunte, 90 px Explosionsradius; Boss ausnehmen.
+- `LevelData.vines`: `{x,y,height}`, y ist der Fuß. `fireBars`: `{x,y,length,angularSpeed?,phase?}` (rad/s, Radiant, 16 px Kugelabstand). `redCoinChallenges`: `{x,y,coins,durationMs?,reward?}`.
+- `ClassicElements` nach Player-Setup anlegen; `handleClimbing` vor `stepJump`, Klettern unterdrückt normalen Sprung, Z-Absprung markiert externen Launch. `update(delta)` nur im aktiven Spiel; Shutdown zerstört Gruppen/Collider idempotent und reaktiviert keinen toten Spieler.
+- Neue Assets: `src/art/classicAssets.ts`, alle Animationsphasen in gleicher nativer Größe. Neue Tests: ClassicAssets, ClassicEnemyRules, ClassicElements, ClassicExpansion und `e2e/classic-expansion.test.ts`.

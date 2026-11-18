@@ -61,6 +61,7 @@ PLAYER_MOVE_SPEED:   300
 | ← → | Bewegen |
 | ↑ / Z | Springen / Schwimmen (Wasser); halten = voller Sprung, kurz drücken = flacher Sprung |
 | Shift | Sprinten (400 px/s statt 300 px/s) |
+| ↑ / ↓ an Lianen | Klettern / absteigen; Z springt ab, ←/→ verlässt die Ranke |
 | X / Space | Schießen (Fire Mario) |
 | R | Level neustarten |
 | N | Nächstes Level |
@@ -408,3 +409,18 @@ createMovingPlat(x, y, w, h, type, moveType, range, speed) - Bewegliche Plattfor
 - Röhrenzugang: ↓ auf dem Deckel; Prüfung anhand der Füße, für kleine und große Figur identisch. L1-Warps behalten ihre Ziellevel.
 - L90: 7600 px, ein Boss mit 3 HP, keine Nebenpatrouillen. Feuerblumen sind auf dem Bodenweg erreichbar; verbrauchte Blumenblöcke regenerieren nach sechs Spielsekunden ohne Feuerkraft. Die Flagge bleibt bis zum Boss-Sieg gesperrt; HP-Bar skaliert auf die tatsächlichen Start-HP. Nach der letzten Flagge erscheint der Siegesbildschirm statt eines erneuten Bosslevels.
 - Solver prüft Auf- und Abwärtssprünge mit vorzeichenrichtiger Ballistik. Aufstieg ist durch min(MAX_JUMP_UP, v²/(2g)) begrenzt; höhere Ziele erhalten keine fiktive Flugzeit. Alle 90 Level bestehen die Prüfung ohne automatische Zusatzplattformen.
+
+## Klassische Figuren und Bonuselemente
+
+In 24 ausgewählten Leveln ergänzen drei neue Gegnerrollen und drei optionale Elemente die vorhandenen Mechaniken. L1/L2 bleiben als Einführung übersichtlich, L11 behält seinen Gegner-Pin, L90 bleibt eine reine Bossarena. Das Level-Array wird deterministisch durch `classicExpansion.ts` ergänzt; die solide Pflichtgeometrie bleibt unverändert.
+
+| Figur / Element | Verhalten |
+|-----------------|-----------|
+| Flügel-Koopa (`parakoopa`) | Schwebt auf einer festen vertikalen Bahn mit 48 px Amplitude. Erster Stomp entfernt Flügel und macht ihn zum normalen bodengebundenen Koopa; erst der nächste Stomp erzeugt einen Panzer. |
+| Panzerkäfer (`buzzy_beetle`) | Läuft auf dem Boden, widersteht Feuerbällen und wird beim Stomp zu einem eigenen kickbaren Panzer. Bewegte Käferpanzer lassen sich wie Koopa-Panzer von oben stoppen. |
+| Bombengegner (`bobomb`) | Stomp oder Feuerball zündet eine blinkende Lunte für 1500 ms Game-Time. Danach Explosion im Radius 90 px; Schaden am Spieler, andere normale Gegner werden besiegt, der Boss bleibt geschützt. |
+| Lianen (`vines`) | Vier Kletterabkürzungen zu vorhandenen Bonuswegen. ↑/↓ klettert mit 180 px/s, loslassen hält; Z springt mit −450 px/s ab, seitliche Richtung verlässt die Ranke sofort. Außerhalb der Ranke bleibt die direkte Steuerung unverändert. |
+| Feuerarme (`fireBars`) | Vier rotierende Arme mit vier Kugeln im 16-px-Abstand, langsamer positiver oder negativer Winkelgeschwindigkeit. Kollision verursacht Schaden; Bodenweg darunter bleibt frei. |
+| Rote Münzringe (`redCoinChallenges`) | Sechs Ringe starten 6–8 sichtbare rote Münzen und 10–14 Sekunden Game-Time. Alle sammeln gibt 1-UP oder 1000 Punkte; einzelne rote Münzen zählen regulär. Nach Ablauf kann nach Verlassen und erneutem Betreten des Rings wiederholt werden. Ein vollständig geschaffter Ring belohnt nur einmal pro Levelversuch. |
+
+Neue Grafiken in `src/art/classicAssets.ts`: 18 maßgleiche Pixeltexturen für Figuren, Panzer, Statusbilder und Elemente. `ClassicElements.ts` verwaltet Lianen, Feuerarme, Challenges und Shutdown; `ClassicEnemyRules.ts` enthält testbare Regeln für Flügel, Feuerresistenz, Bombenlunte und Explosionsradius. Keine neue Mechanik sperrt das Levelziel oder wird für die Solver-Lösbarkeit vorausgesetzt.

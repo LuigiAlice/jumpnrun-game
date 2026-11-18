@@ -116,6 +116,12 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-069** – Röhrenzugänge prüfen die Fußposition auf dem Deckel; tiefe Levelstarts bleiben in der Kamera sichtbar und Hintergründe decken auch lange Level ab.
 - **R-070** – Physikalische Lösbarkeit verwendet die tatsächliche biomeabhängige Sprunghöhe und eine kürzere Flugzeit beim Aufwärtssprung; unerreichbare Höhen werden abgelehnt.
 
+- **R-071** – Zusätzliche Gegnerrollen: Flügel-Koopa verliert beim ersten Stomp die Flügel, Panzerkäfer widersteht Feuer und besitzt Panzerzustände, Bombengegner blinkt 1500 ms vor einer 90-px-Explosion; der Boss bleibt geschützt.
+- **R-072** – Lianen erlauben optionales Klettern mit ↑/↓, Halten, direkten seitlichen Ausstieg und Z-Absprung; nur der eigene Klettermodus darf die Schwerkraft deaktivieren.
+- **R-073** – Rotierende Feuerarme bewegen vorhandene Kollisionskörper auf Game-Time, verursachen Schaden und lassen eine sichere Bodenroute frei.
+- **R-074** – Rote Münzringe zeigen einen Game-Time-Countdown, belohnen einen vollständigen Satz genau einmal und erlauben nach Ablauf und Verlassen einen neuen Versuch.
+- **R-075** – Die Erweiterung verteilt sich kuratiert auf 24 Level, bewahrt Einführungen, Pins und Bossarena sowie die tatsächliche Lösbarkeit aller 90 Level ohne die neuen Elemente; neue Figuren und Elemente haben gültige maßgleiche Pixeltexturen.
+
 ## Traceability
 
 Format: Eine Zeile pro Mapping (R-ID wird bei mehreren Tests wiederholt).
@@ -266,3 +272,19 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-024 | Finale Boss-Sperre | tests/GoalRules.test.ts | keeps the final flag locked |
 | R-024 | Boss und Feuerkraft | e2e/rendering-polish.test.ts | final boss gates the flag |
 | R-024 | Kampagnenabschluss | tests/GoalRules.test.ts | ends the campaign after the final level |
+| R-071 | Flügel-Koopa | tests/ClassicEnemyRules.test.ts | removes wings on the first stomp |
+| R-071 | Feuerfester Käfer | tests/ClassicEnemyRules.test.ts | makes armored beetles resist fire |
+| R-071 | Bombenwarnung | tests/ClassicEnemyRules.test.ts | arms bombs on a stomp or fireball |
+| R-071 | Bombenzeit und Radius | tests/ClassicEnemyRules.test.ts | uses game-time fuse duration |
+| R-071 | Runtime-Flügel | e2e/classic-expansion.test.ts | a winged koopa loses its wings |
+| R-072 | Lianensteuerung | tests/ClassicElements.test.ts | climbs vines, holds still, jumps off |
+| R-072 | Runtime-Klettern | e2e/classic-expansion.test.ts | a vine supports climbing |
+| R-073 | Feuerarmbewegung | tests/ClassicElements.test.ts | rotates fire bars on game time |
+| R-073 | Sicherer Bodenweg | tests/ClassicExpansion.test.ts | places slow fire arms overhead |
+| R-074 | Einmalige Münzbelohnung | tests/ClassicElements.test.ts | reveals timed red coins |
+| R-074 | Ablauf und Wiederholung | tests/ClassicElements.test.ts | expires trials in game time |
+| R-074 | Faire Sammlung | tests/ClassicExpansion.test.ts | offers timed red coins on contiguous safe shelves |
+| R-075 | Kuratierter Rollout | tests/ClassicExpansion.test.ts | curates twenty-four levels |
+| R-075 | Lösbarkeit | tests/ClassicExpansion.test.ts | keeps all ninety goals and bonus platforms solvable |
+| R-075 | Echte Asset-Erzeugung | tests/ClassicAssets.test.ts | generates every runtime key |
+| R-075 | Sauberer Shutdown | tests/ClassicElements.test.ts | releases groups and colliders once |

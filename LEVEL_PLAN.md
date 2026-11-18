@@ -247,3 +247,12 @@ Alle 90 Level wurden überarbeitet und erneut mit strenger Ballistik geprüft. B
 | Finale (L90) | Kompakte 7600-px-Arena, ein Boss, Bodenweg mit wieder erhältlichen Feuerblumen und gesperrter Flagge bis zum Sieg. |
 
 Die sechs zu hoch angelegten Bonusplattformen in L73/L74/L75/L76/L86/L89 liegen jetzt 160 px über ihrer Bodenroute und sind ohne Feder erreichbar; Münzen wurden angepasst. Optionale Checkpoints sind auch in kurzen Leveln zulässig, ab width >= 16000 bleiben sie Pflicht. Lösbarkeit umfasst Ziel und Bonusplattformen; der Auto-Fixer darf nichts ergänzen.
+
+## Phase 11 — zusätzliche Figuren und optionale Entdeckungen
+
+24 kuratierte Level erhalten über `classicExpansion.ts` 21 ersetzte Gegnerspawns (Flügel-Koopa, Panzerkäfer, Bombe), vier Lianen, vier langsame Feuerarme und sechs Rotmünzen-Challenges. L1/L2/L11/L90 bleiben unverändert. Bestehende Gegner werden gezielt ersetzt statt die Gegnerdichte pauschal zu erhöhen.
+
+- Lianen: L4, L31, L34, L37; freie Kletterkorridore neben vorhandenen Bonuskanten, keine neue Pflichtplattform.
+- Feuerarme: L49, L55, L67, L85; überschaubare Drehgeschwindigkeit und freier Bodenweg unter dem gesamten Kreis, Abstand zu Start, Checkpoint und Ziel.
+- Rote Ringe: L10, L16, L19, L25, L43, L61; zusammenhängende sichere Plattformen, 6–8 Münzen, Reaktionsreserve im Zeitlimit, wiederholbar nach Ablauf, einmalige Erfolgsbelohnung.
+- Alle 90 Ziele und Bonusplattformen bleiben mit tatsächlicher Ballistik ohne neue Elemente und ohne Auto-Fixer erreichbar.

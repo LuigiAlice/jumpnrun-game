@@ -18,7 +18,7 @@ export type PlatformType =
 export type EnemyType = 
   | 'goomba' | 'koopa' | 'piranha' | 'spiny' | 'boo' | 'thwomp'
   | 'lakitu' | 'bullet_bill' | 'fireball' | 'crab' | 'robot'
-  | 'ghost' | 'squid' | 'ufo' | 'boss';
+  | 'ghost' | 'squid' | 'ufo' | 'boss' | 'parakoopa' | 'buzzy_beetle' | 'bobomb';
 
 export type QuestionBlockContent = 'coin' | 'mushroom' | 'flower' | 'star' | 'oneup';
 
@@ -86,6 +86,17 @@ export interface PipeWarp {
     targetLevelIndex: number;
 }
 
+/** Optional climbable vine: y is the foot resting on a platform. */
+export interface Vine { x: number; y: number; height: number }
+export interface FireBar { x: number; y: number; length: number; angularSpeed?: number; phase?: number }
+export interface RedCoinChallenge {
+    x: number;
+    y: number;
+    coins: { x: number; y: number }[];
+    durationMs?: number;
+    reward?: 'oneup' | 'score';
+}
+
 export interface LevelData {
     id: number;
     name: string;
@@ -122,6 +133,12 @@ export interface LevelData {
     rising?: { kind: 'lava' | 'water'; speed?: number };
     /** Falling hazard finale: timed falling fireballs spawn near the player. */
     fallingHazards?: { intervalMs?: number };
+    /** Optional climbing detours; the ordinary route must remain solvable. */
+    vines?: Vine[];
+    /** Rotating fireball arms; length is the number of 16px-spaced orbs. */
+    fireBars?: FireBar[];
+    /** Touch a ring to reveal a timed set of red coins; never gates the goal. */
+    redCoinChallenges?: RedCoinChallenge[];
     timeBonus: number;
 }
 
@@ -143,6 +160,7 @@ import { SPACE_STAR_LEVELS } from './space-star';
 import { CASTLE_FINAL_LEVELS } from './castle-final';
 import { Physics } from '../../engine/Physics';
 import { getBiomeGravity } from '../../config';
+import { expandClassicLevel } from './classicExpansion';
 
 export const ALL_LEVELS = [
     ...GRASSLANDS_LEVELS,
@@ -160,7 +178,7 @@ export const ALL_LEVELS = [
     ...CANYON_BASE_LEVELS,
     ...SPACE_STAR_LEVELS,
     ...CASTLE_FINAL_LEVELS,
-];
+].map(expandClassicLevel);
 
 const NON_SOLID = new Set(['lava', 'pipe']);
 

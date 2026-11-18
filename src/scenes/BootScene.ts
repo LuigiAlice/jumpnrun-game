@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { createClassicAssets } from '../art/classicAssets';
 import { createPixelEnemies, createPixelCoins, createPixelBlocks, createPixelItems } from '../art/pixelAssets';
 
 export class BootScene extends Phaser.Scene {
@@ -21,6 +22,7 @@ export class BootScene extends Phaser.Scene {
     this.createDecorationTextures();
     this.createBackgroundTextures();
     this.createItemTextures();
+    createClassicAssets(this);
     this.createParticleTextures();
   }
 
