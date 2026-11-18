@@ -1,3 +1,4 @@
+import { polishNatureLevel } from './naturePolish';
 // Beach Island — 6 Level, 6 Archetypen (IDs 43-48), Phase-9-Neubau
 // L43 Sandy Shores   (Strandspaziergang: Duenen, Tidenbecken, Terrassen)
 // L44 Boardwalk Dash (Steg ueber Watt: Wasserzonen, Crumble-Sandbruecke, Gaps)
@@ -22,7 +23,7 @@ type PlatType = Parameters<typeof createPlat>[4];
 const dec = (x: number, y: number, type: 'palm' | 'seagull' | 'shell' | 'sea' | 'coral') =>
   createDeco(x, y, type);
 
-export const BEACH_ISLAND_LEVELS: LevelData[] = [
+const BEACH_ISLAND_AUTHORED_LEVELS: LevelData[] = [
   // ==========================================================================
   // L43 "Sandy Shores" — Strandspaziergang (width 7000)
   // Duenen-Terrassen, Tidenbecken mit Schwimm-Bonus, Grube mit Boden,
@@ -559,3 +560,6 @@ export const BEACH_ISLAND_LEVELS: LevelData[] = [
     ],
   },
 ];
+
+// Individually anchored landscape, reward and recovery polish; original jump tops stay fixed.
+export const BEACH_ISLAND_LEVELS: LevelData[] = BEACH_ISLAND_AUTHORED_LEVELS.map(polishNatureLevel);

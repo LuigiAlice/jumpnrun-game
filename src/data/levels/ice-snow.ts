@@ -1,3 +1,4 @@
+import { polishNatureLevel } from './naturePolish';
 // Ice-Snow World - 6 Levels (19-24) - Phase 9 rebuild
 // Archetypes:
 //   L19 "Snowy Path"     - Schneepfad (Tutorial: sanfte Terrassen, erste Eisflaeche)
@@ -18,7 +19,7 @@ import {
   coinArc, coinDiamond, coinTrail, coinLadder,
 } from './helpers';
 
-export const ICE_SNOW_LEVELS: LevelData[] = [
+const ICE_SNOW_AUTHORED_LEVELS: LevelData[] = [
   // ===== Level 19: Schneepfad - "Snowy Path" =====
   {
     id: 19, name: "Snowy Path", width: 9400, height: 900, biome: 'ice-snow',
@@ -675,3 +676,6 @@ export const ICE_SNOW_LEVELS: LevelData[] = [
     fallingHazards: { intervalMs: 2500 },
   },
 ];
+
+// Individually anchored landscape, reward and recovery polish; original jump tops stay fixed.
+export const ICE_SNOW_LEVELS: LevelData[] = ICE_SNOW_AUTHORED_LEVELS.map(polishNatureLevel);

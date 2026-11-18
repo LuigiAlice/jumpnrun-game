@@ -38,7 +38,7 @@ test('F1: floating enemies leave no invisible ground (water routes stay open)', 
   // Zustandsbasierte Phasen — fps-unabhängig (Headless-Slow-Mo sicher).
   const res = await inGame(page, `
     scene.enemies.getChildren().forEach(e => e.destroy());
-    scene.isInvincible = true;
+    scene.makeInvincible(600000);
     const plats = scene.currentLevelData.platforms.filter(p => p.type !== 'lava' && p.type !== 'pipe');
     const deep = plats.reduce((a, b) => ((b.y - b.h / 2) > (a.y - a.h / 2) ? b : a));
     const top = deep.y - deep.h / 2;
@@ -79,7 +79,7 @@ test('F2: crumble platform breaks after 800ms and respawns after 3s', async ({ p
   const setup = await inGame(page, `
     // Neutralize collateral deaths — die() pauses physics and timers
     scene.enemies.getChildren().forEach(e => e.destroy());
-    scene.isInvincible = true;
+    scene.makeInvincible(600000);
     const all = [...scene.platforms.getChildren(), ...scene.solidPlatforms.getChildren()];
     const p = all.find(x => x.getData && x.getData('crumble') && x.body && x.body.enable);
     if (!p) return { error: 'no crumble platform' };
@@ -349,34 +349,43 @@ test('F12: rising flood climbs toward the player', async ({ page }) => {
   expect(res.y1, `flood did not rise (y ${res.y0} -> ${res.y1})`).toBeLessThan(res.y0 - 3);
 });
 
-test('F13: hidden brick reveals itself when bonked from below', async ({ page }) => {
-  await startLevel(page, 61); // L62 haunted — hidden/secret wall
-  const res = await inGame(page, `
-    const p = scene.solidPlatforms.getChildren().find(x => (x.platformType || x.getData?.('platformType')) === 'hidden');
-    if (!p) return { error: 'no hidden platform' };
-    // Neutralize collateral deaths (floating ghosts etc.) — die() pauses physics
+test('F13: hidden brick reveals itself when bonked from below and rewards only once', async ({ page }) => {
+  test.setTimeout(60000);
+  await startLevel(page, 61);
+  await inGame(page, `
+    const block = scene.solidPlatforms.getChildren().find(p => p.platformType === 'hidden');
+    if (!block) throw new Error('no hidden platform');
     scene.enemies.getChildren().forEach(e => e.destroy());
-    scene.isInvincible = true;
-    const before = { type: p.platformType || p.getData('platformType'), vis: p.visible, by: Math.round(p.body.y), bh: Math.round(p.body.height), bx: Math.round(p.body.x), bw: Math.round(p.body.width), enable: p.body.enable };
-    // A) Standing on top must be supported (proves the body collides)
-    scene.player.body.reset(p.x - 11, p.body.y - 34);
-    scene.player.body.setVelocity(0, 0);
-    await new Promise(r => setTimeout(r, 300));
-    const standInfo = { blocked: scene.player.body.blocked.down, py: Math.round(scene.player.y), bottom: Math.round(scene.player.body.y + scene.player.body.height), dead: scene.isDead };
-    // B) Bonk from below (full jump; enemies are cleared so nothing can pause physics)
-    scene.player.body.reset(p.x - 11, p.body.y + p.body.height + 40);
+    scene.coins.clear(true, true);
+    scene.makeInvincible(600000);
+    scene.hiddenProbe = block;
+    scene.coinsBeforeHidden = scene.coinCount;
+    scene.player.body.reset(block.x, block.body.y + block.body.height + 40);
     scene.player.body.setVelocity(0, -900);
-    await new Promise(r => setTimeout(r, 700));
-    return {
-      before, standInfo, dead: scene.isDead,
-      revealed: (p.getData('platformType') || p.platformType) === 'question',
-      coins: scene.coinCount,
+  `);
+  await page.waitForFunction(() => {
+    const scene = (window as any).__game.scene.getScene('Game');
+    return scene.hiddenProbe?.platformType === 'question_used' && !scene.tweens.isTweening(scene.hiddenProbe);
+  }, undefined, { timeout: 20000 });
+  const first = await inGame(page, `return { visible: scene.hiddenProbe.visible, coins: scene.coinCount, before: scene.coinsBeforeHidden };`);
+  expect(first.visible).toBe(true);
+  expect(first.coins).toBe(first.before + 1);
+  await inGame(page, `
+    scene.secondHiddenBonk = false;
+    const block = scene.hiddenProbe;
+    const sample = () => {
+      if (scene.player.body.touching.up && block.body.touching.down) {
+        scene.secondHiddenBonk = true;
+        scene.events.off('postupdate', sample);
+      }
     };
-  `) as { error?: string; before: unknown; standInfo: unknown; dead: boolean; revealed: boolean; coins: number };
-  const diag = `before=${JSON.stringify(res.before)} stand=${JSON.stringify(res.standInfo)} dead=${res.dead}`;
-  expect(res.error, JSON.stringify(res)).toBeUndefined();
-  expect(res.revealed, `hidden platform did not reveal — ${diag}`).toBe(true);
-  expect(res.coins, `hidden brick did not award a coin — ${diag}`).toBeGreaterThanOrEqual(1);
+    scene.events.on('postupdate', sample);
+    scene.player.body.reset(block.x, block.body.y + block.body.height + 40);
+    scene.player.body.setVelocity(0, -900);
+  `);
+  await page.waitForFunction(() => (window as any).__game.scene.getScene('Game').secondHiddenBonk, undefined, { timeout: 20000 });
+  const after = await inGame(page, `return scene.coinCount;`);
+  expect(after).toBe(first.coins);
 });
 
 test('F14: 1-UP question block grants an extra life', async ({ page }) => {

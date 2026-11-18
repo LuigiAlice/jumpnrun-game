@@ -11,7 +11,7 @@
 ## Technologie
 - TypeScript + Vite + Phaser 3 + Vitest (ES Modules)
 - Arcade Physics
-- Alle Texturen prozedural generiert (BootScene)
+- Alle Texturen prozedural generiert (BootScene + src/art/pixelAssets.ts)
 
 ## Physik-Konstanten (Standard)
 
@@ -154,11 +154,13 @@ Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pf
 ## Kamera
 
 - Folgt Spieler horizontal (smooth lerp: 0.1)
-- Bounds: 0, 0, level.width, GAME_HEIGHT
+- Bounds: 0, 0, level.width, max(GAME_HEIGHT, level.height); Startkamera zentriert den Spieler auch in tiefen Leveln.
 - Canvas: 1200x800 (FIT Skalierung, keine Verzerrung)
-- Parallax-Hintergrund: 7 Layers pro Biome (scrollFactors: 0 - 0.4)
+- Parallax-Hintergrund: 7 bildschirmfeste Layers pro Biome; die Texturen scrollen mit Faktor 0–0.4 innerhalb der Flächen, damit lange Level keine Hintergrundlücken bekommen.
 
 ## Gegner-Typen
+
+Spiny ist wegen seiner Stacheln nicht stompbar. Koopa: Stomp → eigener Panzer; laufenden Panzer von oben stoppen, seitlich kicken. Treffer-Schutz verhindert Schaden, nur ein Stern besiegt Gegner durch Berührung.
 
 ### Stompbare Gegner (Spieler springt von oben drauf → +500 Punkte)
 
@@ -166,7 +168,6 @@ Alle Elemente sind optional in `LevelData`, solver-agnostisch und dürfen nie Pf
 |-----|-----------|
 | goomba | Läuft hin und her (edge-detection) |
 | koopa | Läuft hin und her |
-| spiny | Läuft hin und her (auch Lakitu-Eier) |
 | robot | Läuft hin und her |
 | crab | Läuft seitlich |
 | ghost | Schwebt, folgt Spieler langsam (+ Sinus-Bob) |
@@ -395,3 +396,15 @@ createMovingPlat(x, y, w, h, type, moveType, range, speed) - Bewegliche Plattfor
 - **Boss-HP-Bar**: Graphics-Rectangle (L90, über HUD, Depth 1001)
 - **Game Over**: Score-Anzeige
 - **Level Clear**: Auto-Übergang zum nächsten Level (+1000 Punkte)
+
+## Landschaft, Pixelgrafik und Dramaturgie
+
+- `src/art/pixelAssets.ts` erzeugt einheitliche Pixelgrafiken: Laufphasen für fünf Bodengegner, eigener Koopa-Panzer, Piranha- und Boo-Zustände, vier Münzphasen sowie lesbare Power-ups.
+- `src/rendering/terrain.ts` kachelt Bodenflächen in nativer Pixelgröße; Deckkachel einmal oben, separate Füllkacheln darunter. Statische TileSprites behalten die vollständige Kollisionsfläche. Mover nutzen gleich große gekachelte Panels. Röhrenlippen verwenden `pipe_top`, Eis hat eine eigene Grafik.
+- Welt 1 führt Gegnerrollen schrittweise ein. L2 ist 7300 px lang, mit sechs Goomba/Koopa, zusammenhängenden Hügeln, kurzen Lücken und einer begehbaren Bonusnische. Weitere Welt-1-Nischen und massive Erdflächen erhalten die optionalen Höhenwege.
+- Alle weiteren 84 Level haben individuell gewählte Ruhe- und Belohnungsbereiche, biomtypische Gegner und Münzführungen; massives Terrain lässt untere Routen frei. L50/L55 besitzen zusätzliche Rettungswege, L61/L67/L85 Seitenkammern.
+- Pilze laufen, Blumen bleiben stehen, Sterne hüpfen. Power-ups erscheinen zunächst über dem Block; die Physik startet nach dem Auftauchen. Versteckte Einzelblöcke geben nur einmal eine Münze.
+- Piranhas bleiben bei Spielernähe in der Röhre; Game-Time-Zyklus: verborgen 1800 ms, aufsteigen 650 ms, offen 1400 ms, absteigen 650 ms.
+- Röhrenzugang: ↓ auf dem Deckel; Prüfung anhand der Füße, für kleine und große Figur identisch. L1-Warps behalten ihre Ziellevel.
+- L90: 7600 px, ein Boss mit 3 HP, keine Nebenpatrouillen. Feuerblumen sind auf dem Bodenweg erreichbar; verbrauchte Blumenblöcke regenerieren nach sechs Spielsekunden ohne Feuerkraft. Die Flagge bleibt bis zum Boss-Sieg gesperrt; HP-Bar skaliert auf die tatsächlichen Start-HP. Nach der letzten Flagge erscheint der Siegesbildschirm statt eines erneuten Bosslevels.
+- Solver prüft Auf- und Abwärtssprünge mit vorzeichenrichtiger Ballistik. Aufstieg ist durch min(MAX_JUMP_UP, v²/(2g)) begrenzt; höhere Ziele erhalten keine fiktive Flugzeit. Alle 90 Level bestehen die Prüfung ohne automatische Zusatzplattformen.

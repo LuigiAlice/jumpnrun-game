@@ -4,6 +4,7 @@ import { goToTitle } from '../sceneNav';
 
 export class GameOverScene extends Phaser.Scene {
   private score: number = 0;
+  private victory = false;
   private coins: number = 0;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private escapeKey!: Phaser.Input.Keyboard.Key;
@@ -14,6 +15,8 @@ export class GameOverScene extends Phaser.Scene {
   }
 
   init(data: any) {
+    this.victory = data?.victory === true;
+    this.canRestart = false;
     this.score = data?.score ?? 0;
     this.coins = data?.coins ?? 0;
   }
@@ -28,15 +31,15 @@ export class GameOverScene extends Phaser.Scene {
 
     const centerX = GAME_WIDTH / 2;
 
-    const title = this.add.text(centerX, 150, 'GAME OVER', {
-      fontSize: '64px',
-      fontFamily: 'Fredoka, Arial Black, sans-serif',
-      color: '#e74c3c',
+    const title = this.add.text(centerX, 150, this.victory ? 'ABENTEUER GESCHAFFT!' : 'GAME OVER', {
+      fontSize: this.victory ? '42px' : '64px',
+      fontFamily: 'monospace',
+      color: this.victory ? '#f1c40f' : '#e74c3c',
       stroke: '#c0392b',
       strokeThickness: 8
     }).setOrigin(0.5);
 
-    this.add.text(centerX, 250, 'GEWONNEN:', {
+    this.add.text(centerX, 250, this.victory ? 'DER BURGHÜTER IST BESIEGT' : 'DEIN ERGEBNIS', {
       fontSize: '28px',
       color: '#2ecc71'
     }).setOrigin(0.5);
@@ -67,7 +70,7 @@ export class GameOverScene extends Phaser.Scene {
       color: '#bdc3c7',
     }).setOrigin(0.5);
 
-    const restartText = this.add.text(centerX, 520, 'DRÜCKE LEERTASTE FÜR NEUSTART', {
+    const restartText = this.add.text(centerX, 520, 'LEERTASTE = LEVELAUSWAHL', {
       fontSize: '20px',
       color: '#ffffff',
       stroke: '#000000',

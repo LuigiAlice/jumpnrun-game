@@ -38,12 +38,18 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     platforms.push(ground(2300, 500, 480, 'castle'));
     platforms.push(ground(2875, 450, 460, 'castle'));
     platforms.push(createPlat(3400, 420, 200, 24, 'platform_hard'));
-    platforms.push(ground(3450, 700, 720, 'castle'));
+    platforms.push(ground(3450, 700, 720, 'castle', 136));
     platforms.push(...pitFloor(4150, 720, 440, 140, 'stone'));
     platforms.push(ground(4560, 680, 720, 'castle'));
     platforms.push(...overhangSection(5240, 720, 900, 5740, 180, 'castle'));
     platforms.push(ground(6300, 800, 720, 'castle'));
     platforms.push(ground(7200, 500, 640, 'castle'));
+
+    // A real attic chamber: enter below the short right wall, then discover the 1-UP.
+    // Roof-to-question-block headroom is 58px; the hall floor remains unobstructed.
+    platforms.push(createPlat(1520, 214, 260, 24, 'castle'));
+    platforms.push(createPlat(1388, 303, 24, 154, 'castle'));
+    platforms.push(createPlat(1652, 263, 24, 74, 'castle'));
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(150, 640, 900, 640, 5));
@@ -57,6 +63,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     coins.push(...coinTrail(4700, 640, 5100, 640, 3));
     coins.push(...coinTrail(6400, 640, 7000, 640, 4));
     coins.push(...coinArc(7000, 560, 5, 70, 80));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(3900, 592, 32, 32, 'hidden'));
+    coins.push(...coinTrail(3844, 530, 3956, 530, 3));
 
     return {
       id: 61, name: 'Eingangshalle', width: 7600, height: 950, biome: 'haunted-mansion',
@@ -75,7 +85,6 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
       enemies: [
         createEnemy(1600, 600, 'ghost'),
         createEnemy(2700, 420, 'boo'),
-        createEnemy(3800, 680, 'goomba'),
         createEnemy(4900, 640, 'ghost'),
         createEnemy(5400, 680, 'robot'),
         createEnemy(5700, 620, 'ghost'),
@@ -120,7 +129,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     platforms.push(...zigzagClimb(4150, 760, 4, 90, 110, 130, 'platform_medium'));
     platforms.push(ground(4100, 600, 360, 'castle'));
     platforms.push(ledge(4800, 200, 340, 'wood'));
-    platforms.push(ground(5170, 730, 640, 'castle'));
+    platforms.push(ground(5170, 730, 640, 'castle', 136));
     platforms.push(ledge(5400, 220, 400, 'platform_hard'));
     platforms.push(...overhangSection(6000, 640, 1000, 6500, 200, 'castle'));
     platforms.push(ground(7100, 700, 640, 'castle'));
@@ -150,6 +159,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     coins.push(...coinTrail(10900, 480, 11600, 480, 4));
     coins.push(...coinDiamond(12250, 640, 50));
     coins.push(...coinArc(12600, 400, 5, 70, 80));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(5720, 512, 32, 32, 'brick_secret'));
+    coins.push(...coinTrail(5664, 450, 5776, 450, 3));
 
     return {
       id: 62, name: 'Spiegelsäle', width: 15200, height: 1000, biome: 'haunted-mansion',
@@ -262,6 +275,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     coins.push(...coinTrail(10100, 680, 10700, 680, 4));
     coins.push(...coinTrail(11400, 470, 11950, 470, 4));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(3375, 672, 32, 32, 'hidden'));
+    coins.push(...coinTrail(3319, 610, 3431, 610, 3));
+
     return {
       id: 63, name: 'Geistertreppen', width: 17200, height: 1100, biome: 'haunted-mansion',
       platforms,
@@ -281,7 +298,6 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createEnemy(700, 420, 'thwomp'),
         createEnemy(1800, 460, 'ghost'),
         createEnemy(2500, 180, 'boo'),
-        createEnemy(3500, 700, 'ghost'),
         createEnemy(4300, 700, 'boo'),
         createEnemy(5700, 700, 'ghost'),
         createEnemy(6600, 200, 'thwomp'),
@@ -340,7 +356,7 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     platforms.push(ground(4000, 800, 880, 'stone'));
     platforms.push(ledge(4050, 140, 800, 'stone'));
     platforms.push(...staircase(4800, 880, 3, 80, 120, 40, 'stone'));
-    platforms.push(ground(5300, 800, 640, 'stone'));
+    platforms.push(ground(5300, 800, 640, 'stone', 136));
     platforms.push(...overhangSection(6200, 640, 1000, 6700, 200, 'stone'));
     platforms.push(...pitFloor(7300, 640, 420, 160, 'stone'));
     platforms.push(ground(7550, 700, 640, 'stone'));
@@ -371,6 +387,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     coins.push(...coinTrail(9200, 420, 9400, 420, 3));
     coins.push(...coinTrail(10300, 400, 10900, 400, 4));
     coins.push(...coinDiamond(11450, 340, 60));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(5900, 512, 32, 32, 'brick_multi'));
+    coins.push(...coinTrail(5844, 450, 5956, 450, 3));
 
     return {
       id: 64, name: 'Verlies', width: 14200, height: 1050, biome: 'haunted-mansion',
@@ -482,6 +502,9 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     coins.push(...coinArc(10300, 700, 5, 70, 80));
     coins.push(...coinTrail(10900, 510, 11450, 510, 4));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinTrail(5719, 610, 5831, 610, 3));
+
     return {
       id: 65, name: 'Banshee-Horde', width: 14800, height: 1000, biome: 'haunted-mansion',
       platforms,
@@ -509,7 +532,6 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
         createEnemy(4800, 320, 'boo'),
         createEnemy(5100, 320, 'ghost'),
         createEnemy(5400, 320, 'boo'),
-        createEnemy(5900, 700, 'ghost'),
         createEnemy(6300, 700, 'boo'),
         createEnemy(6900, 700, 'ghost'),
         createEnemy(7300, 700, 'boo'),
@@ -636,6 +658,10 @@ export const HAUNTED_MANSION_LEVELS: LevelData[] = [
     coins.push(...coinTrail(16000, 240, 16350, 240, 3));
     coins.push(...coinTrail(16900, 490, 17200, 490, 2));
     coins.push(...coinDiamond(17500, 400, 60));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(8990, 492, 32, 32, 'hidden'));
+    coins.push(...coinTrail(8934, 430, 9046, 430, 3));
 
     return {
       id: 66, name: 'Krypta-Finale', width: 18200, height: 1150, biome: 'haunted-mansion',

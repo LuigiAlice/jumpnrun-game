@@ -38,7 +38,7 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(createPlat(500, 480, 260, 24, 'platform_medium')); // Katwalk top 468 [370,630]
     platforms.push(createPlat(2350, 560, 300, 40, 'metal'));          // top 540  [2200,2500]
     platforms.push(createConveyorPlat(2830, 532, 660, 24, 'metal', 1, 60)); // Band R top 520 [2500,3160]
-    platforms.push(createPlat(3480, 580, 640, 40, 'metal'));          // top 560  [3160,3800]
+    platforms.push(createPlat(3480, 628, 640, 136, 'metal'));          // top 560  [3160,3800]
     platforms.push(...pitFloor(3800, 560, 420, 160, 'metal')); // Grubenboden top 720
     platforms.push(createPlat(3860, 682, 110, 24, 'platform_easy'));  // Leiter L top 670
     platforms.push(createPlat(4160, 682, 110, 24, 'platform_easy'));  // Leiter R top 670
@@ -63,6 +63,10 @@ export const FACTORY_LEVELS: LevelData[] = [
     coins.push(...coinTrail(6250, 400, 6750, 400, 4));
     coins.push(...coinTrail(6420, 260, 6540, 260, 3));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(3640, 432, 32, 32, 'hidden'));
+    coins.push(...coinTrail(3592, 380, 3688, 350, 3));
+
     return {
       id: 49, name: 'Gear Grinder', width: 7200, height: 900, biome: 'factory',
       platforms,
@@ -75,14 +79,13 @@ export const FACTORY_LEVELS: LevelData[] = [
         createQB(700, 490, 'mushroom'),
         createQB(2600, 460, 'coin'),
         createQB(4500, 480, 'oneup'),
-        createQB(6600, 380, 'flower'),
+        createQB(6632, 380, 'flower'),
       ],
       enemies: [
         createEnemy(900, 572, 'robot'),
         createEnemy(1600, 362, 'goomba'),
         createEnemy(1900, 382, 'koopa'),
         createEnemy(2400, 532, 'crab'),
-        createEnemy(3400, 552, 'robot'),
         createEnemy(4400, 552, 'spiny'),
         createEnemy(5300, 552, 'goomba'),
         createEnemy(6000, 552, 'crab'),
@@ -125,7 +128,7 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(createPlat(2330, 452, 100, 24, 'platform_easy'));  // Strahl top 440
     platforms.push(createPlat(2620, 392, 140, 24, 'platform_hard'));  // Strahl top 380
     platforms.push(createPlat(2945, 472, 110, 24, 'platform_medium')); // Strahl top 460
-    platforms.push(createPlat(3350, 660, 640, 40, 'metal'));          // Tiefdeck top 640 [3030,3670]
+    platforms.push(createPlat(3350, 708, 640, 136, 'metal'));          // Tiefdeck top 640 [3030,3670]
     platforms.push(createPlat(3300, 300, 160, 24, 'platform_medium')); // Bonus top 288
     platforms.push(createPlat(4000, 480, 110, 24, 'platform_easy'));  // Nische top 468
     platforms.push(createPlat(4400, 620, 600, 40, 'metal'));          // top 600  [4100,4700]
@@ -136,6 +139,10 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(createPlat(6600, 480, 560, 40, 'metal'));          // Ziel-Traeger top 460
     platforms.push(createPlat(6300, 340, 120, 24, 'platform_medium')); // Bonus top 328
     platforms.push(createPlat(6560, 280, 140, 24, 'platform_hard'));  // Bonus top 268
+
+    // Missed girder jumps can land on the maintenance deck and climb back up.
+    // It is an optional low route rather than another mandatory identical beam.
+    platforms.push(createPlat(2190, 622, 360, 36, 'metal'));
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(120, 520, 950, 520, 5));
@@ -150,6 +157,11 @@ export const FACTORY_LEVELS: LevelData[] = [
     coins.push(...coinTrail(5300, 340, 5700, 340, 4));
     coins.push(...coinDiamond(6060, 320, 60));
     coins.push(...coinTrail(6350, 410, 6800, 410, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinTrail(3462, 460, 3558, 430, 3));
+
+    coins.push(...coinTrail(2080, 552, 2300, 552, 3));
 
     return {
       id: 50, name: 'Steel Girders', width: 8800, height: 950, biome: 'factory',
@@ -211,7 +223,7 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(...pipePair(1950, 560));
     platforms.push(...pipePair(2400, 560));
     platforms.push(createConveyorPlat(2960, 572, 600, 24, 'metal', 1, 70)); // Band R top 560 [2660,3260]
-    platforms.push(createPlat(3580, 600, 640, 40, 'metal'));          // top 580  [3260,3900]
+    platforms.push(createPlat(3580, 648, 640, 136, 'metal'));          // top 580  [3260,3900]
     platforms.push(createPlat(3580, 440, 220, 24, 'platform_medium')); // Rohr-Ebene top 428
     platforms.push(createPlat(3950, 600, 100, 280, 'metal'));         // Kanonenturm top 460
     platforms.push(createPlat(4090, 512, 120, 24, 'platform_medium')); // Tritt top 500
@@ -248,6 +260,10 @@ export const FACTORY_LEVELS: LevelData[] = [
     coins.push(...coinArc(8840, 690, 5, 170, 80));
     coins.push(...coinLadder(9600, 560, 520, 4));
     coins.push(...coinTrail(9250, 560, 9950, 560, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(3740, 452, 32, 32, 'brick_secret'));
+    coins.push(...coinTrail(3692, 400, 3788, 370, 3));
 
     return {
       id: 51, name: 'Pipeworks', width: 10400, height: 950, biome: 'factory',
@@ -314,7 +330,7 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(createPlat(2800, 340, 400, 40, 'metal'));          // top 320  [2600,3000]
     platforms.push(createPlat(3200, 280, 160, 80, 'metal'));          // Schornstein top 240
     platforms.push(createPlat(3550, 480, 200, 24, 'platform_medium')); // Abstieg top 468
-    platforms.push(createPlat(4200, 760, 1000, 40, 'metal'));         // Halle 2 top 740 [3700,4700]
+    platforms.push(createPlat(4200, 808, 1000, 136, 'metal'));         // Halle 2 top 740 [3700,4700]
     platforms.push(createPlat(5300, 560, 400, 40, 'metal'));          // top 540  [5100,5500]
     platforms.push(createPlat(5800, 480, 400, 40, 'metal'));          // top 460  [5600,6000]
     platforms.push(createPlat(6600, 260, 500, 40, 'metal'));          // Dach top 240 [6350,6850]
@@ -336,6 +352,10 @@ export const FACTORY_LEVELS: LevelData[] = [
     coins.push(...coinTrail(6400, 180, 6800, 180, 4));
     coins.push(...coinDiamond(6600, 60, 70));
     coins.push(...coinTrail(7250, 240, 7550, 240, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(4450, 612, 32, 32, 'hidden'));
+    coins.push(...coinTrail(4402, 560, 4498, 530, 3));
 
     return {
       id: 52, name: 'Smokestack Climb', width: 7800, height: 1100, biome: 'factory',
@@ -395,7 +415,7 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(createPlat(2275, 660, 150, 40, 'metal'));          // top 640  [2200,2350]
     platforms.push(createConveyorPlat(2700, 652, 700, 24, 'metal', -1, 70)); // Band L top 640 [2350,3050]
     platforms.push(createPlat(3225, 660, 350, 40, 'metal'));          // top 640  [3050,3400]
-    platforms.push(createPlat(3900, 720, 1000, 40, 'metal'));         // Grube top 700 [3400,4400]
+    platforms.push(createPlat(3900, 768, 1000, 136, 'metal'));         // Grube top 700 [3400,4400]
     platforms.push(createPlat(4550, 620, 300, 40, 'metal'));          // top 600  [4400,4700]
     platforms.push(createConveyorPlat(5000, 612, 600, 24, 'metal', 1, 80)); // Band R top 600 [4700,5300]
     platforms.push(createPlat(5450, 620, 300, 40, 'metal'));          // top 600  [5300,5600]
@@ -425,6 +445,9 @@ export const FACTORY_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(7600, 380, 60));
     coins.push(...coinDiamond(8800, 300, 70));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinTrail(3852, 520, 3948, 490, 3));
+
     return {
       id: 53, name: 'Robot Rampage', width: 11600, height: 900, biome: 'factory',
       platforms,
@@ -445,8 +468,6 @@ export const FACTORY_LEVELS: LevelData[] = [
         createEnemy(2300, 632, 'koopa'),
         createEnemy(2900, 632, 'robot'),
         createEnemy(3200, 632, 'crab'),
-        createEnemy(3700, 692, 'goomba'),
-        createEnemy(4100, 692, 'spiny'),
         createEnemy(4600, 592, 'robot'),
         createEnemy(5000, 460, 'spiny'),
         createEnemy(5500, 592, 'crab'),
@@ -499,7 +520,7 @@ export const FACTORY_LEVELS: LevelData[] = [
     platforms.push(createPlat(3500, 700, 80, 200, 'metal'));          // Kanonenturm top 600
     platforms.push(createPlat(4000, 680, 900, 40, 'metal'));          // top 660  [3550,4450]
     platforms.push(createConveyorPlat(4950, 672, 900, 24, 'metal', -1, 90)); // Band L top 660 [4500,5400]
-    platforms.push(createPlat(6000, 700, 1200, 40, 'metal'));         // top 680  [5400,6600]
+    platforms.push(createPlat(6000, 748, 1200, 136, 'metal'));         // top 680  [5400,6600]
     platforms.push(createPlat(7150, 380, 700, 40, 'metal'));          // obere Etage top 360 [6800,7500]
     platforms.push(createConveyorPlat(7900, 372, 800, 24, 'metal', 1, 100)); // Band R top 360 [7500,8300]
     platforms.push(createPlat(8420, 392, 120, 24, 'platform_medium')); // Tritt top 380
@@ -537,6 +558,10 @@ export const FACTORY_LEVELS: LevelData[] = [
     coins.push(...coinTrail(11800, 540, 12250, 540, 4));
     coins.push(...coinArc(12700, 460, 5, 140, 70));
     coins.push(...coinTrail(12780, 320, 12920, 320, 3));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(6300, 552, 32, 32, 'brick_multi'));
+    coins.push(...coinTrail(6252, 500, 6348, 470, 3));
 
     return {
       id: 54, name: 'Conveyor Chaos', width: 13200, height: 1000, biome: 'factory',

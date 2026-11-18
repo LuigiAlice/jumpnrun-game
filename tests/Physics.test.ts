@@ -17,10 +17,11 @@ describe('Physics - getMaxHorizontalJump', () => {
     expect(d).toBeCloseTo(246, 0);
   });
 
-  it('upward jump (negative vDiff) should return 246px', () => {
+  it('upward jump uses the shorter ballistic flight time', () => {
     const ph = new Physics([], 800, 600);
     const d = (ph as any).getMaxHorizontalJump(-50);
-    expect(d).toBeCloseTo(246, 0);
+    expect(d).toBeCloseTo(300 * (900 + Math.sqrt(900 ** 2 - 2 * 2000 * 50)) / 2000 - 24, 8);
+    expect(d).toBeLessThan((ph as any).getMaxHorizontalJump(0));
   });
 
   it('downward jump of 100px should return longer distance', () => {

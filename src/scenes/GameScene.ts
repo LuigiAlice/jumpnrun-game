@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
-import { loadLevel, getLevelName } from '../generator/LevelLoader';
+import { TerrainTextures } from '../rendering/terrain';
+import { goalConditionsMet, nextCampaignLevel } from '../engine/GoalRules';
+import { loadLevel, getLevelName, getLevelCount } from '../generator/LevelLoader';
 import type { LevelData, Biome, Rect } from '../data/levels/index';
 import { GAME_HEIGHT, GAME_WIDTH, BIOME_GRAVITY, SPRING_VELOCITY } from '../config';
 import { goToTitle } from '../sceneNav';
@@ -8,13 +10,9 @@ import { BIOME_MUSIC } from '../audio/biomeMusic';
 import type { BiomeSong } from '../audio/biomeMusic';
 import { MusicPlayer } from '../audio/musicPlayer';
 import { createJumpState, stepJump, stepHorizontalVelocity } from '../engine/PlayerMovement';
+import { advanceProtection, enemyContact, pipeEntryAligned, powerUpMotion, stepPiranha } from '../engine/EnemyRules';
 
 const MIN_ENEMY_SPAWN_DISTANCE = 500;
-
-/** Enemies that cannot be stomped (see AGENTS.md). */
-const NON_STOMPABLE_ENEMIES = new Set([
-  'piranha', 'thwomp', 'boo', 'lakitu', 'bullet_bill', 'fireball', 'boss',
-]);
 
 const SOLID_TYPES = ['grass', 'stone', 'brick', 'brick_secret', 'brick_multi', 'cave', 'castle', 'metal', 'wood', 'sand', 'snow', 'ruins', 'space', 'sandstone', 'ground', 'cloud', 'water', 'hidden'];
 
@@ -39,6 +37,7 @@ const BIOME_PARTICLE_CONFIG: Record<string, { key: string; color: number; freque
 
 export class GameScene extends Phaser.Scene {
   private player!: Phaser.Physics.Arcade.Sprite;
+  private terrainTextures!: TerrainTextures;
   private platforms!: Phaser.Physics.Arcade.StaticGroup;
   private solidPlatforms!: Phaser.Physics.Arcade.StaticGroup;
   private movingPlatforms!: Phaser.Physics.Arcade.Group;
@@ -69,6 +68,8 @@ export class GameScene extends Phaser.Scene {
   private isPlayerBig: boolean = false;
   private isPlayerFire: boolean = false;
   private isInvincible: boolean = false;
+  private starProtectionMs = 0;
+  private hitProtectionMs = 0;
   private isDead: boolean = false;
   private isTransitioning: boolean = false;
   private isQuitting: boolean = false;
@@ -149,6 +150,10 @@ export class GameScene extends Phaser.Scene {
     this.isDead = false;
     this.isTransitioning = false;
     this.isInvincible = false;
+    this.bossHp = 0;
+    this.bossHpBar = undefined;
+    this.starProtectionMs = 0;
+    this.hitProtectionMs = 0;
     this.jumpState = createJumpState();
     this.externalLaunchPending = false;
     this.lastCameraX = 0;
@@ -184,6 +189,7 @@ export class GameScene extends Phaser.Scene {
     this.totalTime = 300 + (level.timeBonus || 0);
     this.timeLeft = this.totalTime;
 
+    this.terrainTextures = new TerrainTextures(this);
     this.setupWorld(level);
     this.createGroups();
     this.spawnEntities(level);
@@ -219,8 +225,9 @@ export class GameScene extends Phaser.Scene {
 
   private setupWorld(level: LevelData) {
     this.physics.world.gravity.y = BIOME_GRAVITY[level.biome] ?? 2000;
-    this.physics.world.setBounds(0, 0, level.width, GAME_HEIGHT);
-    this.cameras.main.setBounds(0, 0, level.width, GAME_HEIGHT);
+    const worldHeight = Math.max(GAME_HEIGHT, level.height);
+    this.physics.world.setBounds(0, 0, level.width, worldHeight);
+    this.cameras.main.setBounds(0, 0, level.width, worldHeight);
     this.currentBiome = level.biome;
     this.bgTiles = [];
     
@@ -252,8 +259,9 @@ export class GameScene extends Phaser.Scene {
 
     for (let i = 0; i < 7; i++) {
       const tile = this.add.tileSprite(GAME_WIDTH / 2, yPositions[i], widths[i], heights[i], `${prefix}_${i}`)
-        .setScrollFactor(scrollFactors[i], 0)
+        .setScrollFactor(0, 0)
         .setDepth(depths[i]);
+      tile.setData('parallax', scrollFactors[i]);
       this.bgTiles.push(tile);
     }
   }
@@ -280,7 +288,7 @@ export class GameScene extends Phaser.Scene {
     if (level.decorations) {
       level.decorations.forEach((d, di) => {
         const dec = this.add.image(d.x, d.y, d.type);
-        dec.setScrollFactor(0.3, 0.3).setDepth(-85);
+        dec.setScrollFactor(1, 1).setDepth(-85);
         // Animate certain decoration types (deterministic index-based timing)
         if (d.type === 'fire' || d.type === 'ember') {
           this.tweens.add({
@@ -349,7 +357,7 @@ export class GameScene extends Phaser.Scene {
       else if (platType === 'wood') tex = 'ground_cave';
       else if (platType === 'sand') tex = 'ground_sand';
       else if (platType === 'snow') tex = 'ground_snow';
-      else if (platType === 'ice') tex = 'ground_snow';
+      else if (platType === 'ice') tex = 'ground_ice';
       else if (platType === 'lava') tex = 'ground_lava';
       else if (platType === 'space') tex = 'ground_space';
       else if (platType === 'sandstone') tex = 'ground_ruins';
@@ -359,14 +367,24 @@ export class GameScene extends Phaser.Scene {
       else if (platType === 'stone') tex = 'ground_stone';
       else if (platType === 'bubble') tex = 'cloud_block';
       else if (platType === 'ground') tex = 'ground_grass';
-      else if (platType === 'pipe_top') tex = 'pipe';
+      else if (platType === 'pipe_top') tex = 'pipe_top';
       
+      if (p.conveyor !== undefined) tex = 'conveyor';
       const isSolid = SOLID_TYPES.includes(p.type);
       const targetGroup = isSolid ? this.solidPlatforms : this.platforms;
       
-      const platform = targetGroup.create(p.x, p.y, tex);
-      platform.setDisplaySize(p.w, p.h).refreshBody();
+      // Pipes have purpose-built silhouettes. Terrain repeats native-size pixels.
+      let platform: any;
+      if (platType === 'pipe' || platType === 'pipe_top') {
+        platform = targetGroup.create(p.x, p.y, tex);
+        platform.setDisplaySize(p.w, p.h).refreshBody();
+      } else {
+        platform = this.add.tileSprite(p.x, p.y, p.w, p.h, this.terrainTextures.surface(tex, p.h));
+        targetGroup.add(platform); // StaticGroup attaches the exact-size Arcade body.
+      }
       (platform as any).platformType = p.type;
+      platform.setData('sourcePlatformType', p.type);
+      platform.setData('sourcePlatformX', p.x).setData('sourcePlatformY', p.y);
       if (!isSolid && p.type.startsWith('platform_')) {
         (platform.body as Phaser.Physics.Arcade.StaticBody).checkCollision.down = false;
         (platform.body as Phaser.Physics.Arcade.StaticBody).checkCollision.left = false;
@@ -383,10 +401,6 @@ export class GameScene extends Phaser.Scene {
       }
       if (p.conveyor !== undefined) {
         platform.setData('conveyor', p.conveyor);
-        platform.setTexture('conveyor');
-      }
-      if (platType === 'ice') {
-        platform.setTint(0xbfe8ff);
       }
     });
     
@@ -396,7 +410,7 @@ export class GameScene extends Phaser.Scene {
         if (mp.type === 'platform_medium') tex = 'platform_medium';
         else if (mp.type === 'platform_hard') tex = 'platform_hard';
         
-        const mplat = this.movingPlatforms.create(mp.x, mp.y, tex);
+        const mplat = this.movingPlatforms.create(mp.x, mp.y, this.terrainTextures.panel(tex, mp.w, mp.h));
         mplat.setDisplaySize(mp.w, mp.h).refreshBody();
         mplat.body.setAllowGravity(false);
         mplat.setImmovable(true);
@@ -512,17 +526,8 @@ export class GameScene extends Phaser.Scene {
           enemy.setY(hiddenY);
           enemy.setData('hiddenY', hiddenY);
           enemy.setData('peekY', peekY);
-          this.tweens.add({
-            targets: enemy,
-            y: { from: hiddenY, to: peekY },
-            duration: 1500,
-            ease: 'Sine.easeInOut',
-            hold: 3000,
-            yoyo: true,
-            repeat: -1,
-            repeatDelay: 2000,
-            delay: Math.random() * 2000,
-          });
+          enemy.setData('piranhaState', { phase: 'hidden', elapsedMs: e.x % 1400 });
+          enemy.body.checkCollision.none = true;
         } else {
           enemy.destroy();
         }
@@ -538,6 +543,7 @@ export class GameScene extends Phaser.Scene {
         enemy.setData('noEdgeDetection', true);
         enemy.setData('lastEggTime', 0);
       } else if (e.type === 'bullet_bill') {
+        enemy.body.setAllowGravity(false);
         enemy.setVelocityX(-Math.round(biomeSpeed * 4)).setCollideWorldBounds(true);
         enemy.setData('noEdgeDetection', true);
       } else if (e.type === 'boss') {
@@ -581,7 +587,7 @@ export class GameScene extends Phaser.Scene {
     if (level.id === 90) {
       this.enemies.getChildren().forEach((e: any) => {
         const eType = e.getData('type') || e.texture?.key;
-        if (eType === 'boss') e.setData('hp', 3);
+        if (eType === 'boss') { e.setData('hp', 3); this.bossHp += 3; }
       });
       // Arena walls (left, right, ceiling) to keep boss fight contained
       const wallThick = 32;
@@ -602,7 +608,7 @@ export class GameScene extends Phaser.Scene {
     this.goal = this.physics.add.sprite(level.goal.x, level.goal.y, 'flag').setImmovable(true);
     (this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false;
     this.coinGateOpen = false;
-    if (level.coinGoal || level.timeGate) {
+    if (level.coinGoal || level.timeGate || level.id === 90) {
       this.goal.setAlpha(0.4);
       (this.goal.body as Phaser.Physics.Arcade.Body).enable = false;
     }
@@ -635,7 +641,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     (level.doors || []).forEach(d => {
-      const door = this.solidPlatforms.create(d.x, d.y, 'metal');
+      const door = this.solidPlatforms.create(d.x, d.y, this.terrainTextures.panel('ground_metal', d.w, d.h));
       door.setDisplaySize(d.w, d.h).refreshBody();
       door.setData('door', true);
       door.setTint(0x99bbff);
@@ -708,6 +714,7 @@ export class GameScene extends Phaser.Scene {
     else body.setSize(22, 32);
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+    this.cameras.main.centerOn(this.player.x, this.player.y);
   }
 
   private setupCollisions() {
@@ -716,16 +723,17 @@ export class GameScene extends Phaser.Scene {
       const platType = (b as any).platformType || b.getData?.('platformType') || b.texture?.key;
       if (b.body?.touching?.down && p.body?.touching?.up) {
         if (platType === 'hidden') {
-          b.setTexture('question');
-          b.setData('platformType', 'question');
+          b.setTexture('question_used');
+          b.platformType = 'question_used';
+          b.setData('platformType', 'question_used');
           this.tweens.add({ targets: b, y: b.y - 10, duration: 100, yoyo: true });
           this.playBlockSound();
-          this.coinCount++;
-          this.score += 100;
+          this.addCoin();
           b.setVisible(true);
         }
         if ((platType === 'brick_secret' || platType === 'brick_multi') && b.body.blocked?.up === false) {
           if (platType === 'brick_secret') {
+            b.platformType = 'brick';
             b.setData('platformType', 'brick');
             this.addCoin();
             this.tweens.add({ targets: b, y: b.y - 10, duration: 100, yoyo: true });
@@ -742,7 +750,7 @@ export class GameScene extends Phaser.Scene {
         }
         if (platType === 'brick' && b.body.blocked?.up === false) {
           const isBig = this.isPlayerBig || this.isPlayerFire;
-          const loadBearing = this.currentLevelData ? isBrickLoadBearing(this.currentLevelData, { x: b.x, y: b.y, type: platType }) : false;
+          const loadBearing = this.currentLevelData ? isBrickLoadBearing(this.currentLevelData, { x: b.getData('sourcePlatformX') ?? b.x, y: b.getData('sourcePlatformY') ?? b.y, type: b.getData('sourcePlatformType') || platType }) : false;
           if (canBreakBrick(isBig, platType, loadBearing)) {
             b.destroy();
             for (let i = 0; i < 6; i++) {
@@ -795,9 +803,20 @@ export class GameScene extends Phaser.Scene {
     
     // Moving platforms: player can land on top
     this.physics.add.collider(this.player, this.movingPlatforms);
-    this.physics.add.collider(this.powerUps, this.solidPlatforms);
-    this.physics.add.collider(this.powerUps, this.platforms);
-    this.physics.add.collider(this.powerUps, this.movingPlatforms);
+    const movePowerUp = (item: any) => {
+      const type = item.getData('powerUpType');
+      const motion = powerUpMotion(type);
+      if (item.body.blocked.left || item.body.blocked.right) {
+        const dir = -(item.getData('travelDir') || 1);
+        item.setData('travelDir', dir);
+        item.setVelocityX(dir * motion.vx);
+      }
+      if (type === 'star' && item.body.touching.down) item.setVelocityY(motion.launchY);
+    };
+    this.physics.add.collider(this.powerUps, this.solidPlatforms, movePowerUp as any);
+    this.physics.add.collider(this.powerUps, this.platforms, movePowerUp as any);
+    this.physics.add.collider(this.powerUps, this.movingPlatforms, movePowerUp as any);
+    this.physics.add.collider(this.powerUps, this.questionBlocks, movePowerUp as any);
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.physics.add.collider(this.player, this.questionBlocks, (p: any, b: any) => { if (p.body?.touching?.up && b.body?.touching?.down) this.hitQuestionBlock(b); });
@@ -808,59 +827,51 @@ export class GameScene extends Phaser.Scene {
         const enemyType = e.getData('type') || e.texture?.key;
         const eState = e.getData('state') || 'walking';
 
-        if (this.isDead) return;
-        if (this.isInvincible && eState === 'walking') {
-            this.starKillChain++;
-            const starScore = 200 * Math.pow(2, Math.min(this.starKillChain, 4));
-            this.score += starScore;
-            this.killEnemy(e, starScore);
-            return;
+        if (this.isDead || !e.body?.enable || e.getData('defeated')) return;
+        const enemyTop = e.body.y;
+        const fromAbove = p.body.velocity.y >= 0 && p.body.bottom <= enemyTop + 15
+          && Math.abs(p.x - e.x) < e.displayWidth / 2 + 15;
+        const contact = enemyContact(enemyType, eState, fromAbove, this.starProtectionMs > 0, this.isInvincible);
+        if (contact === 'ignore') return;
+        if (contact === 'star-kill') {
+          this.starKillChain++;
+          const starScore = 200 * Math.pow(2, Math.min(this.starKillChain, 4));
+          this.score += starScore;
+          this.killEnemy(e, starScore);
+          return;
         }
-
-        // Kicking a koopa shell
-        if (eState === 'shell_idle') {
+        if (contact === 'damage') { this.playerHit(); return; }
+        if (contact === 'kick') {
           const kickDir = p.x < e.x ? 1 : -1;
           e.setVelocityX(kickDir * 400);
           e.setData('state', 'shell_moving');
+          e.setData('noEdgeDetection', true);
           e.setBounce(1, 0);
           this.playStompSound();
           this.score += 500;
-          return;
-        }
-        // Shell hits player from the side
-        if (eState === 'shell_moving') {
-          this.playerHit();
-          return;
-        }
-
-        if (NON_STOMPABLE_ENEMIES.has(enemyType)) {
-            this.playerHit();
-            return;
-        }
-        // Player stomps enemy when landing from above
-        const playerFeet = p.body.bottom;
-        const enemyTop = e.body.y;
-        const isFalling = p.body.velocity.y >= 0;
-        const isStomping = isFalling && playerFeet <= enemyTop + 15 && Math.abs(p.x - e.x) < e.displayWidth / 2 + 15;
-        if (isStomping) {
-            if (enemyType === 'koopa') {
-              e.setData('state', 'shell_idle');
-              e.setData('shellDir', e.body.velocity.x > 0 ? 1 : -1);
-              e.setVelocity(0, 0);
-              e.setBounce(0);
-              e.setScale(0.8, 0.5);
-              e.body.setSize(28, 16);
-              e.setData('shellTimer', 4000);
-            } else {
-              this.killEnemy(e);
-            }
-            this.playStompSound();
+          if (fromAbove) {
             p.setVelocityY(-400);
             this.externalLaunchPending = true;
-            this.score += 500;
-        } else {
-            this.playerHit();
+          }
+          return;
         }
+        if (enemyType === 'koopa') {
+          const feet = e.body.bottom;
+          e.setData('state', 'shell_idle');
+          e.setData('shellDir', e.body.velocity.x > 0 ? 1 : -1);
+          e.setVelocity(0, 0).setBounce(0).setScale(1, 1).setTexture('koopa_shell');
+          e.body.setSize(28, 16, false).setOffset(2, 18);
+          e.setY(feet - 17);
+          e.body.updateFromGameObject();
+          e.setData('shellTimer', 4000);
+          e.setData('noEdgeDetection', true);
+        } else {
+          this.killEnemy(e);
+        }
+        this.playStompSound();
+        p.setVelocityY(-400);
+        this.externalLaunchPending = true;
+        this.score += contact === 'stop-shell' ? 100 : 500;
     });
     
     this.physics.add.overlap(this.player, this.powerUps, (_p, pu) => this.collectPowerUp(pu as any));
@@ -904,6 +915,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.enemies, this.enemies, (a: any, b: any) => {
       const sA = a.getData('state') || 'walking';
       const sB = b.getData('state') || 'walking';
+      if (a.getData('type') === 'boss' || b.getData('type') === 'boss') return;
       if (sA === 'shell_moving' && sB !== 'shell_moving') { this.killEnemy(b); this.score += 500; a.setVelocityX(a.body.velocity.x); }
       else if (sB === 'shell_moving' && sA !== 'shell_moving') { this.killEnemy(a); this.score += 500; b.setVelocityX(b.body.velocity.x); }
     });
@@ -936,6 +948,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private killEnemy(enemy: Phaser.GameObjects.Sprite, scoreAmount: number = 500) {
+    if (enemy.getData('defeated')) return;
+    enemy.setData('defeated', true);
+    if (enemy.body) (enemy.body as Phaser.Physics.Arcade.Body).enable = false;
     const x = enemy.x;
     const y = enemy.y;
     
@@ -952,7 +967,7 @@ export class GameScene extends Phaser.Scene {
     
     const popup = this.add.text(x, y - 20, `+${scoreAmount}`, {
       fontSize: '20px',
-      fontFamily: 'Arial',
+      fontFamily: 'monospace',
       color: '#FFD700',
       stroke: '#000',
       strokeThickness: 3
@@ -984,11 +999,27 @@ export class GameScene extends Phaser.Scene {
         this.time.delayedCall(200, () => this.playNote(987.77, 'square', 0.08, 0.25, 0));
       }
     }
-    else { const pu = this.powerUps.create(block.x, block.y - 32, content); pu.setVelocity(-60, -200); pu.setBounce(0.3); (pu as any).type = content; this.score += 200; }
+    else {
+      const pu = this.powerUps.create(block.x, block.y - 8, content) as Phaser.Physics.Arcade.Sprite;
+      pu.setData('powerUpType', content).setData('travelDir', 1);
+      pu.body!.enable = false;
+      pu.setDepth(3);
+      const emergedY = block.y - 16 - pu.height / 2 - 2;
+      this.tweens.add({ targets: pu, y: emergedY, duration: 260, ease: 'Sine.Out', onComplete: () => {
+        if (!pu.active || !pu.body) return;
+        const motion = powerUpMotion(content);
+        const itemBody = pu.body as Phaser.Physics.Arcade.Body;
+        itemBody.enable = true;
+        itemBody.reset(pu.x, emergedY);
+        itemBody.setAllowGravity(motion.gravity);
+        pu.setVelocity(motion.vx, motion.launchY).setBounce(0);
+      } });
+      this.score += 200;
+    }
   }
 
   private collectPowerUp(pu: any) {
-    const type = pu.type;
+    const type = pu.getData('powerUpType') || pu.type;
     pu.destroy();
     this.playPowerUpSound();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
@@ -996,9 +1027,10 @@ export class GameScene extends Phaser.Scene {
       if (!this.isPlayerBig) { this.isPlayerBig = true; this.player.y -= 16; this.player.setTexture('player_big_idle'); body.setSize(24, 48); }
       else if (!this.storedItemType) { this.storedItemType = 'mushroom'; this.updateStoredItemHUD(); }
     } else if (type === 'flower') {
+      const alreadyFire = this.isPlayerFire;
       if (!this.isPlayerBig) this.player.y -= 16; this.isPlayerBig = true; this.isPlayerFire = true; this.player.setTexture('player_fire_idle'); body.setSize(24, 48);
-      if (this.isPlayerFire && !this.storedItemType) { this.storedItemType = 'flower'; this.updateStoredItemHUD(); }
-    } else if (type === 'star') { this.makeInvincible(5000); }
+      if (alreadyFire && !this.storedItemType) { this.storedItemType = 'flower'; this.updateStoredItemHUD(); }
+    } else if (type === 'star') { this.makeInvincible(5000, true); }
   }
 
   private updateStoredItemHUD() {
@@ -1010,10 +1042,27 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private makeInvincible(duration: number) { this.isInvincible = true; this.player.setAlpha(0.5); this.starKillChain = 0; this.time.delayedCall(duration, () => { this.isInvincible = false; this.player.setAlpha(1); }); }
+  private makeInvincible(duration: number, star = false) {
+    if (star) { this.starProtectionMs = Math.max(this.starProtectionMs, duration); this.starKillChain = 0; }
+    else this.hitProtectionMs = Math.max(this.hitProtectionMs, duration);
+    this.isInvincible = true;
+  }
+
+  private updateProtection(delta: number) {
+    const remaining = advanceProtection({ hitMs: this.hitProtectionMs, starMs: this.starProtectionMs }, delta);
+    const starEnded = this.starProtectionMs > 0 && remaining.starMs === 0;
+    this.hitProtectionMs = remaining.hitMs;
+    this.starProtectionMs = remaining.starMs;
+    this.isInvincible = remaining.hitMs > 0 || remaining.starMs > 0;
+    this.player.setAlpha(remaining.hitMs > 0 && Math.floor(remaining.hitMs / 90) % 2 === 0 ? 0.45 : 1);
+    if (remaining.starMs > 0) {
+      const colors = [0xffdd55, 0x66ddff, 0xff88dd, 0x88ff88];
+      this.player.setTint(colors[Math.floor(remaining.starMs / 100) % colors.length]);
+    } else if (starEnded) this.player.clearTint();
+  }
 
   private playerHit() {
-    if (this.isInvincible) return;
+    if (this.isInvincible || this.isDead || this.isTransitioning) return;
     this.playHitSound();
     if (this.storedItemType) {
       const restoreType = this.storedItemType;
@@ -1031,7 +1080,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private die() {
-    if (this.isDead) return;
+    if (this.isDead || this.isTransitioning) return;
     this.isDead = true;
     this.isMusicPlaying = false;
     this.stopMusic();
@@ -1094,7 +1143,7 @@ export class GameScene extends Phaser.Scene {
     // Level name display - centered below HUD
     this.add.text(GAME_WIDTH / 2, 75, levelName, {
       fontSize: '16px',
-      fontFamily: 'Arial',
+      fontFamily: 'monospace',
       color: '#FFD700',
       stroke: '#000',
       strokeThickness: 2
@@ -1103,16 +1152,16 @@ export class GameScene extends Phaser.Scene {
     // ESC hint
     this.add.text(GAME_WIDTH - 20, GAME_HEIGHT - 20, '← → Laufen · Shift Sprint · ↑ / Z Sprung · X / Space Feuer · ESC Menü', {
       fontSize: '12px',
-      fontFamily: 'Arial',
+      fontFamily: 'monospace',
       color: '#aaa',
       stroke: '#000',
       strokeThickness: 1
     }).setOrigin(1, 1).setScrollFactor(0).setDepth(1000);
 
-    if (levelData?.coinGoal || levelData?.timeGate) {
+    if (levelData?.coinGoal || levelData?.timeGate || levelData?.id === 90) {
       this.coinGateText = this.add.text(GAME_WIDTH / 2, 100, '', {
         fontSize: '16px',
-        fontFamily: 'Arial',
+        fontFamily: 'monospace',
         color: '#FFD700',
         stroke: '#000',
         strokeThickness: 2
@@ -1124,9 +1173,16 @@ export class GameScene extends Phaser.Scene {
   private goalUnlocked(): boolean {
     const level = this.currentLevelData;
     if (!level) return false;
-    const coinOk = !level.coinGoal || this.coinCount >= level.coinGoal;
-    const timeOk = !level.timeGate || this.levelElapsed >= level.timeGate;
-    return coinOk && timeOk;
+    const bossHp = level.id === 90 ? this.remainingBossHp() : 0;
+    return goalConditionsMet(this.coinCount, level.coinGoal, this.levelElapsed, level.timeGate, bossHp);
+  }
+
+  private remainingBossHp(): number {
+    let hp = 0;
+    for (const enemy of this.enemies.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
+      if (enemy.getData('type') === 'boss' && !enemy.getData('defeated')) hp += enemy.getData('hp') ?? 3;
+    }
+    return hp;
   }
 
   private updateCoinGate() {
@@ -1134,7 +1190,7 @@ export class GameScene extends Phaser.Scene {
     if (!level) return;
     const coinGoal = level.coinGoal;
     const timeGate = level.timeGate;
-    if (!coinGoal && !timeGate) return;
+    if (!coinGoal && !timeGate && level.id !== 90) return;
     if (this.goalUnlocked()) {
       if (this.coinGateOpen) return;
       this.coinGateOpen = true;
@@ -1153,7 +1209,8 @@ export class GameScene extends Phaser.Scene {
     (this.goal.body as Phaser.Physics.Arcade.Body).enable = false;
     this.goal.setAlpha(0.4);
     if (this.coinGateText) {
-      if (coinGoal && this.coinCount < coinGoal) this.coinGateText.setText(`Coins: ${Math.min(this.coinCount, coinGoal)} / ${coinGoal}`);
+      if (level.id === 90 && this.remainingBossHp() > 0) this.coinGateText.setText('Besiege den Burghüter!');
+      else if (coinGoal && this.coinCount < coinGoal) this.coinGateText.setText(`Coins: ${Math.min(this.coinCount, coinGoal)} / ${coinGoal}`);
       else if (timeGate !== undefined) this.coinGateText.setText(`Zeit-Tor: ${Math.max(0, Math.ceil(timeGate - this.levelElapsed))}s`);
     }
   }
@@ -1181,7 +1238,7 @@ export class GameScene extends Phaser.Scene {
 
   private showScorePopup(text: string, x: number, y: number) {
     const popup = this.add.text(x, y, text, {
-      fontSize: '16px', fontFamily: 'Arial', color: '#ffffff',
+      fontSize: '16px', fontFamily: 'monospace', color: '#ffffff',
       stroke: '#000', strokeThickness: 3
     }).setOrigin(0.5).setDepth(1001);
     this.tweens.add({
@@ -1201,7 +1258,7 @@ export class GameScene extends Phaser.Scene {
     if (this.coinCount - this.lastCoinMilestone >= 100) {
       this.lastCoinMilestone += 100;
       const text = this.add.text(GAME_WIDTH / 2, 200, '1-UP', {
-        fontSize: '36px', fontFamily: 'Arial', color: '#4CAF50',
+        fontSize: '36px', fontFamily: 'monospace', color: '#4CAF50',
         stroke: '#000', strokeThickness: 5
       }).setOrigin(0.5).setScrollFactor(0).setDepth(1001);
       this.tweens.add({ targets: text, y: 120, alpha: 0, duration: 1500, onComplete: () => text.destroy() });
@@ -1214,9 +1271,8 @@ export class GameScene extends Phaser.Scene {
     if (!level) return;
 
     const entryPipe = level.pipeWarps?.find(w => {
-      const dx = Math.abs(this.player.x - w.pipeX);
-      const dy = Math.abs(this.player.y - w.pipeY);
-      return dx < 32 && dy < 16;
+      const lip = level.platforms.find(p => p.type === 'pipe_top' && Math.abs(p.x - w.pipeX) < 1 && Math.abs(p.y - w.pipeY) < 1);
+      return !!lip && pipeEntryAligned(this.player.x, body.bottom, lip.x, lip.y - lip.h / 2, lip.w);
     });
 
     if (!entryPipe) return;
@@ -1276,6 +1332,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     if (this.isDead || this.isTransitioning) return;
+    this.updateProtection(delta);
     this.updateUI();
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     const grounded = body.blocked.down || body.touching.down;
@@ -1302,8 +1359,11 @@ export class GameScene extends Phaser.Scene {
     const swimming = (this.currentBiome === 'water' && body.y > 500) || inWaterZone;
     const jumpDown = this.cursors.up.isDown || this.jumpKey.isDown;
     // Pipe intent takes precedence over buffered jumping.
-    const enteringPipe = grounded && this.cursors.down.isDown && jumpDown && !this.jumpState.wasDown;
-    if (enteringPipe) this.handlePipeEntry();
+    const enteringPipe = grounded && this.cursors.down.isDown;
+    if (enteringPipe) {
+      this.handlePipeEntry();
+      if (this.isTransitioning) return;
+    }
     const jump = stepJump(this.jumpState, {
       grounded, jumpDown, velocityY: body.velocity.y, deltaMs: delta,
       suppressed: enteringPipe || swimming, externalLaunch: this.externalLaunchPending,
@@ -1357,13 +1417,18 @@ export class GameScene extends Phaser.Scene {
     }
     if ((this.shootKey.isDown || this.spaceShoot.isDown) && this.isPlayerFire && time > this.lastFired) { this.shootFireball(); this.lastFired = time + 250; }
     
-    // Animate background for certain biomes
-    if (this.currentBiome === 'water' || this.currentBiome === 'beach-island') {
-      this.bgTiles.forEach((t, i) => t.tilePositionY += [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12][i] || 0);
-    } else if (this.currentBiome === 'sky-clouds' || this.currentBiome === 'space-star') {
-      this.bgTiles.forEach((t, i) => t.tilePositionX += [0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06][i] || 0);
+    // Keep every layer covering the viewport, even deep into the longest levels.
+    // The texture scrolls inside a fixed rectangle rather than the rectangle leaving the screen.
+    for (const tile of this.bgTiles) {
+      const factor = tile.getData('parallax') as number;
+      const ambient = (this.currentBiome === 'sky-clouds' || this.currentBiome === 'space-star')
+        ? this.moveAccum * factor * 0.008 : 0;
+      tile.tilePositionX = this.cameras.main.scrollX * factor + ambient;
+      if (this.currentBiome === 'water' || this.currentBiome === 'beach-island') {
+        tile.tilePositionY = this.moveAccum * factor * 0.016;
+      }
     }
-    
+
     // Rising lava / rising water (Phase 9: data-driven + chase clamp so it never traps the player)
     this.platforms.getChildren().forEach((p: any) => {
       if (p.getData?.('risingLava')) {
@@ -1427,6 +1492,11 @@ export class GameScene extends Phaser.Scene {
     // identical, so tuned feel is unchanged.
     this.moveAccum += delta;
     const mt = this.moveAccum;
+    const coinTexture = `coin_spin${Math.floor(mt / 130) % 4 + 1}`;
+    if (this.textures.exists(coinTexture)) this.coins.getChildren().forEach((coin: any) => coin.setTexture(coinTexture));
+    this.powerUps.getChildren().forEach((item: any) => {
+      if (item.y > (this.currentLevelData?.height ?? GAME_HEIGHT) + 100) item.destroy();
+    });
     let playerCarried = false;
     this.movingPlatforms.getChildren().forEach((mplat: any) => {
       const data = this.movingPlatformData.get(mplat);
@@ -1524,10 +1594,28 @@ export class GameScene extends Phaser.Scene {
     // Enemy AI behaviors (thwomp, boo, lakitu)
     const aiBiomeSpeed = BIOME_ENEMY_SPEED[this.currentBiome] ?? DEFAULT_ENEMY_SPEED;
     this.enemies.getChildren().forEach((enemy: any) => {
-      if (!enemy.body) return;
+      if (!enemy.body || !enemy.body.enable || enemy.getData('defeated')) return;
       const eType = enemy.getData('type') || enemy.texture?.key;
       
-      if (eType === 'thwomp') {
+      const eState = enemy.getData('state') || 'walking';
+      if (['goomba', 'koopa', 'spiny', 'robot', 'crab'].includes(eType) && eState === 'walking') {
+        const frame = Math.floor(mt / 140 + enemy.x / 200) % 2 + 1;
+        const texture = `${eType}_walk${frame}`;
+        if (this.textures.exists(texture)) enemy.setTexture(texture);
+        if (enemy.body.velocity.x !== 0) enemy.setFlipX(enemy.body.velocity.x < 0);
+      }
+      if (eType === 'piranha') {
+        const near = Math.abs(this.player.x - enemy.x) < 64;
+        const step = stepPiranha(enemy.getData('piranhaState') || { phase: 'hidden', elapsedMs: 0 }, delta, near);
+        enemy.setData('piranhaState', step.state);
+        const hiddenY = enemy.getData('hiddenY');
+        const peekY = enemy.getData('peekY');
+        enemy.setY(hiddenY + (peekY - hiddenY) * step.exposure);
+        enemy.body.updateFromGameObject();
+        enemy.body.checkCollision.none = step.exposure < 0.15;
+        const texture = step.state.phase === 'open' && Math.floor(mt / 180) % 2 ? 'piranha_open' : 'piranha_closed';
+        if (this.textures.exists(texture)) enemy.setTexture(texture);
+      } else if (eType === 'thwomp') {
         const isFalling = enemy.getData('isFalling');
         if (!isFalling) {
           const distX = Math.abs(this.player.x - enemy.x);
@@ -1537,7 +1625,8 @@ export class GameScene extends Phaser.Scene {
             enemy.setImmovable(false);
             enemy.setData('isFalling', true);
           }
-        } else if (enemy.body.blocked?.down) {
+        } else if (enemy.body.blocked?.down && !enemy.getData('isReturning')) {
+          enemy.setData('isReturning', true);
           const origY = enemy.getData('origY');
           const origX = enemy.getData('origX');
           enemy.body.setAllowGravity(false);
@@ -1549,13 +1638,15 @@ export class GameScene extends Phaser.Scene {
             x: origX,
             duration: 2000,
             ease: 'Sine.easeIn',
-            onComplete: () => enemy.setData('isFalling', false),
+            onComplete: () => { enemy.setData('isFalling', false); enemy.setData('isReturning', false); },
           });
         }
       } else if (eType === 'boo') {
         const playerLeftOfBoo = this.player.x < enemy.x;
         const facingTowardBoo = playerLeftOfBoo !== this.player.flipX;
         const booSpeed = enemy.getData('speed') || 140;
+        if (this.textures.exists(facingTowardBoo ? 'boo_shy' : 'boo')) enemy.setTexture(facingTowardBoo ? 'boo_shy' : 'boo');
+        enemy.setFlipX(this.player.x < enemy.x);
         if (facingTowardBoo) {
           enemy.setVelocityX(0);
           enemy.setVelocityY(0);
@@ -1599,9 +1690,21 @@ export class GameScene extends Phaser.Scene {
       } else if (eType === 'boss') {
         const hp: number = enemy.getData('hp') || 3;
         if (hp <= 0) return;
+        // The arena must stay winnable after losing fire power: replenish its flower blocks.
+        const refillMs = (enemy.getData('flowerRefillMs') || 0) + delta;
+        if (!this.isPlayerFire && refillMs >= 6000) {
+          this.questionBlocks.getChildren().forEach((block: any) => {
+            if (block.contents === 'flower' && block.isEmpty) {
+              block.isEmpty = false;
+              block.setTexture('question');
+            }
+          });
+          enemy.setData('flowerRefillMs', 0);
+        } else enemy.setData('flowerRefillMs', refillMs);
         const distX = this.player.x - enemy.x;
         const distY = this.player.y - enemy.y;
-        enemy.setVelocityX(distX > 0 ? 50 : -50);
+        if (Math.abs(distX) < GAME_WIDTH * 0.85) enemy.setVelocityX(distX > 0 ? 50 : -50);
+        else enemy.setVelocityX(0);
         if (Math.abs(distX) < 500 && Math.abs(distY) < 300 && time - this.lastBossShot > 2000) {
           this.lastBossShot = time;
           const proj = this.bossProjectiles.create(enemy.x, enemy.y, 'fireball');
@@ -1613,15 +1716,15 @@ export class GameScene extends Phaser.Scene {
         }
       }
       // Koopa shell timer: re-awaken after 4s
-      const eState = enemy.getData('state') || 'walking';
       if (eType === 'koopa' && eState === 'shell_idle') {
         const timer = enemy.getData('shellTimer') || 0;
         if (timer > 0) {
-          enemy.setData('shellTimer', timer - this.game.loop.delta);
+          enemy.setData('shellTimer', timer - delta);
         } else {
           enemy.setData('state', 'walking');
-          enemy.setScale(1, 1);
-          enemy.body.setSize(28, 34);
+          enemy.setScale(1, 1).setTexture('koopa_walk1');
+          enemy.body.setSize(28, 34, true);
+          enemy.setData('noEdgeDetection', false);
           const shellDir = enemy.getData('shellDir') || -1;
           enemy.setVelocityX(shellDir * aiBiomeSpeed);
           enemy.setBounce(0);
@@ -1661,10 +1764,7 @@ export class GameScene extends Phaser.Scene {
     
     // Level 90: Boss HP bar
     if (this.levelId === 90) {
-      let totalHp = 0;
-      this.enemies.getChildren().forEach((e: any) => {
-        if ((e.getData('type') || e.texture?.key) === 'boss') totalHp += e.getData('hp') || 0;
-      });
+      const totalHp = this.remainingBossHp();
       if (!this.bossHpBar) {
         this.bossHpBar = this.add.graphics().setScrollFactor(0).setDepth(1001);
       }
@@ -1673,9 +1773,9 @@ export class GameScene extends Phaser.Scene {
         this.bossHpBar.fillStyle(0x000000, 0.7);
         this.bossHpBar.fillRect(GAME_WIDTH / 2 - 110, 100, 220, 20);
         this.bossHpBar.fillStyle(0xff0000, 1);
-        this.bossHpBar.fillRect(GAME_WIDTH / 2 - 108, 102, 216 * (totalHp / 12), 16);
+        this.bossHpBar.fillRect(GAME_WIDTH / 2 - 108, 102, 216 * (totalHp / Math.max(1, this.bossHp)), 16);
         this.bossHpBar.fillStyle(0xffffff, 0.3);
-        this.bossHpBar.fillRect(GAME_WIDTH / 2 - 108, 102, 216 * (totalHp / 12), 8);
+        this.bossHpBar.fillRect(GAME_WIDTH / 2 - 108, 102, 216 * (totalHp / Math.max(1, this.bossHp)), 8);
       }
     }
     
@@ -1737,7 +1837,13 @@ export class GameScene extends Phaser.Scene {
     this.isMusicPlaying = false;
     this.stopMusic();
     const timeBonus = Math.max(0, this.timeLeft);
-    this.scene.restart({ levelIndex: this.levelIndex + 1, lives: this.lives, score: this.score + 1000 + timeBonus, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
+    const nextIndex = nextCampaignLevel(this.levelIndex, getLevelCount());
+    const score = this.score + 1000 + timeBonus;
+    if (nextIndex === null) {
+      this.scene.start('GameOver', { score, coins: this.coinCount, victory: true });
+    } else {
+      this.scene.restart({ levelIndex: nextIndex, lives: this.lives, score, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
+    }
   }
 
   private shootFireball() {
@@ -1750,6 +1856,7 @@ export class GameScene extends Phaser.Scene {
       if (this.isTransitioning) return;
       if (!this.goalUnlocked()) return;
       this.isTransitioning = true;
+      this.timerEvent.paused = true;
       this.playGoalSound();
       this.isMusicPlaying = false;
       this.stopMusic();
@@ -1784,17 +1891,14 @@ export class GameScene extends Phaser.Scene {
             duration: 400,
           });
           const clearText = this.add.text(this.player.x, this.player.y - 60, 'COURSE CLEAR!', {
-            fontSize: '24px', fontFamily: 'Arial', color: '#FFD700',
+            fontSize: '24px', fontFamily: 'monospace', color: '#FFD700',
             stroke: '#000', strokeThickness: 4
           }).setOrigin(0.5).setDepth(1001);
           this.tweens.add({ targets: clearText, y: clearText.y - 30, alpha: 0, duration: 1500, delay: 500 });
         }
       });
 
-      this.time.delayedCall(2000, () => {
-        const timeBonus = Math.max(0, this.timeLeft);
-        this.scene.restart({ levelIndex: this.levelIndex + 1, lives: this.lives, score: this.score + 1000 + timeBonus, coinCount: this.coinCount, isPlayerBig: this.isPlayerBig, isPlayerFire: this.isPlayerFire });
-      });
+      this.time.delayedCall(2000, () => this.nextLevel());
   }
 
   private startBgm() {

@@ -42,9 +42,9 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 
 ## 4. Gegner & Kampf
 
-- **R-022** – Gegner sind in stompbar (goomba, koopa, spiny, robot, crab, ghost, squid, ufo — Sprung von oben tötet, +500 Punkte) und nicht-stompbar (piranha, thwomp, boo, lakitu, bullet_bill, fireball, boss — jeder Kontakt tötet) geteilt.
-- **R-023** – Gegner-AI: Bodengegner erkennen Kanten und drehen um; Piranhas erscheinen nur an Pipes (Auf/Ab-Tween); Thwomp fällt nur bei Spieler-Kontakt von oben; Boo erstarrt bei Blickkontakt und folgt sonst; Lakitu wirft alle 3 s Spiny-Eier; Gegner-Tempo ist biome-abhängig (80–130).
-- **R-024** – Boss (L90): 3 HP, schießt alle 2 s zielsuchende Feuerbälle, ist nur durch Spieler-Fireballs verletzbar (+200 pro Treffer), hat eine HP-Bar und wird von Arena-Wänden eingegrenzt.
+- **R-022** – Gegner sind in stompbar (goomba, koopa, robot, crab, ghost, squid, ufo — Sprung von oben tötet, +500 Punkte) und nicht-stompbar (spiny, piranha, thwomp, boo, lakitu, bullet_bill, fireball, boss — Kontakt verursacht Schaden, außer bei Schutz) geteilt.
+- **R-023** – Gegner-AI: Bodengegner erkennen Kanten und drehen um; Piranhas erscheinen nur an Pipes und warten bei Spielernähe; Thwomp fällt nur bei Spielerposition darunter; Boo erstarrt bei Blickkontakt und folgt sonst; Lakitu wirft alle 3 s Spiny-Eier; Gegner-Tempo ist biome-abhängig (80–130).
+- **R-024** – Boss (L90): 3 HP, schießt alle 2 s zielsuchende Feuerbälle, ist nur durch Spieler-Fireballs verletzbar (+200 pro Treffer), hat eine HP-Bar und wird von Arena-Wänden eingegrenzt. Die Flagge öffnet erst nach seinem Tod; verlorene Feuerkraft bleibt erneut erhältlich. Der letzte Levelabschluss führt zum Siegesbildschirm.
 - **R-025** – Alle in Leveln verwendeten Gegner-Typen mappen auf gültige, generierte Texturen.
 
 ## 5. Level-Struktur & Lösbarkeit
@@ -109,6 +109,12 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 
 - **R-064** – Melodische Biome-Musik: 15 unterschiedliche Motive mit harmonischen Taktankern, echten Notenlängen und Hook-Reprise; ruhige Biome mit weniger Percussion und langsameren Tempi als Action-Biome. Begleitdichte und Mischung sind pro Song steuerbar.
 - **R-065** – Musik-Wiedergabe: Akkordflächen einmal pro Takt, notenlängentreuer Lead, taktsynchrones Delay, deterministische Percussion sowie vollständige Audio-Knoten-Freigabe beim Stoppen.
+
+- **R-066** – Einheitliche Pixelgrafik mit maßgleichen Gegner-/Münzanimationsphasen und eigenem Panzer; Terrain nutzt native Deck-/Füllkacheln statt gestreckter Texturen.
+- **R-067** – Verlässliche Gegner-/Itemregeln: Treffer-Schutz ist kein Stern, bewegte Panzer von oben stoppbar, Spiny gefährlich, Bullet Bills ohne Gravitation, Piranhas warten bei Nähe; Pilz/Blume/Stern bewegen sich unterschiedlich.
+- **R-068** – Levelrhythmus aller 90 Level: kompakter gestaffelter Einstieg, individuelle Belohnungs-/Erholungsstellen, geschützte untere Routen und freiwillige Entdeckungsräume; alle Ziele und Bonusplattformen ohne Auto-Fixer erreichbar.
+- **R-069** – Röhrenzugänge prüfen die Fußposition auf dem Deckel; tiefe Levelstarts bleiben in der Kamera sichtbar und Hintergründe decken auch lange Level ab.
+- **R-070** – Physikalische Lösbarkeit verwendet die tatsächliche biomeabhängige Sprunghöhe und eine kürzere Flugzeit beim Aufwärtssprung; unerreichbare Höhen werden abgelehnt.
 
 ## Traceability
 
@@ -206,7 +212,7 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-049 | Crumble datengetrieben | tests/Phase9Features.test.ts | crumble platforms appear in the finale biomes |
 | R-050 | Ice-Plattformen nur ice-snow | tests/Phase9Features.test.ts | ice platforms exist in ice-snow and nowhere else |
 | R-051 | Conveyor-Bänder in factory | tests/Phase9Features.test.ts | conveyor belts exist in factory levels |
-| R-052 | Checkpoints in langen Leveln | tests/Phase9Features.test.ts | checkpoints exist in long levels only |
+| R-052 | Checkpoints in langen Leveln | tests/Phase9Features.test.ts | checkpoints have safe support and protect every long level |
 | R-053 | Wind- & Wasser-Zonen | tests/Phase9Features.test.ts | wind zones appear in at least four windy biomes |
 | R-053 | Wind- & Wasser-Zonen | tests/Phase9Features.test.ts | water zones appear in water and beach-island |
 | R-054 | Keys/Doors & Multi-Goal | tests/Phase9Features.test.ts | keys and doors are paired and never block start or goal |
@@ -240,3 +246,23 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-065 | Audio-Freigabe | tests/MusicPlayer.test.ts | disconnects completed voices |
 | R-065 | Deterministische Percussion | tests/MusicPlayer.test.ts | creates bounded, repeatable non-silent |
 | R-062 | Direkte Steuerung ohne Rutschen | tests/PlayerMovement.test.ts | stops and reverses immediately |
+| R-066 | Pixel-Animationsgrößen | tests/PixelAssets.test.ts | generates actual animation frames |
+| R-066 | Terrain-Raster | tests/TerrainRendering.test.ts | repeats original-size pixels |
+| R-066 | Runtime-Terrain | e2e/rendering-polish.test.ts | terrain repeats native pixels |
+| R-067 | Treffer und Stern | tests/EnemyRules.test.ts | keeps hit protection separate |
+| R-067 | Panzer und Stacheln | tests/EnemyRules.test.ts | stops moving shells from above |
+| R-067 | Item-Bewegung | tests/EnemyRules.test.ts | gives flowers, walking mushrooms |
+| R-067 | Piranha-Nähe | tests/EnemyRules.test.ts | holds hidden piranhas near |
+| R-067 | Bullet-Flug | e2e/enemy-behavior.test.ts | bullet bills keep horizontal flight |
+| R-068 | Gestaffelter Einstieg | tests/WorldOneDesign.test.ts | introduces hills in a compact second level |
+| R-068 | Naturwelten | tests/NatureLevelPolish.test.ts | gives all 42 nature levels |
+| R-068 | Herausforderung | tests/ChallengeLevelPolish.test.ts | provides a broad recovery deck |
+| R-068 | Freiwillige Entdeckungen | tests/ChallengeLevelPolish.test.ts | keeps the route solvable without |
+| R-068 | Lösbarkeit aller Level | tests/StrictPhysicsAudit.test.ts | reaches every authored goal and bonus platform |
+| R-069 | Fußbasierter Röhrenzugang | tests/EnemyRules.test.ts | enters pipes by foot position |
+| R-069 | Tiefe Level und Hintergrund | e2e/rendering-polish.test.ts | deep level starts stay visible |
+| R-070 | Aufwärtssprung | tests/Physics.test.ts | upward jump uses the shorter ballistic flight time |
+| R-070 | Gesamte Levelprüfung | tests/StrictPhysicsAudit.test.ts | reaches every authored goal and bonus platform |
+| R-024 | Finale Boss-Sperre | tests/GoalRules.test.ts | keeps the final flag locked |
+| R-024 | Boss und Feuerkraft | e2e/rendering-polish.test.ts | final boss gates the flag |
+| R-024 | Kampagnenabschluss | tests/GoalRules.test.ts | ends the campaign after the final level |

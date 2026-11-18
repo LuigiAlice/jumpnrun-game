@@ -117,11 +117,13 @@ describe('Phase 9: data-driven level elements', () => {
     expect(beltLevels.some(l => l.platforms.some(p => (p.conveyor ?? 0) > 0))).toBe(true);
   });
 
-  it('checkpoints exist in long levels only', () => {
+  it('checkpoints have safe support and protect every long level', () => {
     const cpLevels = levels.filter(l => (l.checkpoints || []).length > 0);
     expect(cpLevels.length).toBeGreaterThanOrEqual(8);
+    for (const level of levels.filter(l => l.width >= 16000)) {
+      expect(level.checkpoints?.length, `${label(level)} needs a checkpoint`).toBeGreaterThan(0);
+    }
     for (const level of cpLevels) {
-      expect(level.width, `${label(level)} has checkpoints but is short`).toBeGreaterThanOrEqual(12000);
       for (const cp of level.checkpoints || []) {
         expect(hasSupport(level, cp), `${label(level)}: checkpoint (${cp.x}, ${cp.y}) floating`).toBe(true);
       }

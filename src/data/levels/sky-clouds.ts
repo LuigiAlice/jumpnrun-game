@@ -1,3 +1,4 @@
+import { polishNatureLevel } from './naturePolish';
 // Sky Clouds World - 6 Levels (25-30)
 // Phase 9 archetypes: 25 Wolkenhopser, 26 Windkanal, 27 Wolkenröhren,
 // 28 Himmelsleiter, 29 Luftschlacht, 30 Wolkenfinale.
@@ -24,7 +25,7 @@ const plat = (x: number, top: number, w: number, h: number, type: PlatformType):
 const crumble = (x: number, top: number, w: number, h: number, type: PlatformType = 'platform_medium'): Platform =>
   createCrumblePlat(x, top + h / 2, w, h, type);
 
-export const SKY_CLOUDS_LEVELS: LevelData[] = [
+const SKY_CLOUDS_AUTHORED_LEVELS: LevelData[] = [
   // ============================================================
   // Level 25: "Cloud Hop" (Wolkenhopser) - Tutorial
   // Gentle island hops, one two-tier cloud (high bonus route), a
@@ -575,3 +576,6 @@ export const SKY_CLOUDS_LEVELS: LevelData[] = [
     ],
   },
 ];
+
+// Individually anchored landscape, reward and recovery polish; original jump tops stay fixed.
+export const SKY_CLOUDS_LEVELS: LevelData[] = SKY_CLOUDS_AUTHORED_LEVELS.map(polishNatureLevel);

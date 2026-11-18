@@ -37,7 +37,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     platforms.push(createPlat(4500, 240, 300, 24, 'platform_hard')); // top 228
     platforms.push(createPlat(4950, 180, 200, 24, 'platform_medium')); // top 168 Mond-Bonus
     platforms.push(createPlat(5200, 600, 400, 24, 'space'));        // top 588
-    platforms.push(createPlat(6000, 560, 500, 40, 'space'));        // top 540
+    platforms.push(createPlat(6000, 608, 500, 136, 'space'));        // top 540
     platforms.push(...staircase(6250, 540, 3, 80, 150, 45, 'space')); // tops 460/380/300
     platforms.push(createPlat(7100, 300, 300, 24, 'platform_hard')); // top 288
     platforms.push(createPlat(7900, 480, 600, 40, 'space'));        // top 460 Ziel [7600,8200]
@@ -56,6 +56,9 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     coins.push(...coinArc(6050, 480, 5, 80, 70));
     coins.push(...coinTrail(6400, 380, 6700, 380, 3));
     coins.push(...coinTrail(7400, 400, 8000, 400, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinDiamond(5875, 350, 48));
 
     return {
       id: 79, name: 'Orbit', width: 8600, height: 1000, biome: 'space-star',
@@ -77,7 +80,6 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         createEnemy(1700, 748, 'robot'),
         createEnemy(2580, 668, 'robot'),
         createEnemy(2950, 578, 'robot'),
-        createEnemy(6000, 520, 'robot'),
         createEnemy(7100, 268, 'robot'),
         createEnemy(2300, 500, 'ufo'),
         createEnemy(4400, 320, 'ufo'),
@@ -125,7 +127,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     // Sichere Route durch die Schlucht
     platforms.push(createPlat(2800, 980, 1600, 40, 'stone'));        // top 960 [2000,3600]
     platforms.push(createPlat(3750, 900, 300, 24, 'platform_easy')); // top 888 Ausstieg
-    platforms.push(createPlat(4400, 860, 700, 40, 'space'));         // top 840 [4050,4750]
+    platforms.push(createPlat(4400, 908, 700, 136, 'space'));         // top 840 [4050,4750]
     platforms.push(createPlat(5600, 720, 400, 24, 'platform_easy')); // top 708
     platforms.push(createPlat(6300, 680, 400, 40, 'space'));         // top 660 [6100,6500]
     platforms.push(createPlat(6900, 620, 300, 24, 'platform_medium')); // top 608
@@ -150,6 +152,10 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     coins.push(...coinTrail(7500, 260, 7800, 260, 3));
     coins.push(...coinTrail(8200, 480, 8600, 480, 3));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(4575, 712, 32, 32, 'hidden'));
+    coins.push(...coinDiamond(4575, 650, 48));
+
     return {
       id: 80, name: 'Asteroidenfeld', width: 9000, height: 1000, biome: 'space-star',
       platforms,
@@ -169,12 +175,10 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         createEnemy(1400, 780, 'robot'),
         createEnemy(2030, 730, 'robot'),
         createEnemy(3300, 940, 'robot'),
-        createEnemy(4300, 820, 'robot'),
         createEnemy(5600, 688, 'robot'),
         createEnemy(6300, 640, 'robot'),
         createEnemy(6900, 588, 'robot'),
         createEnemy(2500, 420, 'ufo'),
-        createEnemy(4800, 520, 'ufo'),
         createEnemy(7200, 300, 'ufo'),
         createEnemy(8000, 280, 'ufo'),
       ],
@@ -213,7 +217,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     platforms.push(...zigzagClimb(3200, 840, 4, 90, 110, 130, 'platform_medium')); // tops 750/660/570/480
     platforms.push(createPlat(3700, 420, 700, 40, 'metal'));         // top 400 [3350,4050]
     platforms.push(createPlat(4800, 200, 500, 24, 'platform_hard')); // top 188 Aussenring [4550,5050]
-    platforms.push(createPlat(5400, 680, 600, 40, 'metal'));         // top 660 [5100,5700]
+    platforms.push(createPlat(5400, 728, 600, 136, 'metal'));         // top 660 [5100,5700]
     platforms.push(createPlat(6050, 740, 500, 40, 'metal'));         // top 720 Bonusraum [5800,6300]
     platforms.push(createPlat(6500, 260, 400, 24, 'platform_easy')); // top 248 Laufsteg
     platforms.push(createPlat(7300, 300, 800, 40, 'metal'));         // top 280 Beobachtungsdeck [6900,7700]
@@ -241,6 +245,9 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     coins.push(...coinTrail(9700, 140, 10150, 140, 3));
     coins.push(...coinTrail(10800, 220, 11350, 220, 4));
     coins.push(...coinTrail(11700, 180, 12150, 180, 3));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinDiamond(5250, 470, 48));
 
     return {
       id: 81, name: 'Raumstation', width: 12600, height: 1100, biome: 'space-star',
@@ -270,7 +277,6 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         createEnemy(4400, 200, 'ufo'),
         createEnemy(6800, 140, 'ufo'),
         createEnemy(10400, 180, 'ufo'),
-        createEnemy(5500, 400, 'ghost'),
       ],
       decorations: [
         createDeco(300, 700, 'satellite'),
@@ -319,7 +325,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     platforms.push(createCrumblePlat(7000, 60, 120, 24));            // top 48
     platforms.push(createPlat(7300, 200, 500, 40, 'metal'));         // top 180 Landung [7050,7550]
     platforms.push(createPlat(8100, 360, 600, 40, 'metal'));         // top 340 [7800,8400]
-    platforms.push(createPlat(9000, 500, 700, 40, 'space'));         // top 480 [8650,9350]
+    platforms.push(createPlat(9000, 548, 700, 136, 'space'));         // top 480 [8650,9350]
     platforms.push(createPlat(10000, 620, 700, 40, 'metal'));        // top 600 [9650,10350]
     platforms.push(createPlat(10900, 700, 700, 40, 'space'));        // top 680 [10550,11250]
     platforms.push(createPlat(11900, 780, 800, 40, 'space'));        // top 760 Ziel [11500,12300]
@@ -343,6 +349,10 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     coins.push(...coinTrail(9800, 540, 10250, 540, 3));
     coins.push(...coinTrail(10700, 620, 11150, 620, 3));
     coins.push(...coinTrail(11700, 700, 12250, 700, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(8825, 352, 32, 32, 'brick_secret'));
+    coins.push(...coinDiamond(8825, 290, 48));
 
     return {
       id: 82, name: 'Satelliten-Kletterer', width: 12600, height: 1150, biome: 'space-star',
@@ -370,7 +380,6 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         createEnemy(10000, 580, 'robot'),
         createEnemy(2800, 200, 'ufo'),
         createEnemy(6000, 200, 'ufo'),
-        createEnemy(8600, 300, 'ufo'),
         createEnemy(11000, 500, 'ufo'),
         createEnemy(5000, 300, 'ghost'),
       ],
@@ -417,7 +426,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     platforms.push(createPlat(5200, 560, 600, 40, 'metal'));         // top 540 [4900,5500]
     platforms.push(createPlat(6150, 240, 400, 24, 'platform_hard')); // top 228 UFO-Nest
     platforms.push(createPlat(6700, 480, 500, 40, 'space'));         // top 460 [6450,6950]
-    platforms.push(createPlat(7900, 560, 500, 40, 'space'));         // top 540 [7650,8150]
+    platforms.push(createPlat(7900, 608, 500, 136, 'space'));         // top 540 [7650,8150]
     platforms.push(...gapWithPlatforms(1, 8150, 552, 700, 3, {
       widths: [120, 130, 110], dy: [30, 60, 0],
       types: ['platform_medium', 'platform_easy', 'platform_hard'], xOffsets: [0, 20, -15],
@@ -440,6 +449,9 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     coins.push(...coinTrail(8900, 460, 9400, 460, 4));
     coins.push(...coinArc(10000, 520, 5, 80, 70));
     coins.push(...coinTrail(10800, 560, 11400, 560, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinDiamond(7775, 350, 48));
 
     return {
       id: 83, name: 'UFO-Horde', width: 12000, height: 1000, biome: 'space-star',
@@ -465,7 +477,6 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         createEnemy(4400, 580, 'robot'),
         createEnemy(5200, 520, 'robot'),
         createEnemy(6700, 440, 'robot'),
-        createEnemy(7900, 520, 'robot'),
         createEnemy(9100, 520, 'robot'),
         createEnemy(1200, 600, 'ufo'),
         createEnemy(2900, 500, 'ufo'),
@@ -474,7 +485,6 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         createEnemy(5600, 350, 'ufo'),
         createEnemy(6400, 300, 'ufo'),
         createEnemy(7000, 350, 'ufo'),
-        createEnemy(8000, 420, 'ufo'),
         createEnemy(8800, 400, 'ufo'),
         createEnemy(9800, 450, 'ufo'),
         createEnemy(10800, 500, 'ufo'),
@@ -541,7 +551,7 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     platforms.push(createPlat(8300, 680, 200, 24, 'platform_easy')); // top 668
     platforms.push(createPlat(8550, 560, 200, 24, 'platform_medium')); // top 548
     platforms.push(createPlat(8100, 420, 600, 40, 'space'));         // top 400 Finaldeck [7800,8400]
-    platforms.push(createPlat(9100, 480, 700, 40, 'space'));         // top 460 [8750,9450]
+    platforms.push(createPlat(9100, 528, 700, 136, 'space'));         // top 460 [8750,9450]
     platforms.push(...staircase(9450, 460, 3, 90, 160, 50, 'metal')); // tops 370/280/190
     platforms.push(createPlat(10400, 160, 700, 40, 'space'));        // top 140 Nova-Krone [10050,10750]
     platforms.push(createPlat(11200, 260, 600, 40, 'metal'));        // top 240 [10900,11500]
@@ -568,6 +578,10 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
     coins.push(...coinTrail(10950, 200, 11450, 200, 4));
     coins.push(...coinArc(12200, 280, 5, 80, 70));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(8925, 332, 32, 32, 'hidden'));
+    coins.push(...coinDiamond(8925, 270, 48));
+
     return {
       id: 84, name: 'Nova-Finale', width: 13000, height: 1050, biome: 'space-star',
       platforms,
@@ -591,7 +605,6 @@ export const SPACE_STAR_LEVELS: LevelData[] = [
         createEnemy(6500, 520, 'robot'),
         createEnemy(7100, 720, 'robot'),
         createEnemy(7700, 760, 'robot'),
-        createEnemy(9100, 440, 'robot'),
         createEnemy(11200, 220, 'robot'),
         createEnemy(2000, 400, 'ufo'),
         createEnemy(5000, 300, 'ufo'),

@@ -10,10 +10,25 @@ import {
   LevelData, createPlat, createQB, createEnemy, createDeco,
   createMovingPlat, createSpring, createSpike, createCrumblePlat,
   createCheckpoint, createWindZone,
-  staircase, plateauSection, pitFloor, twoTierSection, islandCluster,
+  staircase, pitFloor, twoTierSection, islandCluster,
   zigzagClimb, coinArc, coinDiamond, coinTrail, coinLadder,
   gapWithPlatforms, pipeSection,
 } from './helpers';
+
+/** Ground faces continue below the screen instead of hovering as thin strips. */
+const landscape = (platforms: LevelData['platforms']): LevelData['platforms'] => platforms.map(p => {
+  const top = p.y - p.h / 2;
+  // High optional islands keep their open underside: never seal an existing lower route.
+  if (p.type !== 'grass' || top < 480) return p;
+  return { ...p, y: (top + 800) / 2, h: 800 - top };
+});
+
+/** Sculpted columns keep the original jumpable tops, with visible soil underneath. */
+const hillSteps = (x: number, baseTop: number, count: number, rise: number, width: number, gap: number) =>
+  staircase(x, baseTop, count, rise, width, gap, 'grass').map(p => {
+    const top = p.y - p.h / 2;
+    return { ...p, y: (top + 800) / 2, h: 800 - top };
+  });
 
 export const GRASSLANDS_LEVELS: LevelData[] = [
   // ============================================================
@@ -71,7 +86,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(140, 480, 560, 480, 4));
     coins.push(...coinLadder(520, 350, 300, 2));
-    coins.push(...coinArc(400, 470, 5, 80, 80));
+    coins.push(...coinArc(400, 375, 5, 60, 60));
     coins.push(...coinTrail(700, 430, 1200, 240, 4));
     coins.push(...coinDiamond(1440, 170, 60));
     coins.push(...coinTrail(1650, 290, 1900, 400, 3));
@@ -82,8 +97,8 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     coins.push(...coinTrail(6000, 450, 6100, 450, 2));
 
     return {
-      id: 1, name: 'Grasslands Plains', width: 6400, height: 800, biome: 'grasslands',
-      platforms,
+      id: 1, name: 'Wiesenweg und erste Sprünge', width: 6400, height: 800, biome: 'grasslands',
+      platforms: landscape(platforms),
       movingPlatforms: [
         createMovingPlat(5200, 380, 110, 24, 'platform_easy', 'vertical', 100, 18),
       ],
@@ -122,137 +137,72 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
   })(),
 
   // ============================================================
-  // Level 2 (Hügel & Gruben): drei Hügel, zwei Gruben mit Rändern,
-  // Crumbling-Brücke als optionale Abkürzung über Grube 1,
-  // Zwei-Ebenen-Route, Checkpoints (width >= 12000) und eine
-  // circulare Moving-Platform als Bonus über der zweiten Grube.
+  // Level 2: Orchard hills. One idea at a time: gentle solid hills,
+  // a first short gap, a sheltered coin alcove, then a recoverable pit.
+  // No spikes, crumble traps or advanced enemy types in the introduction.
   // ============================================================
   (() => {
-    const platforms = [] as LevelData['platforms'];
-    platforms.push(createPlat(450, 660, 700, 40, 'grass'));
-    // Hill 1
-    platforms.push(...staircase(850, 640, 3, 70, 130, 40, 'grass'));
-    platforms.push(createPlat(1450, 420, 260, 40, 'grass'));
-    platforms.push(createPlat(1720, 500, 140, 24, 'platform_medium'));
-    // Pit 1 (depth 180) with ledges out of it
-    platforms.push(...pitFloor(1850, 640, 700, 180, 'stone'));
-    platforms.push(createPlat(1980, 760, 110, 24, 'platform_easy'));
-    platforms.push(createPlat(2250, 700, 110, 24, 'platform_medium'));
-    platforms.push(createPlat(2480, 660, 110, 24, 'platform_hard'));
-    // Crumble shortcut across the pit (optional, solver-agnostic)
-    platforms.push(createCrumblePlat(1950, 560, 120, 24, 'platform_medium'));
-    platforms.push(createCrumblePlat(2150, 520, 120, 24, 'platform_medium'));
-    platforms.push(createCrumblePlat(2350, 560, 120, 24, 'platform_medium'));
-    platforms.push(createPlat(2950, 660, 800, 40, 'grass'));
-    // Two-tier section
-    platforms.push(...twoTierSection(3450, 640, 700, 'grass', 'stone'));
-    platforms.push(createPlat(4450, 660, 600, 40, 'grass'));
-    // Pit 2 (depth 200)
-    platforms.push(...pitFloor(4800, 640, 600, 200, 'stone'));
-    platforms.push(createPlat(4950, 760, 100, 24, 'platform_easy'));
-    platforms.push(createPlat(5250, 700, 100, 24, 'platform_medium'));
-    platforms.push(createPlat(5700, 660, 700, 40, 'grass'));
-    platforms.push(createPlat(6200, 620, 110, 24, 'platform_easy'));
-    platforms.push(createPlat(6700, 660, 800, 40, 'grass'));
-    // Rolling hills
-    platforms.push(...staircase(7150, 640, 3, 70, 140, 45, 'grass'));
-    platforms.push(createPlat(7830, 500, 140, 24, 'platform_hard'));
-    platforms.push(createPlat(8200, 660, 700, 40, 'grass'));
-    platforms.push(...staircase(8650, 640, 2, 80, 130, 40, 'grass'));
-    platforms.push(createPlat(9100, 470, 260, 40, 'grass'));
-    platforms.push(createPlat(9450, 590, 140, 24, 'platform_medium'));
-    platforms.push(createPlat(9800, 660, 800, 40, 'grass'));
-    // Final long climb
-    platforms.push(...staircase(10250, 640, 4, 70, 140, 40, 'grass'));
-    platforms.push(createPlat(11050, 350, 150, 24, 'platform_hard'));
-    platforms.push(createPlat(11350, 420, 130, 24, 'platform_medium'));
-    platforms.push(...plateauSection(11600, 640, [
-      { dx: 0, dy: 0, w: 300, h: 40, type: 'grass' },
-      { dx: 340, dy: 120, w: 260, h: 40, type: 'stone' },
-      { dx: 640, dy: 240, w: 300, h: 40, type: 'grass' },
-    ]));
-
-    const coins = [] as LevelData['coins'];
-    coins.push(...coinTrail(120, 580, 780, 580, 4));
-    coins.push(...coinTrail(880, 550, 1280, 370, 4));
-    coins.push(...coinArc(1440, 350, 5, 70, 80));
-    coins.push(...coinTrail(1900, 800, 2500, 800, 5));
-    coins.push(...coinTrail(1900, 520, 2400, 520, 5));
-    coins.push(...coinDiamond(2950, 560, 70));
-    coins.push(...coinArc(3450, 560, 5, 80, 80));
-    coins.push(...coinTrail(4950, 730, 5250, 660, 3));
-    coins.push(...coinDiamond(6200, 560, 60));
-    coins.push(...coinArc(7150, 560, 5, 70, 80));
-    coins.push(...coinLadder(9100, 430, 300, 3));
-    coins.push(...coinTrail(10300, 540, 10880, 300, 5));
-    coins.push(...coinDiamond(12390, 330, 70));
-
+    const land = (left: number, right: number, top: number) =>
+      createPlat((left + right) / 2, (top + 800) / 2, right - left, 800 - top, 'grass');
+    const platforms: LevelData['platforms'] = [
+      land(100, 1100, 530),
+      land(1100, 1330, 490), land(1330, 1560, 450), land(1560, 2090, 410),
+      land(2090, 2390, 470), land(2390, 3000, 530),
+      // A single 180px pit is introduced with a visible coin arc.
+      land(3180, 4050, 530),
+      // Optional sheltered overlook. Main route stays below the 160px-high floor.
+      createPlat(3510, 430, 110, 24, 'platform_easy'),
+      createPlat(3700, 380, 220, 24, 'wood'),
+      createPlat(3740, 192, 300, 24, 'wood'),
+      createPlat(3874, 286, 32, 164, 'wood'),
+      createPlat(3500, 338, 32, 32, 'hidden'),
+      // Recoverable grassy hollow: 120px depth, safe ledges and no enemy in the pit.
+      land(4050, 4490, 650),
+      createPlat(4160, 590, 110, 24, 'platform_easy'),
+      createPlat(4400, 590, 110, 24, 'platform_medium'),
+      land(4490, 4820, 530),
+      land(4820, 5090, 480), land(5090, 5400, 430),
+      land(5400, 5660, 480), land(5660, 5870, 530),
+      land(6050, 7000, 530),
+      createPlat(6380, 420, 32, 32, 'brick'),
+      createPlat(6444, 420, 32, 32, 'brick'),
+    ];
     return {
-      id: 2, name: 'Grasslands Gaps', width: 13000, height: 900, biome: 'grasslands',
+      id: 2, name: 'Obstgarten und Hügel', width: 7300, height: 900, biome: 'grasslands',
       platforms,
       movingPlatforms: [
-        createMovingPlat(6350, 560, 110, 24, 'platform_easy', 'circular', 120, 20),
-        createMovingPlat(2200, 650, 110, 24, 'platform_medium', 'vertical', 110, 18),
+        createMovingPlat(4250, 430, 100, 24, 'platform_medium', 'circular', 70, 16),
+        createMovingPlat(5720, 370, 110, 24, 'platform_easy', 'vertical', 65, 16),
       ],
-      coins,
+      coins: [
+        ...coinTrail(180, 480, 960, 480, 5),
+        ...coinTrail(1150, 430, 1900, 350, 5),
+        ...coinArc(3090, 470, 5, 100, 70),
+        ...coinTrail(3600, 330, 3790, 330, 4),
+        ...coinArc(4300, 530, 5, 100, 60),
+        ...coinArc(5200, 370, 5, 90, 70),
+        ...coinArc(5960, 470, 5, 100, 70),
+        ...coinTrail(6200, 480, 6830, 480, 5),
+      ],
       questionBlocks: [
-        createQB(650, 530, 'mushroom'),
-        createQB(2750, 530, 'coin'),
-        createQB(3900, 530, 'flower'),
-        createQB(4900, 530, 'star'),
-        createQB(9700, 530, 'mushroom'),
+        createQB(650, 420, 'mushroom'), createQB(1810, 300, 'coin'),
+        createQB(3710, 295, 'oneup'), createQB(6412, 420, 'coin'),
       ],
       enemies: [
-        createEnemy(350, 620, 'goomba'),
-        createEnemy(1050, 550, 'koopa'),
-        createEnemy(1400, 380, 'spiny'),
-        createEnemy(2800, 620, 'crab'),
-        createEnemy(3100, 620, 'robot'),
-        createEnemy(3700, 460, 'spiny'),
-        createEnemy(4400, 620, 'koopa'),
-        createEnemy(5000, 820, 'crab'),
-        createEnemy(5600, 620, 'goomba'),
-        createEnemy(6700, 620, 'robot'),
-        createEnemy(7405, 480, 'spiny'),
-        createEnemy(8500, 620, 'koopa'),
-        createEnemy(9050, 430, 'goomba'),
-        createEnemy(9900, 620, 'crab'),
-        createEnemy(10500, 480, 'robot'),
-        createEnemy(12050, 500, 'spiny'),
+        createEnemy(850, 510, 'goomba'), createEnemy(1740, 390, 'goomba'),
+        createEnemy(2660, 510, 'koopa'), createEnemy(3310, 510, 'goomba'),
+        createEnemy(5230, 410, 'koopa'), createEnemy(6720, 510, 'goomba'),
       ],
       decorations: [
-        createDeco(200, 630, 'tree'),
-        createDeco(1000, 610, 'bush'),
-        createDeco(1500, 380, 'flower'),
-        createDeco(2200, 820, 'rock'),
-        createDeco(3000, 630, 'tree'),
-        createDeco(4200, 630, 'bush'),
-        createDeco(5100, 820, 'rock'),
-        createDeco(5800, 630, 'flower'),
-        createDeco(7000, 630, 'tree'),
-        createDeco(8300, 630, 'bush'),
-        createDeco(9200, 440, 'flower'),
-        createDeco(10000, 630, 'tree'),
-        createDeco(11800, 610, 'bush'),
+        createDeco(260, 510, 'tree'), createDeco(1020, 510, 'bush'),
+        createDeco(1700, 390, 'tree'), createDeco(2300, 450, 'flower'),
+        createDeco(3450, 510, 'bush'), createDeco(4270, 630, 'rock'),
+        createDeco(5150, 410, 'tree'), createDeco(6210, 510, 'flower'),
+        createDeco(6890, 510, 'tree'),
       ],
-      playerStart: { x: 170, y: 620 },
-      goal: { x: 12390, y: 392 },
-      timeBonus: 180,
-      checkpoints: [
-        createCheckpoint(2900, 600),
-        createCheckpoint(6900, 600),
-        createCheckpoint(9750, 600),
-      ],
-      springs: [
-        createSpring(600, 640),
-        createSpring(2900, 640),
-        createSpring(8300, 640),
-      ],
-      spikes: [
-        createSpike(780, 632),
-        createSpike(4300, 632),
-        createSpike(9900, 632),
-      ],
+      playerStart: { x: 170, y: 500 }, goal: { x: 6860, y: 522 }, timeBonus: 110,
+      checkpoints: [createCheckpoint(4580, 510)],
+      springs: [createSpring(1020, 530), createSpring(6180, 530)],
     };
   })(),
 
@@ -276,6 +226,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     // Secret room (brick_secret platform + approach)
     platforms.push(createPlat(3450, 430, 120, 24, 'platform_medium'));
     platforms.push(createPlat(3620, 350, 140, 24, 'brick_secret'));
+    platforms.push(createPlat(3650, 192, 280, 24, 'wood'));
+    platforms.push(createPlat(3774, 270, 32, 156, 'wood'));
+    platforms.push(createPlat(3490, 338, 32, 32, 'hidden'));
     // Pit with ledges back up
     platforms.push(...pitFloor(3900, 500, 500, 160, 'stone'));
     platforms.push(createPlat(4000, 590, 110, 24, 'platform_easy'));
@@ -298,13 +251,13 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     coins.push(...coinLadder(3620, 320, 240, 3));
     coins.push(...coinTrail(3950, 640, 4350, 640, 4));
     coins.push(...coinDiamond(4900, 90, 60));
-    coins.push(...coinLadder(5430, 380, 180, 5));
+    coins.push(...coinArc(5430, 180, 5, 70, 60));
     coins.push(...coinTrail(5600, 440, 6400, 440, 5));
-    coins.push(...coinDiamond(6900, 500, 70));
+    coins.push(...coinDiamond(6900, 480, 70));
 
     return {
-      id: 3, name: 'Grasslands Pipes', width: 7800, height: 900, biome: 'grasslands',
-      platforms,
+      id: 3, name: 'Röhren und verborgene Nischen', width: 7800, height: 900, biome: 'grasslands',
+      platforms: landscape(platforms),
       movingPlatforms: [
         createMovingPlat(3800, 400, 110, 24, 'platform_easy', 'vertical', 90, 18),
       ],
@@ -323,9 +276,9 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
         createEnemy(2950, 460, 'piranha'),
         createEnemy(3300, 460, 'piranha'),
         createEnemy(5000, 460, 'koopa'),
-        createEnemy(5700, 460, 'robot'),
+        createEnemy(5700, 460, 'koopa'),
         createEnemy(6100, 460, 'goomba'),
-        createEnemy(6800, 520, 'crab'),
+        createEnemy(6800, 520, 'goomba'),
       ],
       decorations: [
         createDeco(250, 520, 'tree'),
@@ -372,7 +325,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     // Calm run with wind zone
     platforms.push(createPlat(2200, 660, 700, 40, 'grass'));
     // Hill staircase (solid grass steps for guards)
-    platforms.push(...staircase(2650, 640, 4, 70, 140, 40, 'grass'));
+    platforms.push(...hillSteps(2650, 640, 4, 70, 140, 40));
     platforms.push(createPlat(3450, 560, 120, 24, 'platform_medium'));
     platforms.push(createPlat(3650, 600, 120, 24, 'platform_hard'));
     platforms.push(createPlat(3950, 660, 700, 40, 'grass'));
@@ -390,19 +343,19 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(140, 700, 780, 700, 4));
-    coins.push(...coinLadder(1190, 620, 380, 5));
+    coins.push(...coinArc(1190, 290, 5, 60, 50));
     coins.push(...coinDiamond(1400, 250, 60));
     coins.push(...coinArc(1650, 370, 5, 60, 60));
     coins.push(...coinTrail(1950, 580, 2500, 580, 4));
-    coins.push(...coinTrail(2700, 540, 3250, 380, 5));
+    coins.push(...coinTrail(2700, 520, 3250, 300, 5));
     coins.push(...coinDiamond(5450, 280, 70));
     coins.push(...coinArc(5800, 380, 5, 70, 70));
     coins.push(...coinTrail(6400, 580, 6900, 580, 4));
     coins.push(...coinDiamond(6900, 540, 60));
 
     return {
-      id: 4, name: 'Grasslands Ascent', width: 7600, height: 1100, biome: 'grasslands',
-      platforms,
+      id: 4, name: 'Aufstieg zum Windhügel', width: 7600, height: 1100, biome: 'grasslands',
+      platforms: landscape(platforms),
       movingPlatforms: [
         createMovingPlat(4400, 560, 110, 24, 'platform_easy', 'vertical', 120, 18),
         createMovingPlat(4250, 480, 100, 24, 'platform_medium', 'circular', 100, 20),
@@ -417,13 +370,13 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
       ],
       enemies: [
         createEnemy(300, 720, 'goomba'),
-        createEnemy(1400, 290, 'spiny'),
-        createEnemy(2300, 620, 'crab'),
-        createEnemy(2905, 480, 'robot'),
+        createEnemy(1400, 290, 'goomba'),
+        createEnemy(2300, 620, 'koopa'),
+        createEnemy(2905, 480, 'goomba'),
         createEnemy(4000, 620, 'goomba'),
         createEnemy(5450, 310, 'spiny'),
         createEnemy(6400, 620, 'koopa'),
-        createEnemy(6900, 580, 'robot'),
+        createEnemy(6900, 580, 'koopa'),
       ],
       decorations: [
         createDeco(200, 720, 'tree'),
@@ -482,7 +435,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     platforms.push(createPlat(4400, 720, 110, 24, 'platform_hard'));
     platforms.push(createPlat(4900, 660, 800, 40, 'grass'));
     // Final climb to the goal plateau
-    platforms.push(...staircase(5400, 640, 3, 70, 150, 40, 'grass'));
+    platforms.push(...hillSteps(5400, 640, 3, 70, 150, 40));
     platforms.push(createPlat(6200, 420, 400, 40, 'grass'));
 
     const coins = [] as LevelData['coins'];
@@ -491,13 +444,13 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(1280, 400, 60));
     coins.push(...coinTrail(1600, 580, 2200, 580, 4));
     coins.push(...coinLadder(2700, 440, 340, 3));
-    coins.push(...coinTrail(3800, 700, 4400, 700, 4));
+    coins.push(...coinArc(4100, 620, 5, 250, 60));
     coins.push(...coinArc(4900, 560, 5, 70, 80));
     coins.push(...coinDiamond(6200, 340, 60));
 
     return {
-      id: 5, name: 'Grasslands Horde', width: 6900, height: 900, biome: 'grasslands',
-      platforms,
+      id: 5, name: 'Münzjagd auf den Terrassen', width: 6900, height: 900, biome: 'grasslands',
+      platforms: landscape(platforms),
       movingPlatforms: [
         createMovingPlat(3750, 560, 110, 24, 'platform_easy', 'circular', 100, 20),
         createMovingPlat(4550, 560, 120, 24, 'platform_medium', 'horizontal', 260, 22),
@@ -510,22 +463,22 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
         createQB(6200, 290, 'oneup'),
       ],
       enemies: [
-        createEnemy(400, 620, 'goomba'),
+        createEnemy(900, 620, 'goomba'),
         createEnemy(700, 620, 'koopa'),
         createEnemy(1070, 500, 'goomba'),
         createEnemy(1280, 440, 'spiny'),
-        createEnemy(1480, 520, 'crab'),
-        createEnemy(1600, 620, 'robot'),
+        createEnemy(1480, 520, 'goomba'),
+        createEnemy(1600, 620, 'koopa'),
         createEnemy(1900, 620, 'koopa'),
-        createEnemy(2150, 620, 'crab'),
+        createEnemy(2150, 620, 'goomba'),
         createEnemy(2467, 460, 'spiny'),
-        createEnemy(2933, 460, 'robot'),
+        createEnemy(2933, 460, 'koopa'),
         createEnemy(3100, 620, 'goomba'),
         createEnemy(3400, 620, 'koopa'),
         createEnemy(4000, 820, 'goomba'),
-        createEnemy(4300, 820, 'spiny'),
-        createEnemy(4700, 620, 'crab'),
-        createEnemy(5100, 620, 'robot'),
+        createEnemy(4300, 820, 'goomba'),
+        createEnemy(4700, 620, 'goomba'),
+        createEnemy(5100, 620, 'koopa'),
         createEnemy(6100, 380, 'spiny'),
       ],
       decorations: [
@@ -583,7 +536,7 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     }));
     platforms.push(createPlat(5500, 660, 900, 40, 'grass'));
     // Final hill
-    platforms.push(...staircase(6050, 640, 4, 70, 140, 40, 'grass'));
+    platforms.push(...hillSteps(6050, 640, 4, 70, 140, 40));
     platforms.push(createPlat(6950, 350, 300, 40, 'grass'));
     platforms.push(createPlat(7300, 420, 130, 24, 'platform_medium'));
     platforms.push(createPlat(7500, 520, 130, 24, 'platform_hard'));
@@ -604,8 +557,8 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     coins.push(...coinTrail(150, 580, 1000, 580, 5));
     coins.push(...coinArc(1250, 560, 5, 80, 70));
     coins.push(...coinTrail(1500, 580, 2200, 580, 4));
-    coins.push(...coinLadder(2900, 480, 340, 3));
-    coins.push(...coinTrail(3150, 500, 3880, 500, 5));
+    coins.push(...coinLadder(2900, 350, 240, 3));
+    coins.push(...coinTrail(3150, 470, 3880, 470, 5));
     coins.push(...coinDiamond(3200, 620, 70));
     coins.push(...coinArc(4800, 540, 5, 70, 70));
     coins.push(...coinTrail(5200, 580, 5900, 580, 4));
@@ -613,12 +566,12 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(6950, 270, 60));
     coins.push(...coinTrail(7600, 580, 8300, 580, 4));
     coins.push(...coinTrail(8900, 580, 9750, 580, 4));
-    coins.push(...coinTrail(9950, 520, 10750, 500, 5));
+    coins.push(...coinArc(10350, 420, 5, 400, 80));
     coins.push(...coinDiamond(11500, 560, 60));
 
     return {
-      id: 6, name: 'Grasslands Dash', width: 12000, height: 900, biome: 'grasslands',
-      platforms,
+      id: 6, name: 'Wiesenwind-Finale', width: 12000, height: 900, biome: 'grasslands',
+      platforms: landscape(platforms),
       movingPlatforms: [
         createMovingPlat(4880, 440, 110, 24, 'platform_easy', 'vertical', 100, 18),
         createMovingPlat(3000, 600, 110, 24, 'platform_medium', 'circular', 110, 20),
@@ -632,17 +585,17 @@ export const GRASSLANDS_LEVELS: LevelData[] = [
         createQB(11200, 530, 'coin'),
       ],
       enemies: [
-        createEnemy(400, 620, 'goomba'),
-        createEnemy(800, 620, 'koopa'),
-        createEnemy(1900, 620, 'robot'),
+        createEnemy(900, 620, 'goomba'),
+        createEnemy(1800, 620, 'koopa'),
+        createEnemy(1900, 620, 'koopa'),
         createEnemy(2400, 550, 'spiny'),
         createEnemy(2900, 380, 'goomba'),
-        createEnemy(4200, 620, 'crab'),
+        createEnemy(4200, 620, 'goomba'),
         createEnemy(4400, 620, 'spiny'),
         createEnemy(5300, 620, 'koopa'),
-        createEnemy(6120, 550, 'robot'),
+        createEnemy(6120, 550, 'koopa'),
         createEnemy(7000, 310, 'spiny'),
-        createEnemy(8100, 620, 'crab'),
+        createEnemy(8100, 620, 'goomba'),
         createEnemy(9000, 620, 'goomba'),
         createEnemy(11000, 620, 'koopa'),
       ],

@@ -2,7 +2,7 @@
 // Archetypes: 73 Abgrundpfad, 74 Felsspalten, 75 Windkanaele,
 // 76 Kletterwaende, 77 Adlerhorde, 78 Felssturz-Finale.
 // Canyon gravity is 2000 (default): safe rises <=160px, safe same-height
-// gaps <=210px; spring-only ledges stay within the solver's 350px reach.
+// gaps <=210px; bonus ledges stay within a normal 160px climb, springs are optional.
 // All levels are authored solvable (ensureSolvable adds nothing).
 
 import {
@@ -28,7 +28,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     platforms.push(createPlat(1500, 700, 400, 24, 'platform_hard'));    // top 688 [1300,1700]
     platforms.push(createPlat(2250, 780, 1000, 40, 'sandstone'));       // top 760 [1750,2750]
     platforms.push(createPlat(2880, 830, 120, 24, 'platform_easy'));    // top 818 (Schlucht-Ausstieg)
-    platforms.push(createPlat(3600, 780, 1100, 40, 'stone'));           // top 760 [3050,4150]
+    platforms.push(createPlat(3600, 828, 1100, 136, 'stone'));           // top 760 [3050,4150]
     // Hoehlen-Boden + Bonusraum (Schluessel/Tuer)
     platforms.push(createPlat(4500, 960, 850, 40, 'cave'));             // top 940 [4075,4925]
     platforms.push(createPlat(4300, 860, 120, 24, 'platform_easy'));    // top 848 Hoehlen-Ausstieg
@@ -38,7 +38,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     // Ueberhang mit Schluchtspalt
     platforms.push(...overhangSection(5900, 760, 700, 6200, 200, 'stone'));
     platforms.push(createPlat(7600, 780, 1600, 40, 'stone'));           // top 760 [6800,8400]
-    platforms.push(createPlat(7800, 500, 140, 24, 'platform_hard'));    // top 488 Feder-Plateau
+    platforms.push(createPlat(7800, 612, 140, 24, 'platform_hard'));    // top 600: 160px normal-jump bonus ledge
     platforms.push(createPlat(8800, 780, 400, 40, 'sandstone'));        // top 760 Ziel [8600,9000]
 
     const coins = [] as LevelData['coins'];
@@ -53,8 +53,12 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     coins.push(...coinTrail(5000, 700, 5800, 700, 4));
     coins.push(...coinArc(6300, 700, 5, 70, 80));
     coins.push(...coinTrail(6900, 700, 8300, 700, 5));
-    coins.push(...coinLadder(7800, 700, 500, 5));
-    coins.push(...coinDiamond(7800, 410, 70));
+    coins.push(...coinLadder(7700, 700, 620, 3));
+    coins.push(...coinDiamond(7800, 520, 70));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(3600, 632, 32, 32, 'hidden'));
+    coins.push(...coinArc(3600, 570, 3, 48, 28));
 
     return {
       id: 73, name: 'Abgrundpfad', width: 9200, height: 1000, biome: 'canyon-base',
@@ -76,7 +80,6 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
         createEnemy(750, 700, 'goomba'),
         createEnemy(1520, 668, 'spiny'),
         createEnemy(2300, 740, 'crab'),
-        createEnemy(3400, 740, 'koopa'),
         createEnemy(3900, 740, 'robot'),
         createEnemy(5100, 740, 'crab'),
         createEnemy(6100, 740, 'koopa'),
@@ -132,7 +135,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     platforms.push(createPlat(5200, 480, 140, 24, 'platform_hard'));    // top 468 Hochplateau
     platforms.push(createPlat(5700, 800, 800, 40, 'stone'));            // top 780 [5300,6100]
     platforms.push(createPlat(6600, 820, 900, 40, 'stone'));            // top 800 [6150,7050]
-    platforms.push(createPlat(6900, 520, 140, 24, 'platform_hard'));    // top 508 Feder-Plateau
+    platforms.push(createPlat(6900, 652, 140, 24, 'platform_hard'));    // top 640: 160px normal-jump bonus ledge
     platforms.push(createPlat(7200, 780, 130, 24, 'platform_medium'));  // top 768
     platforms.push(createPlat(7725, 820, 800, 40, 'stone'));            // top 800 [7325,8125]
     platforms.push(createPlat(8600, 820, 600, 40, 'sandstone'));        // top 800 Ziel [8300,8900]
@@ -150,6 +153,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     coins.push(...coinTrail(6400, 720, 7000, 720, 4));
     coins.push(...coinTrail(7400, 720, 8200, 720, 4));
     coins.push(...coinTrail(8500, 720, 8800, 720, 3));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(4500, 610, 3, 48, 28));
 
     return {
       id: 74, name: 'Felsspalten', width: 9200, height: 1000, biome: 'canyon-base',
@@ -222,13 +228,13 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
       { dx: 640, dy: 240, w: 300, h: 40, type: 'stone' },
     ]));
     platforms.push(createPlat(3900, 760, 900, 40, 'stone'));            // top 740 [3450,4350]
-    platforms.push(createPlat(5425, 760, 1250, 40, 'sandstone'));       // top 740 [4800,6050]
+    platforms.push(createPlat(5425, 808, 1250, 136, 'sandstone'));       // top 740 [4800,6050]
     platforms.push(...pitFloor(6050, 740, 300, 150, 'stone')); // Spaltenboden top 890
     platforms.push(createPlat(6480, 830, 120, 24, 'platform_easy'));    // top 818 Ausstieg
     platforms.push(createPlat(7300, 780, 1300, 40, 'stone'));           // top 760 [6650,7950]
     platforms.push(...staircase(7950, 760, 3, 80, 150, 45, 'sandstone'));
     platforms.push(createPlat(9200, 860, 1400, 40, 'stone'));           // top 840 [8500,9900]
-    platforms.push(createPlat(9900, 560, 140, 24, 'platform_hard'));    // top 548 Feder-Plateau
+    platforms.push(createPlat(9900, 692, 140, 24, 'platform_hard'));    // top 680: 160px normal-jump bonus ledge
     platforms.push(createPlat(10500, 860, 800, 40, 'sandstone'));       // top 840 Ziel [10100,10900]
 
     const coins = [] as LevelData['coins'];
@@ -245,8 +251,12 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(7300, 640, 60));
     coins.push(...coinLadder(8025, 640, 480, 4));
     coins.push(...coinTrail(8550, 780, 8850, 780, 3));
-    coins.push(...coinDiamond(9900, 460, 60));
+    coins.push(...coinDiamond(9900, 600, 60));
     coins.push(...coinTrail(10150, 780, 10850, 780, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(5650, 612, 32, 32, 'brick_secret'));
+    coins.push(...coinArc(5650, 550, 3, 48, 28));
 
     return {
       id: 75, name: 'Windkanaele', width: 11500, height: 950, biome: 'canyon-base',
@@ -268,8 +278,6 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
         createEnemy(2300, 720, 'koopa'),
         createEnemy(3700, 720, 'robot'),
         createEnemy(5000, 720, 'crab'),
-        createEnemy(5400, 720, 'robot'),
-        createEnemy(5800, 720, 'spiny'),
         createEnemy(6800, 740, 'koopa'),
         createEnemy(7500, 740, 'robot'),
         createEnemy(8700, 820, 'spiny'),
@@ -311,7 +319,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
   (() => {
     const platforms = [] as LevelData['platforms'];
     platforms.push(createPlat(600, 820, 1200, 40, 'stone'));            // top 800 [0,1200]
-    platforms.push(createPlat(900, 520, 160, 24, 'platform_hard'));     // top 508 Feder-Wandnest
+    platforms.push(createPlat(900, 652, 160, 24, 'platform_hard'));     // top 640: 160px normal-jump wall nest
     platforms.push(createPlat(1350, 780, 130, 24, 'platform_easy'));    // top 768
     platforms.push(...zigzagClimb(1500, 800, 5, 90, 110, 130, 'platform_medium'));
     platforms.push(createPlat(2130, 380, 500, 60, 'cave'));             // top 350 Wandterrasse
@@ -326,7 +334,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     platforms.push(createCrumblePlat(3750, 400, 110, 24));              // top 388
     platforms.push(createCrumblePlat(3950, 320, 110, 24));              // top 308
     platforms.push(createPlat(4200, 340, 500, 40, 'stone'));            // top 320 Wandabsatz
-    platforms.push(createPlat(5350, 640, 800, 40, 'stone'));            // top 620 [4950,5750]
+    platforms.push(createPlat(5350, 688, 800, 136, 'stone'));            // top 620 [4950,5750]
     platforms.push(createPlat(6250, 660, 700, 40, 'sandstone'));        // top 640 [5900,6600]
     platforms.push(...gapWithPlatforms(1, 6600, 632, 400, 2, {
       widths: [120, 110], dy: [20, 0],
@@ -339,8 +347,8 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(150, 760, 950, 760, 4));
-    coins.push(...coinLadder(900, 800, 540, 5));
-    coins.push(...coinDiamond(900, 430, 60));
+    coins.push(...coinLadder(800, 740, 660, 3));
+    coins.push(...coinDiamond(900, 560, 60));
     coins.push(...coinArc(1630, 640, 5, 70, 70));
     coins.push(...coinDiamond(3000, 460, 70));
     coins.push(...coinArc(3650, 360, 5, 70, 70));
@@ -351,6 +359,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     coins.push(...coinArc(6850, 560, 5, 70, 70));
     coins.push(...coinTrail(7000, 560, 7600, 560, 5));
     coins.push(...coinTrail(8150, 560, 8600, 560, 3));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(5350, 430, 3, 48, 28));
 
     return {
       id: 76, name: 'Kletterwaende', width: 12500, height: 950, biome: 'canyon-base',
@@ -371,8 +382,6 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
         createEnemy(2250, 330, 'robot'),
         createEnemy(2900, 520, 'spiny'),
         createEnemy(4300, 300, 'robot'),
-        createEnemy(5100, 600, 'crab'),
-        createEnemy(5500, 600, 'robot'),
         createEnemy(6100, 620, 'koopa'),
         createEnemy(7100, 620, 'spiny'),
       ],
@@ -426,7 +435,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     ]));
     platforms.push(createPlat(5100, 420, 160, 24, 'platform_hard'));    // top 408 Bonusinsel
     platforms.push(createPlat(5000, 500, 140, 24, 'platform_easy'));    // top 488
-    platforms.push(createPlat(5650, 620, 800, 40, 'sandstone'));        // top 600 [5250,6050]
+    platforms.push(createPlat(5650, 668, 800, 136, 'sandstone'));        // top 600 [5250,6050]
     platforms.push(createPlat(6200, 640, 140, 24, 'platform_medium'));  // top 628
     platforms.push(createPlat(6800, 700, 900, 40, 'stone'));            // top 680 [6350,7250]
     platforms.push(createPlat(7650, 420, 200, 24, 'platform_hard'));    // top 408 Adlerhorst
@@ -451,6 +460,9 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(7650, 340, 60));
     coins.push(...coinTrail(8100, 640, 8900, 640, 4));
     coins.push(...coinTrail(9300, 640, 9850, 640, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(5850, 410, 3, 48, 28));
 
     return {
       id: 77, name: 'Adlerhorde', width: 10500, height: 950, biome: 'canyon-base',
@@ -530,7 +542,7 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     platforms.push(createPlat(2280, 830, 120, 24, 'platform_easy'));    // top 818 Ausstieg
     platforms.push(createPlat(3200, 780, 1400, 40, 'stone'));           // top 760 [2500,3900]
     platforms.push(createPlat(4050, 740, 140, 24, 'platform_medium'));  // top 728
-    platforms.push(createPlat(4800, 800, 1200, 40, 'stone'));           // top 780 [4200,5400]
+    platforms.push(createPlat(4800, 848, 1200, 136, 'stone'));           // top 780 [4200,5400]
     platforms.push(createPlat(5550, 780, 110, 24, 'platform_easy'));    // top 768 sicherer Steg
     platforms.push(createCrumblePlat(5650, 720, 130, 24));              // top 708 Abkuerzung
     platforms.push(createPlat(6400, 800, 1400, 40, 'stone'));           // top 780 [5700,7100]
@@ -578,6 +590,10 @@ export const CANYON_BASE_LEVELS: LevelData[] = [
     coins.push(...coinTrail(14300, 760, 14800, 760, 3));
     coins.push(...coinTrail(14600, 640, 15000, 640, 3));
     coins.push(...coinTrail(14250, 40, 14900, 40, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(4800, 652, 32, 32, 'hidden'));
+    coins.push(...coinArc(4800, 590, 3, 48, 28));
 
     return {
       id: 78, name: 'Felssturz-Finale', width: 16000, height: 1000, biome: 'canyon-base',

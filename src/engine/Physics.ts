@@ -37,17 +37,20 @@ export class Physics {
         const PLAYER_BUFFER = PHYSICS.PLAYER_BUFFER;
         const GRAVITY = this.gravity;
 
-        if (deltaY <= 0) {
-            const t = (2 * JUMP_VEL) / GRAVITY;
-            return HORIZ_SPEED * t - PLAYER_BUFFER;
-        }
-
-        const t = (JUMP_VEL + Math.sqrt(JUMP_VEL * JUMP_VEL + 2 * GRAVITY * deltaY)) / GRAVITY;
+        // Positive deltaY is a lower landing; negative deltaY consumes jump height.
+        // Above the ballistic apex no real flight time exists, even when x overlaps.
+        const discriminant = JUMP_VEL * JUMP_VEL + 2 * GRAVITY * deltaY;
+        if (discriminant < 0) return -Infinity;
+        const t = (JUMP_VEL + Math.sqrt(discriminant)) / GRAVITY;
         return HORIZ_SPEED * t - PLAYER_BUFFER;
     }
 
+    private getMaxJumpUp(): number {
+        return Math.min(PHYSICS.MAX_JUMP_UP, PHYSICS.JUMP_SPEED ** 2 / (2 * this.gravity));
+    }
+
     private horizontalJumpCheck(gap: number, vDiff: number): boolean {
-        return gap <= this.getMaxHorizontalJump(Math.max(0, vDiff));
+        return gap <= this.getMaxHorizontalJump(vDiff);
     }
 
     private getMovingPlatformPositions(mp: MovingPlatformData): { x: number; y: number }[] {
@@ -91,7 +94,7 @@ export class Physics {
             const verticalDiff = mpTop - fromTop;
 
             if (verticalDiff > PHYSICS.MAX_FALL_DOWN) continue;
-            if (verticalDiff < -PHYSICS.MAX_JUMP_UP) continue;
+            if (verticalDiff < -this.getMaxJumpUp()) continue;
             if (this.horizontalJumpCheck(horizontalGap, verticalDiff)) return true;
         }
 
@@ -115,7 +118,7 @@ export class Physics {
             const verticalDiff = toTop - mpTop;
 
             if (verticalDiff > PHYSICS.MAX_FALL_DOWN) continue;
-            if (verticalDiff < -PHYSICS.MAX_JUMP_UP) continue;
+            if (verticalDiff < -this.getMaxJumpUp()) continue;
             if (this.horizontalJumpCheck(horizontalGap, verticalDiff)) return true;
         }
 
@@ -144,7 +147,7 @@ export class Physics {
                 const verticalDiff = toTop - mpTop;
 
                 if (verticalDiff > PHYSICS.MAX_FALL_DOWN) continue;
-                if (verticalDiff < -PHYSICS.MAX_JUMP_UP) continue;
+                if (verticalDiff < -this.getMaxJumpUp()) continue;
                 if (!this.horizontalJumpCheck(horizontalGap, verticalDiff)) continue;
 
                 reachable.push(next);
@@ -171,11 +174,11 @@ export class Physics {
             return false;
         }
 
-        if (verticalDiff < -PHYSICS.MAX_JUMP_UP) {
+        if (verticalDiff < -this.getMaxJumpUp()) {
             return false;
         }
 
-        const maxGap = this.getMaxHorizontalJump(Math.max(0, verticalDiff));
+        const maxGap = this.getMaxHorizontalJump(verticalDiff);
 
         if (horizontalGap > maxGap) {
             return false;
@@ -196,11 +199,11 @@ export class Physics {
             return false;
         }
 
-        if (verticalDiff < -PHYSICS.MAX_JUMP_UP) {
+        if (verticalDiff < -this.getMaxJumpUp()) {
             return false;
         }
 
-        const maxGap = this.getMaxHorizontalJump(Math.max(0, verticalDiff));
+        const maxGap = this.getMaxHorizontalJump(verticalDiff);
 
         if (horizontalGap > maxGap) {
             return false;

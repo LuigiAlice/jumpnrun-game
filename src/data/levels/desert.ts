@@ -1,3 +1,4 @@
+import { polishNatureLevel } from './naturePolish';
 // Desert World (ids 7-12) — Phase 9 rebuild
 // Archetypes: 7 Dünen-Tutorial, 8 Sandsturm-Schlucht, 9 Pyramiden-Labyrinth,
 // 10 Oasen-Kletterer, 11 Skorpion-Horde, 12 Pharaonen-Finale.
@@ -12,7 +13,7 @@ import {
   gapWithPlatforms,
 } from './helpers';
 
-export const DESERT_LEVELS: LevelData[] = [
+const DESERT_AUTHORED_LEVELS: LevelData[] = [
   // ============================================================
   // Level 7 (Dünen-Tutorial): sanfter Einstieg mit Dünen-Terrasse,
   // Grube, optionaler Zwei-Ebenen-Route und einem Secret-Nest
@@ -510,3 +511,6 @@ export const DESERT_LEVELS: LevelData[] = [
     };
   })(),
 ];
+
+// Individually anchored landscape, reward and recovery polish; original jump tops stay fixed.
+export const DESERT_LEVELS: LevelData[] = DESERT_AUTHORED_LEVELS.map(polishNatureLevel);

@@ -1,3 +1,4 @@
+import { polishNatureLevel } from './naturePolish';
 // Forest World (ids 31-36) — Phase 9 rebuild
 // Archetypes: 31 Waldweg, 32 Lichtungssprünge, 33 Wurzel-Labyrinth,
 // 34 Baumkronen, 35 Käferhorde, 36 Wipfelpfad-Finale (fallende Äste, Engine-ID 36).
@@ -13,7 +14,7 @@ import {
   gapWithPlatforms,
 } from './helpers';
 
-export const FOREST_LEVELS: LevelData[] = [
+const FOREST_AUTHORED_LEVELS: LevelData[] = [
   // ============================================================
   // Level 31 (Waldweg): sanfter Einstieg — Waldboden-Segmente,
   // kleine Grube, zwei Baumkronen-Stufen und ein Geheimnest über
@@ -677,3 +678,6 @@ export const FOREST_LEVELS: LevelData[] = [
     };
   })(),
 ];
+
+// Individually anchored landscape, reward and recovery polish; original jump tops stay fixed.
+export const FOREST_LEVELS: LevelData[] = FOREST_AUTHORED_LEVELS.map(polishNatureLevel);

@@ -25,8 +25,8 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 - Tests run from `tests/**/*.test.ts`
 - Run single test: `npm test -- LevelSolvability.test.ts`
 - TypeScript Fehler müssen vor test/build behoben werden
-- 239 Tests in 13 Dateien (Physics, LevelInvariant, LevelSolvability, GameLogic, AssetCoverage, NewElements, PilotElements, Music, RequirementsCoverage, StompMechanics, ElementMix, Phase9Features, BiomeAudit). Phase9Features + BiomeAudit sichern die Level-Vielfalt ab; BiomeAudit läuft scoped via `BIOME=<biom> npx vitest run tests/BiomeAudit.test.ts` (ohne ENV 10 skipped).
-- E2E: 43 Playwright-Tests in `e2e/**/*.test.ts` (game.test.ts 6 + elements.test.ts 8 + element-features.test.ts 14 + biome-smoke.test.ts 15: Springs/Spikes/Bricks/Coin-Gate/Stomp/Mover-Escape/Element-Probes/Biome-Smoke via `window.__game`; benötigt `npx playwright install chromium`)
+- Unit- und Datentests in `tests/**/*.test.ts`, einschließlich echter Pixel-Drawcalls, Terrain-Rendering, Gegnerregeln, WorldOneDesign, NatureLevelPolish, ChallengeLevelPolish und StrictPhysicsAudit. BiomeAudit läuft scoped via `BIOME=<biom> npx vitest run tests/BiomeAudit.test.ts` (ohne ENV 10 skipped).
+- E2E in `e2e/**/*.test.ts`: Spiel, Elemente, Biome-Smoke, direkte Steuerung, Gegner/Panzer/Röhren, Terrain/Kamera und Boss-Goal. Zugriffe via `window.__game`; benötigt Chromium und erlaubten Browser-/Serverstart.
 - **Traceability**: `REQUIREMENTS.md` listet alle Anforderungen mit IDs (R-001 ff.); `tests/RequirementsCoverage.test.ts` prüft, dass jedes Mapping auf eine existierende Test-Datei + Testnamen-Teilstring zeigt (Gaps `—` max. 8)
 
 ## Architecture
@@ -53,8 +53,8 @@ Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinG
 - PlatformType: grass, stone, brick, brick_secret, brick_multi, pipe, pipe_top, cloud, platform_easy/medium/hard, lava, wood, sand, snow, ice, ruins, space, water, bubble, ground, cave, castle, metal, sandstone, hidden
 - SOLID_TYPES: alles ausser lava, pipe, pipe_top, platform_* (lava ist in `this.platforms`, nicht solid)
 - EnemyType: goomba, koopa, piranha, spiny, boo, thwomp, lakitu, bullet_bill, fireball, crab, robot, ghost, squid, ufo, boss
-- Stompbare Gegner: goomba, koopa, spiny, robot, crab, ghost, squid, ufo
-- Nicht stompbar: piranha, thwomp, boo, lakitu, bullet_bill, fireball, boss
+- Stompbare Gegner: goomba, koopa, robot, crab, ghost, squid, ufo
+- Nicht stompbar: spiny, piranha, thwomp, boo, lakitu, bullet_bill, fireball, boss
 
 ## Enemy AI (GameScene.ts update)
 - **goomba/koopa/spiny/robot/crab**: Edge-detection, laufen hin/her mit `BIOME_ENEMY_SPEED`
@@ -134,3 +134,11 @@ Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinG
 - `src/engine/PlayerMovement.ts`: reine Game-Time-Steuerung; Walk 300, Shift-Sprint 400; sofortiges Starten/Stoppen/Umkehren auch in der Luft. Nur auf `ice` mit Bodenkontakt: Beschleunigung, Trägheit und zeitnormierte Eisreibung ×0.96. Schnee bleibt griffig.
 - ↑/Z: variable Sprunghöhe, Coyote 90 ms, Buffer 120 ms; kein Auto-Bounce. Springs/Stomps markieren `externalLaunchPending`, damit Jump-Cut externe Impulse nicht kürzt.
 - Tests: `tests/PlayerMovement.test.ts`, Runtime-Verkabelung in `e2e/player-feel.test.ts`.
+
+## Landschafts- und Gegnerpolitur
+- Terrain: `src/rendering/terrain.ts` (native Deck-/Füllkacheln, StaticGroup-TileSprites, Mover-Panels, Cachefreigabe beim Shutdown). Für TileSprites ist die Quelltextur `displayTexture`, nicht die interne Rendertextur `texture`.
+- Grafik: `src/art/pixelAssets.ts` (Pixelraster, alle Animationsframes maßgleich). BootScene erzeugt Hintergrund/Deko und delegiert Spielobjekte an dieses Modul.
+- `EnemyRules.ts` trennt Treffer- und Sternschutz, Shell-Kontakte, Power-up-Bewegung und Piranha-Phasen. Stern-/Schutzdauer läuft auf Game-Time. Versteckte Blöcke synchronisieren `platformType` und Data; `sourcePlatformType` erhält den tragenden Brick-Schutz nach Zustandswechseln.
+- `GoalRules.ts` kombiniert Münzen, Zeit und Boss-HP. L90-Flagge erst nach Boss-Sieg; HP-Bar und Grafikreferenzen bei Restart zurücksetzen.
+- Welt/Kamera-Höhe ist max(GAME_HEIGHT, level.height), Hintergründe bleiben bildschirmfüllend. Direkte Steuerung auf Normalboden und in der Luft bleibt unverändert.
+- Physik-Solver: signed deltaY auch bei Aufwärtssprüngen; maximale Aufstiegshöhe min(350, v²/(2g)). Kein Level darf Auto-Fixer-Plattformen benötigen.

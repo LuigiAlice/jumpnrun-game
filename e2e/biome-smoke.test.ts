@@ -59,7 +59,7 @@ for (const biome of BIOMES) {
       // Kollateraltod vor jeder Messung verhindern (Feinde sofort entfernen)
       await inGame(page, `
         scene.enemies.getChildren().forEach(e => e.destroy());
-        scene.isInvincible = true;
+        scene.makeInvincible(600000);
         return true;
       `);
       // Spawn-Settle: grounded ist asynchron (Fallen zum Boden), fps-fair abwarten

@@ -35,7 +35,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(2400, 632, 160, 24, 'platform_medium'));   // top 620
     platforms.push(createPlat(2750, 582, 140, 24, 'platform_hard'));     // top 570
     platforms.push(createPlat(3100, 512, 180, 24, 'platform_medium'));   // top 500
-    platforms.push(createPlat(3900, 660, 1000, 40, 'castle'));           // top 640 [3400,4400]
+    platforms.push(createPlat(3900, 708, 1000, 136, 'castle'));           // top 640 [3400,4400]
     platforms.push(createPlat(4600, 592, 140, 24, 'platform_hard'));     // top 580 obere Grabenroute
     platforms.push(...pitFloor(4400, 640, 300, 180, 'cave'));   // Grabenboden top 820
     platforms.push(createPlat(4840, 780, 140, 24, 'platform_easy'));     // top 768 Graben-Ausstieg
@@ -47,6 +47,12 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(8675, 692, 650, 40, 'castle'));            // top 672 Ziel [8350,9000]
     platforms.push(createPlat(2250, 480, 140, 24, 'platform_hard'));     // top 468 Aufzug-Nest
     platforms.push(createPlat(8330, 512, 120, 24, 'platform_hard'));     // top 500 Schatzkammer
+
+    // The key nest is a turret alcove, reached from the existing lift.
+    // The short left wall leaves an 80px entrance; the courtyard route runs underneath.
+    platforms.push(createPlat(2250, 316, 264, 24, 'castle'));
+    platforms.push(createPlat(2106, 358, 24, 60, 'stone'));
+    platforms.push(createPlat(2394, 398, 24, 140, 'castle'));
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(250, 700, 950, 700, 4));
@@ -64,6 +70,10 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     coins.push(...coinTrail(7350, 460, 8050, 460, 4));
     coins.push(...coinTrail(8450, 600, 8950, 600, 4));
     coins.push(...coinTrail(8300, 460, 8360, 460, 2));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(3900, 512, 32, 32, 'brick_secret'));
+    coins.push(...coinArc(3900, 455, 3, 48, 32));
 
     return {
       id: 85, name: 'Burghof', width: 9500, height: 1000, biome: 'castle-final',
@@ -84,7 +94,6 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         createEnemy(1700, 670, 'spiny'),
         createEnemy(2000, 600, 'crab'),
         createEnemy(3600, 620, 'robot'),
-        createEnemy(4100, 620, 'goomba'),
         createEnemy(5000, 590, 'boo'),
         createEnemy(6000, 470, 'thwomp'),
         createEnemy(6600, 652, 'robot'),
@@ -131,9 +140,9 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createCrumblePlat(1980, 748, 160, 24, 'platform_hard'));   // top 736
     platforms.push(createPlat(1980, 890, 140, 24, 'platform_easy'));     // top 878 Graben-Ausstieg
     platforms.push(createPlat(2700, 780, 1300, 40, 'castle'));           // top 760 [2050,3350]
-    platforms.push(createPlat(3000, 472, 160, 24, 'platform_hard'));     // top 460 Feder-Nest
+    platforms.push(createPlat(3000, 612, 160, 24, 'platform_hard'));     // top 600: 160px over courtyard, reachable without the spring
     platforms.push(...twoTierSection(3350, 760, 1000, 'castle', 'stone')); // obere Route top 600
-    platforms.push(createPlat(4950, 780, 1000, 40, 'castle'));           // top 760 [4450,5450]
+    platforms.push(createPlat(4950, 828, 1000, 136, 'castle'));           // top 760 [4450,5450]
     platforms.push(...overhangSection(5450, 760, 800, 5750, 200, 'castle')); // Spalt [5750,5950]
     platforms.push(createPlat(6800, 780, 1000, 40, 'castle'));           // top 760 [6300,7300]
     platforms.push(...gapWithPlatforms(1, 7300, 772, 200, 1, {
@@ -149,8 +158,8 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(200, 700, 1100, 700, 4));
     coins.push(...coinArc(1650, 860, 5, 80, 70));
-    coins.push(...coinLadder(3000, 700, 500, 4));
-    coins.push(...coinDiamond(3000, 380, 70));
+    coins.push(...coinLadder(3000, 700, 640, 4));
+    coins.push(...coinDiamond(3000, 520, 70));
     coins.push(...coinTrail(3500, 680, 4300, 680, 4));
     coins.push(...coinTrail(4550, 700, 5400, 700, 4));
     coins.push(...coinArc(5890, 700, 5, 80, 70));
@@ -161,6 +170,9 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     coins.push(...coinTrail(8850, 620, 9650, 620, 4));
     coins.push(...coinLadder(9800, 620, 450, 4));
     coins.push(...coinTrail(10100, 540, 10850, 540, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(5200, 575, 3, 48, 32));
 
     return {
       id: 86, name: 'Zugbruecke', width: 11500, height: 1000, biome: 'castle-final',
@@ -239,7 +251,8 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(2500, 512, 140, 24, 'platform_hard'));     // top 500 Schluesselplateau
     platforms.push(createPlat(2710, 622, 240, 24, 'platform_medium'));   // top 610 Zellenboden
     platforms.push(...twoTierSection(3100, 680, 900, 'stone', 'castle')); // obere Route top 520
-    platforms.push(createPlat(4400, 680, 900, 40, 'castle'));            // top 660 [3950,4850]
+    platforms.push(createPlat(4400, 728, 900, 136, 'castle'));            // top 660 [3950,4850]
+    platforms.push(createPlat(4430, 532, 110, 24, 'platform_medium'));   // top 520: visible bonus step, never require the hidden coin cache
     platforms.push(createPlat(4600, 372, 160, 24, 'platform_hard'));     // top 360 Feder-Nest
     platforms.push(...overhangSection(4850, 660, 800, 5200, 200, 'castle')); // Spalt [5200,5400]
     platforms.push(createPlat(5500, 570, 200, 24, 'platform_medium'));   // top 558 Zellenboden 2
@@ -274,6 +287,10 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     coins.push(...coinTrail(9200, 620, 9500, 620, 3));
     coins.push(...coinTrail(9800, 580, 10500, 580, 4));
     coins.push(...coinTrail(10850, 600, 11150, 600, 3));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(4625, 532, 32, 32, 'hidden'));
+    coins.push(...coinArc(4625, 475, 3, 48, 32));
 
     return {
       id: 87, name: 'Kerkerkanaele', width: 11200, height: 1000, biome: 'castle-final',
@@ -372,7 +389,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(6180, 760, 120, 24, 'platform_easy'));     // top 748
     platforms.push(createPlat(6500, 680, 1100, 40, 'castle'));           // top 660 [5950,7050]
     platforms.push(...twoTierSection(7050, 660, 900, 'castle', 'platform_medium')); // obere Route top 500
-    platforms.push(createPlat(8600, 660, 1000, 40, 'stone'));            // top 640 [8100,9100]
+    platforms.push(createPlat(8600, 708, 1000, 136, 'stone'));            // top 640 [8100,9100]
     platforms.push(createPlat(9800, 700, 1000, 40, 'castle'));           // top 680 [9300,10300]
     platforms.push(createPlat(11000, 740, 1200, 40, 'stone'));           // top 720 [10400,11600] Checkpoint 2
     platforms.push(createPlat(11460, 640, 220, 24, 'platform_medium'));  // top 628 Schatzkammer
@@ -407,6 +424,9 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     coins.push(...coinArc(14400, 600, 5, 70, 60));
     coins.push(...coinTrail(14200, 400, 14600, 400, 3));
     coins.push(...coinTrail(14250, 60, 14550, 60, 3));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(8600, 455, 3, 48, 32));
 
     return {
       id: 88, name: 'Turm-Kletterer', width: 16000, height: 1000, biome: 'castle-final',
@@ -509,7 +529,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(4600, 600, 140, 24, 'platform_hard'));     // top 588
     platforms.push(createPlat(4750, 860, 120, 24, 'platform_easy'));     // top 848 Ausstieg
     platforms.push(createPlat(5350, 740, 1000, 40, 'stone'));            // top 720 [4850,5850]
-    platforms.push(createPlat(5000, 420, 140, 24, 'platform_hard'));     // top 408 Feder-Nest
+    platforms.push(createPlat(5000, 572, 140, 24, 'platform_hard'));     // top 560: optional nest is reachable by a normal 160px jump
     platforms.push(...twoTierSection(5850, 720, 1000, 'castle', 'stone')); // obere Route top 560
     platforms.push(createPlat(7500, 680, 1200, 40, 'castle'));           // top 660 [6900,8100]
     platforms.push(...overhangSection(8100, 660, 900, 8450, 200, 'castle')); // Spalt [8450,8650]
@@ -519,7 +539,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(10600, 520, 130, 24, 'platform_hard'));    // top 508
     platforms.push(createPlat(10850, 560, 130, 24, 'platform_medium'));  // top 548
     platforms.push(createPlat(10700, 790, 130, 24, 'platform_easy'));    // top 778 Ausstieg
-    platforms.push(createPlat(11400, 700, 1200, 40, 'castle'));          // top 680 [10800,12000]
+    platforms.push(createPlat(11400, 748, 1200, 136, 'castle'));          // top 680 [10800,12000]
     platforms.push(createPlat(12150, 660, 140, 24, 'platform_easy'));    // top 648 Tritt
     platforms.push(createPlat(13100, 700, 1600, 40, 'castle'));          // top 680 Bossarena [12300,13900]
     platforms.push(...staircase(13900, 680, 3, 60, 150, 40, 'stone'));   // Stufen top 620/560/500
@@ -533,7 +553,7 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     coins.push(...coinArc(4450, 840, 5, 80, 70));
     coins.push(...coinDiamond(4450, 540, 60));
     coins.push(...coinTrail(4950, 660, 5800, 660, 4));
-    coins.push(...coinTrail(5000, 370, 5150, 370, 2));
+    coins.push(...coinTrail(5000, 510, 5150, 510, 2));
     coins.push(...coinTrail(6050, 480, 6750, 480, 4));
     coins.push(...coinDiamond(6300, 380, 60));
     coins.push(...coinTrail(7000, 600, 8000, 600, 4));
@@ -546,6 +566,10 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(12500, 440, 60));
     coins.push(...coinTrail(14000, 440, 14300, 440, 3));
     coins.push(...coinTrail(14500, 470, 15500, 470, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(11400, 552, 32, 32, 'brick_multi'));
+    coins.push(...coinArc(11400, 495, 3, 48, 32));
 
     return {
       id: 89, name: 'Boss-Horde', width: 16000, height: 1000, biome: 'castle-final',
@@ -584,7 +608,6 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         createEnemy(9900, 640, 'spiny'),
         createEnemy(10600, 400, 'boo'),
         createEnemy(11100, 660, 'robot'),
-        createEnemy(11600, 660, 'koopa'),
         createEnemy(12600, 640, 'spiny'),
         createEnemy(13000, 640, 'boss'),
         createEnemy(13600, 640, 'boss'),
@@ -641,21 +664,15 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     platforms.push(createPlat(1650, 700, 300, 40, 'stone'));             // top 680 [1500,1800]
     platforms.push(createPlat(2100, 620, 300, 40, 'castle'));            // top 600 [1950,2250]
     platforms.push(createPlat(2400, 700, 200, 40, 'stone'));             // top 680 [2300,2500]
-    platforms.push(createPlat(7500, 820, 9800, 40, 'castle'));           // Arenaboden top 800 [2600,12400]
+    platforms.push(createPlat(4800, 820, 4400, 40, 'castle'));           // Arenaboden top 800 [2600,7000]
     platforms.push(createPlat(3800, 740, 140, 120, 'stone'));            // Saeule top 680
     platforms.push(createPlat(5600, 740, 160, 120, 'metal'));            // Saeule top 680
-    platforms.push(createPlat(8500, 740, 140, 120, 'stone'));            // Saeule top 680
-    platforms.push(createPlat(10500, 740, 160, 120, 'castle'));          // Saeule top 680
     platforms.push(createPlat(4140, 560, 160, 24, 'platform_hard'));     // Dachbalken top 548
     platforms.push(createPlat(4500, 500, 160, 24, 'platform_medium'));   // top 488
     platforms.push(createPlat(4850, 540, 160, 24, 'platform_hard'));     // top 528
-    platforms.push(createPlat(5200, 490, 160, 24, 'platform_medium'));   // top 478
     platforms.push(createPlat(5550, 530, 160, 24, 'platform_hard'));     // top 518
-    platforms.push(createPlat(5900, 490, 160, 24, 'platform_medium'));   // top 478
     platforms.push(createPlat(6250, 540, 180, 24, 'platform_hard'));     // top 528
-    platforms.push(createPlat(6600, 490, 160, 24, 'platform_medium'));   // top 478
-    platforms.push(createPlat(9500, 400, 160, 24, 'platform_hard'));     // top 388 Hochnest
-    platforms.push(createPlat(12700, 720, 600, 40, 'castle'));           // top 700 Ziel [12400,13000]
+    platforms.push(createPlat(7200, 720, 600, 40, 'castle'));           // top 700 Ziel [6900,7500]
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(200, 700, 1300, 700, 5));
@@ -663,37 +680,30 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
     coins.push(...coinArc(2100, 540, 5, 80, 70));
     coins.push(...coinTrail(2700, 740, 3700, 740, 4));
     coins.push(...coinTrail(3900, 600, 5500, 600, 4));
-    coins.push(...coinTrail(5700, 600, 8400, 600, 5));
-    coins.push(...coinTrail(8600, 600, 10400, 600, 5));
     coins.push(...coinDiamond(4200, 480, 60));
     coins.push(...coinDiamond(4850, 440, 60));
     coins.push(...coinDiamond(5550, 430, 60));
-    coins.push(...coinDiamond(6250, 440, 60));
-    coins.push(...coinLadder(9500, 640, 420, 4));
-    coins.push(...coinDiamond(9500, 330, 60));
-    coins.push(...coinTrail(10600, 620, 12300, 620, 5));
-    coins.push(...coinTrail(12450, 640, 12950, 640, 4));
+
+    // A short aftermath gives the victory room to breathe without an empty 8,000px run.
+    coins.push(...coinArc(5900, 610, 5, 120, 70));
+    coins.push(...coinTrail(6500, 740, 6800, 740, 3));
+    coins.push(...coinTrail(7050, 640, 7400, 640, 3));
 
     return {
-      id: 90, name: 'Bossarena', width: 13000, height: 1000, biome: 'castle-final',
+      id: 90, name: 'Bossarena', width: 7600, height: 1000, biome: 'castle-final',
       platforms,
       movingPlatforms: [
-        createMovingPlat(9500, 560, 120, 24, 'platform_easy', 'circular', 100, 20),
+        createMovingPlat(6200, 640, 120, 24, 'platform_easy', 'circular', 100, 20),
       ],
       coins,
       questionBlocks: [
-        createQB(400, 680, 'mushroom'),
+        createQB(400, 650, 'flower'),
         createQB(4850, 430, 'flower'),
-        createQB(7000, 720, 'star'),
-        createQB(11000, 620, 'mushroom'),
+        createQB(5800, 680, 'flower'),
+        createQB(7200, 600, 'flower'),
       ],
       enemies: [
-        createEnemy(3300, 780, 'spiny'),
-        createEnemy(5200, 780, 'robot'),
-        createEnemy(6500, 760, 'boss'),
-        createEnemy(7300, 780, 'koopa'),
-        createEnemy(9600, 780, 'spiny'),
-        createEnemy(11300, 780, 'robot'),
+        createEnemy(4500, 760, 'boss'),
       ],
       decorations: [
         createDeco(300, 720, 'torch'),
@@ -704,16 +714,12 @@ export const CASTLE_FINAL_LEVELS: LevelData[] = [
         createDeco(4600, 700, 'skull'),
         createDeco(5600, 640, 'torch'),
         createDeco(6800, 760, 'chain'),
-        createDeco(8000, 760, 'banner'),
-        createDeco(9000, 760, 'torch'),
-        createDeco(10300, 700, 'skull'),
-        createDeco(11200, 760, 'chain'),
-        createDeco(12400, 660, 'torch'),
-        createDeco(12800, 660, 'boss-flag'),
-        createDeco(12950, 660, 'torch'),
+        createDeco(7150, 660, 'torch'),
+        createDeco(7300, 660, 'boss-flag'),
+        createDeco(7450, 660, 'torch'),
       ],
       playerStart: { x: 200, y: 736 },
-      goal: { x: 12800, y: 700 },
+      goal: { x: 7300, y: 700 },
       timeBonus: 300,
       checkpoints: [createCheckpoint(2700, 784)],
     };

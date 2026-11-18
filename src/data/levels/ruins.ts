@@ -45,7 +45,7 @@ export const RUINS_LEVELS: LevelData[] = [
     ]));
     // Schatzterrasse (über dem Grabungsaufzug)
     platforms.push(createPlat(4900, 420, 240, 24, 'sandstone'));
-    platforms.push(createPlat(5450, 760, 800, 48, 'ruins'));
+    platforms.push(createPlat(5450, 808, 800, 144, 'ruins'));
     // Zerbrochene Brücke
     platforms.push(...gapWithPlatforms(1, 5850, 748, 520, 2, {
       widths: [120, 130], dy: [0, 50], types: ['platform_easy', 'platform_medium'],
@@ -54,6 +54,11 @@ export const RUINS_LEVELS: LevelData[] = [
     // Treppe zum Ausgrabungsausgang
     platforms.push(...staircase(7300, 736, 3, 70, 140, 40, 'sandstone'));
     platforms.push(createPlat(8100, 760, 600, 48, 'ruins'));
+
+    // A roofed excavation cache with an open lower entrance on the left.
+    platforms.push(createPlat(2450, 228, 284, 24, 'sandstone'));
+    platforms.push(createPlat(2300, 273, 24, 66, 'sandstone'));
+    platforms.push(createPlat(2600, 314, 24, 148, 'ruins'));
 
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(200, 700, 1000, 700, 4));
@@ -72,6 +77,10 @@ export const RUINS_LEVELS: LevelData[] = [
     coins.push(...coinTrail(6400, 660, 7200, 660, 4));
     coins.push(...coinTrail(7350, 620, 7700, 620, 4));
     coins.push(...coinTrail(7850, 660, 8350, 660, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(5700, 608, 32, 32, 'brick_secret'));
+    coins.push(...coinArc(5700, 551, 3, 48, 32));
 
     return {
       id: 67, name: 'Ausgrabung', width: 8800, height: 950, biome: 'ruins',
@@ -93,7 +102,6 @@ export const RUINS_LEVELS: LevelData[] = [
         createEnemy(2000, 716, 'spiny'),
         createEnemy(3000, 716, 'robot'),
         createEnemy(4130, 516, 'crab'),
-        createEnemy(5600, 716, 'goomba'),
         createEnemy(6600, 716, 'koopa'),
         createEnemy(7550, 576, 'robot'),
         createEnemy(8000, 716, 'spiny'),
@@ -185,6 +193,9 @@ export const RUINS_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(10050, 330, 60));
     coins.push(...coinTrail(10250, 660, 10850, 660, 4));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(5125, 551, 3, 48, 32));
+
     return {
       id: 68, name: 'Tempelbrücken', width: 11200, height: 950, biome: 'ruins',
       platforms,
@@ -205,7 +216,6 @@ export const RUINS_LEVELS: LevelData[] = [
         createEnemy(1800, 716, 'koopa'),
         createEnemy(3100, 716, 'spiny'),
         createEnemy(4300, 716, 'robot'),
-        createEnemy(5300, 716, 'crab'),
         createEnemy(6050, 650, 'ghost'),
         createEnemy(7000, 866, 'goomba'),
         createEnemy(7900, 716, 'robot'),
@@ -259,7 +269,7 @@ export const RUINS_LEVELS: LevelData[] = [
     // Hochterrasse über dem kreisenden Aufzug
     platforms.push(createPlat(3400, 392, 200, 24, 'platform_hard'));
     platforms.push(createPlat(3500, 640, 120, 24, 'platform_easy'));
-    platforms.push(createPlat(4100, 760, 900, 48, 'ruins'));
+    platforms.push(createPlat(4100, 808, 900, 144, 'ruins'));
     // Eingestürzte Deckenpassage
     platforms.push(...overhangSection(4600, 736, 1000, 5000, 200, 'sandstone'));
     platforms.push(createPlat(6100, 760, 800, 48, 'ruins'));
@@ -294,6 +304,10 @@ export const RUINS_LEVELS: LevelData[] = [
     coins.push(...coinTrail(8400, 660, 9200, 660, 4));
     coins.push(...coinTrail(9450, 590, 9550, 590, 2));
     coins.push(...coinTrail(9800, 660, 10600, 660, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(4325, 608, 32, 32, 'hidden'));
+    coins.push(...coinArc(4325, 551, 3, 48, 32));
 
     return {
       id: 69, name: 'Säulengänge', width: 10900, height: 950, biome: 'ruins',
@@ -377,7 +391,7 @@ export const RUINS_LEVELS: LevelData[] = [
     platforms.push(createPlat(8000, 320, 200, 24, 'platform_medium'));
     platforms.push(createPlat(8400, 480, 220, 24, 'platform_easy'));
     platforms.push(createPlat(8750, 640, 240, 24, 'platform_hard'));
-    platforms.push(createPlat(9500, 800, 1200, 48, 'ruins'));
+    platforms.push(createPlat(9500, 848, 1200, 144, 'ruins'));
     platforms.push(createPlat(10500, 760, 500, 48, 'sandstone'));
     platforms.push(...twoTierSection(10800, 736, 900, 'stone', 'sandstone'));
     platforms.push(createPlat(12300, 760, 800, 48, 'ruins'));
@@ -412,6 +426,9 @@ export const RUINS_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(14430, 300, 60));
     coins.push(...coinTrail(14850, 660, 15700, 660, 4));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(9250, 591, 3, 48, 32));
+
     return {
       id: 70, name: 'Stufenpyramide', width: 16200, height: 1000, biome: 'ruins',
       platforms,
@@ -439,7 +456,6 @@ export const RUINS_LEVELS: LevelData[] = [
         createEnemy(5500, 316, 'spiny'),
         createEnemy(6200, 296, 'robot'),
         createEnemy(7400, 96, 'koopa'),
-        createEnemy(9000, 756, 'crab'),
         createEnemy(9800, 690, 'ghost'),
         createEnemy(11000, 716, 'spiny'),
         createEnemy(12500, 716, 'robot'),
@@ -507,7 +523,7 @@ export const RUINS_LEVELS: LevelData[] = [
     platforms.push(createPlat(5800, 700, 300, 24, 'brick_secret'));
     platforms.push(createPlat(6100, 620, 280, 24, 'brick_secret'));
     platforms.push(createPlat(6350, 560, 200, 24, 'brick_secret'));
-    platforms.push(createPlat(6600, 760, 800, 48, 'ruins'));
+    platforms.push(createPlat(6600, 808, 800, 144, 'ruins'));
     platforms.push(...gapWithPlatforms(1, 7000, 748, 560, 3, {
       widths: [130, 110, 140], dy: [0, 60, 30], types: ['platform_medium', 'platform_easy', 'platform_hard'],
     }));
@@ -541,6 +557,10 @@ export const RUINS_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(10500, 170, 70));
     coins.push(...coinTrail(10700, 660, 11300, 660, 4));
     coins.push(...coinTrail(11600, 660, 12200, 660, 4));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(6800, 608, 32, 32, 'brick_multi'));
+    coins.push(...coinArc(6800, 551, 3, 48, 32));
 
     return {
       id: 71, name: 'Wächter-Horde', width: 12600, height: 950, biome: 'ruins',
@@ -644,7 +664,7 @@ export const RUINS_LEVELS: LevelData[] = [
       widths: [120, 130, 110], dy: [0, 50, 20], types: ['platform_easy', 'platform_medium', 'platform_hard'],
     }));
     platforms.push(createPlat(6600, 940, 900, 48, 'ruins'));
-    platforms.push(createPlat(7600, 900, 700, 48, 'stone'));
+    platforms.push(createPlat(7600, 948, 700, 144, 'stone'));
     platforms.push(...pitFloor(8000, 876, 300, 60, 'sandstone'));
     platforms.push(createPlat(8800, 900, 700, 48, 'ruins'));
     platforms.push(createPlat(9500, 860, 600, 48, 'sandstone'));
@@ -696,6 +716,9 @@ export const RUINS_LEVELS: LevelData[] = [
     coins.push(...coinArc(14000, 610, 5, 70, 80));
     coins.push(...coinTrail(14450, 550, 15050, 550, 4));
     coins.push(...coinTrail(15300, 330, 15800, 330, 5));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(7425, 691, 3, 48, 32));
 
     return {
       id: 72, name: 'Fallender Tempel', width: 16200, height: 1000, biome: 'ruins',

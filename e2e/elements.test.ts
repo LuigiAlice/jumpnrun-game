@@ -190,7 +190,7 @@ test.describe('Pilot elements runtime verification', () => {
     await startLevel(page, 0);
     const setup = await inGame(page, `
       const getType = (e) => e.getData('type') || (e.texture ? e.texture.key : null);
-      const stompable = ['goomba', 'koopa', 'spiny', 'robot', 'crab', 'ghost', 'squid', 'ufo'];
+      const stompable = ['goomba', 'koopa', 'robot', 'crab', 'ghost', 'squid', 'ufo'];
       const target = scene.enemies.getChildren().find(e => stompable.includes(getType(e)));
       if (!target) return { error: 'no stompable enemy in level' };
       target.setData('e2eTarget', true);

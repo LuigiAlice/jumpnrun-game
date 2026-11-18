@@ -1,3 +1,4 @@
+import { polishNatureLevel } from './naturePolish';
 // Water World — 6 Level, 6 Archetypen (IDs 13-18), Phase-9-Neubau
 // L13 Lagunenpfad   (Oberflaeche + ueberflutete Korallengrotte, waterZone)
 // L14 Tiden-Tunnel  (komplett unter Wasser: Graeben, zwei Ebenen, Hallen)
@@ -24,7 +25,7 @@ import {
 
 type PlatType = Parameters<typeof createPlat>[4];
 
-export const WATER_LEVELS: LevelData[] = [
+const WATER_AUTHORED_LEVELS: LevelData[] = [
   // ==========================================================================
   // L13 "Aqua Lagoon" — Lagunenpfad (width 7000)
   // Oberflaechenpfad -> Lagunenbecken mit Inselsteinen -> zwei Ebenen ->
@@ -690,3 +691,6 @@ export const WATER_LEVELS: LevelData[] = [
     ],
   },
 ];
+
+// Individually anchored landscape, reward and recovery polish; original jump tops stay fixed.
+export const WATER_LEVELS: LevelData[] = WATER_AUTHORED_LEVELS.map(polishNatureLevel);

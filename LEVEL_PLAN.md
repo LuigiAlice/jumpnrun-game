@@ -234,3 +234,16 @@ Abwärts ist bis 1000px Fallhöhe immer möglich. Bei `body.y > 500` schwimmt de
 ## Klassischer Einstieg (aktuell)
 
 L1 erhält unter der bisherigen Hügelroute einen sicheren Bodenlauf, zwei Brick–Frageblock–Brick-Gruppen und eine massive vierstufige Treppe mit Münzbogen vor der Flagge. Die Hügel bleiben als höhere Belohnungsroute erhalten. Geheim-Plattform, Warp-Röhren, genau eine Feder und null Stacheln bleiben erhalten. Sprint ist optional; alle Level bleiben ohne Sprint lösbar.
+
+## Phase 10 — Landschaft und Spielrhythmus (umgesetzt)
+
+Alle 90 Level wurden überarbeitet und erneut mit strenger Ballistik geprüft. Bestehende Pins, individuelle Finale-Mechaniken und biomeigene Gravitation bleiben erhalten.
+
+| Gruppe | Änderungen |
+|--------|------------|
+| Welt 1 (L1–6) | Massive Erdflächen, gestaffelte Gegnerrollen, Bonusnischen; L2 auf 7300 px und sechs frühe Gegner reduziert. |
+| Naturwelten (L7–48) | 42 einzeln kuratierte Belohnungs-/Ruheanker in `naturePolish.ts`; geschützte untere Wege, tiefere Landschaftsfundamente, natürliche Gegnerbesetzung, zusätzliche Nischen L7/L31. |
+| Herausforderung (L49–89) | Individuelle Ruheinseln und entzerrte Gegnerwellen, 27 kleine Entdeckungen, massive Fundamente, Kammern L61/L67/L85, Rettungswege L50/L55. |
+| Finale (L90) | Kompakte 7600-px-Arena, ein Boss, Bodenweg mit wieder erhältlichen Feuerblumen und gesperrter Flagge bis zum Sieg. |
+
+Die sechs zu hoch angelegten Bonusplattformen in L73/L74/L75/L76/L86/L89 liegen jetzt 160 px über ihrer Bodenroute und sind ohne Feder erreichbar; Münzen wurden angepasst. Optionale Checkpoints sind auch in kurzen Leveln zulässig, ab width >= 16000 bleiben sie Pflicht. Lösbarkeit umfasst Ziel und Bonusplattformen; der Auto-Fixer darf nichts ergänzen.

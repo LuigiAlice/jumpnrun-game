@@ -22,8 +22,8 @@ type PType = LevelData['platforms'][number]['type'];
 type Plat = LevelData['platforms'][number];
 
 /** Solider Boden von x1 bis x2 mit Oberkante topY. */
-const ground = (x1: number, x2: number, topY: number, type: PType = 'stone'): Plat =>
-  seg(x1, x2, topY, 40, type);
+const ground = (x1: number, x2: number, topY: number, type: PType = 'stone', depth = 40): Plat =>
+  seg(x1, x2, topY, depth, type);
 
 /** Schwebende Trittplatte (24px hoch), y = Zentrum. */
 const slab = (cx: number, topY: number, w: number, type: PType = 'platform_medium'): Plat =>
@@ -58,7 +58,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     platforms.push(slab(2595, 395, 90, 'platform_easy'));              // Tritt 1 top 395
     platforms.push(slab(2780, 380, 80, 'platform_hard'));              // Tritt 2 top 380
     platforms.push(slab(2965, 395, 90, 'platform_medium'));            // Tritt 3 top 395
-    platforms.push(ground(3100, 3800, 410));                           // top 410  [3100,3800]
+    platforms.push(ground(3100, 3800, 410, 'stone', 136));                           // top 410  [3100,3800]
     platforms.push(lavaPool(3800, 4300, 740));                         // Lava-Fluss 2
     platforms.push(ground(4300, 5000, 340));                           // top 340  [4300,5000]
     platforms.push(lavaPool(5000, 5560, 740));                         // Lava-Fluss 3
@@ -93,6 +93,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     platforms.push(ground(15820, 16580, 220));                         // Ausklang top 220
     platforms.push(slab(16100, 120, 140, 'platform_medium'));          // Muenz-Perch top 120
 
+    // A cool obsidian grotto below the first stepping-stone crossing.
+    // Falling here costs height, not a life; both 145px return jumps fit volcano gravity.
+    platforms.push(createPlat(2780, 582, 150, 84, 'stone'));
+
     const coins = [] as LevelData['coins'];
     coins.push(...coinTrail(150, 570, 1100, 570, 5));
     coins.push(...coinArc(2150, 330, 5, 150, 70));
@@ -116,6 +120,12 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     coins.push(...coinArc(16180, 170, 5, 130, 60));
     coins.push(...coinDiamond(16100, 60, 60));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(3450, 282, 32, 32, 'hidden'));
+    coins.push(...coinArc(3450, 220, 3, 48, 28));
+
+    coins.push(...coinArc(2780, 490, 3, 38, 24));
+
     return {
       id: 55, name: 'Lavasteg', width: 16800, height: 800, biome: 'volcano-lava',
       platforms,
@@ -131,8 +141,6 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         createQB(12400, 110, 'star'),
       ],
       enemies: [
-        createEnemy(3300, 402, 'goomba'),
-        createEnemy(3620, 402, 'spiny'),
         createEnemy(4500, 332, 'robot'),
         createEnemy(4850, 332, 'goomba'),
         createEnemy(5750, 292, 'spiny'),
@@ -201,7 +209,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     platforms.push(lavaPool(2400, 3600, 740));                         // grosser See 1
     platforms.push(ground(3600, 4400, 620));                           // top 620  [3600,4400]
     platforms.push(lavaPool(4400, 4900, 740));                         // See 2
-    platforms.push(ground(4900, 5700, 520));                           // top 520  [4900,5700]
+    platforms.push(ground(4900, 5700, 520, 'stone', 136));                           // top 520  [4900,5700]
     platforms.push(lavaPool(5700, 6300, 740));                         // See 3
     platforms.push(...islandCluster(5700, 520, [
       { dx: 70, dy: 20, w: 100 }, { dx: 250, dy: 55, w: 90 },
@@ -259,6 +267,9 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(16250, 150, 70));
     coins.push(...coinTrail(16650, 250, 17100, 250, 4));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(5100, 330, 3, 48, 28));
+
     return {
       id: 56, name: 'Magmasprünge', width: 17200, height: 800, biome: 'volcano-lava',
       platforms,
@@ -283,7 +294,6 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         createEnemy(2150, 632, 'spiny'),
         createEnemy(3700, 612, 'robot'),
         createEnemy(4200, 612, 'spiny'),
-        createEnemy(5250, 512, 'robot'),
         createEnemy(7000, 462, 'robot'),
         createEnemy(7100, 462, 'spiny'),
         createEnemy(8400, 422, 'robot'),
@@ -363,7 +373,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     platforms.push(...pipePair(4600, 620));
     platforms.push(...pipePair(5050, 620));
     platforms.push(lavaPool(5300, 5900, 740));                         // Lava-Fluss 3
-    platforms.push(ground(5900, 6800, 620));                           // top 620  [5900,6800]
+    platforms.push(ground(5900, 6800, 620, 'stone', 136));                           // top 620  [5900,6800]
     platforms.push(...pitFloor(6800, 620, 700, 160, 'lava')); // Lavagrube top 780
     platforms.push(slab(6900, 610, 100, 'platform_medium'));
     platforms.push(slab(7080, 600, 90, 'platform_easy'));
@@ -423,6 +433,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     coins.push(...coinDiamond(16000, 340, 60));
     coins.push(...coinTrail(15900, 360, 16350, 360, 4));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(6350, 492, 32, 32, 'brick_secret'));
+    coins.push(...coinArc(6350, 430, 3, 48, 28));
+
     return {
       id: 57, name: 'Obsidianröhren', width: 16400, height: 800, biome: 'volcano-lava',
       platforms,
@@ -448,7 +462,6 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         createEnemy(4600, 588, 'piranha'),
         createEnemy(5050, 588, 'piranha'),
         createEnemy(6000, 612, 'robot'),
-        createEnemy(6500, 612, 'spiny'),
         createEnemy(6700, 612, 'goomba'),
         createEnemy(7600, 588, 'piranha'),
         createEnemy(9000, 612, 'robot'),
@@ -564,6 +577,9 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     coins.push(...coinArc(11650, 40, 5, 150, 50));
     coins.push(...coinTrail(12200, 110, 12700, 110, 4));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(3920, 130, 3, 48, 28));
+
     return {
       id: 58, name: 'Kraterkletterer', width: 12800, height: 800, biome: 'volcano-lava',
       platforms,
@@ -583,7 +599,6 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         createEnemy(1900, 632, 'robot'),
         createEnemy(2300, 420, 'thwomp'),
         createEnemy(3600, 112, 'spiny'),
-        createEnemy(4000, 312, 'robot'),
         createEnemy(4800, 272, 'spiny'),
         createEnemy(5500, 272, 'spiny'),
         createEnemy(6700, 92, 'spiny'),
@@ -645,7 +660,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     platforms.push(slab(5620, 535, 80, 'platform_hard'));
     platforms.push(ground(5800, 7100, 540));                           // Arena 4 top 540 [5800,7100]
     platforms.push(lavaPool(7100, 7700, 740));                         // Lavagraben 3
-    platforms.push(ground(7700, 9000, 520));                           // Arena 5 top 520 [7700,9000]
+    platforms.push(ground(7700, 9000, 520, 'stone', 136));                           // Arena 5 top 520 [7700,9000]
     platforms.push(lavaPool(9000, 9600, 740));                         // Lavagraben 4
     platforms.push(slab(9120, 510, 90, 'platform_easy'));
     platforms.push(slab(9320, 495, 100, 'platform_medium'));
@@ -689,6 +704,9 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     coins.push(...coinTrail(16000, 300, 16350, 300, 4));
     coins.push(...coinDiamond(16700, 380, 70));
 
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    coins.push(...coinArc(8150, 330, 3, 48, 28));
+
     return {
       id: 59, name: 'Aschesturm-Horde', width: 17000, height: 800, biome: 'volcano-lava',
       platforms,
@@ -724,7 +742,6 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
         createEnemy(6450, 532, 'goomba'),
         createEnemy(6700, 532, 'spiny'),
         createEnemy(6950, 532, 'robot'),
-        createEnemy(7900, 512, 'robot'),
         createEnemy(8600, 300, 'thwomp'),
         createEnemy(9750, 502, 'spiny'),
         createEnemy(10050, 502, 'robot'),
@@ -797,7 +814,7 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     platforms.push(...islandCluster(3200, 470, [
       { dx: 60, dy: 20, w: 100 }, { dx: 230, dy: 45, w: 90 }, { dx: 390, dy: 20, w: 100 },
     ]));                                                               // tops 450/425/450
-    platforms.push(ground(3800, 4800, 430));                           // Plateau top 430 [3800,4800]
+    platforms.push(ground(3800, 4800, 430, 'stone', 136));                           // Plateau top 430 [3800,4800]
     platforms.push(ground(4850, 5350, 300));                           // Hochstufe top 300 [4850,5350]
     platforms.push(ground(5450, 6400, 280));                           // Plateau top 280 [5450,6400]
     platforms.push(lavaPool(6400, 6900, 760));                         // Lavabecken 3
@@ -836,6 +853,10 @@ export const VOLCANO_LAVA_LEVELS: LevelData[] = [
     coins.push(...coinTrail(12700, 60, 13500, 60, 5));
     coins.push(...coinArc(13800, 120, 5, 150, 50));
     coins.push(...coinTrail(14600, 60, 15300, 60, 5));
+
+    // A sheltered breather between set pieces; the optional reward never gates the route.
+    platforms.push(createPlat(4050, 302, 32, 32, 'hidden'));
+    coins.push(...coinArc(4050, 240, 3, 48, 28));
 
     return {
       id: 60, name: 'Eruptions-Finale', width: 15600, height: 800, biome: 'volcano-lava',

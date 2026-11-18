@@ -66,7 +66,7 @@ export class TitleScene extends Phaser.Scene {
 
         this.add.text(centerX, 60, 'SUPER JUMP WORLD', {
             fontSize: '48px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'monospace',
             color: '#f1c40f',
             stroke: '#e74c3c',
             strokeThickness: 8
@@ -100,7 +100,7 @@ export class TitleScene extends Phaser.Scene {
         const tabHeight = 30;
         const gapX = 20;
         const gapY = 10;
-        const startX = GAME_WIDTH / 2 - (cols * (tabWidth + gapX) - gapX) / 2;
+        const startX = GAME_WIDTH / 2 - (cols - 1) * (tabWidth + gapX) / 2;
         const startY = 120;
         
         this.BIOME_NAMES.forEach((biome, i) => {
@@ -119,7 +119,7 @@ export class TitleScene extends Phaser.Scene {
             
             const text = this.add.text(0, 0, biome, {
                 fontSize: '11px',
-                fontFamily: 'Arial',
+                fontFamily: 'monospace',
                 color: '#fff'
             }).setOrigin(0.5);
             
@@ -183,13 +183,13 @@ export class TitleScene extends Phaser.Scene {
                 
                 const text = this.add.text(0, -10, label, {
                     fontSize: '16px',
-                    fontFamily: 'Arial Black',
+                    fontFamily: 'monospace',
                     color: '#fff'
                 }).setOrigin(0.5);
                 
                 const numText = this.add.text(0, 18, `${levelIndex + 1}`, {
                     fontSize: '24px',
-                    fontFamily: 'Arial',
+                    fontFamily: 'monospace',
                     color: '#aaa'
                 }).setOrigin(0.5);
                 
@@ -250,13 +250,13 @@ export class TitleScene extends Phaser.Scene {
         
         this.levelLabel = this.add.text(0, -5, 'grasslands-1.1', {
             fontSize: '24px',
-            fontFamily: 'Arial Black',
+            fontFamily: 'monospace',
             color: '#fff'
         }).setOrigin(0.5);
         
         const hint = this.add.text(0, 18, 'KLICKEN ZUM START', {
             fontSize: '12px',
-            fontFamily: 'Arial',
+            fontFamily: 'monospace',
             color: '#afa'
         }).setOrigin(0.5);
         

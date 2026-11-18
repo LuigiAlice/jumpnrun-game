@@ -1,3 +1,4 @@
+import { polishNatureLevel } from './naturePolish';
 // Village World (ids 37-42) — Phase 9 rebuild
 // Archetypes: 37 Dorfplatz, 38 Marktweg, 39 Kanalisation,
 // 40 Schornsteine, 41 Stadthorde, 42 Dach-Rennen-Finale (Wind, Engine-ID 42).
@@ -15,7 +16,7 @@ import {
   gapWithPlatforms,
 } from './helpers';
 
-export const VILLAGE_LEVELS: LevelData[] = [
+const VILLAGE_AUTHORED_LEVELS: LevelData[] = [
   // ============================================================
   // Level 37 (Dorfplatz): Dorfplatz mit Haus-Terrassen, Brunnen-
   // Steg über eine Schlucht (PIN: tragender Brick exakt bei
@@ -719,3 +720,6 @@ export const VILLAGE_LEVELS: LevelData[] = [
     };
   })(),
 ];
+
+// Individually anchored landscape, reward and recovery polish; original jump tops stay fixed.
+export const VILLAGE_LEVELS: LevelData[] = VILLAGE_AUTHORED_LEVELS.map(polishNatureLevel);
