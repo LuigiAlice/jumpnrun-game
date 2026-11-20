@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 vi.mock('phaser', () => ({ default: { Scene: class {} } }));
+import { goalConditionsMet } from '../src/engine/GoalRules';
 import { GameScene } from '../src/scenes/GameScene';
 
 function fixture(unlocked = true) {
@@ -21,7 +22,7 @@ function fixture(unlocked = true) {
     player, goal: { y: 450 }, isTransitioning: false, isDead: false, isQuitting: false,
     isPlayerBig: false, isPlayerFire: false, score: 0, lives: 3,
     timerEvent: { paused: false }, goalUnlocked: () => unlocked,
-    playGoalSound: vi.fn(), stopMusic: vi.fn(), showScorePopup: vi.fn(), nextLevel: vi.fn(),
+    showLockedGoalFeedback: vi.fn(), playGoalSound: vi.fn(), stopMusic: vi.fn(), showScorePopup: vi.fn(), nextLevel: vi.fn(),
     tweens: { killTweensOf: vi.fn(), add: vi.fn() }, add: { text: vi.fn(() => text) },
     time: { delayedCall: vi.fn((_ms: number, callback: () => void) => delayed.push(callback)) },
   };
@@ -66,6 +67,21 @@ describe('Safe goal finish', () => {
       expect(body.velocity).toEqual({ x: 400, y: 550 });
       expect(scene.time.delayedCall).not.toHaveBeenCalled();
     }
+  });
+
+  it('finishes level 1-5 exactly when its required twenty-five coins have been collected', () => {
+    const { scene, finish, delayed } = fixture();
+    let coins = 24;
+    scene.goalUnlocked = () => goalConditionsMet(coins, 25, 0, undefined);
+    finish();
+    expect(scene.isTransitioning).toBe(false);
+    expect(scene.showLockedGoalFeedback).toHaveBeenCalledOnce();
+    coins = 25;
+    finish();
+    expect(scene.isTransitioning).toBe(true);
+    delayed.forEach(callback => callback());
+    expect(scene.nextLevel).toHaveBeenCalledOnce();
+    expect(scene.lives).toBe(3);
   });
 
   it('keeps big and fire finish poses at their native player size', () => {

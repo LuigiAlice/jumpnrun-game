@@ -78,12 +78,13 @@ for (const biome of BIOMES) {
           goalX: scene.currentLevelData.goal.x,
           width: scene.currentLevelData.width,
           movers: scene.movingPlatforms.getChildren().length,
+          authoredMovers: scene.currentLevelData.movingPlatforms?.length ?? 0,
         };
-      `) as { id: number; biome: string; grounded: boolean; startY: number; goalX: number; width: number; movers: number };
+      `) as { id: number; biome: string; grounded: boolean; startY: number; goalX: number; width: number; movers: number; authoredMovers: number };
       expect(info.biome, `level index ${idx} should be ${biome.name}`).toBe(biome.name);
       expect(info.grounded, `L${info.id}: player is not grounded at spawn`).toBe(true);
       expect(info.goalX, `L${info.id}: goal outside level width`).toBeLessThanOrEqual(info.width);
-      expect(info.movers, `L${info.id}: no moving platforms`).toBeGreaterThanOrEqual(1);
+      expect(info.movers, `L${info.id}: authored moving platforms must spawn`).toBe(info.authoredMovers);
 
       // Sprung (echte Taste): bis zum Apex pollen, Steighöhe muss zur Biome-Gravity passen
       await page.locator('canvas').click({ position: { x: 400, y: 300 } });
@@ -129,6 +130,9 @@ for (const biome of BIOMES) {
       }
       await page.keyboard.up('ArrowRight');
       expect(maxVx, `L${info.id}: run speed ${maxVx} (expected >= 250)`).toBeGreaterThanOrEqual(250);
+
+      // Intentionally static routes (e.g. the new tower) need no moving platform.
+      if (info.movers === 0) continue;
 
       // Mover lebt: maximale Abweichung vom Startpunkt über 1.2s (Sinus-Nulldurchgang tolerant)
       const moved = await inGame(page, `

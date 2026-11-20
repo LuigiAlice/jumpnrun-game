@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test';
 const startLevel = async (page: Page, levelIndex: number) => {
   await page.goto('http://localhost:5173');
   await page.waitForFunction(() => {
-    const g = (window as unknown as { __game?: { scene: Phaser.Scene.ScenePlugin & { isActive: (k: string) => boolean } } }).__game;
+    const g = (window as unknown as { __game?: { scene: { isActive: (k: string) => boolean } } }).__game;
     return typeof g !== 'undefined' && !!g.scene && g.scene.isActive('Title');
   }, undefined, { timeout: 30000 });
   await page.evaluate((idx: number) => {
@@ -141,49 +141,87 @@ test.describe('Pilot elements runtime verification', () => {
   });
 
   test('T5: coin gate locks goal, reachGoal guarded, opens at coinGoal', async ({ page }) => {
+    test.setTimeout(90000);
     await startLevel(page, 4);
     const locked = await inGame(page, `
+      scene.enemies.clear(true, true);
       return {
         coinGoal: scene.currentLevelData.coinGoal,
         coinGateOpen: scene.coinGateOpen,
         goalAlpha: scene.goal.alpha,
         goalBodyEnabled: scene.goal.body.enable,
-        gateText: scene.coinGateText ? scene.coinGateText.text : null
+        gateText: scene.coinGateText ? scene.coinGateText.text : null,
+        worldText: scene.goalRequirementText ? scene.goalRequirementText.text : null,
+        lives: scene.lives,
       };
     `);
     expect(locked.coinGoal).toBe(25);
     expect(locked.coinGateOpen).toBe(false);
     expect(locked.goalAlpha).toBeLessThan(1);
-    expect(locked.goalBodyEnabled).toBe(false);
+    // The locked flag still senses contact; only reachGoal decides whether to finish.
+    expect(locked.goalBodyEnabled).toBe(true);
     expect(locked.gateText).toContain('/ 25');
+    expect(locked.worldText).toContain('25 Münzen');
 
+    await inGame(page, `
+      scene.player.body.reset(scene.goal.x - 45, scene.goal.y - 20);
+      scene.player.body.setVelocity(0, 0);
+    `);
+    await page.keyboard.down('ArrowRight');
+    await page.waitForFunction(() => {
+      const scene = (window as any).__game.scene.getScene('Game');
+      return scene.lastLockedGoalNotice >= 0 || scene.isDead;
+    }, undefined, { timeout: 30000 });
+    await page.keyboard.up('ArrowRight');
     const guard = await inGame(page, `
-      scene.player.body.reset(scene.goal.x, scene.goal.y - 20);
-      const t0 = performance.now();
-      while (performance.now() - t0 < 1600) {
-        await new Promise(r => setTimeout(r, 50));
-      }
-      const g = window.__game;
-      const sc = g.scene.getScene('Game');
-      return { isTransitioning: sc.isTransitioning, stillGame: g.scene.isActive('Game'), levelIndex: sc.levelIndex };
+      return {
+        isTransitioning: scene.isTransitioning, stillGame: scene.scene.isActive(),
+        levelIndex: scene.levelIndex, dead: scene.isDead, lives: scene.lives,
+        gateText: scene.coinGateText.text, worldText: scene.goalRequirementText.text,
+      };
     `);
     expect(guard.stillGame, 'scene left Game while coin gate locked').toBe(true);
     expect(guard.isTransitioning).toBe(false);
     expect(guard.levelIndex).toBe(4);
+    expect(guard.dead).toBe(false);
+    expect(guard.lives).toBe(locked.lives);
+    expect(guard.gateText).toContain('Ziel gesperrt');
+    expect(guard.worldText).toContain('25 Münzen');
 
     await inGame(page, `
+      // Leave the sensor before unlocking so the open-state assertions are observable.
+      scene.player.body.reset(scene.goal.x - 140, scene.goal.y - 20);
+      scene.player.body.setVelocity(0, 0);
       scene.coinCount = 25;
       scene.updateCoinGate();
     `);
     await page.waitForFunction(() => {
-      const s = (window as unknown as { __game?: { scene: { getScene: (k: string) => any } } }).__game!.scene.getScene('Game');
-      return !!s && s.coinGateOpen === true && s.goal.body.enable === true && s.goal.alpha > 0.9;
-    }, undefined, { timeout: 3000 }).catch(() => { throw new Error('coin gate did not open after coinCount reached coinGoal'); });
+      const scene = (window as any).__game.scene.getScene('Game');
+      return scene.coinGateOpen && scene.goal.body.enable && scene.goal.alpha > 0.9;
+    }, undefined, { timeout: 10000 });
     const opened = await inGame(page, `
-      return { gateText: scene.coinGateText ? scene.coinGateText.text : null, coinGateOpen: scene.coinGateOpen };
+      return { gateText: scene.coinGateText.text, worldText: scene.goalRequirementText.text, coinGateOpen: scene.coinGateOpen };
     `);
     expect(opened.gateText).toBe('Gate offen!');
+    expect(opened.worldText).toBe('Ziel frei!');
     expect(opened.coinGateOpen).toBe(true);
+
+    // A real flag overlap after collecting enough coins must advance to world 1-6.
+    await inGame(page, `
+      scene.player.body.reset(scene.goal.x - 45, scene.goal.y - 20);
+      scene.player.body.setVelocity(0, 0);
+    `);
+    await page.keyboard.down('ArrowRight');
+    await page.waitForFunction(() => {
+      const scene = (window as any).__game.scene.getScene('Game');
+      return scene.isTransitioning || scene.levelIndex === 5 || scene.isDead;
+    }, undefined, { timeout: 30000 });
+    await page.keyboard.up('ArrowRight');
+    await page.waitForFunction(() => {
+      const scene = (window as any).__game.scene.getScene('Game');
+      return scene.scene.isActive() && scene.levelIndex === 5 && !scene.isDead;
+    }, undefined, { timeout: 40000 });
+    expect(await inGame(page, 'return scene.lives;')).toBe(locked.lives);
   });
 
   test('T6: stomp on goomba destroys enemy (+500, bounce -400, player alive)', async ({ page }) => {

@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
+import { constrainCameraX } from '../engine/CameraRules';
 import { ClassicElements } from '../engine/ClassicElements';
 import { advanceBombFuse, BOMB_FUSE_MS, BOMB_BLAST_RADIUS, fireHitEffect, isInBombBlast, parakoopaOffset } from '../engine/ClassicEnemyRules';
 import { TerrainTextures } from '../rendering/terrain';
-import { goalConditionsMet, nextCampaignLevel } from '../engine/GoalRules';
+import { goalConditionsMet, goalRequirementHint, nextCampaignLevel } from '../engine/GoalRules';
 import { loadLevel, getLevelName, getLevelCount } from '../generator/LevelLoader';
 import type { LevelData, Biome, Rect } from '../data/levels/index';
 import { GAME_HEIGHT, GAME_WIDTH, BIOME_GRAVITY, SPRING_VELOCITY } from '../config';
@@ -125,6 +126,8 @@ export class GameScene extends Phaser.Scene {
   private spikes!: Phaser.Physics.Arcade.StaticGroup;
   private coinGateText?: Phaser.GameObjects.Text;
   private coinGateOpen: boolean = false;
+  private goalRequirementText?: Phaser.GameObjects.Text;
+  private lastLockedGoalNotice = -1500;
 
   // Phase 9: data-driven elements
   private checkpointGroup!: Phaser.Physics.Arcade.StaticGroup;
@@ -161,6 +164,8 @@ export class GameScene extends Phaser.Scene {
     this.jumpState = createJumpState();
     this.externalLaunchPending = false;
     this.lastCameraX = 0;
+    this.goalRequirementText = undefined;
+    this.lastLockedGoalNotice = -1500;
     this.animFrame = 0;
     this.animTime = 0;
     this.starKillChain = 0;
@@ -631,7 +636,7 @@ export class GameScene extends Phaser.Scene {
     this.coinGateOpen = false;
     if (level.coinGoal || level.timeGate || level.id === 90) {
       this.goal.setAlpha(0.4);
-      (this.goal.body as Phaser.Physics.Arcade.Body).enable = false;
+      // Keep overlap detection alive so a locked flag can explain its requirement.
     }
   }
 
@@ -1241,6 +1246,11 @@ export class GameScene extends Phaser.Scene {
         stroke: '#000',
         strokeThickness: 2
       }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
+      this.goalRequirementText = this.add.text(levelData.goal.x, levelData.goal.y - 90, '', {
+        fontSize: '16px', fontFamily: 'Fredoka, Trebuchet MS, sans-serif', color: '#38565a',
+        backgroundColor: '#fff4dc', padding: { x: 10, y: 7 }, align: 'center',
+        wordWrap: { width: 260 },
+      }).setOrigin(0.5, 1).setDepth(1000);
     }
   }
 
@@ -1273,6 +1283,8 @@ export class GameScene extends Phaser.Scene {
       this.tweens.add({ targets: this.goal, alpha: 1, duration: 300 });
       this.tweens.add({ targets: this.goal, scaleX: 1.2, scaleY: 1.2, duration: 200, yoyo: true, ease: 'Sine.easeInOut' });
       if (this.coinGateText) this.coinGateText.setText('Gate offen!');
+      this.goalRequirementText?.setText('Ziel frei!');
+      this.goal.clearTint();
       if (this.audioContext) {
         this.playNote(523.25, 'triangle', 0.06, 0.15, 0);
         this.time.delayedCall(120, () => this.playNote(659.25, 'triangle', 0.06, 0.15, 0));
@@ -1280,14 +1292,29 @@ export class GameScene extends Phaser.Scene {
       }
       return;
     }
-    // Still locked: HUD shows the first unmet requirement
-    (this.goal.body as Phaser.Physics.Arcade.Body).enable = false;
+    // A locked goal remains an overlap target; the completion guard owns the lock.
+    (this.goal.body as Phaser.Physics.Arcade.Body).enable = true;
     this.goal.setAlpha(0.4);
-    if (this.coinGateText) {
-      if (level.id === 90 && this.remainingBossHp() > 0) this.coinGateText.setText('Besiege den Burghüter!');
-      else if (coinGoal && this.coinCount < coinGoal) this.coinGateText.setText(`Coins: ${Math.min(this.coinCount, coinGoal)} / ${coinGoal}`);
-      else if (timeGate !== undefined) this.coinGateText.setText(`Zeit-Tor: ${Math.max(0, Math.ceil(timeGate - this.levelElapsed))}s`);
-    }
+    const hint = this.currentGoalHint();
+    this.coinGateText?.setText(hint);
+    this.goalRequirementText?.setText(hint);
+  }
+
+  private currentGoalHint(): string {
+    const level = this.currentLevelData;
+    if (!level) return '';
+    return goalRequirementHint(this.coinCount, level.coinGoal, this.levelElapsed, level.timeGate,
+      level.id === 90 ? this.remainingBossHp() : 0);
+  }
+
+  private showLockedGoalFeedback() {
+    // Overlap callbacks run every physics step; use game time to avoid popup spam.
+    if (this.moveAccum - this.lastLockedGoalNotice < 1500) return;
+    this.lastLockedGoalNotice = this.moveAccum;
+    const hint = this.currentGoalHint();
+    this.showScorePopup(hint, this.player.x, this.player.y - 48);
+    this.coinGateText?.setText(hint);
+    this.goalRequirementText?.setText(hint);
   }
 
   private updateUI() {
@@ -1307,7 +1334,7 @@ export class GameScene extends Phaser.Scene {
     this.livesValText.setText(String(this.lives));
     const coinGoal = this.currentLevelData?.coinGoal;
     if (coinGoal && !this.coinGateOpen) {
-      this.coinGateText?.setText(`Coins: ${Math.min(this.coinCount, coinGoal)} / ${coinGoal}`);
+      this.coinGateText?.setText(this.currentGoalHint());
     }
   }
 
@@ -1453,9 +1480,9 @@ export class GameScene extends Phaser.Scene {
     body.setVelocityY(jump.velocityY);
     if (jump.jumped) this.playJumpSound();
 
-    if (this.cameras.main.scrollX < this.lastCameraX) {
-      this.cameras.main.scrollX = this.lastCameraX;
-    }
+    this.cameras.main.scrollX = constrainCameraX(
+      this.cameras.main.scrollX, this.lastCameraX, this.currentLevelData?.cameraMode, this.currentLevelData?.coinGoal
+    );
     this.lastCameraX = this.cameras.main.scrollX;
 
     const playerSpeed = Math.abs(body.velocity.x);
@@ -1948,7 +1975,10 @@ export class GameScene extends Phaser.Scene {
 
   private reachGoal(bonusPoints: number = 0) {
       if (this.isDead || this.isTransitioning || this.isQuitting) return;
-      if (!this.goalUnlocked()) return;
+      if (!this.goalUnlocked()) {
+        this.showLockedGoalFeedback();
+        return;
+      }
       this.isTransitioning = true;
       this.timerEvent.paused = true;
       this.playGoalSound();

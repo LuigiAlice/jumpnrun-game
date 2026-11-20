@@ -36,7 +36,7 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-016** – Spike-Design-Regeln: ≥ 100 px Abstand zu QBs, ≥ 150 px zu playerStart, ≥ 96 px zum Goal, auf einer Plattform „grounded", nie auf Moving-Platforms, max. 4 pro Level, keine zwei Spikes an derselben Position.
 - **R-017** – Breakable Bricks: Nur Big Mario zerbricht 'brick'-Plattformen von unten (+50 Punkte); Small Mario erzeugt nur einen Bonk; nicht-'brick'-Plattformen sind nie zerstörbar.
 - **R-018** – Load-Bearing-Schutz: Bricks, deren Entfernung das Level unlösbar machte, zerbrechen nicht (`isBrickLoadBearing`), sondern wobblen; E2E verifiziert, dass ein tragender Brick einen Bonk überlebt.
-- **R-019** – Münz-Tor: Ist `coinGoal` gesetzt, bleibt das Goal gesperrt (transparent, Body disabled) und `reachGoal` wird guardiert, bis `coins ≥ coinGoal`; HUD-Hint zeigt „Coins: X / Y" und danach „Gate offen!".
+- **R-019** – Münz-Tor: Ist `coinGoal` gesetzt, bleibt das Goal gesperrt (transparent, aktiver Overlap-Körper für Kontaktfeedback) und `reachGoal` wird guardiert, bis `coins ≥ coinGoal`; HUD und Fahnenschild erklären fehlende Münzen, danach erscheint „Gate offen!“.
 - **R-020** – coinGoal ist > 0 und überschreitet nie die Münz-Anzahl des Levels.
 - **R-021** – `ensureSolvable` erhält Springs, Spikes und coinGoal unverändert.
 
@@ -126,6 +126,11 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-077** – Stimmige Biome-Landschaften: sieben deterministische Hintergrundebenen je Biom mit unterschiedlichen geometrischen Motiven und passenden runden Dekorationen.
 
 - **R-078** – Sicherer Zielabschluss: Nach erfolgreichem Zielkontakt bleibt die Figur bis zum Levelwechsel an ihrer erreichten Position; kein Herunterfallen oder Weiterlaufen. Timer pausiert, Abschlussbelohnung nur einmal, nach 2000 ms normaler Levelwechsel. Gesperrte Ziele bleiben spielbar.
+
+- **R-079** – Zwölf eigenständige Hauptwege in L8/14/20/28/32/38/44/50/58/62/74/80: Schluchten, Galerien, Eisfelder, Turm, lange Verzweigungen, Dächer, Buchten, Maschinenetagen, Krater, Geistersäle, Felsbänder und Orbitinseln. Jeweils kompakt, ohne Pflicht-Sonderaktionen, alle Ziele und Bonusplattformen as-authored erreichbar. Keine Mover-/Feder-/Stachel-Vollausstattung dieser Rewrites; harte Pins bleiben erhalten.
+- **R-080** – Die Kamera folgt in den zwölf umgebauten Leveln auch nach links; bestehende Level behalten ihre bisherige Vorwärtskamera. Vertikale Weltgrenzen und sichere Zielabschlüsse bleiben gültig.
+
+- **R-081** – Gesperrte Fahnen reagieren sichtbar auf Kontakt: fehlende Münzen bzw. Zeit/Boss werden im HUD, direkt am Ziel und mit gedrosseltem Kontakt-Popup angezeigt. Münztor-Level erlauben Rückwege per Kamera; L1-5 endet nach 25 Münzen beim Fahnenkontakt zuverlässig genau einmal.
 
 ## Traceability
 
@@ -302,3 +307,18 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-078 | Stabiler Zielabschluss | tests/GoalFinish.test.ts | holds the player at the reached position |
 | R-078 | Gesperrte Ziele | tests/GoalFinish.test.ts | leaves a locked goal fully playable |
 | R-078 | Runtime-Zielkontakt | e2e/goal-finish.test.ts | crossing the goal freezes a falling runner |
+
+| R-079 | Zwölf vollständige Rewrites | tests/VarietyRollout.test.ts | loads twelve complete main-route identities |
+| R-079 | Naturwege | tests/VarietyNature.test.ts | replaces six routes deterministically |
+| R-079 | Maschinenetagen | tests/VarietyChallenge.test.ts | folds the machine route |
+| R-079 | Wolkenturm | tests/VarietyVertical.test.ts | replaces the long cloud run |
+| R-079 | Kollisionsfreie Wege | tests/VarietyTraversal.test.ts | provides a sampled collision-clear |
+| R-079 | Runtime-Spawns | e2e/level-variety.test.ts | safe grounded spawn and camera bounds |
+| R-080 | Rückwärtskamera | tests/CameraRules.test.ts | follows both directions |
+| R-080 | Runtime-Turmsprung | e2e/level-variety.test.ts | the cloud tower first ascent |
+
+| R-081 | Kontakt und fehlende Münzen | tests/GoalGateFeedback.test.ts | keeps level 1-5 contact detectable |
+| R-081 | Popup-Drosselung | tests/GoalGateFeedback.test.ts | throttles contact popups |
+| R-081 | Zielabschluss ab 25 Münzen | tests/GoalFinish.test.ts | finishes level 1-5 exactly |
+| R-081 | Rückweg zum Sammeln | tests/CameraRules.test.ts | lets coin-gate players return |
+| R-081 | Runtime-Fahnenkontakt | e2e/elements.test.ts | T5: coin gate locks goal |

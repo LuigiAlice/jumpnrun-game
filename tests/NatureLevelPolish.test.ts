@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { LEVEL_IDENTITIES } from '../src/data/levels/variety';
 import { ALL_LEVELS } from '../src/data/levels/index';
 import type { LevelData, Platform } from '../src/data/levels/index';
 import { deepenSafeFoundation, NATURE_LEVEL_PLANS, polishNatureLevel } from '../src/data/levels/naturePolish';
@@ -15,10 +16,11 @@ const fixture = (changes: Partial<LevelData> = {}): LevelData => ({
 });
 
 describe('Nature level polish', () => {
-  it('gives all 42 nature levels a distinct authored idea and reward anchor', () => {
+  it('gives all 42 nature levels an authored plan and preserves legacy anchors outside identity rewrites', () => {
     expect(natureLevels).toHaveLength(42);
     expect(new Set(Object.values(NATURE_LEVEL_PLANS).map(plan => plan.idea)).size).toBe(42);
-    for (const level of natureLevels) {
+    // Rewritten main routes have their own geometry assertions in Variety* tests.
+    for (const level of natureLevels.filter(level => !LEVEL_IDENTITIES[level.id])) {
       const plan = NATURE_LEVEL_PLANS[level.id];
       expect(level.platforms.some(p => p.x === plan.reward && p.w >= 240), `L${level.id} reward shelf`).toBe(true);
       expect(level.platforms.some(p => p.x === plan.recovery && p.w >= 240), `L${level.id} recovery shelf`).toBe(true);

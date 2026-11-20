@@ -102,8 +102,9 @@ PLAYER_MOVE_SPEED:   300
 
 ## Münz-Tor (`coinGoal`)
 
-- Optional in LevelData: Goal-Flag bleibt inaktiv (alpha 0.4, Body disabled) bis `coins >= coinGoal`
-- HUD-Hint: "Coins: X / Y" → "Gate offen!" + Glow-Tween + Arpeggio
+- Optional in LevelData: Goal-Flag bleibt optisch gesperrt (alpha 0.4) bis `coins >= coinGoal`; ihr Overlap-Körper bleibt aktiv, `reachGoal()` verhindert den Abschluss bis zur Freigabe
+- HUD und Schild direkt an der Fahne zeigen „Ziel gesperrt: noch N Münzen (X / Y)“. Kontakt zeigt denselben Hinweis als Popup, höchstens alle 1500 ms Game-Time. Freigabe: „Gate offen!“ / „Ziel frei!“ + Glow-Tween + Arpeggio.
+- Münztor-Level erlauben Rückwärtskamera, damit fehlende Münzen nachgeholt werden können; L1-5 verlangt weiterhin 25 Münzen.
 - Regeln: `coinGoal ≤ Coins im Level` (~60-70% der Coins empfohlen)
 
 ## Level-Elemente Phase 9 (datengetrieben)
@@ -251,7 +252,7 @@ Spiny ist wegen seiner Stacheln nicht stompbar. Koopa: Stomp → eigener Panzer;
 
 - Spieler wird mitgetragen — ausschliesslich positionsbasiert (`setX`/`setY`); `body.velocity` wird dabei nie überschrieben (Bugfix „Figur klebt auf dem Mover", R-057)
 - Keine Gravity, immovable Body
-- **In ALLEN 90 Leveln vorhanden**
+- In 78 Leveln vorhanden; die zwölf Hauptweg-Rewrites aus Phase 13 sind bewusst statisch und benötigen keinen Mover.
 
 ## Level-Struktur
 
@@ -430,3 +431,9 @@ Neue Grafiken in `src/art/classicAssets.ts`: 18 maßgleiche, weich schattierte T
 Die Grafik orientiert sich an der freundlichen, ausdrucksstarken Stimmung moderner Jump-and-Runs: runde Formen, warme Pastellfarben, große Augen und farbige Schatten. `storybookPlayer.ts` erzeugt alle Spielerposen; `storybookPrimitives.ts` bündelt weiche Formen für Gegner, Blöcke, Münzen und Power-ups. Alle bestehenden Texture-Keys, Framegrößen und Fußpositionen bleiben erhalten. Die Render-Konfiguration nutzt Antialiasing ohne Pixelrundung.
 
 `storybookScenery.ts` erzeugt sieben Parallax-Ebenen je Biom (105 Texturen) mit individuellen Motiven, sanftem Himmelslicht und nahtlos wiederholten Rändern. Neun zentrale Dekotexturen erhalten passende runde Silhouetten. Menü, HUD und Ergebnisbildschirm verwenden helle, gerundete Karten und gut lesbare dunkle Schrift. Levelgeometrie, Kollisionsgrößen und direkte Steuerung bleiben unverändert. Es handelt sich um eine eigene prozedurale 2D-Bilderbuchoptik.
+
+## Levelvielfalt — zwölf neue Hauptwege
+
+Referenzanalyse und Umsetzung: [docs/LEVEL_VARIETY_ANALYSIS.md](docs/LEVEL_VARIETY_ANALYSIS.md). L8/14/20/28/32/38/44/50/58/62/74/80 besitzen vollständig neue Geometrie: Schlucht, Becken/Galerien, Eisfelder, Turm, lange Verzweigungen, Dächer, Buchten, Maschinenetagen, Krater, Spuksäle, Felsbänder und Orbitinseln. Alle zwölf sind unter 5000 px breit; der Turm ist 2800 px hoch. Sie haben individuelle Abschnittslängen und Checkpoints statt gleicher Vollausstattung mit Movern/Federn/Stacheln.
+
+Die Kamera folgt in diesen Leveln beiden Laufrichtungen; bestehende Level behalten ihre Vorwärtskamera. Die alte gleiche Abfolge von sechs Levelrollen je Biom ist kein weiteres Designziel. Direkte Steuerung, biomebewusste Lösbarkeit und verbindliche Pins bleiben erhalten. Die zwölf statischen Hauptwege benötigen keine Sonderaktionen. Zusätzliche Kollisionskurvenprüfungen berücksichtigen kleine und große Körper; echte Runtime-Playtests bleiben neben den vorbereiteten E2E-Fällen notwendig.

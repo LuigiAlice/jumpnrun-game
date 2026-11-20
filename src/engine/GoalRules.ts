@@ -7,3 +7,14 @@ export function goalConditionsMet(coins: number, coinGoal: number | undefined, e
 export function nextCampaignLevel(index: number, count: number): number | null {
   return index + 1 < count ? index + 1 : null;
 }
+
+/** Tell the player why touching a visible flag has not yet finished the course. */
+export function goalRequirementHint(coins: number, coinGoal: number | undefined, elapsed: number, timeGate: number | undefined, bossHp = 0): string {
+  if (bossHp > 0) return 'Ziel gesperrt: Besiege den Burghüter!';
+  if (coinGoal && coins < coinGoal) {
+    const missing = coinGoal - coins;
+    return `Ziel gesperrt: noch ${missing} ${missing === 1 ? 'Münze' : 'Münzen'} (${coins} / ${coinGoal})`;
+  }
+  if (timeGate !== undefined && elapsed < timeGate) return `Ziel gesperrt: noch ${Math.ceil(timeGate - elapsed)} Sekunden`;
+  return 'Ziel frei!';
+}

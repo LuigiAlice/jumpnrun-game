@@ -1,0 +1,1535 @@
+{
+  "schemaVersion": 1,
+  "source": "ALL_LEVELS after biome polish, classic expansion and twelve main-route rewrites, before ensureSolvable",
+  "limitations": [
+    "Element presence does not measure player use, distinctiveness or quality.",
+    "Widths do not measure play time; heights are world bounds, not path elevation.",
+    "Dominant surfaces sum platform widths including overlaps and optional routes; they do not trace a played path.",
+    "Enemy gaps compare x coordinates only, ignoring vertical separation and enemy behaviour.",
+    "The audit is deterministic and reads level data without changing gameplay."
+  ],
+  "levelCount": 90,
+  "biomeCount": 15,
+  "widths": {
+    "min": 2200,
+    "median": 10750,
+    "max": 18200
+  },
+  "worldHeights": {
+    "min": 700,
+    "median": 950,
+    "max": 2800
+  },
+  "levelsAtLeast12000Wide": 36,
+  "totalWidth": 946030,
+  "featurePresence": {
+    "springs": 76,
+    "spikes": 69,
+    "checkpoints": 49,
+    "windZones": 9,
+    "waterZones": 10,
+    "keys": 17,
+    "doors": 17,
+    "cannons": 8,
+    "vines": 4,
+    "fireBars": 4,
+    "redCoinChallenges": 6,
+    "goals": 3,
+    "pipeWarps": 1
+  },
+  "movingPlatforms": 78,
+  "enemyPresence": {
+    "goomba": 68,
+    "koopa": 61,
+    "robot": 37
+  },
+  "coinGates": 16,
+  "timeGates": 2,
+  "risingFinales": 3,
+  "fallingHazardFinales": 5,
+  "recurringWorldOrder": {
+    "firstIsShortestIncludingTies": 2,
+    "sixthAmongTwoLongestIncludingTies": 13,
+    "fifthHasMostEnemiesIncludingTies": 12
+  },
+  "dominantSurfaceLevels": {
+    "0.5": 22,
+    "0.65": 9,
+    "0.7": 4
+  },
+  "enemyHorizontalGaps": {
+    "min": 0,
+    "median": 627.5,
+    "max": 3500
+  },
+  "biomes": [
+    {
+      "biome": "grasslands",
+      "levelIds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "widths": [
+        6400,
+        7300,
+        7800,
+        7600,
+        6900,
+        12000
+      ],
+      "heights": [
+        800,
+        900,
+        900,
+        1100,
+        900,
+        900
+      ],
+      "enemyCounts": [
+        4,
+        6,
+        9,
+        8,
+        17,
+        13
+      ],
+      "enemyKinds": [
+        "goomba",
+        "koopa",
+        "parakoopa",
+        "piranha",
+        "spiny"
+      ]
+    },
+    {
+      "biome": "desert",
+      "levelIds": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "widths": [
+        5600,
+        4800,
+        6600,
+        6600,
+        6800,
+        7600
+      ],
+      "heights": [
+        800,
+        1380,
+        900,
+        900,
+        850,
+        950
+      ],
+      "enemyCounts": [
+        4,
+        5,
+        7,
+        8,
+        18,
+        11
+      ],
+      "enemyKinds": [
+        "buzzy_beetle",
+        "crab",
+        "goomba",
+        "koopa",
+        "robot",
+        "spiny"
+      ]
+    },
+    {
+      "biome": "water",
+      "levelIds": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "widths": [
+        7000,
+        4650,
+        10000,
+        10500,
+        14000,
+        12600
+      ],
+      "heights": [
+        700,
+        1100,
+        800,
+        800,
+        800,
+        800
+      ],
+      "enemyCounts": [
+        7,
+        4,
+        11,
+        11,
+        27,
+        20
+      ],
+      "enemyKinds": [
+        "crab",
+        "piranha",
+        "squid"
+      ]
+    },
+    {
+      "biome": "ice-snow",
+      "levelIds": [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "widths": [
+        9400,
+        4380,
+        13000,
+        12800,
+        13000,
+        14800
+      ],
+      "heights": [
+        900,
+        1000,
+        900,
+        1000,
+        900,
+        900
+      ],
+      "enemyCounts": [
+        8,
+        3,
+        16,
+        17,
+        20,
+        19
+      ],
+      "enemyKinds": [
+        "buzzy_beetle",
+        "goomba",
+        "koopa",
+        "parakoopa",
+        "piranha",
+        "spiny"
+      ]
+    },
+    {
+      "biome": "sky-clouds",
+      "levelIds": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "widths": [
+        8400,
+        11200,
+        12600,
+        2200,
+        12000,
+        13000
+      ],
+      "heights": [
+        720,
+        760,
+        780,
+        2800,
+        800,
+        900
+      ],
+      "enemyCounts": [
+        5,
+        8,
+        15,
+        3,
+        14,
+        15
+      ],
+      "enemyKinds": [
+        "boo",
+        "bullet_bill",
+        "goomba",
+        "koopa",
+        "lakitu",
+        "parakoopa",
+        "piranha",
+        "spiny",
+        "ufo"
+      ]
+    },
+    {
+      "biome": "forest",
+      "levelIds": [
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "widths": [
+        7000,
+        4550,
+        11000,
+        12500,
+        7600,
+        15200
+      ],
+      "heights": [
+        800,
+        1100,
+        950,
+        950,
+        850,
+        1000
+      ],
+      "enemyCounts": [
+        8,
+        6,
+        11,
+        11,
+        20,
+        14
+      ],
+      "enemyKinds": [
+        "buzzy_beetle",
+        "goomba",
+        "koopa",
+        "parakoopa",
+        "spiny"
+      ]
+    },
+    {
+      "biome": "village",
+      "levelIds": [
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
+      ],
+      "widths": [
+        8200,
+        4420,
+        9200,
+        10400,
+        11500,
+        17000
+      ],
+      "heights": [
+        850,
+        1050,
+        950,
+        1100,
+        950,
+        1100
+      ],
+      "enemyCounts": [
+        12,
+        4,
+        13,
+        15,
+        18,
+        20
+      ],
+      "enemyKinds": [
+        "boo",
+        "buzzy_beetle",
+        "goomba",
+        "koopa",
+        "spiny",
+        "thwomp"
+      ]
+    },
+    {
+      "biome": "beach-island",
+      "levelIds": [
+        43,
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "widths": [
+        7000,
+        4230,
+        7600,
+        10600,
+        16000,
+        18000
+      ],
+      "heights": [
+        700,
+        1140,
+        900,
+        1000,
+        800,
+        900
+      ],
+      "enemyCounts": [
+        6,
+        4,
+        7,
+        11,
+        23,
+        18
+      ],
+      "enemyKinds": [
+        "crab",
+        "goomba",
+        "koopa",
+        "parakoopa",
+        "spiny",
+        "squid"
+      ]
+    },
+    {
+      "biome": "factory",
+      "levelIds": [
+        49,
+        50,
+        51,
+        52,
+        53,
+        54
+      ],
+      "widths": [
+        7200,
+        3400,
+        10400,
+        7800,
+        11600,
+        13200
+      ],
+      "heights": [
+        900,
+        1720,
+        950,
+        1100,
+        900,
+        1000
+      ],
+      "enemyCounts": [
+        7,
+        4,
+        13,
+        9,
+        16,
+        13
+      ],
+      "enemyKinds": [
+        "bobomb",
+        "buzzy_beetle",
+        "crab",
+        "goomba",
+        "koopa",
+        "piranha",
+        "robot",
+        "spiny"
+      ]
+    },
+    {
+      "biome": "volcano-lava",
+      "levelIds": [
+        55,
+        56,
+        57,
+        58,
+        59,
+        60
+      ],
+      "widths": [
+        16800,
+        17200,
+        16400,
+        4100,
+        17000,
+        15600
+      ],
+      "heights": [
+        800,
+        800,
+        800,
+        1480,
+        800,
+        800
+      ],
+      "enemyCounts": [
+        14,
+        19,
+        20,
+        3,
+        27,
+        18
+      ],
+      "enemyKinds": [
+        "bobomb",
+        "goomba",
+        "koopa",
+        "piranha",
+        "robot",
+        "spiny",
+        "thwomp"
+      ]
+    },
+    {
+      "biome": "haunted-mansion",
+      "levelIds": [
+        61,
+        62,
+        63,
+        64,
+        65,
+        66
+      ],
+      "widths": [
+        7600,
+        4200,
+        17200,
+        14200,
+        14800,
+        18200
+      ],
+      "heights": [
+        950,
+        1150,
+        1100,
+        1050,
+        1000,
+        1150
+      ],
+      "enemyCounts": [
+        7,
+        3,
+        14,
+        18,
+        28,
+        23
+      ],
+      "enemyKinds": [
+        "boo",
+        "buzzy_beetle",
+        "crab",
+        "ghost",
+        "goomba",
+        "koopa",
+        "robot",
+        "spiny",
+        "thwomp"
+      ]
+    },
+    {
+      "biome": "ruins",
+      "levelIds": [
+        67,
+        68,
+        69,
+        70,
+        71,
+        72
+      ],
+      "widths": [
+        8800,
+        11200,
+        10900,
+        16200,
+        12600,
+        16200
+      ],
+      "heights": [
+        950,
+        950,
+        950,
+        1000,
+        950,
+        1000
+      ],
+      "enemyCounts": [
+        8,
+        9,
+        13,
+        14,
+        17,
+        18
+      ],
+      "enemyKinds": [
+        "buzzy_beetle",
+        "crab",
+        "ghost",
+        "goomba",
+        "koopa",
+        "robot",
+        "spiny",
+        "thwomp"
+      ]
+    },
+    {
+      "biome": "canyon-base",
+      "levelIds": [
+        73,
+        74,
+        75,
+        76,
+        77,
+        78
+      ],
+      "widths": [
+        9200,
+        4600,
+        11500,
+        12500,
+        10500,
+        16000
+      ],
+      "heights": [
+        1000,
+        1400,
+        950,
+        950,
+        950,
+        1000
+      ],
+      "enemyCounts": [
+        9,
+        4,
+        9,
+        7,
+        17,
+        17
+      ],
+      "enemyKinds": [
+        "bobomb",
+        "crab",
+        "goomba",
+        "koopa",
+        "lakitu",
+        "robot",
+        "spiny",
+        "thwomp",
+        "ufo"
+      ]
+    },
+    {
+      "biome": "space-star",
+      "levelIds": [
+        79,
+        80,
+        81,
+        82,
+        83,
+        84
+      ],
+      "widths": [
+        8600,
+        4800,
+        12600,
+        12600,
+        12000,
+        13000
+      ],
+      "heights": [
+        1000,
+        1100,
+        1100,
+        1150,
+        1000,
+        1050
+      ],
+      "enemyCounts": [
+        9,
+        3,
+        11,
+        12,
+        20,
+        15
+      ],
+      "enemyKinds": [
+        "ghost",
+        "parakoopa",
+        "robot",
+        "ufo"
+      ]
+    },
+    {
+      "biome": "castle-final",
+      "levelIds": [
+        85,
+        86,
+        87,
+        88,
+        89,
+        90
+      ],
+      "widths": [
+        9500,
+        11500,
+        11200,
+        16000,
+        16000,
+        7600
+      ],
+      "heights": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+      ],
+      "enemyCounts": [
+        12,
+        14,
+        16,
+        22,
+        25,
+        1
+      ],
+      "enemyKinds": [
+        "bobomb",
+        "boo",
+        "boss",
+        "crab",
+        "ghost",
+        "goomba",
+        "koopa",
+        "robot",
+        "spiny",
+        "thwomp"
+      ]
+    }
+  ],
+  "surfaces": [
+    {
+      "id": 1,
+      "name": "Wiesenweg und erste Sprünge",
+      "dominantTop": 530,
+      "dominantWidth": 5100,
+      "totalSurfaceWidth": 7780,
+      "dominantShare": 0.6555,
+      "distinctTops": 21
+    },
+    {
+      "id": 2,
+      "name": "Obstgarten und Hügel",
+      "dominantTop": 530,
+      "dominantWidth": 3970,
+      "totalSurfaceWidth": 7518,
+      "dominantShare": 0.5281,
+      "distinctTops": 15
+    },
+    {
+      "id": 3,
+      "name": "Röhren und verborgene Nischen",
+      "dominantTop": 480,
+      "dominantWidth": 3300,
+      "totalSurfaceWidth": 9200,
+      "dominantShare": 0.3587,
+      "distinctTops": 19
+    },
+    {
+      "id": 4,
+      "name": "Aufstieg zum Windhügel",
+      "dominantTop": 640,
+      "dominantWidth": 2100,
+      "totalSurfaceWidth": 6310,
+      "dominantShare": 0.3328,
+      "distinctTops": 23
+    },
+    {
+      "id": 5,
+      "name": "Münzjagd auf den Terrassen",
+      "dominantTop": 640,
+      "dominantWidth": 3900,
+      "totalSurfaceWidth": 6930,
+      "dominantShare": 0.5628,
+      "distinctTops": 14
+    },
+    {
+      "id": 6,
+      "name": "Wiesenwind-Finale",
+      "dominantTop": 640,
+      "dominantWidth": 6600,
+      "totalSurfaceWidth": 11220,
+      "dominantShare": 0.5882,
+      "distinctTops": 19
+    },
+    {
+      "id": 7,
+      "name": "Sandy Deserts",
+      "dominantTop": 640,
+      "dominantWidth": 2590,
+      "totalSurfaceWidth": 5824,
+      "dominantShare": 0.4447,
+      "distinctTops": 12
+    },
+    {
+      "id": 8,
+      "name": "Dünental: hinab zur Oase",
+      "dominantTop": 630,
+      "dominantWidth": 1100,
+      "totalSurfaceWidth": 5130,
+      "dominantShare": 0.2144,
+      "distinctTops": 11
+    },
+    {
+      "id": 9,
+      "name": "Scorpion Sands",
+      "dominantTop": 640,
+      "dominantWidth": 2500,
+      "totalSurfaceWidth": 6790,
+      "dominantShare": 0.3682,
+      "distinctTops": 14
+    },
+    {
+      "id": 10,
+      "name": "Tomb Raider",
+      "dominantTop": 680,
+      "dominantWidth": 1560,
+      "totalSurfaceWidth": 5760,
+      "dominantShare": 0.2708,
+      "distinctTops": 19
+    },
+    {
+      "id": 11,
+      "name": "Quicksand Canyon",
+      "dominantTop": 640,
+      "dominantWidth": 4100,
+      "totalSurfaceWidth": 6460,
+      "dominantShare": 0.6347,
+      "distinctTops": 8
+    },
+    {
+      "id": 12,
+      "name": "Pharaoh's Tomb",
+      "dominantTop": 740,
+      "dominantWidth": 1710,
+      "totalSurfaceWidth": 7260,
+      "dominantShare": 0.2355,
+      "distinctTops": 17
+    },
+    {
+      "id": 13,
+      "name": "Aqua Lagoon",
+      "dominantTop": 500,
+      "dominantWidth": 2280,
+      "totalSurfaceWidth": 7270,
+      "dominantShare": 0.3136,
+      "distinctTops": 13
+    },
+    {
+      "id": 14,
+      "name": "Korallengänge und Luftglocken",
+      "dominantTop": 430,
+      "dominantWidth": 1150,
+      "totalSurfaceWidth": 6140,
+      "dominantShare": 0.1873,
+      "distinctTops": 15
+    },
+    {
+      "id": 15,
+      "name": "Coral Labyrinth",
+      "dominantTop": 300,
+      "dominantWidth": 2380,
+      "totalSurfaceWidth": 9820,
+      "dominantShare": 0.2424,
+      "distinctTops": 11
+    },
+    {
+      "id": 16,
+      "name": "Sunken Temple",
+      "dominantTop": 700,
+      "dominantWidth": 1700,
+      "totalSurfaceWidth": 10810,
+      "dominantShare": 0.1573,
+      "distinctTops": 15
+    },
+    {
+      "id": 17,
+      "name": "Abyssal Horde",
+      "dominantTop": 680,
+      "dominantWidth": 2940,
+      "totalSurfaceWidth": 12550,
+      "dominantShare": 0.2343,
+      "distinctTops": 18
+    },
+    {
+      "id": 18,
+      "name": "The Mariana Trench",
+      "dominantTop": 500,
+      "dominantWidth": 1460,
+      "totalSurfaceWidth": 11860,
+      "dominantShare": 0.1231,
+      "distinctTops": 19
+    },
+    {
+      "id": 19,
+      "name": "Snowy Path",
+      "dominantTop": 560,
+      "dominantWidth": 5200,
+      "totalSurfaceWidth": 9040,
+      "dominantShare": 0.5752,
+      "distinctTops": 8
+    },
+    {
+      "id": 20,
+      "name": "Eisfelder und Schneeinseln",
+      "dominantTop": 650,
+      "dominantWidth": 2100,
+      "totalSurfaceWidth": 4620,
+      "dominantShare": 0.4545,
+      "distinctTops": 8
+    },
+    {
+      "id": 21,
+      "name": "Frozen Tunnels",
+      "dominantTop": 600,
+      "dominantWidth": 7900,
+      "totalSurfaceWidth": 14896,
+      "dominantShare": 0.5303,
+      "distinctTops": 13
+    },
+    {
+      "id": 22,
+      "name": "Iceberg Ascent",
+      "dominantTop": 610,
+      "dominantWidth": 3370,
+      "totalSurfaceWidth": 12290,
+      "dominantShare": 0.2742,
+      "distinctTops": 22
+    },
+    {
+      "id": 23,
+      "name": "Polar Heights",
+      "dominantTop": 620,
+      "dominantWidth": 8480,
+      "totalSurfaceWidth": 12740,
+      "dominantShare": 0.6656,
+      "distinctTops": 9
+    },
+    {
+      "id": 24,
+      "name": "Frozen Finale",
+      "dominantTop": 640,
+      "dominantWidth": 12710,
+      "totalSurfaceWidth": 17550,
+      "dominantShare": 0.7242,
+      "distinctTops": 6
+    },
+    {
+      "id": 25,
+      "name": "Cloud Hop",
+      "dominantTop": 250,
+      "dominantWidth": 1220,
+      "totalSurfaceWidth": 6300,
+      "dominantShare": 0.1937,
+      "distinctTops": 20
+    },
+    {
+      "id": 26,
+      "name": "Wind Channel",
+      "dominantTop": 520,
+      "dominantWidth": 920,
+      "totalSurfaceWidth": 6860,
+      "dominantShare": 0.1341,
+      "distinctTops": 19
+    },
+    {
+      "id": 27,
+      "name": "Cloud Pipes",
+      "dominantTop": 560,
+      "dominantWidth": 880,
+      "totalSurfaceWidth": 7270,
+      "dominantShare": 0.121,
+      "distinctTops": 23
+    },
+    {
+      "id": 28,
+      "name": "Der große Wolkenturm",
+      "dominantTop": 260,
+      "dominantWidth": 660,
+      "totalSurfaceWidth": 5260,
+      "dominantShare": 0.1255,
+      "distinctTops": 14
+    },
+    {
+      "id": 29,
+      "name": "Air Battle",
+      "dominantTop": 340,
+      "dominantWidth": 960,
+      "totalSurfaceWidth": 6920,
+      "dominantShare": 0.1387,
+      "distinctTops": 23
+    },
+    {
+      "id": 30,
+      "name": "Cloud Islands Finale",
+      "dominantTop": 560,
+      "dominantWidth": 1240,
+      "totalSurfaceWidth": 10300,
+      "dominantShare": 0.1204,
+      "distinctTops": 35
+    },
+    {
+      "id": 31,
+      "name": "Waldweg",
+      "dominantTop": 640,
+      "dominantWidth": 5620,
+      "totalSurfaceWidth": 6854,
+      "dominantShare": 0.82,
+      "distinctTops": 10
+    },
+    {
+      "id": 32,
+      "name": "Waldweg oder Baumkronen?",
+      "dominantTop": 790,
+      "dominantWidth": 720,
+      "totalSurfaceWidth": 7660,
+      "dominantShare": 0.094,
+      "distinctTops": 18
+    },
+    {
+      "id": 33,
+      "name": "Wurzel-Labyrinth",
+      "dominantTop": 680,
+      "dominantWidth": 6830,
+      "totalSurfaceWidth": 10450,
+      "dominantShare": 0.6536,
+      "distinctTops": 14
+    },
+    {
+      "id": 34,
+      "name": "Baumkronen",
+      "dominantTop": 680,
+      "dominantWidth": 3700,
+      "totalSurfaceWidth": 11760,
+      "dominantShare": 0.3146,
+      "distinctTops": 20
+    },
+    {
+      "id": 35,
+      "name": "Käfer-Plage",
+      "dominantTop": 680,
+      "dominantWidth": 6270,
+      "totalSurfaceWidth": 8010,
+      "dominantShare": 0.7828,
+      "distinctTops": 9
+    },
+    {
+      "id": 36,
+      "name": "Wipfelpfad",
+      "dominantTop": 780,
+      "dominantWidth": 7480,
+      "totalSurfaceWidth": 15600,
+      "dominantShare": 0.4795,
+      "distinctTops": 19
+    },
+    {
+      "id": 37,
+      "name": "Dorfplatz",
+      "dominantTop": 680,
+      "dominantWidth": 3100,
+      "totalSurfaceWidth": 8530,
+      "dominantShare": 0.3634,
+      "distinctTops": 14
+    },
+    {
+      "id": 38,
+      "name": "Über Dächer, durch Innenhöfe",
+      "dominantTop": 760,
+      "dominantWidth": 910,
+      "totalSurfaceWidth": 4550,
+      "dominantShare": 0.2,
+      "distinctTops": 12
+    },
+    {
+      "id": 39,
+      "name": "Kanalisation",
+      "dominantTop": 860,
+      "dominantWidth": 2700,
+      "totalSurfaceWidth": 8110,
+      "dominantShare": 0.3329,
+      "distinctTops": 16
+    },
+    {
+      "id": 40,
+      "name": "Schornsteine",
+      "dominantTop": 640,
+      "dominantWidth": 1400,
+      "totalSurfaceWidth": 8100,
+      "dominantShare": 0.1728,
+      "distinctTops": 21
+    },
+    {
+      "id": 41,
+      "name": "Stadthorde",
+      "dominantTop": 700,
+      "dominantWidth": 2570,
+      "totalSurfaceWidth": 9910,
+      "dominantShare": 0.2593,
+      "distinctTops": 13
+    },
+    {
+      "id": 42,
+      "name": "Dach-Rennen",
+      "dominantTop": 740,
+      "dominantWidth": 4550,
+      "totalSurfaceWidth": 12120,
+      "dominantShare": 0.3754,
+      "distinctTops": 20
+    },
+    {
+      "id": 43,
+      "name": "Sandy Shores",
+      "dominantTop": 550,
+      "dominantWidth": 3540,
+      "totalSurfaceWidth": 7500,
+      "dominantShare": 0.472,
+      "distinctTops": 15
+    },
+    {
+      "id": 44,
+      "name": "Buchten, Stege und Muschelstrand",
+      "dominantTop": 580,
+      "dominantWidth": 1160,
+      "totalSurfaceWidth": 5430,
+      "dominantShare": 0.2136,
+      "distinctTops": 12
+    },
+    {
+      "id": 45,
+      "name": "Palm Grove",
+      "dominantTop": 480,
+      "dominantWidth": 1160,
+      "totalSurfaceWidth": 9490,
+      "dominantShare": 0.1222,
+      "distinctTops": 17
+    },
+    {
+      "id": 46,
+      "name": "Cliff Ascent",
+      "dominantTop": 300,
+      "dominantWidth": 1870,
+      "totalSurfaceWidth": 11600,
+      "dominantShare": 0.1612,
+      "distinctTops": 21
+    },
+    {
+      "id": 47,
+      "name": "Reef Horde",
+      "dominantTop": 650,
+      "dominantWidth": 2760,
+      "totalSurfaceWidth": 16430,
+      "dominantShare": 0.168,
+      "distinctTops": 15
+    },
+    {
+      "id": 48,
+      "name": "Lagoon Paradise",
+      "dominantTop": 860,
+      "dominantWidth": 2200,
+      "totalSurfaceWidth": 17450,
+      "dominantShare": 0.1261,
+      "distinctTops": 22
+    },
+    {
+      "id": 49,
+      "name": "Gear Grinder",
+      "dominantTop": 560,
+      "dominantWidth": 2480,
+      "totalSurfaceWidth": 7572,
+      "dominantShare": 0.3275,
+      "distinctTops": 16
+    },
+    {
+      "id": 50,
+      "name": "Wartungsschacht: hin, zurück und hinauf",
+      "dominantTop": 820,
+      "dominantWidth": 1980,
+      "totalSurfaceWidth": 8150,
+      "dominantShare": 0.2429,
+      "distinctTops": 11
+    },
+    {
+      "id": 51,
+      "name": "Pipeworks",
+      "dominantTop": 580,
+      "dominantWidth": 2440,
+      "totalSurfaceWidth": 10202,
+      "dominantShare": 0.2392,
+      "distinctTops": 20
+    },
+    {
+      "id": 52,
+      "name": "Smokestack Climb",
+      "dominantTop": 760,
+      "dominantWidth": 1400,
+      "totalSurfaceWidth": 5892,
+      "dominantShare": 0.2376,
+      "distinctTops": 13
+    },
+    {
+      "id": 53,
+      "name": "Robot Rampage",
+      "dominantTop": 640,
+      "dominantWidth": 4250,
+      "totalSurfaceWidth": 9870,
+      "dominantShare": 0.4306,
+      "distinctTops": 10
+    },
+    {
+      "id": 54,
+      "name": "Conveyor Chaos",
+      "dominantTop": 660,
+      "dominantWidth": 4400,
+      "totalSurfaceWidth": 13092,
+      "dominantShare": 0.3361,
+      "distinctTops": 17
+    },
+    {
+      "id": 55,
+      "name": "Lavasteg",
+      "dominantTop": 200,
+      "dominantWidth": 1980,
+      "totalSurfaceWidth": 13962,
+      "dominantShare": 0.1418,
+      "distinctTops": 29
+    },
+    {
+      "id": 56,
+      "name": "Magmasprünge",
+      "dominantTop": 470,
+      "dominantWidth": 2450,
+      "totalSurfaceWidth": 12840,
+      "dominantShare": 0.1908,
+      "distinctTops": 22
+    },
+    {
+      "id": 57,
+      "name": "Obsidianröhren",
+      "dominantTop": 620,
+      "dominantWidth": 7170,
+      "totalSurfaceWidth": 14132,
+      "dominantShare": 0.5074,
+      "distinctTops": 18
+    },
+    {
+      "id": 58,
+      "name": "Hinab in den stillen Krater",
+      "dominantTop": 580,
+      "dominantWidth": 840,
+      "totalSurfaceWidth": 3670,
+      "dominantShare": 0.2289,
+      "distinctTops": 8
+    },
+    {
+      "id": 59,
+      "name": "Aschesturm-Horde",
+      "dominantTop": 520,
+      "dominantWidth": 2200,
+      "totalSurfaceWidth": 13970,
+      "dominantShare": 0.1575,
+      "distinctTops": 22
+    },
+    {
+      "id": 60,
+      "name": "Eruptions-Finale",
+      "dominantTop": 120,
+      "dominantWidth": 2110,
+      "totalSurfaceWidth": 13252,
+      "dominantShare": 0.1592,
+      "distinctTops": 20
+    },
+    {
+      "id": 61,
+      "name": "Eingangshalle",
+      "dominantTop": 720,
+      "dominantWidth": 4520,
+      "totalSurfaceWidth": 7850,
+      "dominantShare": 0.5758,
+      "distinctTops": 15
+    },
+    {
+      "id": 62,
+      "name": "Drei Säle und scheue Geister",
+      "dominantTop": 800,
+      "dominantWidth": 1160,
+      "totalSurfaceWidth": 4700,
+      "dominantShare": 0.2468,
+      "distinctTops": 8
+    },
+    {
+      "id": 63,
+      "name": "Geistertreppen",
+      "dominantTop": 800,
+      "dominantWidth": 3200,
+      "totalSurfaceWidth": 11812,
+      "dominantShare": 0.2709,
+      "distinctTops": 20
+    },
+    {
+      "id": 64,
+      "name": "Verlies",
+      "dominantTop": 640,
+      "dominantWidth": 4520,
+      "totalSurfaceWidth": 12342,
+      "dominantShare": 0.3662,
+      "distinctTops": 13
+    },
+    {
+      "id": 65,
+      "name": "Banshee-Horde",
+      "dominantTop": 800,
+      "dominantWidth": 7200,
+      "totalSurfaceWidth": 11220,
+      "dominantShare": 0.6417,
+      "distinctTops": 11
+    },
+    {
+      "id": 66,
+      "name": "Krypta-Finale",
+      "dominantTop": 900,
+      "dominantWidth": 11800,
+      "totalSurfaceWidth": 30232,
+      "dominantShare": 0.3903,
+      "distinctTops": 18
+    },
+    {
+      "id": 67,
+      "name": "Ausgrabung",
+      "dominantTop": 736,
+      "dominantWidth": 5240,
+      "totalSurfaceWidth": 8304,
+      "dominantShare": 0.631,
+      "distinctTops": 17
+    },
+    {
+      "id": 68,
+      "name": "Tempelbrücken",
+      "dominantTop": 736,
+      "dominantWidth": 8150,
+      "totalSurfaceWidth": 11360,
+      "dominantShare": 0.7174,
+      "distinctTops": 16
+    },
+    {
+      "id": 69,
+      "name": "Säulengänge",
+      "dominantTop": 736,
+      "dominantWidth": 6400,
+      "totalSurfaceWidth": 9222,
+      "dominantShare": 0.694,
+      "distinctTops": 13
+    },
+    {
+      "id": 70,
+      "name": "Stufenpyramide",
+      "dominantTop": 736,
+      "dominantWidth": 4420,
+      "totalSurfaceWidth": 13360,
+      "dominantShare": 0.3308,
+      "distinctTops": 25
+    },
+    {
+      "id": 71,
+      "name": "Wächter-Horde",
+      "dominantTop": 736,
+      "dominantWidth": 8650,
+      "totalSurfaceWidth": 13352,
+      "dominantShare": 0.6478,
+      "distinctTops": 16
+    },
+    {
+      "id": 72,
+      "name": "Fallender Tempel",
+      "dominantTop": 916,
+      "dominantWidth": 1620,
+      "totalSurfaceWidth": 13920,
+      "dominantShare": 0.1164,
+      "distinctTops": 33
+    },
+    {
+      "id": 73,
+      "name": "Abgrundpfad",
+      "dominantTop": 760,
+      "dominantWidth": 5600,
+      "totalSurfaceWidth": 8602,
+      "dominantShare": 0.651,
+      "distinctTops": 9
+    },
+    {
+      "id": 74,
+      "name": "Zwei Wege durch die Felsbänder",
+      "dominantTop": 420,
+      "dominantWidth": 2110,
+      "totalSurfaceWidth": 6150,
+      "dominantShare": 0.3431,
+      "distinctTops": 8
+    },
+    {
+      "id": 75,
+      "name": "Windkanaele",
+      "dominantTop": 740,
+      "dominantWidth": 4770,
+      "totalSurfaceWidth": 9982,
+      "dominantShare": 0.4779,
+      "distinctTops": 12
+    },
+    {
+      "id": 76,
+      "name": "Kletterwaende",
+      "dominantTop": 620,
+      "dominantWidth": 1620,
+      "totalSurfaceWidth": 7740,
+      "dominantShare": 0.2093,
+      "distinctTops": 20
+    },
+    {
+      "id": 77,
+      "name": "Adlerhorde",
+      "dominantTop": 700,
+      "dominantWidth": 1600,
+      "totalSurfaceWidth": 7860,
+      "dominantShare": 0.2036,
+      "distinctTops": 15
+    },
+    {
+      "id": 78,
+      "name": "Felssturz-Finale",
+      "dominantTop": 800,
+      "dominantWidth": 3330,
+      "totalSurfaceWidth": 17272,
+      "dominantShare": 0.1928,
+      "distinctTops": 25
+    },
+    {
+      "id": 79,
+      "name": "Orbit",
+      "dominantTop": 820,
+      "dominantWidth": 1400,
+      "totalSurfaceWidth": 5730,
+      "dominantShare": 0.2443,
+      "distinctTops": 14
+    },
+    {
+      "id": 80,
+      "name": "Die fünf Orbitinseln",
+      "dominantTop": 680,
+      "dominantWidth": 820,
+      "totalSurfaceWidth": 3680,
+      "dominantShare": 0.2228,
+      "distinctTops": 6
+    },
+    {
+      "id": 81,
+      "name": "Raumstation",
+      "dominantTop": 840,
+      "dominantWidth": 1600,
+      "totalSurfaceWidth": 10610,
+      "dominantShare": 0.1508,
+      "distinctTops": 19
+    },
+    {
+      "id": 82,
+      "name": "Satelliten-Kletterer",
+      "dominantTop": 1020,
+      "dominantWidth": 1400,
+      "totalSurfaceWidth": 9372,
+      "dominantShare": 0.1494,
+      "distinctTops": 24
+    },
+    {
+      "id": 83,
+      "name": "UFO-Horde",
+      "dominantTop": 540,
+      "dominantWidth": 1810,
+      "totalSurfaceWidth": 8660,
+      "dominantShare": 0.209,
+      "distinctTops": 12
+    },
+    {
+      "id": 84,
+      "name": "Nova-Finale",
+      "dominantTop": 880,
+      "dominantWidth": 2200,
+      "totalSurfaceWidth": 12112,
+      "dominantShare": 0.1816,
+      "distinctTops": 27
+    },
+    {
+      "id": 85,
+      "name": "Burghof",
+      "dominantTop": 672,
+      "dominantWidth": 2450,
+      "totalSurfaceWidth": 8994,
+      "dominantShare": 0.2724,
+      "distinctTops": 16
+    },
+    {
+      "id": 86,
+      "name": "Zugbruecke",
+      "dominantTop": 760,
+      "dominantWidth": 6300,
+      "totalSurfaceWidth": 11610,
+      "dominantShare": 0.5426,
+      "distinctTops": 11
+    },
+    {
+      "id": 87,
+      "name": "Kerkerkanaele",
+      "dominantTop": 660,
+      "dominantWidth": 2600,
+      "totalSurfaceWidth": 13142,
+      "dominantShare": 0.1978,
+      "distinctTops": 21
+    },
+    {
+      "id": 88,
+      "name": "Turm-Kletterer",
+      "dominantTop": 680,
+      "dominantWidth": 5100,
+      "totalSurfaceWidth": 16140,
+      "dominantShare": 0.316,
+      "distinctTops": 24
+    },
+    {
+      "id": 89,
+      "name": "Boss-Horde",
+      "dominantTop": 720,
+      "dominantWidth": 3400,
+      "totalSurfaceWidth": 16482,
+      "dominantShare": 0.2063,
+      "distinctTops": 19
+    },
+    {
+      "id": 90,
+      "name": "Bossarena",
+      "dominantTop": 800,
+      "dominantWidth": 4400,
+      "totalSurfaceWidth": 8320,
+      "dominantShare": 0.5288,
+      "distinctTops": 9
+    }
+  ]
+}

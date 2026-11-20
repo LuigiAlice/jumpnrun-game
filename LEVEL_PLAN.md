@@ -260,3 +260,20 @@ Die sechs zu hoch angelegten Bonusplattformen in L73/L74/L75/L76/L86/L89 liegen 
 ## Phase 12 — Bilderbuchoptik
 
 Alle 15 Biome erhalten je sieben neue Hintergrundebenen mit eigener Motivfamilie: Blütenbäume, Kakteen, Korallen, Schnee, Wolken, Wald, Pilzhäuser, Palmen, Spielzeugfabrik, Vulkane, Spukhäuser, Ruinen, Canyon, Planeten und Burg. Runde Figuren und Objekte, weiches Licht und helle Menükarten vereinheitlichen die Darstellung. Alle 90 Level behalten ihre Geometrie, Gegnerpositionen, Bonuswege und physikalische Lösbarkeit.
+
+## Phase 13 — echte Levelidentitäten (zwölf Rewrites umgesetzt)
+
+Referenzanalyse, Vorher-/Nachher-Metriken und Geometrieübersicht: [LEVEL_VARIETY_ANALYSIS.md](docs/LEVEL_VARIETY_ANALYSIS.md). Die globale Sechs-Slot-Folge ist für künftige Rewrites kein Ziel mehr. Zwölf Level besitzen vollständig neue Hauptwege, die übrigen 78 bleiben unverändert.
+
+- L8 Schluchtabstieg; L14 drei Korallenbecken mit Luftgalerien; L20 Eisfelder mit Schneeinseln.
+- L28 kompakter 2200×2800-Wolkenturm mit 2340 px Aufstieg; L32 lange Wald-/Baumkronenverzweigung; L38 Dächer und zwei Innenhöfe.
+- L44 zwei Buchten; L50 dreigeschossiger Maschinenweg mit Richtungswechseln; L58 Kraterabstieg.
+- L62 verbundene Geistersäle; L74 oberes/unteres Felsband; L80 fünf große Orbitinseln.
+
+Die Rewrites liegen in `src/data/levels/variety/{nature,challenge,vertical}.ts` und werden nach der bisherigen Biome-Politur/Klassik-Erweiterung über `applyLevelIdentity()` vollständig eingesetzt. Alle veralteten Elementkoordinaten entfallen. Zwölf Level brauchen keinen Mover und keine Pflichtfeder; L8 bewahrt die Pilot-Feder-Verteilung. Die früheren Landmark-Tests gelten nur noch für die nicht ersetzten Wege; neue Tests prüfen die neuen Hauptwege.
+
+Die zwölf Level erlauben Rückwärtskamera (`cameraMode: 'bidirectional'`), damit Hin-/Rückwege sichtbar bleiben. Direkte Steuerung, alle harten Pins, finale Mechaniken und die 90-Level-Struktur bleiben erhalten. Neue Sonderaktionen sind weiter optional. Unit-/Biome-Tests und abgetastete Sprungkurven prüfen die Lösbarkeit; neue Runtime-Tests sind vorbereitet, echte Browser-Playtests wegen lokaler Server-Sperre noch offen.
+
+## Zielkontakt in Münztor-Leveln
+
+L1-5 behält `coinGoal: 25`. Die Fahne erkennt auch bei fehlenden Münzen Kontakt und erklärt die Sperre im HUD und direkt am Ziel. In Münztor-Leveln folgt die Kamera nach links, damit Münzen nachgeholt werden können. Nach erfüllten Bedingungen löst erneuter oder andauernder Kontakt den normalen sicheren Abschluss aus. Kein Geometrieumbau für diesen Fix.

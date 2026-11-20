@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { LEVEL_IDENTITIES } from '../src/data/levels/variety';
 import { ALL_LEVELS } from '../src/data/levels';
 import { Physics } from '../src/engine/Physics';
 import { getBiomeGravity } from '../src/config';
@@ -18,7 +19,7 @@ const refuges: Record<number, number> = {
 describe('Challenge world pacing and discovery', () => {
   it('provides a broad recovery deck and reward between set pieces in every challenge level', () => {
     expect(levels).toHaveLength(42);
-    for (const level of levels.filter(level => level.id !== 90)) {
+    for (const level of levels.filter(level => level.id !== 90 && !LEVEL_IDENTITIES[level.id])) {
       const x = refuges[level.id];
       const support = level.platforms.find(p => p.w >= 450 && p.type !== 'lava'
         && Math.abs(p.x - x) < p.w / 2);
@@ -55,8 +56,8 @@ describe('Challenge world pacing and discovery', () => {
     }
   });
 
-  it('offers a recoverable low route beneath the factory girders and first lava crossing', () => {
-    for (const [id, x, top] of [[50, 2190, 604], [55, 2780, 540]]) {
+  it('retains the first lava crossing recovery landing outside the rewritten machine shaft', () => {
+    for (const [id, x, top] of [[55, 2780, 540]]) {
       const level = levels.find(level => level.id === id)!;
       const landing = level.platforms.find(p => p.x === x && p.y - p.h / 2 === top);
       expect(landing, `L${id} missed jumps need a recovery landing`).toBeDefined();

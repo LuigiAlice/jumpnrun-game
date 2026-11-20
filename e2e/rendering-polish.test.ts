@@ -57,7 +57,8 @@ test('final boss gates the flag and its flower block can replenish lost fire pow
   const result = await page.evaluate(() => {
     const scene = (window as any).__game.scene.getScene('Game');
     const boss = scene.enemies.getChildren().find((e: any) => e.getData('type') === 'boss');
-    const initiallyLocked = !scene.goalUnlocked() && !scene.goal.body.enable;
+    scene.reachGoal();
+    const initiallyLocked = !scene.goalUnlocked() && scene.goal.body.enable && !scene.isTransitioning;
     const flowers = scene.questionBlocks.getChildren().filter((b: any) => b.contents === 'flower');
     scene.refillProbe = flowers[0];
     if (scene.refillProbe) { scene.refillProbe.isEmpty = true; scene.refillProbe.setTexture('question_used'); }

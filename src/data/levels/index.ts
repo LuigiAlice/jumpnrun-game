@@ -103,6 +103,8 @@ export interface LevelData {
     width: number;
     height: number;
     biome: Biome;
+    /** Room/tower routes may turn back; classic levels retain forward-only framing. */
+    cameraMode?: 'bidirectional';
     platforms: Platform[];
     movingPlatforms?: MovingPlatform[];
     coins: { x: number; y: number }[];
@@ -161,6 +163,7 @@ import { CASTLE_FINAL_LEVELS } from './castle-final';
 import { Physics } from '../../engine/Physics';
 import { getBiomeGravity } from '../../config';
 import { expandClassicLevel } from './classicExpansion';
+import { applyLevelIdentity } from './variety';
 
 export const ALL_LEVELS = [
     ...GRASSLANDS_LEVELS,
@@ -178,7 +181,7 @@ export const ALL_LEVELS = [
     ...CANYON_BASE_LEVELS,
     ...SPACE_STAR_LEVELS,
     ...CASTLE_FINAL_LEVELS,
-].map(expandClassicLevel);
+].map(expandClassicLevel).map(applyLevelIdentity);
 
 const NON_SOLID = new Set(['lava', 'pipe']);
 

@@ -308,7 +308,7 @@ test('F10: time gate keeps the goal locked until the countdown runs', async ({ p
     return { open: scene.coinGateOpen, enabled: scene.goal.body.enable };
   `) as { open: boolean; enabled: boolean };
   expect(locked.open, 'time gate opened too early').toBe(false);
-  expect(locked.enabled, 'goal body enabled while time gate closed').toBe(false);
+  expect(locked.enabled, 'locked goal must keep sensing contact for requirement feedback').toBe(true);
   const opened = await inGame(page, `
     scene.timeLeft = scene.totalTime - 50;
     await new Promise(r => setTimeout(r, 250));
