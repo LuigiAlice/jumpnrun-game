@@ -25,7 +25,7 @@ Teile deine Arbeit auf mehrere Subagenten auf.
 - Tests run from `tests/**/*.test.ts`
 - Run single test: `npm test -- LevelSolvability.test.ts`
 - TypeScript Fehler müssen vor test/build behoben werden
-- Unit- und Datentests in `tests/**/*.test.ts`, einschließlich echter Pixel-Drawcalls, Terrain-Rendering, Gegnerregeln, WorldOneDesign, NatureLevelPolish, ChallengeLevelPolish und StrictPhysicsAudit. BiomeAudit läuft scoped via `BIOME=<biom> npx vitest run tests/BiomeAudit.test.ts` (ohne ENV 10 skipped).
+- Unit- und Datentests in `tests/**/*.test.ts`, einschließlich echter Grafik-Drawcalls, Terrain-Rendering, Gegnerregeln, WorldOneDesign, NatureLevelPolish, ChallengeLevelPolish und StrictPhysicsAudit. BiomeAudit läuft scoped via `BIOME=<biom> npx vitest run tests/BiomeAudit.test.ts` (ohne ENV 10 skipped).
 - E2E in `e2e/**/*.test.ts`: Spiel, Elemente, Biome-Smoke, direkte Steuerung, Gegner/Panzer/Röhren, Terrain/Kamera und Boss-Goal. Zugriffe via `window.__game`; benötigt Chromium und erlaubten Browser-/Serverstart.
 - **Traceability**: `REQUIREMENTS.md` listet alle Anforderungen mit IDs (R-001 ff.); `tests/RequirementsCoverage.test.ts` prüft, dass jedes Mapping auf eine existierende Test-Datei + Testnamen-Teilstring zeigt (Gaps `—` max. 8)
 
@@ -45,7 +45,7 @@ Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinG
 - **Level Data**: 90 levels across 15 biomes in `src/data/levels/`
 
 ## Key Config
-- Canvas: 1200x800, scale FIT, auto center, pixelArt + roundPixels
+- Canvas: 1200x800, scale FIT, auto center, Antialiasing, pixelArt: false, roundPixels: false
 - Build outDir: `dist/`
 - TypeScript: strict mode, ESNext modules
 
@@ -137,8 +137,9 @@ Neue Elemente (LevelData-Felder: `springs?: {x,y}[]`, `spikes?: {x,y}[]`, `coinG
 
 ## Landschafts- und Gegnerpolitur
 - Terrain: `src/rendering/terrain.ts` (native Deck-/Füllkacheln, StaticGroup-TileSprites, Mover-Panels, Cachefreigabe beim Shutdown). Für TileSprites ist die Quelltextur `displayTexture`, nicht die interne Rendertextur `texture`.
-- Grafik: `src/art/pixelAssets.ts` (Pixelraster, alle Animationsframes maßgleich). BootScene erzeugt Hintergrund/Deko und delegiert Spielobjekte an dieses Modul.
+- Grafik: `src/art/pixelAssets.ts` + `storybookPrimitives.ts` (weiche runde Formen, alle Animationsframes maßgleich). `storybookPlayer.ts` erzeugt alle Spielerposen bei unveränderten Fußpositionen und Canvasgrößen; `storybookScenery.ts` erzeugt 105 Hintergrundebenen und neun Dekotexturen. BootScene delegiert die Erzeugung. Tests: StorybookPlayer, StorybookScenery, PixelAssets und ClassicAssets prüfen echte Drawcalls, Größen und Freigabe. Die knuffige Bilderbuchoptik ersetzt den früheren Pixelrasterstil; keine Änderung an Steuerung oder Kollisionen.
 - `EnemyRules.ts` trennt Treffer- und Sternschutz, Shell-Kontakte, Power-up-Bewegung und Piranha-Phasen. Stern-/Schutzdauer läuft auf Game-Time. Versteckte Blöcke synchronisieren `platformType` und Data; `sourcePlatformType` erhält den tragenden Brick-Schutz nach Zustandswechseln.
+- Zielabschluss: `reachGoal()` beendet Spieler-Tweens, setzt Velocity/Acceleration auf null, deaktiviert Gravity, moves und Body bis zum Scene-Restart; Spielerposition bleibt erhalten. Kein Slide-/Weiterlauf-Tween. Tests: GoalFinish und `e2e/goal-finish.test.ts`.
 - `GoalRules.ts` kombiniert Münzen, Zeit und Boss-HP. L90-Flagge erst nach Boss-Sieg; HP-Bar und Grafikreferenzen bei Restart zurücksetzen.
 - Welt/Kamera-Höhe ist max(GAME_HEIGHT, level.height), Hintergründe bleiben bildschirmfüllend. Direkte Steuerung auf Normalboden und in der Luft bleibt unverändert.
 - Physik-Solver: signed deltaY auch bei Aufwärtssprüngen; maximale Aufstiegshöhe min(350, v²/(2g)). Kein Level darf Auto-Fixer-Plattformen benötigen.

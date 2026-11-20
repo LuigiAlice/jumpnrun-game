@@ -256,3 +256,7 @@ Die sechs zu hoch angelegten Bonusplattformen in L73/L74/L75/L76/L86/L89 liegen 
 - Feuerarme: L49, L55, L67, L85; überschaubare Drehgeschwindigkeit und freier Bodenweg unter dem gesamten Kreis, Abstand zu Start, Checkpoint und Ziel.
 - Rote Ringe: L10, L16, L19, L25, L43, L61; zusammenhängende sichere Plattformen, 6–8 Münzen, Reaktionsreserve im Zeitlimit, wiederholbar nach Ablauf, einmalige Erfolgsbelohnung.
 - Alle 90 Ziele und Bonusplattformen bleiben mit tatsächlicher Ballistik ohne neue Elemente und ohne Auto-Fixer erreichbar.
+
+## Phase 12 — Bilderbuchoptik
+
+Alle 15 Biome erhalten je sieben neue Hintergrundebenen mit eigener Motivfamilie: Blütenbäume, Kakteen, Korallen, Schnee, Wolken, Wald, Pilzhäuser, Palmen, Spielzeugfabrik, Vulkane, Spukhäuser, Ruinen, Canyon, Planeten und Burg. Runde Figuren und Objekte, weiches Licht und helle Menükarten vereinheitlichen die Darstellung. Alle 90 Level behalten ihre Geometrie, Gegnerpositionen, Bonuswege und physikalische Lösbarkeit.

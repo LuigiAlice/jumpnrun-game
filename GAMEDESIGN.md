@@ -11,7 +11,7 @@
 ## Technologie
 - TypeScript + Vite + Phaser 3 + Vitest (ES Modules)
 - Arcade Physics
-- Alle Texturen prozedural generiert (BootScene + src/art/pixelAssets.ts)
+- Alle Texturen prozedural generiert (BootScene + src/art/storybook*.ts + src/art/pixelAssets.ts)
 
 ## Physik-Konstanten (Standard)
 
@@ -42,7 +42,7 @@ PLAYER_MOVE_SPEED:   300
 - Sprung nur auf neuen Tastendruck (kein automatisches Dauerspringen), 90 ms Kulanz nach einer Kante und 120 ms Eingabepuffer vor Landung.
 - Loslassen begrenzt eigene Aufwärtsgeschwindigkeit einmalig auf −360 px/s; Federn und Stomp-Bounces behalten ihren Impuls.
 - Trägheit und Beschleunigung nur bei Bodenkontakt auf einer echten `ice`-Plattform; alle anderen Flächen einschließlich Schnee steuern direkt.
-- Seitliche Pixelfigur, feste Lauf-Silhouette, scharfe Pixel ohne Texturfilterung; lesbare Fragezeichen- und Münzgrafik.
+- Knuffige seitliche Bilderbuchfigur mit runden Silhouetten, freundlichem Gesicht, farbigen Schatten und weichen Glanzlichtern. Antialiasing und lineare Texturfilterung; feste native Frame- und Kollisionsgrößen.
 
 ### Eis-Rutsch-Effekt (`ice`-Plattformen)
 - Nur auf `ice`: Beschleunigung, allmähliches Umkehren und Ausgleiten beim Loslassen (×0.96 pro 60-Hz-Frame, über Game-Time normalisiert).
@@ -396,12 +396,12 @@ createMovingPlat(x, y, w, h, type, moveType, range, speed) - Bewegliche Plattfor
 - **HUD**: Score, Coins, World, Time, Lives (oben)
 - **Boss-HP-Bar**: Graphics-Rectangle (L90, über HUD, Depth 1001)
 - **Game Over**: Score-Anzeige
-- **Level Clear**: Auto-Übergang zum nächsten Level (+1000 Punkte)
+- **Level Clear**: Nach freigeschaltetem Zielkontakt bleibt die Figur an ihrer erreichten Position in Idle-Pose stehen. Spieler-Tweens werden beendet, Bewegung und Physikkörper deaktiviert; keine erneute Schwerkraft und kein automatisches Weiterlaufen. Timer pausiert; Abschlussanzeige, Punkte und Auto-Übergang nach 2000 ms bleiben erhalten. Gesperrte Ziele ändern die Steuerung nicht.
 
-## Landschaft, Pixelgrafik und Dramaturgie
+## Landschaft, Bilderbuchgrafik und Dramaturgie
 
-- `src/art/pixelAssets.ts` erzeugt einheitliche Pixelgrafiken: Laufphasen für fünf Bodengegner, eigener Koopa-Panzer, Piranha- und Boo-Zustände, vier Münzphasen sowie lesbare Power-ups.
-- `src/rendering/terrain.ts` kachelt Bodenflächen in nativer Pixelgröße; Deckkachel einmal oben, separate Füllkacheln darunter. Statische TileSprites behalten die vollständige Kollisionsfläche. Mover nutzen gleich große gekachelte Panels. Röhrenlippen verwenden `pipe_top`, Eis hat eine eigene Grafik.
+- `src/art/pixelAssets.ts` erzeugt einheitliche weiche, gerundete Grafiken: Laufphasen für fünf Bodengegner, eigener Koopa-Panzer, Piranha- und Boo-Zustände, vier Münzphasen sowie lesbare Power-ups.
+- `src/rendering/terrain.ts` kachelt Bodenflächen in nativer Kachelgröße; Deckkachel einmal oben, separate Füllkacheln darunter. Statische TileSprites behalten die vollständige Kollisionsfläche. Mover nutzen gleich große gekachelte Panels. Röhrenlippen verwenden `pipe_top`, Eis hat eine eigene Grafik.
 - Welt 1 führt Gegnerrollen schrittweise ein. L2 ist 7300 px lang, mit sechs Goomba/Koopa, zusammenhängenden Hügeln, kurzen Lücken und einer begehbaren Bonusnische. Weitere Welt-1-Nischen und massive Erdflächen erhalten die optionalen Höhenwege.
 - Alle weiteren 84 Level haben individuell gewählte Ruhe- und Belohnungsbereiche, biomtypische Gegner und Münzführungen; massives Terrain lässt untere Routen frei. L50/L55 besitzen zusätzliche Rettungswege, L61/L67/L85 Seitenkammern.
 - Pilze laufen, Blumen bleiben stehen, Sterne hüpfen. Power-ups erscheinen zunächst über dem Block; die Physik startet nach dem Auftauchen. Versteckte Einzelblöcke geben nur einmal eine Münze.
@@ -423,4 +423,10 @@ In 24 ausgewählten Leveln ergänzen drei neue Gegnerrollen und drei optionale E
 | Feuerarme (`fireBars`) | Vier rotierende Arme mit vier Kugeln im 16-px-Abstand, langsamer positiver oder negativer Winkelgeschwindigkeit. Kollision verursacht Schaden; Bodenweg darunter bleibt frei. |
 | Rote Münzringe (`redCoinChallenges`) | Sechs Ringe starten 6–8 sichtbare rote Münzen und 10–14 Sekunden Game-Time. Alle sammeln gibt 1-UP oder 1000 Punkte; einzelne rote Münzen zählen regulär. Nach Ablauf kann nach Verlassen und erneutem Betreten des Rings wiederholt werden. Ein vollständig geschaffter Ring belohnt nur einmal pro Levelversuch. |
 
-Neue Grafiken in `src/art/classicAssets.ts`: 18 maßgleiche Pixeltexturen für Figuren, Panzer, Statusbilder und Elemente. `ClassicElements.ts` verwaltet Lianen, Feuerarme, Challenges und Shutdown; `ClassicEnemyRules.ts` enthält testbare Regeln für Flügel, Feuerresistenz, Bombenlunte und Explosionsradius. Keine neue Mechanik sperrt das Levelziel oder wird für die Solver-Lösbarkeit vorausgesetzt.
+Neue Grafiken in `src/art/classicAssets.ts`: 18 maßgleiche, weich schattierte Texturen für Figuren, Panzer, Statusbilder und Elemente. `ClassicElements.ts` verwaltet Lianen, Feuerarme, Challenges und Shutdown; `ClassicEnemyRules.ts` enthält testbare Regeln für Flügel, Feuerresistenz, Bombenlunte und Explosionsradius. Keine neue Mechanik sperrt das Levelziel oder wird für die Solver-Lösbarkeit vorausgesetzt.
+
+## Aktuelle Grafikrichtung — knuffige Bilderbuchwelt
+
+Die Grafik orientiert sich an der freundlichen, ausdrucksstarken Stimmung moderner Jump-and-Runs: runde Formen, warme Pastellfarben, große Augen und farbige Schatten. `storybookPlayer.ts` erzeugt alle Spielerposen; `storybookPrimitives.ts` bündelt weiche Formen für Gegner, Blöcke, Münzen und Power-ups. Alle bestehenden Texture-Keys, Framegrößen und Fußpositionen bleiben erhalten. Die Render-Konfiguration nutzt Antialiasing ohne Pixelrundung.
+
+`storybookScenery.ts` erzeugt sieben Parallax-Ebenen je Biom (105 Texturen) mit individuellen Motiven, sanftem Himmelslicht und nahtlos wiederholten Rändern. Neun zentrale Dekotexturen erhalten passende runde Silhouetten. Menü, HUD und Ergebnisbildschirm verwenden helle, gerundete Karten und gut lesbare dunkle Schrift. Levelgeometrie, Kollisionsgrößen und direkte Steuerung bleiben unverändert. Es handelt sich um eine eigene prozedurale 2D-Bilderbuchoptik.

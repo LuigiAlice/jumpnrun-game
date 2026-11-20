@@ -26,33 +26,36 @@ export class GameOverScene extends Phaser.Scene {
     this.escapeKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
     this.add.graphics()
-      .fillGradientStyle(0x1a1a2e, 0x1a1a2e, 0x0f0f1a, 0x0f0f1a, 1)
+      .fillGradientStyle(0xc6e9df, 0xc6e9df, 0xf7edd1, 0xf7edd1, 1)
       .fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
     const centerX = GAME_WIDTH / 2;
+    this.add.graphics().fillStyle(0x527e78, 0.12).fillRoundedRect(220, 102, 760, 510, 36)
+      .fillStyle(0xfffcf0, 0.96).fillRoundedRect(220, 94, 760, 510, 36);
 
     const title = this.add.text(centerX, 150, this.victory ? 'ABENTEUER GESCHAFFT!' : 'GAME OVER', {
       fontSize: this.victory ? '42px' : '64px',
-      fontFamily: 'monospace',
-      color: this.victory ? '#f1c40f' : '#e74c3c',
-      stroke: '#c0392b',
-      strokeThickness: 8
+      fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+      color: this.victory ? '#d79b45' : '#df7c75',
+      stroke: '#fff4dc',
+      strokeThickness: 5
     }).setOrigin(0.5);
 
     this.add.text(centerX, 250, this.victory ? 'DER BURGHÜTER IST BESIEGT' : 'DEIN ERGEBNIS', {
       fontSize: '28px',
-      color: '#2ecc71'
+      fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+      color: '#527e78'
     }).setOrigin(0.5);
 
     this.add.text(centerX, 310, 'PUNKTE: ' + this.score, {
       fontSize: '36px',
-      color: '#f1c40f',
+      color: '#527e78',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
     this.add.text(centerX, 360, 'MÜNZEN: ' + this.coins, {
       fontSize: '36px',
-      color: '#f39c12',
+      color: '#527e78',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
@@ -67,13 +70,13 @@ export class GameOverScene extends Phaser.Scene {
 
     this.add.text(centerX, 560, 'ESC = HAUPTMENÜ', {
       fontSize: '18px',
-      color: '#bdc3c7',
+      color: '#527e78',
     }).setOrigin(0.5);
 
     const restartText = this.add.text(centerX, 520, 'LEERTASTE = LEVELAUSWAHL', {
       fontSize: '20px',
-      color: '#ffffff',
-      stroke: '#000000',
+      color: '#527e78',
+      stroke: '#fff4dc',
       strokeThickness: 4
     }).setOrigin(0.5);
     

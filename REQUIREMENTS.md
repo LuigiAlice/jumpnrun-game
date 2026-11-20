@@ -110,7 +110,7 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-064** – Melodische Biome-Musik: 15 unterschiedliche Motive mit harmonischen Taktankern, echten Notenlängen und Hook-Reprise; ruhige Biome mit weniger Percussion und langsameren Tempi als Action-Biome. Begleitdichte und Mischung sind pro Song steuerbar.
 - **R-065** – Musik-Wiedergabe: Akkordflächen einmal pro Takt, notenlängentreuer Lead, taktsynchrones Delay, deterministische Percussion sowie vollständige Audio-Knoten-Freigabe beim Stoppen.
 
-- **R-066** – Einheitliche Pixelgrafik mit maßgleichen Gegner-/Münzanimationsphasen und eigenem Panzer; Terrain nutzt native Deck-/Füllkacheln statt gestreckter Texturen.
+- **R-066** – Einheitliche Grafik mit maßgleichen Gegner-/Münzanimationsphasen und eigenem Panzer; Terrain nutzt native Deck-/Füllkacheln statt gestreckter Texturen.
 - **R-067** – Verlässliche Gegner-/Itemregeln: Treffer-Schutz ist kein Stern, bewegte Panzer von oben stoppbar, Spiny gefährlich, Bullet Bills ohne Gravitation, Piranhas warten bei Nähe; Pilz/Blume/Stern bewegen sich unterschiedlich.
 - **R-068** – Levelrhythmus aller 90 Level: kompakter gestaffelter Einstieg, individuelle Belohnungs-/Erholungsstellen, geschützte untere Routen und freiwillige Entdeckungsräume; alle Ziele und Bonusplattformen ohne Auto-Fixer erreichbar.
 - **R-069** – Röhrenzugänge prüfen die Fußposition auf dem Deckel; tiefe Levelstarts bleiben in der Kamera sichtbar und Hintergründe decken auch lange Level ab.
@@ -120,7 +120,12 @@ Referenzen: [GAMEDESIGN.md](GAMEDESIGN.md), [LEVEL_PLAN.md](LEVEL_PLAN.md), [AGE
 - **R-072** – Lianen erlauben optionales Klettern mit ↑/↓, Halten, direkten seitlichen Ausstieg und Z-Absprung; nur der eigene Klettermodus darf die Schwerkraft deaktivieren.
 - **R-073** – Rotierende Feuerarme bewegen vorhandene Kollisionskörper auf Game-Time, verursachen Schaden und lassen eine sichere Bodenroute frei.
 - **R-074** – Rote Münzringe zeigen einen Game-Time-Countdown, belohnen einen vollständigen Satz genau einmal und erlauben nach Ablauf und Verlassen einen neuen Versuch.
-- **R-075** – Die Erweiterung verteilt sich kuratiert auf 24 Level, bewahrt Einführungen, Pins und Bossarena sowie die tatsächliche Lösbarkeit aller 90 Level ohne die neuen Elemente; neue Figuren und Elemente haben gültige maßgleiche Pixeltexturen.
+- **R-075** – Die Erweiterung verteilt sich kuratiert auf 24 Level, bewahrt Einführungen, Pins und Bossarena sowie die tatsächliche Lösbarkeit aller 90 Level ohne die neuen Elemente; neue Figuren und Elemente haben gültige maßgleiche Texturen.
+
+- **R-076** – Knuffige Bilderbuchgrafik: gerundete, schattierte Spieler-, Gegner- und Objektgrafiken; alle Texture-Keys, nativen Framegrößen und Fußpositionen bleiben erhalten.
+- **R-077** – Stimmige Biome-Landschaften: sieben deterministische Hintergrundebenen je Biom mit unterschiedlichen geometrischen Motiven und passenden runden Dekorationen.
+
+- **R-078** – Sicherer Zielabschluss: Nach erfolgreichem Zielkontakt bleibt die Figur bis zum Levelwechsel an ihrer erreichten Position; kein Herunterfallen oder Weiterlaufen. Timer pausiert, Abschlussbelohnung nur einmal, nach 2000 ms normaler Levelwechsel. Gesperrte Ziele bleiben spielbar.
 
 ## Traceability
 
@@ -252,7 +257,7 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-065 | Audio-Freigabe | tests/MusicPlayer.test.ts | disconnects completed voices |
 | R-065 | Deterministische Percussion | tests/MusicPlayer.test.ts | creates bounded, repeatable non-silent |
 | R-062 | Direkte Steuerung ohne Rutschen | tests/PlayerMovement.test.ts | stops and reverses immediately |
-| R-066 | Pixel-Animationsgrößen | tests/PixelAssets.test.ts | generates actual animation frames |
+| R-066 | Native Animationsgrößen | tests/PixelAssets.test.ts | generates actual animation frames |
 | R-066 | Terrain-Raster | tests/TerrainRendering.test.ts | repeats original-size pixels |
 | R-066 | Runtime-Terrain | e2e/rendering-polish.test.ts | terrain repeats native pixels |
 | R-067 | Treffer und Stern | tests/EnemyRules.test.ts | keeps hit protection separate |
@@ -288,3 +293,12 @@ case-insensitive, im Dateiinhalt der jeweiligen Test-Datei).
 | R-075 | Lösbarkeit | tests/ClassicExpansion.test.ts | keeps all ninety goals and bonus platforms solvable |
 | R-075 | Echte Asset-Erzeugung | tests/ClassicAssets.test.ts | generates every runtime key |
 | R-075 | Sauberer Shutdown | tests/ClassicElements.test.ts | releases groups and colliders once |
+
+| R-076 | Spielergrößen und Fußhöhe | tests/StorybookPlayer.test.ts | keeps all native player canvases stable |
+| R-076 | Runde Silhouetten ohne Zuschnitt | tests/StorybookPlayer.test.ts | draws rounded shaded silhouettes |
+| R-077 | Sieben Ebenen je Biom | tests/StorybookScenery.test.ts | generates seven correctly sized |
+| R-077 | Individuelle Motive | tests/StorybookScenery.test.ts | uses distinctive biome motifs |
+
+| R-078 | Stabiler Zielabschluss | tests/GoalFinish.test.ts | holds the player at the reached position |
+| R-078 | Gesperrte Ziele | tests/GoalFinish.test.ts | leaves a locked goal fully playable |
+| R-078 | Runtime-Zielkontakt | e2e/goal-finish.test.ts | crossing the goal freezes a falling runner |

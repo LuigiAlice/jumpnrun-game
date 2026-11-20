@@ -8,12 +8,13 @@ import { goToTitle } from './sceneNav';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  pixelArt: true,
-  roundPixels: true,
+  pixelArt: false,
+  antialias: true,
+  roundPixels: false,
   parent: 'game-container',
   width: 1200,
   height: 800,
-  backgroundColor: '#1a1a2e',
+  backgroundColor: '#a7dcdf',
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,

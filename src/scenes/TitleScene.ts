@@ -29,6 +29,12 @@ export class TitleScene extends Phaser.Scene {
     private levelLabel!: Phaser.GameObjects.Text;
     private levelGrid!: Phaser.GameObjects.Container;
     private backgroundImage!: Phaser.GameObjects.Image;
+    private backgroundLayers: Phaser.GameObjects.Image[] = [];
+    private readonly BIOME_LABELS = [
+        'Blumenwiese', 'Sonnendünen', 'Korallenmeer', 'Schneeflocken', 'Wolkenland',
+        'Zauberwald', 'Blütendorf', 'Muschelstrand', 'Spielzeugwerk', 'Glutgarten',
+        'Spukschloss', 'Moostempel', 'Wolkenkluft', 'Sternenreich', 'Königsburg',
+    ];
     
     private readonly BIOME_NAMES = [
         'grasslands', 'desert', 'water', 'ice-snow', 'sky-clouds',
@@ -63,13 +69,21 @@ export class TitleScene extends Phaser.Scene {
         this.selectedLevel = 0;
 
         this.backgroundImage = this.add.image(centerX, GAME_HEIGHT / 2, 'bg_grasslands_0');
+        this.backgroundLayers = [];
+        const layerY = [320, 360, 400, 440, 480, 520];
+        for (let i = 1; i < 7; i++) this.backgroundLayers.push(this.add.image(centerX, layerY[i - 1], `bg_grasslands_${i}`));
+        const card = this.add.graphics();
+        card.fillStyle(0x355568, 0.12).fillRoundedRect(252, 284, 696, 292, 28);
+        card.fillStyle(0xfffcf0, 0.93).fillRoundedRect(252, 278, 696, 292, 28);
+        card.lineStyle(2, 0xffffff, 0.95).strokeRoundedRect(252, 278, 696, 292, 28);
 
         this.add.text(centerX, 60, 'SUPER JUMP WORLD', {
             fontSize: '48px',
-            fontFamily: 'monospace',
-            color: '#f1c40f',
-            stroke: '#e74c3c',
-            strokeThickness: 8
+            fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+            color: '#fff4be',
+            stroke: '#527e78',
+            strokeThickness: 5,
+            shadow: { offsetX: 0, offsetY: 5, color: '#7ea88d', blur: 0, fill: true }
         }).setOrigin(0.5);
 
         // Biome tabs
@@ -84,9 +98,9 @@ export class TitleScene extends Phaser.Scene {
         // Control help
         this.add.text(centerX, GAME_HEIGHT - 180, '← → Laufen  |  Shift Sprint  |  ↑ / Z Sprung · ↑/↓ Ranken  |  X / Space Feuer', {
             fontSize: '16px',
-            color: '#fff',
-            stroke: '#000',
-            strokeThickness: 3
+            color: '#38565a',
+            stroke: '#fff9e9',
+            strokeThickness: 4
         }).setOrigin(0.5);
         
         // Select first level by default
@@ -112,38 +126,21 @@ export class TitleScene extends Phaser.Scene {
             const tab = this.add.container(x, y);
             
             const bg = this.add.graphics();
-            bg.fillStyle(0x000000, 0.7);
-            bg.fillRoundedRect(-tabWidth/2, -tabHeight/2, tabWidth, tabHeight, 6);
-            bg.lineStyle(2, Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[i]).color, 1);
-            bg.strokeRoundedRect(-tabWidth/2, -tabHeight/2, tabWidth, tabHeight, 6);
-            
-            const text = this.add.text(0, 0, biome, {
+            this.drawBiomeTab(bg, i, false);
+
+            const text = this.add.text(0, 0, this.BIOME_LABELS[i], {
                 fontSize: '11px',
-                fontFamily: 'monospace',
-                color: '#fff'
+                fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+                color: '#38565a'
             }).setOrigin(0.5);
             
             tab.add([bg, text]);
             tab.setSize(tabWidth, tabHeight);
             tab.setInteractive({ useHandCursor: true });
             
-            tab.on('pointerover', () => {
-                bg.clear();
-                bg.fillStyle(Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[i]).color, 0.5);
-                bg.fillRoundedRect(-tabWidth/2, -tabHeight/2, tabWidth, tabHeight, 6);
-                bg.lineStyle(2, Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[i]).color, 1);
-                bg.strokeRoundedRect(-tabWidth/2, -tabHeight/2, tabWidth, tabHeight, 6);
-            });
-            
-            tab.on('pointerout', () => {
-                if (this.selectedBiome === i) return;
-                bg.clear();
-                bg.fillStyle(0x000000, 0.7);
-                bg.fillRoundedRect(-tabWidth/2, -tabHeight/2, tabWidth, tabHeight, 6);
-                bg.lineStyle(2, Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[i]).color, 1);
-                bg.strokeRoundedRect(-tabWidth/2, -tabHeight/2, tabWidth, tabHeight, 6);
-            });
-            
+            tab.on('pointerover', () => this.drawBiomeTab(bg, i, this.selectedBiome === i, true));
+            tab.on('pointerout', () => this.drawBiomeTab(bg, i, this.selectedBiome === i));
+
             tab.on('pointerdown', () => {
                 this.selectBiome(i);
                 this.startMusic();
@@ -173,7 +170,7 @@ export class TitleScene extends Phaser.Scene {
                 const levelIndex = biome * 6 + level;
                 const biomeNo = biome + 1;
                 const levelNo = level + 1;
-                const label = `${this.BIOME_NAMES[biome]}-${biomeNo}.${levelNo}`;
+                const label = this.BIOME_LABELS[biome];
                 
                 const container = this.add.container(x, y);
                 container.setVisible(false);
@@ -183,14 +180,14 @@ export class TitleScene extends Phaser.Scene {
                 
                 const text = this.add.text(0, -10, label, {
                     fontSize: '16px',
-                    fontFamily: 'monospace',
-                    color: '#fff'
+                    fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+                    color: '#38565a'
                 }).setOrigin(0.5);
                 
-                const numText = this.add.text(0, 18, `${levelIndex + 1}`, {
+                const numText = this.add.text(0, 18, `${biomeNo} – ${levelNo}`, {
                     fontSize: '24px',
-                    fontFamily: 'monospace',
-                    color: '#aaa'
+                    fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+                    color: '#68817d'
                 }).setOrigin(0.5);
                 
                 container.add([bg, text, numText]);
@@ -224,40 +221,43 @@ export class TitleScene extends Phaser.Scene {
         }
     }
     
-    private drawLevelButton(bg: Phaser.GameObjects.Graphics, w: number, h: number, hover: boolean, biome: number) {
-        const color = Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[biome]).color;
-        
+    private drawBiomeTab(bg: Phaser.GameObjects.Graphics, index: number, selected: boolean, hover = false) {
+        const accent = Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[index]).color;
         bg.clear();
-        bg.fillStyle(0x000000, hover ? 0.9 : 0.7);
-        bg.fillRoundedRect(-w/2, -h/2, w, h, 12);
-        bg.lineStyle(3, color, hover ? 1 : 0.7);
-        bg.strokeRoundedRect(-w/2, -h/2, w, h, 12);
-        
-        if (hover) {
-            bg.fillStyle(color, 0.3);
-            bg.fillRoundedRect(-w/2, -h/2, w, h, 12);
-        }
+        bg.fillStyle(0x38565a, 0.12).fillRoundedRect(-100, -11, 200, 30, 11);
+        bg.fillStyle(selected || hover ? 0xfff0bd : 0xfffcf3, 0.96).fillRoundedRect(-100, -15, 200, 30, 11);
+        bg.lineStyle(selected ? 3 : 1.5, accent, selected ? 0.9 : 0.5).strokeRoundedRect(-100, -15, 200, 30, 11);
+        bg.fillStyle(accent, 0.8).fillCircle(-87, 0, 4);
     }
-    
+
+    private drawLevelButton(bg: Phaser.GameObjects.Graphics, w: number, h: number, hover: boolean, biome: number) {
+        const accent = Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[biome]).color;
+        bg.clear();
+        bg.fillStyle(0x547478, 0.15).fillRoundedRect(-w / 2, -h / 2 + 5, w, h, 20);
+        bg.fillStyle(hover ? 0xffecb8 : 0xffffff, 1).fillRoundedRect(-w / 2, -h / 2, w, h, 20);
+        bg.fillStyle(accent, 0.10).fillRoundedRect(-w / 2 + 3, -h / 2 + 3, w - 6, h - 6, 18);
+        bg.lineStyle(hover ? 3 : 2, accent, hover ? 0.85 : 0.35).strokeRoundedRect(-w / 2, -h / 2, w, h, 20);
+    }
+
     private createStartButton() {
         this.startButton = this.add.container(GAME_WIDTH / 2, 530);
         
         const bg = this.add.graphics();
-        bg.fillStyle(0x2ecc71, 1);
+        bg.fillStyle(0x61bfa0, 1);
         bg.fillRoundedRect(-140, -30, 280, 60, 15);
-        bg.lineStyle(4, 0x27ae60, 1);
+        bg.lineStyle(4, 0x458c82, 1);
         bg.strokeRoundedRect(-140, -30, 280, 60, 15);
         
         this.levelLabel = this.add.text(0, -5, 'grasslands-1.1', {
             fontSize: '24px',
-            fontFamily: 'monospace',
-            color: '#fff'
+            fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+            color: '#38565a'
         }).setOrigin(0.5);
         
         const hint = this.add.text(0, 18, 'KLICKEN ZUM START', {
             fontSize: '12px',
-            fontFamily: 'monospace',
-            color: '#afa'
+            fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+            color: '#efffe5'
         }).setOrigin(0.5);
         
         this.startButton.add([bg, this.levelLabel, hint]);
@@ -267,18 +267,18 @@ export class TitleScene extends Phaser.Scene {
         this.startButton.on('pointerover', () => {
             const bg = this.startButton.getAt(0) as Phaser.GameObjects.Graphics;
             bg.clear();
-            bg.fillStyle(0x27ae60, 1);
+            bg.fillStyle(0x458c82, 1);
             bg.fillRoundedRect(-140, -30, 280, 60, 15);
-            bg.lineStyle(4, 0x2ecc71, 1);
+            bg.lineStyle(4, 0x61bfa0, 1);
             bg.strokeRoundedRect(-140, -30, 280, 60, 15);
         });
         
         this.startButton.on('pointerout', () => {
             const bg = this.startButton.getAt(0) as Phaser.GameObjects.Graphics;
             bg.clear();
-            bg.fillStyle(0x2ecc71, 1);
+            bg.fillStyle(0x61bfa0, 1);
             bg.fillRoundedRect(-140, -30, 280, 60, 15);
-            bg.lineStyle(4, 0x27ae60, 1);
+            bg.lineStyle(4, 0x458c82, 1);
             bg.strokeRoundedRect(-140, -30, 280, 60, 15);
         });
         
@@ -293,16 +293,8 @@ export class TitleScene extends Phaser.Scene {
     }
     
     private selectBiome(biome: number) {
-        // Update biome tabs
-        this.biomeButtons.forEach((b, i) => {
-            const bg = b.button.getAt(0) as Phaser.GameObjects.Graphics;
-            bg.clear();
-            bg.fillStyle(0x000000, i === biome ? 0.9 : 0.7);
-            bg.fillRoundedRect(-50, -15, 100, 30, 6);
-            bg.lineStyle(2, Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[i]).color, i === biome ? 1 : 0.5);
-            bg.strokeRoundedRect(-50, -15, 100, 30, 6);
-        });
-        
+        this.biomeButtons.forEach((b, i) => this.drawBiomeTab(b.button.getAt(0) as Phaser.GameObjects.Graphics, i, i === biome));
+
         // Show/hide level buttons for this biome
         this.levelButtons.forEach((lb) => {
             const visible = lb.biomeIndex === biome;
@@ -312,6 +304,7 @@ export class TitleScene extends Phaser.Scene {
         // Update background to match biome
         const biomeBgName = 'bg_' + this.BIOME_BG_NAMES[biome] + '_0';
         this.backgroundImage.setTexture(biomeBgName);
+        this.backgroundLayers.forEach((layer, i) => layer.setTexture(`bg_${this.BIOME_BG_NAMES[biome]}_${i + 1}`));
         
         // Try to keep selected level if same biome, otherwise select first
         if (this.selectedBiome !== biome) {
@@ -319,8 +312,7 @@ export class TitleScene extends Phaser.Scene {
         }
         this.selectedBiome = biome;
         
-        // Redraw visible level buttons to show selection
-        this.updateLevelSelection();
+        this.selectLevel(this.selectedLevel);
     }
     
     private selectLevel(level: number) {
@@ -330,7 +322,7 @@ export class TitleScene extends Phaser.Scene {
         // Update start button label
         const biomeNo = this.selectedBiome + 1;
         const levelNo = this.selectedLevel + 1;
-        const label = `${this.BIOME_NAMES[this.selectedBiome]}-${biomeNo}.${levelNo}`;
+        const label = `Welt ${biomeNo} · Level ${levelNo}`;
         this.levelLabel.setText(label);
     }
     
@@ -343,16 +335,7 @@ export class TitleScene extends Phaser.Scene {
             const btnWidth = 180;
             const btnHeight = 80;
             
-            bg.clear();
-            if (isSelected) {
-                const color = Phaser.Display.Color.HexStringToColor(this.BIOME_COLORS[this.selectedBiome]).color;
-                bg.fillStyle(color, 0.4);
-                bg.fillRoundedRect(-btnWidth/2, -btnHeight/2, btnWidth, btnHeight, 12);
-                bg.lineStyle(4, color, 1);
-                bg.strokeRoundedRect(-btnWidth/2, -btnHeight/2, btnWidth, btnHeight, 12);
-            } else {
-                this.drawLevelButton(bg, btnWidth, btnHeight, false, this.selectedBiome);
-            }
+            this.drawLevelButton(bg, btnWidth, btnHeight, isSelected, this.selectedBiome);
         });
     }
     

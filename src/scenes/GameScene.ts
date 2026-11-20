@@ -1037,9 +1037,9 @@ export class GameScene extends Phaser.Scene {
     
     const popup = this.add.text(x, y - 20, `+${scoreAmount}`, {
       fontSize: '20px',
-      fontFamily: 'monospace',
-      color: '#FFD700',
-      stroke: '#000',
+      fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+      color: '#38565a',
+      stroke: '#fff9e9',
       strokeThickness: 3
     }).setOrigin(0.5).setDepth(100);
     
@@ -1192,16 +1192,21 @@ export class GameScene extends Phaser.Scene {
     const levelData = this.currentLevelData;
     const levelName = levelData?.name || `Level ${this.levelIndex + 1}`;
 
-    const labelStyle = { fontSize: '12px', fontFamily: 'monospace', color: '#fff', stroke: '#000', strokeThickness: 3 };
-    const valueStyle = { fontSize: '22px', fontFamily: 'monospace', color: '#fff', stroke: '#000', strokeThickness: 3 };
+    const labelStyle = { fontSize: '12px', fontFamily: 'Fredoka, Trebuchet MS, sans-serif', color: '#38565a', stroke: '#fff9e9', strokeThickness: 2 };
+    const valueStyle = { fontSize: '22px', fontFamily: 'Fredoka, Trebuchet MS, sans-serif', color: '#38565a', stroke: '#fff9e9', strokeThickness: 2 };
+    const hudPanel = this.add.graphics().setScrollFactor(0).setDepth(999);
+    for (const x of [10, 150, 290, 430, GAME_WIDTH - 110]) {
+      hudPanel.fillStyle(0x355568, 0.12).fillRoundedRect(x, 15, 128, 57, 15);
+      hudPanel.fillStyle(0xfffcf0, 0.93).fillRoundedRect(x, 11, 128, 57, 15);
+    }
     const hudY = 20;
     const valY = hudY + 18;
 
-    this.scoreText = this.add.text(20, hudY, 'MARIO', labelStyle).setScrollFactor(0).setDepth(1000);
-    this.coinText = this.add.text(160, hudY, 'COINS', labelStyle).setScrollFactor(0).setDepth(1000);
-    this.worldText = this.add.text(300, hudY, 'WORLD', labelStyle).setScrollFactor(0).setDepth(1000);
-    this.timerText = this.add.text(440, hudY, 'TIME', labelStyle).setScrollFactor(0).setDepth(1000);
-    this.livesText = this.add.text(GAME_WIDTH - 100, hudY, 'LIVES', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.scoreText = this.add.text(20, hudY, 'PUNKTE', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.coinText = this.add.text(160, hudY, 'MÜNZEN', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.worldText = this.add.text(300, hudY, 'WELT', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.timerText = this.add.text(440, hudY, 'ZEIT', labelStyle).setScrollFactor(0).setDepth(1000);
+    this.livesText = this.add.text(GAME_WIDTH - 100, hudY, 'LEBEN', labelStyle).setScrollFactor(0).setDepth(1000);
 
     // Value texts that get updated
     this.scoreValText = this.add.text(20, valY, '', valueStyle).setScrollFactor(0).setDepth(1000);
@@ -1213,25 +1218,25 @@ export class GameScene extends Phaser.Scene {
     // Level name display - centered below HUD
     this.add.text(GAME_WIDTH / 2, 75, levelName, {
       fontSize: '16px',
-      fontFamily: 'monospace',
-      color: '#FFD700',
-      stroke: '#000',
+      fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+      color: '#38565a',
+      stroke: '#fff9e9',
       strokeThickness: 2
     }).setOrigin(0.5).setScrollFactor(0).setDepth(1000);
     
     // ESC hint
     this.add.text(GAME_WIDTH - 20, GAME_HEIGHT - 20, '← → Laufen · Shift Sprint · ↑/Z Sprung · ↑/↓ Ranken, Z Absprung · X Feuer · ESC Menü', {
       fontSize: '12px',
-      fontFamily: 'monospace',
-      color: '#aaa',
-      stroke: '#000',
+      fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
+      color: '#38565a',
+      stroke: '#fff9e9',
       strokeThickness: 1
     }).setOrigin(1, 1).setScrollFactor(0).setDepth(1000);
 
     if (levelData?.coinGoal || levelData?.timeGate || levelData?.id === 90) {
       this.coinGateText = this.add.text(GAME_WIDTH / 2, 100, '', {
         fontSize: '16px',
-        fontFamily: 'monospace',
+        fontFamily: 'Fredoka, Trebuchet MS, sans-serif',
         color: '#FFD700',
         stroke: '#000',
         strokeThickness: 2
@@ -1308,7 +1313,7 @@ export class GameScene extends Phaser.Scene {
 
   private showScorePopup(text: string, x: number, y: number) {
     const popup = this.add.text(x, y, text, {
-      fontSize: '16px', fontFamily: 'monospace', color: '#ffffff',
+      fontSize: '16px', fontFamily: 'Fredoka, Trebuchet MS, sans-serif', color: '#ffffff',
       stroke: '#000', strokeThickness: 3
     }).setOrigin(0.5).setDepth(1001);
     this.tweens.add({
@@ -1328,7 +1333,7 @@ export class GameScene extends Phaser.Scene {
     if (this.coinCount - this.lastCoinMilestone >= 100) {
       this.lastCoinMilestone += 100;
       const text = this.add.text(GAME_WIDTH / 2, 200, '1-UP', {
-        fontSize: '36px', fontFamily: 'monospace', color: '#4CAF50',
+        fontSize: '36px', fontFamily: 'Fredoka, Trebuchet MS, sans-serif', color: '#4CAF50',
         stroke: '#000', strokeThickness: 5
       }).setOrigin(0.5).setScrollFactor(0).setDepth(1001);
       this.tweens.add({ targets: text, y: 120, alpha: 0, duration: 1500, onComplete: () => text.destroy() });
@@ -1942,7 +1947,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private reachGoal(bonusPoints: number = 0) {
-      if (this.isTransitioning) return;
+      if (this.isDead || this.isTransitioning || this.isQuitting) return;
       if (!this.goalUnlocked()) return;
       this.isTransitioning = true;
       this.timerEvent.paused = true;
@@ -1952,10 +1957,17 @@ export class GameScene extends Phaser.Scene {
       this.score += bonusPoints;
 
       const body = this.player.body as Phaser.Physics.Arcade.Body;
+      // Arcade keeps stepping even while scene update returns during the finish.
+      // Detach only the player until restart; no slide target can put them below terrain.
+      this.tweens.killTweensOf(this.player);
       body.setVelocity(0, 0);
+      body.setAcceleration(0, 0);
+      body.moves = false;
+      body.enable = false;
       body.setAllowGravity(false);
       this.player.setFlipX(true);
-      this.player.setScale(1, 1);
+      this.player.setScale(1, 1).setAlpha(1).clearTint();
+      this.player.setTexture(this.isPlayerFire ? 'player_fire_idle' : this.isPlayerBig ? 'player_big_idle' : 'player_idle');
 
       // Score based on flagpole height
       const flagTop = this.goal.y - 25;
@@ -1966,26 +1978,11 @@ export class GameScene extends Phaser.Scene {
       this.score += poleScore;
       this.showScorePopup('+' + poleScore, this.player.x, this.player.y - 40);
 
-      this.tweens.add({
-        targets: this.player,
-        y: this.goal.y + 40,
-        duration: 600,
-        ease: 'Power1',
-        onComplete: () => {
-          body.setAllowGravity(true);
-          body.setVelocityX(80);
-          this.tweens.add({
-            targets: this.player,
-            x: this.player.x + 60,
-            duration: 400,
-          });
-          const clearText = this.add.text(this.player.x, this.player.y - 60, 'COURSE CLEAR!', {
-            fontSize: '24px', fontFamily: 'monospace', color: '#FFD700',
-            stroke: '#000', strokeThickness: 4
-          }).setOrigin(0.5).setDepth(1001);
-          this.tweens.add({ targets: clearText, y: clearText.y - 30, alpha: 0, duration: 1500, delay: 500 });
-        }
-      });
+      const clearText = this.add.text(this.player.x, this.player.y - 60, 'LEVEL GESCHAFFT!', {
+        fontSize: '24px', fontFamily: 'Fredoka, Trebuchet MS, sans-serif', color: '#fff4be',
+        stroke: '#527e78', strokeThickness: 4
+      }).setOrigin(0.5).setDepth(1001);
+      this.tweens.add({ targets: clearText, y: clearText.y - 30, alpha: 0, duration: 1500, delay: 500 });
 
       this.time.delayedCall(2000, () => this.nextLevel());
   }
